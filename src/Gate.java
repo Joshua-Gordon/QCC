@@ -1,0 +1,115 @@
+import javax.swing.*;
+import java.util.EnumMap;
+import java.util.function.Function;
+import java.util.function.Supplier;
+
+public class Gate {
+
+    public enum GateType{
+        I,X,Y,Z,H,Custom, Edit, Measure, CNOT
+    }
+
+    int length = 0;
+
+    public static String typeToString(GateType gt){
+        switch(gt){
+            case I:
+                return "I";
+            case X:
+                return "X";
+            case Y:
+                return "Y";
+            case Z:
+                return "Z";
+            case H:
+                return "H";
+            case Edit:
+                System.err.println("Incomplete circuit!!!!");
+                return "ERROR";
+            case Measure:
+                return "MEASURE";
+            case CNOT:
+                return "CNOT";
+        }
+        return "ERROR";
+    }
+
+    public static int GATE_PIXEL_SIZE = 64;
+
+    public Complex[][] matrix;
+    public GateType type;
+
+    public Gate(Complex[][] mat, GateType gt) {
+        this.matrix = mat;
+        this.type = gt;
+    }
+
+    public Gate(GateType gt){
+        matrix = identity().matrix;
+        this.type = gt;
+    }
+
+    public static Gate identity() {
+        Complex[][] mat = new Complex[2][2];
+        mat[0][0] = Complex.ONE();
+        mat[0][1] = Complex.ZERO();
+        mat[1][0] = Complex.ZERO();
+        mat[1][1] = Complex.ONE();
+        return new Gate(mat,GateType.I);
+    }
+
+    public static Gate hadamard() { //bam
+        Complex[][] mat = new Complex[2][2];
+        mat[0][0] = Complex.ONE().multiply(Complex.ISQRT2());
+        mat[0][1] = Complex.ONE().multiply(Complex.ISQRT2());
+        mat[1][0] = Complex.ONE().multiply(Complex.ISQRT2());
+        mat[1][1] = Complex.ONE().multiply(Complex.ISQRT2()).negative();
+        return new Gate(mat,GateType.H);
+    }
+
+    public static Gate x(){
+        Complex[][] mat = new Complex[2][2];
+        mat[0][0] = Complex.ZERO();
+        mat[0][1] = Complex.ONE();
+        mat[1][0] = Complex.ONE();
+        mat[1][1] = Complex.ZERO();
+        return new Gate(mat,GateType.X);
+    }
+
+    public static Gate y(){
+        Complex[][] mat = new Complex[2][2];
+        mat[0][0] = Complex.ZERO();
+        mat[0][1] = Complex.I().negative();
+        mat[1][0] = Complex.I();
+        mat[1][1] = Complex.ZERO();
+        return new Gate(mat,GateType.Y);
+    }
+
+    public static Gate z(){
+        Complex[][] mat = new Complex[2][2];
+        mat[0][0] = Complex.ONE();
+        mat[0][1] = Complex.ZERO();
+        mat[1][0] = Complex.ZERO();
+        mat[1][1] = Complex.ONE().negative();
+        return new Gate(mat,GateType.Z);
+    }
+
+    public static Gate measure(){
+        return new Gate(GateType.Measure);
+    }
+    public static Gate cnot(){
+        /*Complex[][] mat = new Complex[4][4];
+        for(int x = 0; x < 4; ++x){
+            for(int y = 0; y < 4; ++y){
+                mat[x][y] = x == y ? Complex.ONE() : Complex.ZERO();
+            }
+        }
+        mat[2][2] = mat[3][3] = Complex.ZERO();
+        mat[2][3] = mat[3][2] = Complex.ONE();*/
+        Gate g = new Gate(GateType.CNOT);
+
+        g.length = Integer.parseInt(JOptionPane.showInputDialog("Length of CNOT?"));
+        return g;
+    }
+
+}
