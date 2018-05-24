@@ -40,9 +40,21 @@ public class Gate {
         } else if(lt == LangType.QASM) {
             switch (gt) {
                 case I:
-                    return "I";
+                    return "Well, I guess this string isn't really needed, but here it is";
+                case H:
+                    return "h";
                 case X:
                     return "x";
+                case Y:
+                    return "y";
+                case Z:
+                    return "z";
+                case CNOT:
+                    return "cx";
+                case Measure:
+                    return "measure";
+                case SWAP:
+                    return "cx"; //Don't worry, this is intentional
             }
         }
         return "ERROR";

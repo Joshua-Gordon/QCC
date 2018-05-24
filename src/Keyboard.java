@@ -31,8 +31,13 @@ public class Keyboard implements KeyListener {
                 break;
             case KeyEvent.VK_S:
                 Main.cb.edit(Gate.GateType.SWAP);
+                break;
             case KeyEvent.VK_ENTER:
                 System.out.println(Translator.translateQUIL());
+                break;
+            case KeyEvent.VK_Q:
+                System.out.println(Translator.translateQASM());
+                break;
             default:
                 Main.cb.edit(Gate.GateType.I);
         }
