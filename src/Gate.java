@@ -6,30 +6,44 @@ import java.util.function.Supplier;
 public class Gate {
 
     public enum GateType{
-        I,X,Y,Z,H,Custom, Edit, Measure, CNOT
+        I,X,Y,Z,H,Custom, Edit, Measure, CNOT, SWAP
+    }
+    public enum LangType{
+        QUIL,QASM
     }
 
     int length = 0;
 
-    public static String typeToString(GateType gt){
-        switch(gt){
-            case I:
-                return "I";
-            case X:
-                return "X";
-            case Y:
-                return "Y";
-            case Z:
-                return "Z";
-            case H:
-                return "H";
-            case Edit:
-                System.err.println("Incomplete circuit!!!!");
-                return "ERROR";
-            case Measure:
-                return "MEASURE";
-            case CNOT:
-                return "CNOT";
+    public static String typeToString(GateType gt, LangType lt){
+        if(lt == LangType.QUIL) {
+            switch (gt) {
+                case I:
+                    return "I";
+                case X:
+                    return "X";
+                case Y:
+                    return "Y";
+                case Z:
+                    return "Z";
+                case H:
+                    return "H";
+                case Edit:
+                    System.err.println("Incomplete circuit!!!!");
+                    return "ERROR";
+                case Measure:
+                    return "MEASURE";
+                case CNOT:
+                    return "CNOT";
+                case SWAP:
+                    return "SWAP";
+            }
+        } else if(lt == LangType.QASM) {
+            switch (gt) {
+                case I:
+                    return "I";
+                case X:
+                    return "x";
+            }
         }
         return "ERROR";
     }
@@ -110,6 +124,12 @@ public class Gate {
 
         g.length = Integer.parseInt(JOptionPane.showInputDialog("Length of CNOT?"));
         return g;
+    }
+    public static Gate swap(){
+
+        Gate g0 = new Gate(GateType.SWAP);
+        g0.length = Integer.parseInt(JOptionPane.showInputDialog("Length of SWAP?"));
+        return g0;
     }
 
 }

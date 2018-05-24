@@ -29,8 +29,10 @@ public class Keyboard implements KeyListener {
             case KeyEvent.VK_C:
                 Main.cb.edit(Gate.GateType.CNOT);
                 break;
+            case KeyEvent.VK_S:
+                Main.cb.edit(Gate.GateType.SWAP);
             case KeyEvent.VK_ENTER:
-                System.out.println(Translator.translate());
+                System.out.println(Translator.translateQUIL());
             default:
                 Main.cb.edit(Gate.GateType.I);
         }

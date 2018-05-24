@@ -36,6 +36,7 @@ public class CircuitBoard {
         gatemap.put(Gate.GateType.Z,Gate::z);
         gatemap.put(Gate.GateType.Measure,Gate::measure);
         gatemap.put(Gate.GateType.CNOT,Gate::cnot);
+        gatemap.put(Gate.GateType.SWAP,Gate::swap);
     }
 
     public void addRow(){
@@ -120,6 +121,18 @@ public class CircuitBoard {
                         int centerY = (y+len)*unit + (unit>>2);
                         g.drawOval(centerX,centerY,unit>>1,unit>>1);
                         break;
+                    case SWAP:
+                        g.setColor(Color.BLACK);
+                        g.drawLine(x*unit,y*unit + (unit>>1),(x+1)*unit,y*unit + (unit>>1));
+                        //Diagonal lines
+                        g.drawLine(x*unit + (unit>>2),y*unit + (unit>>2),(x+1)*unit - (unit >> 2), (y+1)*unit - (unit>>2));
+                        g.drawLine(x*unit + (unit>>2),(y+1)*unit - (unit>>2),(x+1)*unit - (unit >> 2), y*unit + (unit>>2));
+                        int swaplen = board.get(x).get(y).length;
+                        g.drawLine(x*unit + (unit>>1),y*unit + (unit>>1),x*unit + (unit>>1),(y+swaplen)*unit + (unit>>1));
+                        //More diagonal lines
+                        g.drawLine(x*unit + (unit>>2),(y+swaplen)*unit + (unit>>2),(x+1)*unit - (unit >> 2), (y+swaplen+1)*unit - (unit>>2));
+                        g.drawLine(x*unit + (unit>>2),(y+1+swaplen)*unit - (unit>>2),(x+1)*unit - (unit >> 2), (y+swaplen)*unit + (unit>>2));
+
                 }
             }
         }
