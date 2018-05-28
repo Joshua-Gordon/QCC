@@ -150,4 +150,71 @@ public class Translator {
         //System.out.println("Num qubits: " + sum);
         return sum+1;
     }
+
+    public static ArrayList<ArrayList<Gate>> loadQuil(String quil) {
+        ArrayList<ArrayList<Gate>> board = new ArrayList<>();
+        int maxLen = 0;
+        for(String line : quil.split("\n")) {
+            String gate = line.split(" ")[0];
+            Gate g;
+            switch(gate) {
+                case "H":
+                    g = Gate.hadamard();
+                    break;
+                case "X":
+                    g = Gate.x();
+                    break;
+                case "Y":
+                    g = Gate.y();
+                    break;
+                case "Z":
+                    g = Gate.z();
+                    break;
+                case "CNOT":
+                    g = Gate.identity();
+                    g.type = Gate.GateType.CNOT;
+                    break;
+                case "MEASURE":
+                    g = Gate.measure();
+                    break;
+                default:
+                    g = Gate.identity();
+            }
+            int register = Integer.parseInt(line.split(" ")[1]);
+            while(board.size()-1 < register) {
+                board.add(new ArrayList<>());
+            }
+            if(gate.equals("CNOT") || gate.equals("MEASURE")){
+                String otherBit = line.split(" ")[2];
+                if(!otherBit.contains("[")){
+                    g.length = Integer.parseInt(otherBit);
+                    while(board.size()-1 < register+g.length) {
+                        board.add(new ArrayList<>());
+                    }
+                    board.get(register+g.length).add(Gate.identity());
+                    board.get(register+g.length).add(Gate.identity());
+                }
+            }
+            board.get(register).add(g);
+            if(board.get(register).size() > maxLen){
+                maxLen = board.get(register).size();
+            }
+        }
+        //Fill
+        for(ArrayList<Gate> a : board) {
+            while(a.size() < maxLen) {
+                a.add(Gate.identity());
+            }
+        }
+        //Transpose
+        ArrayList<ArrayList<Gate>> transpose = new ArrayList<>();
+        for(int y = 0; y < board.get(0).size(); ++y) {
+            ArrayList<Gate> col = new ArrayList<>();
+            for(ArrayList<Gate> row : board) {
+                col.add(row.get(y));
+            }
+            transpose.add(col);
+        }
+        return transpose;
+    }
 }
