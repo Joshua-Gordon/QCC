@@ -65,15 +65,15 @@ public class Gate {
                 case X:
                     return "QGate[\"not\"]";
                 case Y:
-                    return "y";
+                    return "QGate[\"Y\"]";
                 case Z:
-                    return "z";
+                    return "QGate[\"Z\"]";
                 case CNOT:
-                    return "cx";
+                    return "QGate[\"not\"]";
                 case Measure:
                     return "measure";
                 case SWAP:
-                    return "cx"; //Don't worry, this is intentional
+                    return "QGate[\"not\"]"; //Don't worry, this is intentional
             }
         }
         return "ERROR";
