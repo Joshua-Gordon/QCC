@@ -9,7 +9,7 @@ public class Gate {
         I,X,Y,Z,H,Custom, Edit, Measure, CNOT, SWAP
     }
     public enum LangType{
-        QUIL,QASM
+        QUIL,QASM,QUIPPER
     }
 
     int length = 0;
@@ -45,6 +45,25 @@ public class Gate {
                     return "h";
                 case X:
                     return "x";
+                case Y:
+                    return "y";
+                case Z:
+                    return "z";
+                case CNOT:
+                    return "cx";
+                case Measure:
+                    return "measure";
+                case SWAP:
+                    return "cx"; //Don't worry, this is intentional
+            }
+        } else if(lt == LangType.QUIPPER) {
+            switch (gt) {
+                case I:
+                    return "Well, I guess this string isn't really needed, but here it is";
+                case H:
+                    return "QGate[\"H\"]";
+                case X:
+                    return "QGate[\"not\"]";
                 case Y:
                     return "y";
                 case Z:
