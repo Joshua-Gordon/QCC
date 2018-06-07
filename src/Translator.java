@@ -217,4 +217,64 @@ public class Translator {
         }
         return transpose;
     }
+
+    public static String translateQuipper(){
+        String code = "Inputs: None\n";
+        ArrayList<ArrayList<Gate>> board = Main.cb.board;
+        int numQubits = getQubits(board);
+        for(int i = 0; i < numQubits; ++i) {
+            code += "QInit0(" + i + ")\n";
+        }
+        int offset = 20;
+        for(int x = 0; x < board.size(); ++x) {
+            ArrayList<Gate> instructions = board.get(x);
+            for(int y = 0; y < instructions.size(); y++) {
+                Gate g = instructions.get(y);
+                if(g.type != Gate.GateType.I) {
+                    int idx = y;
+                    if(idx < offset) offset = idx;
+                    code += Gate.typeToString(g.type,Gate.LangType.QUIPPER);
+                    code += "(" + idx + ")";
+                    if(g.type == Gate.GateType.CNOT || g.type == Gate.GateType.SWAP) {
+                        code += " with controls=[+" + (idx+g.length) + "]";
+                    }
+                    if(g.type == Gate.GateType.SWAP){
+                        code += "\nQGate[\"not\"](" + (idx + g.length) + ") with controls=[+" + idx + "]\n";
+                        code += "QGate[\"not\"](" + idx + ") with controls=[+" + (idx + g.length) + "]";
+                        //Three CNOTs do a swap
+                    }
+                    code += "\n";
+                }
+            }
+        }
+        for(int i = 0; i < numQubits; ++i) {
+            code += "QMeas(" + i + ")\n";
+        }
+        code += "Outputs: ";
+        for(int i = 0; i < numQubits; ++i) {
+            code += i + ":Cbit, ";
+        }
+        code = code.substring(0,code.length()-2);
+        return fixQuipper(code,offset);
+    }
+
+    private static String fixQuipper(String code, int offset) {
+        String newCode = "";
+        for(String line : code.split("\n")) {
+            if(line.startsWith("QGate")) {
+                newCode += line.substring(0,line.indexOf("("));
+                int num = Integer.parseInt(line.substring(line.indexOf("(")+1,line.indexOf(")")));
+                newCode += "(" + (num-offset) + ")";
+                if(line.contains("with controls")) {
+                    newCode += " with controls=[+";
+                    num = Integer.parseInt(line.substring(line.indexOf("+")+1,line.substring(16).indexOf("]")+16));
+                    newCode += (num-offset) + "]";
+                }
+            } else {
+                newCode += line;
+            }
+            newCode += "\n";
+        }
+        return newCode;
+    }
 }

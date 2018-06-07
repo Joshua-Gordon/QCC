@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c736768e-d3ef-4607-9580-20064898655e" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Gate.java" afterPath="$PROJECT_DIR$/src/Gate.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Keyboard.java" afterPath="$PROJECT_DIR$/src/Keyboard.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Main.java" afterPath="$PROJECT_DIR$/src/Main.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Translator.java" afterPath="$PROJECT_DIR$/src/Translator.java" />
     </list>
@@ -28,11 +29,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Main.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="Main.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/Main.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="361">
-              <caret line="19" column="27" lean-forward="true" selection-start-line="19" selection-start-column="27" selection-end-line="19" selection-end-column="27" />
+            <state relative-caret-position="-139">
+              <caret line="16" column="35" lean-forward="false" selection-start-line="16" selection-start-column="35" selection-end-line="16" selection-end-column="35" />
               <folding />
             </state>
           </provider>
@@ -41,7 +42,7 @@
       <file leaf-file-name="CircuitBoard.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/CircuitBoard.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-196">
+            <state relative-caret-position="2356">
               <caret line="133" column="122" lean-forward="false" selection-start-line="133" selection-start-column="122" selection-end-line="133" selection-end-column="122" />
               <folding>
                 <element signature="imports" expanded="true" />
@@ -50,13 +51,18 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Translator.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="Translator.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/Translator.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="363">
-              <caret line="193" column="70" lean-forward="false" selection-start-line="193" selection-start-column="70" selection-end-line="193" selection-end-column="70" />
+            <state relative-caret-position="419">
+              <caret line="242" column="33" lean-forward="false" selection-start-line="242" selection-start-column="33" selection-end-line="242" selection-end-column="33" />
               <folding>
                 <element signature="imports" expanded="true" />
+                <element signature="method#translateQUIL#0;class#Translator#0" expanded="false" />
+                <element signature="method#fixQUIL#0;class#Translator#0" expanded="false" />
+                <element signature="method#fixQASM#0;class#Translator#0" expanded="false" />
+                <element signature="method#getQubits#0;class#Translator#0" expanded="false" />
+                <element signature="method#loadQuil#0;class#Translator#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -65,8 +71,8 @@
       <file leaf-file-name="Gate.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/Gate.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-880">
-              <caret line="56" column="67" lean-forward="false" selection-start-line="56" selection-start-column="67" selection-end-line="56" selection-end-column="67" />
+            <state relative-caret-position="-910">
+              <caret line="75" column="42" lean-forward="false" selection-start-line="75" selection-start-column="42" selection-end-line="75" selection-end-column="42" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -77,8 +83,8 @@
       <file leaf-file-name="Keyboard.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/Keyboard.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="741">
-              <caret line="39" column="22" lean-forward="false" selection-start-line="39" selection-start-column="22" selection-end-line="39" selection-end-column="22" />
+            <state relative-caret-position="798">
+              <caret line="42" column="22" lean-forward="false" selection-start-line="42" selection-start-column="22" selection-end-line="42" selection-end-column="22" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -135,10 +141,10 @@
         <option value="$PROJECT_DIR$/src/Window.java" />
         <option value="$PROJECT_DIR$/src/Mouse.java" />
         <option value="$PROJECT_DIR$/src/CircuitBoard.java" />
-        <option value="$PROJECT_DIR$/src/Keyboard.java" />
         <option value="$PROJECT_DIR$/src/Gate.java" />
-        <option value="$PROJECT_DIR$/src/Translator.java" />
+        <option value="$PROJECT_DIR$/src/Keyboard.java" />
         <option value="$PROJECT_DIR$/src/Main.java" />
+        <option value="$PROJECT_DIR$/src/Translator.java" />
       </list>
     </option>
   </component>
@@ -174,9 +180,9 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scratches" />
       <pane id="Scope" />
       <pane id="PackagesPane" />
-      <pane id="Scratches" />
       <pane id="AndroidView" />
     </panes>
   </component>
@@ -400,8 +406,20 @@
           <properties />
           <option name="timeStamp" value="19" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/Translator.java</url>
+          <line>6</line>
+          <properties />
+          <option name="timeStamp" value="20" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/Translator.java</url>
+          <line>265</line>
+          <properties />
+          <option name="timeStamp" value="22" />
+        </line-breakpoint>
       </breakpoints>
-      <option name="time" value="20" />
+      <option name="time" value="23" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -422,6 +440,11 @@
           <caret line="20" column="37" lean-forward="true" selection-start-line="20" selection-start-column="37" selection-end-line="20" selection-end-column="37" />
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="method#translateQUIL#0;class#Translator#0" expanded="false" />
+            <element signature="method#fixQUIL#0;class#Translator#0" expanded="false" />
+            <element signature="method#fixQASM#0;class#Translator#0" expanded="false" />
+            <element signature="method#getQubits#0;class#Translator#0" expanded="false" />
+            <element signature="method#loadQuil#0;class#Translator#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -560,6 +583,11 @@
           <caret line="29" column="58" lean-forward="true" selection-start-line="29" selection-start-column="58" selection-end-line="29" selection-end-column="58" />
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="method#translateQUIL#0;class#Translator#0" expanded="false" />
+            <element signature="method#fixQUIL#0;class#Translator#0" expanded="false" />
+            <element signature="method#fixQASM#0;class#Translator#0" expanded="false" />
+            <element signature="method#getQubits#0;class#Translator#0" expanded="false" />
+            <element signature="method#loadQuil#0;class#Translator#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -639,6 +667,11 @@
           <caret line="48" column="151" lean-forward="true" selection-start-line="48" selection-start-column="151" selection-end-line="48" selection-end-column="151" />
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="method#translateQUIL#0;class#Translator#0" expanded="false" />
+            <element signature="method#fixQUIL#0;class#Translator#0" expanded="false" />
+            <element signature="method#fixQASM#0;class#Translator#0" expanded="false" />
+            <element signature="method#getQubits#0;class#Translator#0" expanded="false" />
+            <element signature="method#loadQuil#0;class#Translator#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -667,6 +700,11 @@
           <caret line="17" column="27" lean-forward="false" selection-start-line="17" selection-start-column="27" selection-end-line="17" selection-end-column="27" />
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="method#translateQUIL#0;class#Translator#0" expanded="false" />
+            <element signature="method#fixQUIL#0;class#Translator#0" expanded="false" />
+            <element signature="method#fixQASM#0;class#Translator#0" expanded="false" />
+            <element signature="method#getQubits#0;class#Translator#0" expanded="false" />
+            <element signature="method#loadQuil#0;class#Translator#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -746,6 +784,11 @@
           <caret line="17" column="27" lean-forward="false" selection-start-line="17" selection-start-column="27" selection-end-line="17" selection-end-column="27" />
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="method#translateQUIL#0;class#Translator#0" expanded="false" />
+            <element signature="method#fixQUIL#0;class#Translator#0" expanded="false" />
+            <element signature="method#fixQASM#0;class#Translator#0" expanded="false" />
+            <element signature="method#getQubits#0;class#Translator#0" expanded="false" />
+            <element signature="method#loadQuil#0;class#Translator#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -853,10 +896,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/Keyboard.java">
+    <entry file="file://$PROJECT_DIR$/src/CircuitBoard.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="741">
-          <caret line="39" column="22" lean-forward="false" selection-start-line="39" selection-start-column="22" selection-end-line="39" selection-end-column="22" />
+        <state relative-caret-position="2356">
+          <caret line="133" column="122" lean-forward="false" selection-start-line="133" selection-start-column="122" selection-end-line="133" selection-end-column="122" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
@@ -865,28 +908,18 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/Gate.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-880">
-          <caret line="56" column="67" lean-forward="false" selection-start-line="56" selection-start-column="67" selection-end-line="56" selection-end-column="67" />
+        <state relative-caret-position="-910">
+          <caret line="75" column="42" lean-forward="false" selection-start-line="75" selection-start-column="42" selection-end-line="75" selection-end-column="42" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/CircuitBoard.java">
+    <entry file="file://$PROJECT_DIR$/src/Keyboard.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-196">
-          <caret line="133" column="122" lean-forward="false" selection-start-line="133" selection-start-column="122" selection-end-line="133" selection-end-column="122" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/Translator.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="363">
-          <caret line="193" column="70" lean-forward="false" selection-start-line="193" selection-start-column="70" selection-end-line="193" selection-end-column="70" />
+        <state relative-caret-position="798">
+          <caret line="42" column="22" lean-forward="false" selection-start-line="42" selection-start-column="22" selection-end-line="42" selection-end-column="22" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
@@ -895,9 +928,24 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/Main.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="361">
-          <caret line="19" column="27" lean-forward="true" selection-start-line="19" selection-start-column="27" selection-end-line="19" selection-end-column="27" />
+        <state relative-caret-position="-139">
+          <caret line="16" column="35" lean-forward="false" selection-start-line="16" selection-start-column="35" selection-end-line="16" selection-end-column="35" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Translator.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="419">
+          <caret line="242" column="33" lean-forward="false" selection-start-line="242" selection-start-column="33" selection-end-line="242" selection-end-column="33" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="method#translateQUIL#0;class#Translator#0" expanded="false" />
+            <element signature="method#fixQUIL#0;class#Translator#0" expanded="false" />
+            <element signature="method#fixQASM#0;class#Translator#0" expanded="false" />
+            <element signature="method#getQubits#0;class#Translator#0" expanded="false" />
+            <element signature="method#loadQuil#0;class#Translator#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>

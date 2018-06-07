@@ -1,0 +1,17 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage[utf8]{inputenc}
+
+%opening
+\title{Install guide for Quantum Platforms}
+\author{}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+We installed some things
+\end{abstract}
+
+
+\end{document}

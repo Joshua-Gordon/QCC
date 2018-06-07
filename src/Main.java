@@ -10,11 +10,11 @@ public class Main {
         w.init();
 
         cb = new CircuitBoard();
-        cb.board = Translator.loadQuil("H 0\n" +
+        /*cb.board = Translator.loadQuil("H 0\n" +
                 "X 1\n" +
                 "Y 0\n" +
                 "CNOT 0 1\n" +
-                "MEASURE 1 [1]");
+                "MEASURE 1 [1]");*/
         for(int i = 0; i < 10; ++i){
             cb.addRow();
             cb.addColumn();
