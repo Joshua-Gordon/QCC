@@ -1,0 +1,254 @@
+\documentclass[12pt]{book}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amsfonts,amssymb}
+
+\newcommand{\yup}{\checkmark}
+\newcommand{\nup}{$\times$}
+
+
+\title{Quantum Programming Without Tears}
+\author{
+Max Cutugno 
+\and
+Josh Gordon
+\and
+Tino Tamon
+}
+\date{\today}
+
+\begin{document}
+\maketitle
+\tableofcontents
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\chapter{Python based platforms}
+
+Pyquil and QISkit are based on python. In what follows, we describe some preliminary setup
+options for running the quantum python programs for these two platforms.
+
+In what follows, we describe an installation on Ubuntu 14.04 running on a 64-bit machine.
+The installations on Windows 10 and Mac OS X are similar (and somewhat easier).
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Anaconda}
+
+To install python in a self-contained environment (which may avoid subtle clashes between python2 
+and python3 as well as their respective libraries), one option is to use anaconda. 
+We stress that this is optional as one can install pyquil directory without using anaconda.
+
+First, we install anaconda into some directory, say {\tt anaconda2}.
+Then, to make it visible globally, we update the bash file {\tt .bashrc}:
+\begin{quote}
+\begin{verbatim}
+#Place the following line in the file .bashrc (at the end)
+export PATH="$USER/anaconda2/bin:$PATH"
+\end{verbatim}
+\end{quote}
+Here the variable {\tt \$USER} specifies the path to the user's main directory.
+Make sure to source the file from the command line:
+\begin{quote}
+\begin{verbatim}
+$ source .bashrc
+\end{verbatim}
+\end{quote}
+Now conda should be visible from anywhere.
+
+We can update conda first (to catch any latest upgrades):
+\begin{quote}
+\begin{verbatim}
+$ conda update conda
+\end{verbatim}
+\end{quote}
+
+Now, we create a conda {\em environment} for running our python based programs:
+\begin{quote}
+\begin{verbatim}
+# create a new conda environment called 'myquil'
+$ conda create --name myquil python=python3.6
+$ conda env list
+\end{verbatim}
+\end{quote}
+To enter the conda environment, we do
+\begin{quote}
+\begin{verbatim} 
+$ source activate myquil
+(myquil) $
+\end{verbatim}
+\end{quote}
+and to exit we do
+\begin{quote}
+\begin{verbatim} 
+(myquil) $ source deactivate
+$
+\end{verbatim}
+\end{quote}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Jupyter Notebook}
+
+If one wishes to use Jupyter notebook, we need to the add the conda environment
+to the notebook. First, we enter the conda environment and then install a python kernel 
+for jupyter notebook and connect it to the conda environment:
+\begin{quote}
+\begin{verbatim} 
+(myquil) $ pip install ipykernel
+(myquil) $ python -m ipykernel install --user --name myquil
+\end{verbatim}
+\end{quote}
+%Installed kernelspec myquil in <$USER>/.local/share/jupyter/kernels/myquil
+Now, we can run jupyter notebook (from outside conda) and choose the appropriate 
+kernel (and hence conda environment).
+
+
+
+\chapter{Pyquil}
+
+On Linux, we can install pyquil directly (using pip). 
+The installations on Windows 10 and MacOS X are similar (we might need brew on MacOS X
+instead of pip).
+
+\section{Anaconda}
+
+But, we can also install it within a conda environment as follows:
+\begin{quote}
+\begin{verbatim} 
+$ source activate myquil
+(myquil) $ pip install pyquil
+(myquil) $ pyquil-config-setup
+Welcome to PyQuil!
+Enter the required information below for Forest connections.
+If you haven't signed up yet you will need to do so first 
+  at https://forest.rigetti.com
+Forest API Key: <ENTER API HERE>
+User ID: <ENTER ID HERE>
+Pyquil config file created at '/home/tino/.pyquil_config'
+If you experience any problems see the guide 
+  at https://go.rigetti.com/getting-started
+\end{verbatim}
+\end{quote}
+Now, we can run some python programs in a directory of examples:
+\begin{quote}
+\begin{verbatim} 
+(myquil) $ python run_quil.py hello_world.quil 
+Running Quil Program from:  hello_world.quil
+---------------------------
+Output: 
+[[1, 0, 0, 0, 0, 0, 0, 0]]
+\end{verbatim}
+\end{quote}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\chapter{QISkit}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\chapter{Quipper}
+
+This seems to be the hardest to install.
+QLSA purportedly is implemented here.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\chapter{Liquid}
+
+This seems to be the most straightforward to install.
+It is unclear if QLSA runs correctly here.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\chapter{Sanity Checks}
+
+
+\section{Main algorithms}
+
+We examine several basic known quantum algorithms and verify if they are implemented 
+within a certain quantum software platform.
+
+\bigskip
+
+\begin{tabular}{|l||c|c|c|c||} \hline
+NAME				& Pyquil& QISkit& Quipper& Liquid \\ \hline \hline
+Bell circuit 		& \yup	& \yup	& \yup	& \yup \\ \hline
+teleportation 		& \yup	& \yup	& \yup	& \yup \\ \hline
+Deutsch	 			& \nup	& \nup	& \nup	& \nup \\ \hline
+Deutsch-Jozsa		& \nup	& \nup	& \nup	& \nup \\ \hline
+Bernstein-Vazirani	& \nup	& \nup	& \nup	& \nup \\ \hline
+Simon				& \nup	& \nup	& \nup	& \nup \\ \hline
+QFT					& \nup	& \nup	& \yup	& \yup \\ \hline
+Phase estimation	& \nup	& \nup	& \nup	& \nup \\ \hline
+Shor				& \nup	& \nup	& \nup	& \nup \\ \hline
+Grover				& \nup	& \nup	& \nup	& \nup \\ \hline
+Singular value estimation	& \nup	& \nup	& \nup	& \nup \\ \hline
+Hamiltonian simulation	& \nup	& \nup	& \nup	& \nup \\ \hline
+HHL					& \nup	& \nup	& \nup	& \nup \\ \hline
+\end{tabular}
+
+\bigskip
+
+
+\section{Additional algorithms}
+
+\begin{enumerate}
+\item (D\"{u}rr and H$\o{}$yer) Finding the minimum element in an array.
+
+\item (Ambainis) Determining if an array contains distinct items.
+
+\item (Child and Goldstone) Continuous-time spatial search.
+
+\end{enumerate}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\chapter{Graphical quantum circuit tools}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\chapter{Cross compilation}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\chapter{Baffling questions}
+
+\begin{enumerate}
+\item Why does Quipper provide a {\em cloning} function?
+
+\item In Liquid, is F\# now obsolete and being replaced by Q\#? If so, why?
+\end{enumerate}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\end{document}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% RIGETTI QUIL
+Welcome to PyQuil!
+Enter the required information below for Forest connections.
+If you haven't signed up yet you will need to do so first at https://forest.rigetti.com
+Forest API Key: nmRPAVunQl19TtQz9eMd11iiIsArtUDTaEnsSV6u
+User ID: 9db973f6-2c27-4c97-921c-fb3039c443a8
+Pyquil config file created at '/home/tino/.pyquil_config'
+If you experience any problems see the guide at https://go.rigetti.com/getting-started
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
