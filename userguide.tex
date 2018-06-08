@@ -1,5 +1,7 @@
 \documentclass[a4paper,10pt]{article}
 \usepackage[utf8]{inputenc}
+\usepackage[style=authoryear,backend=biber]{biblatex}
+\addbibresource{qrefs.bib}
 
 \newcommand{\yup}{\checkmark}
 \newcommand{\nup}{$\times$}
@@ -184,6 +186,7 @@ kernel (and hence conda environment).
 
 We examine several basic known quantum algorithms and verify if they are implemented 
 within a certain quantum software platform.
+Some of these algorithms can be found in \textcite{NC00}.
 
 \bigskip
 
@@ -225,5 +228,8 @@ The focus of the translators is on a graphical tool for designing circuits we de
 \begin{center}
 \includegraphics[width=15cm]{translation}
 \end{center}
+
+
+\printbibliography
 
 \end{document}
