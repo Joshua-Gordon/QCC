@@ -1,53 +1,44 @@
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-public class Keyboard implements KeyListener {
-    @Override
-    public void keyTyped(KeyEvent e) {
+public class Keyboard implements ActionListener {
 
-    }
-
-    @Override
-    public void keyPressed(KeyEvent e) {
-        //System.out.println(e.getKeyChar());
-        switch(e.getKeyCode()){
-            case KeyEvent.VK_H:
-                Main.cb.edit(Gate.GateType.H);
-                break;
-            case KeyEvent.VK_X:
-                Main.cb.edit(Gate.GateType.X);
-                break;
-            case KeyEvent.VK_Y:
-                Main.cb.edit(Gate.GateType.Y);
-                break;
-            case KeyEvent.VK_Z:
-                Main.cb.edit(Gate.GateType.Z);
-                break;
-            case KeyEvent.VK_M:
-                Main.cb.edit(Gate.GateType.Measure);
-                break;
-            case KeyEvent.VK_C:
-                Main.cb.edit(Gate.GateType.CNOT);
-                break;
-            case KeyEvent.VK_S:
-                Main.cb.edit(Gate.GateType.SWAP);
-                break;
-            case KeyEvent.VK_ENTER:
-                System.out.println(Translator.translateQUIL());
-                break;
-            case KeyEvent.VK_Q:
-                System.out.println(Translator.translateQASM());
-                break;
-            case KeyEvent.VK_P:
-                System.out.println(Translator.translateQuipper());
-                break;
-            default:
-                Main.cb.edit(Gate.GateType.I);
-        }
-    }
-
-    @Override
-    public void keyReleased(KeyEvent e) {
-
-    }
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		switch(e.getActionCommand()){
+        case "Hadamard":
+            Main.cb.edit(Gate.GateType.H);
+            break;
+        case "I":
+            Main.cb.edit(Gate.GateType.I);
+            break;
+        case "X":
+            Main.cb.edit(Gate.GateType.X);
+            break;
+        case "Y":
+            Main.cb.edit(Gate.GateType.Y);
+            break;
+        case "Z":
+            Main.cb.edit(Gate.GateType.Z);
+            break;
+        case "Measure":
+            Main.cb.edit(Gate.GateType.Measure);
+            break;
+        case "CNot":
+            Main.cb.edit(Gate.GateType.CNOT);
+            break;
+        case "Swap":
+            Main.cb.edit(Gate.GateType.SWAP);
+            break;
+        case "QUIL":
+            System.out.println(Translator.translateQUIL());
+            break;
+        case "QASM":
+            System.out.println(Translator.translateQASM());
+            break;
+        case "Quipper":
+            System.out.println(Translator.translateQuipper());
+            break;
+		}
+	}
 }
