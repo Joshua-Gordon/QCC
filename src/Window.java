@@ -3,8 +3,8 @@ import java.awt.image.BufferedImage;
 
 public class Window {
 
-    public static int WIDTH = 1920;
-    public static int HEIGHT = 1080;
+    public static int WIDTH = 500;
+    public static int HEIGHT = 400;
 
     private JFrame frame;
     private JScrollPane jsp;
@@ -13,7 +13,7 @@ public class Window {
     public Window() {
         this.frame = new JFrame("Qubits? Maybe.");
         frame.setSize(WIDTH,HEIGHT);
-        frame.setResizable(false);
+        frame.setResizable(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         display = new JLabel();
         jsp = new JScrollPane(display);
