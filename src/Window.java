@@ -9,18 +9,20 @@ public class Window {
     private JFrame frame;
     private JScrollPane jsp;
     private JLabel display;
+    private Keyboard keyboard;
 
     public Window() {
         this.frame = new JFrame("Qubits? Maybe.");
         frame.setSize(WIDTH,HEIGHT);
         frame.setResizable(true);
+        frame.setLocationRelativeTo(null);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         display = new JLabel();
         jsp = new JScrollPane(display);
         jsp.addMouseListener(new Mouse(this));
-        frame.addKeyListener(new Keyboard());
+        this.keyboard = new Keyboard();
         frame.add(jsp);
-        jsp.getVerticalScrollBar().getValue();
+        frame.setJMenuBar(new AppMenuBar(this));
     }
 
     public void init() {
@@ -47,4 +49,7 @@ public class Window {
     	return frame;
     }
 
+    public Keyboard getKeyboard() {
+    	return keyboard;
+    }
 }
