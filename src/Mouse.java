@@ -2,14 +2,27 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
+import javax.swing.JFrame;
+
 public class Mouse implements MouseListener {
+	
+	private Window window;
+	
+	public Mouse(Window window) {
+		this.window = window;
+	}
+	
+	
     @Override
     public void mouseClicked(MouseEvent e) {
         //System.out.println("Click");
-        Point p = e.getLocationOnScreen();
+    	JFrame frame = window.getFrame();
+        Point p = frame.getMousePosition();
+        p.x -= frame.getInsets().left;
         p.x += Main.w.getHorizontalOffset();
-        Main.cb.board.get(p.x/Gate.GATE_PIXEL_SIZE).get((p.y-32)/Gate.GATE_PIXEL_SIZE).type = Gate.GateType.Edit;
-
+        p.y -= frame.getInsets().top;
+        p.y += Main.w.getVerticalOffset();
+        Main.cb.board.get(p.x/Gate.GATE_PIXEL_SIZE).get((p.y)/Gate.GATE_PIXEL_SIZE).type = Gate.GateType.Edit;
         Main.render();
 
     }

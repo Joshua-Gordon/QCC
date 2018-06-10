@@ -17,7 +17,7 @@ public class Window {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         display = new JLabel();
         jsp = new JScrollPane(display);
-        jsp.addMouseListener(new Mouse());
+        jsp.addMouseListener(new Mouse(this));
         frame.addKeyListener(new Keyboard());
         frame.add(jsp);
         jsp.getVerticalScrollBar().getValue();
@@ -38,6 +38,13 @@ public class Window {
     public int getHorizontalOffset(){
         return jsp.getHorizontalScrollBar().getValue();
     }
-
+    
+    public int getVerticalOffset(){
+        return jsp.getVerticalScrollBar().getValue();
+    }
+    
+    public JFrame getFrame() {
+    	return frame;
+    }
 
 }
