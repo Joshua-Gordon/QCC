@@ -1,10 +1,16 @@
 \documentclass[a4paper,10pt]{article}
 \usepackage[utf8]{inputenc}
-\usepackage[style=authoryear,backend=biber]{biblatex}
+\usepackage[style=numeric,backend=biber]{biblatex}
 \addbibresource{qrefs.bib}
 
 \newcommand{\yup}{\checkmark}
 \newcommand{\nup}{$\times$}
+\newcommand{\nyup}{\mbox{$\ket{\times} + \ket{\yup}$}}
+
+\newcommand{\bra}[1]{\langle #1 |}
+\newcommand{\ket}[1]{| #1 \rangle}
+\newcommand{\braket}[2]{\langle #1 | #2 \rangle}
+\newcommand{\ketbra}[2]{| #1 \rangle\langle #2 |}
 
 %opening
 \title{Quantum Programming Without Tears}
@@ -186,25 +192,28 @@ kernel (and hence conda environment).
 
 We examine several basic known quantum algorithms and verify if they are implemented 
 within a certain quantum software platform.
-Some of these algorithms can be found in \textcite{NC00}.
+
+Most of these algorithms are analyzed in \cite{NC00}.
 
 \bigskip
 
 \begin{tabular}{|l||c|c|c|c||} \hline
-NAME				& Pyquil& QISkit& Quipper& Liquid \\ \hline \hline
-Bell circuit 		& \yup	& \yup	& \yup	& \yup \\ \hline
-teleportation 		& \yup	& \yup	& \yup	& \yup \\ \hline
-Deutsch	 			& \nup	& \nup	& \nup	& \nup \\ \hline
-Deutsch-Jozsa		& \yup	& \nup	& \nup	& \nup \\ \hline
-Bernstein-Vazirani	& \yup	& \nup	& \nup	& \nup \\ \hline
-Simon				& \nup	& \nup	& \nup	& \nup \\ \hline
-QFT					& \yup	& \nup	& \yup	& \yup \\ \hline
-Phase estimation	& \nup	& \nup	& \nup	& \nup \\ \hline
-Shor				& \nup	& \nup	& \nup	& \nup \\ \hline
-Grover				& \nup	& \nup	& \nup	& \nup \\ \hline
-Singular value estimation	& \nup	& \nup	& \nup	& \nup \\ \hline
-Hamiltonian simulation	& \nup	& \nup	& \nup	& \nup \\ \hline
-HHL					& \nup	& \nup	& \nup	& \nup \\ \hline
+NAME						& Pyquil& QISkit& Quipper& Liquid \\ \hline \hline
+%Bell circuit 				& \yup	& \yup	& \nup	& \nup \\ \hline
+teleportation 				& \yup	& \yup	& \nup	& \yup \\ \hline \hline
+%Deutsch	 					& \nup	& \nup	& \nup	& \nup \\ \hline
+Deutsch-Jozsa				& \nup	& \yup	& \nup	& \nup \\ \hline
+Bernstein-Vazirani			& \nup	& \yup	& \nup	& \nup \\ \hline
+Simon						& \nup	& \yup	& \nup	& \nup \\ \hline \hline
+QFT							& \nup	& \yup	& \yup	& \nup \\ \hline
+Phase estimation			& \nup	& \yup	& \nup	& \nup \\ \hline
+Shor						& \nup	& \nup	& \nup	& \nup \\ \hline \hline
+Grover						& \nup	& \yup	& \yup	& \yup \\ \hline \hline
+Amplitude amplification		& \nup	& \yup	& \nup	& \yup \\ \hline \hline
+Quantum walk				& \yup	& \yup	& \yup	& \nup \\ \hline \hline
+%Singular value estimation	& \nup	& \nup	& \nup	& \nup \\ \hline
+Hamiltonian simulation		& \nup	& \nup	& \nup	& \nup \\ \hline
+QLSA						& \nup	& \nup	& \nyup	& \nyup \\ \hline \hline
 \end{tabular}
 
 \bigskip
