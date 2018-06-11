@@ -6,6 +6,9 @@ public class Keyboard implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		switch(e.getActionCommand()){
+		
+		
+//		Gates
         case "Hadamard":
             Main.cb.edit(Gate.GateType.H);
             break;
@@ -30,6 +33,9 @@ public class Keyboard implements ActionListener {
         case "Swap":
             Main.cb.edit(Gate.GateType.SWAP);
             break;
+            
+            
+//		Export Types
         case "QUIL":
             System.out.println(Translator.translateQUIL());
             break;
@@ -39,6 +45,18 @@ public class Keyboard implements ActionListener {
         case "Quipper":
             System.out.println(Translator.translateQuipper());
             break;
+            
+//      File Selections
+            
+        case "Open Circuit":
+        	CircuitFileSelector.selectBoardFromFileSystem();
+        	break;            
+        case "Save Circuit as":
+        	CircuitFileSelector.saveBoardToFileSystem();
+        	break;            
+        case "Save":
+        	CircuitFileSelector.saveBoard();
+        	break;
 		}
 	}
 }

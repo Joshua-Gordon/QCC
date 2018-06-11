@@ -1,18 +1,22 @@
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.Serializable;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.function.Supplier;
 
-public class CircuitBoard {
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 
-    BufferedImage image;
+public class CircuitBoard implements Serializable{
+	private static final long serialVersionUID = -6921131331890897905L;
 
+	private transient URI fileLocation = null;
+	
     ArrayList<ArrayList<Gate>> board;
 
     public static EnumMap<Gate.GateType,Supplier<Gate>> gatemap;
@@ -55,7 +59,7 @@ public class CircuitBoard {
 
     public BufferedImage render(){
         int unit = Gate.GATE_PIXEL_SIZE;
-        image = new BufferedImage(board.size()*unit,board.get(0).size()*unit,BufferedImage.TYPE_INT_RGB);
+        BufferedImage image = new BufferedImage(board.size()*unit,board.get(0).size()*unit,BufferedImage.TYPE_INT_RGB);
         Graphics g = image.getGraphics();
         g.setColor(Color.WHITE);
         g.fillRect(0,0,image.getWidth(),image.getHeight());
@@ -167,5 +171,17 @@ public class CircuitBoard {
         }
         Main.render();
     }
+
+	public URI getFileLocation() {
+		return fileLocation;
+	}
+
+	public void setFileLocation(URI fileLocation) {
+		this.fileLocation = fileLocation;
+	}
+    
+    
+    
+    
 
 }

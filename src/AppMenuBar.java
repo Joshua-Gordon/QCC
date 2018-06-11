@@ -17,6 +17,10 @@ public class AppMenuBar extends JMenuBar {
 		JMenu menu, subMenu, subSubMenu;
 		
 		menu = new JMenu("File");
+		menu.add(addItem("Open Circuit", KeyEvent.VK_O));
+		menu.add(addItem("Save Circuit as", KeyEvent.VK_A));
+		menu.add(addItem("Save", KeyEvent.VK_S));
+		menu.addSeparator();
 			subMenu = new JMenu("Export to");
 			subMenu.add(addItem("QUIL", KeyEvent.VK_ENTER));
 			subMenu.add(addItem("QASM", KeyEvent.VK_Q));
@@ -35,7 +39,7 @@ public class AppMenuBar extends JMenuBar {
 			subMenu.add(subSubMenu);
 			subMenu.add(addItem("Measure", KeyEvent.VK_M));
 			subMenu.add(addItem("CNot", KeyEvent.VK_C));
-			subMenu.add(addItem("Swap", KeyEvent.VK_S));
+			subMenu.add(addItem("Swap", KeyEvent.VK_W));
 		menu.add(subMenu);
 		add(menu);
 	}
