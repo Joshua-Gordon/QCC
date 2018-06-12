@@ -87,6 +87,7 @@ public class Keyboard implements ActionListener {
             } catch (IOException e1) {
                 System.err.println("Could not create file!");
             }
+            break;
         }
 
 	}
