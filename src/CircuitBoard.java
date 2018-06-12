@@ -177,20 +177,6 @@ public class CircuitBoard implements Serializable{
                 }
             }
         }
-        if(g == Gate.GateType.H && counter == 3) {
-
-                try {
-                    AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("C:\\Users\\Josh\\IdeaProjects\\QuantumCircuits\\hadamard.wav").getAbsoluteFile());
-                    Clip clip = AudioSystem.getClip();
-                    clip.open(audioInputStream);
-                    clip.start();
-                    //Thread.sleep(clip.getMicrosecondLength()/1000);
-                } catch(Exception ex) {
-                    System.out.println("Error with playing sound.");
-                    ex.printStackTrace();
-                }
-
-        }
         Main.render();
     }
 
