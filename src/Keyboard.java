@@ -57,6 +57,29 @@ public class Keyboard implements ActionListener {
         case "Save":
         	CircuitFileSelector.saveBoard();
         	break;
+		
+		
+//    	Grid Selections
+        
+        case "Add Row":
+        	Main.cb.addRow();
+        	Main.render();
+        	break;            
+        case "Add Column":
+        	Main.cb.addColumn();
+        	Main.render();
+        	break;            
+        case "Remove Last Row":
+        	Main.cb.removeRow();
+        	Main.render();
+        	break;	
+        case "Remove Last Column":
+        	Main.cb.removeColumn();
+        	Main.render();
+        	break;		
+        	
 		}
+		
+		
 	}
 }

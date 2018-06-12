@@ -1,7 +1,14 @@
-import javax.swing.*;
-
-import java.awt.Frame;
+import java.awt.BorderLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.image.BufferedImage;
+
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.SpringLayout;
 
 public class Window {
 
@@ -16,14 +23,24 @@ public class Window {
 
     public Window() {
         this.frame = new JFrame();
-        setTitle("Untitled");
+        setTitle(CircuitFileSelector.UNSAVED_FILE_NAME);
         frame.setSize(WIDTH,HEIGHT);
         frame.setResizable(true);
         frame.setLocationRelativeTo(null);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         display = new JLabel();
-        jsp = new JScrollPane(display);
-        jsp.addMouseListener(new Mouse(this));
+        
+        JPanel panel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.anchor = GridBagConstraints.CENTER;
+        gbc.weightx = 1;
+        gbc.weighty = 1;
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        panel.add(display, gbc);
+        display.addMouseListener(new Mouse());
+        
+        jsp = new JScrollPane(panel);
         this.keyboard = new Keyboard();
         frame.add(jsp);
         frame.setJMenuBar(new AppMenuBar(this));
@@ -55,6 +72,10 @@ public class Window {
 
     public Keyboard getKeyboard() {
     	return keyboard;
+    }
+    
+    public JLabel getDisplay() {
+    	return display;
     }
     
     public void setTitle(String fileName) {

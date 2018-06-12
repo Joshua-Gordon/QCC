@@ -6,25 +6,18 @@ import javax.swing.JFrame;
 
 public class Mouse implements MouseListener {
 	
-	private Window window;
-	
-	public Mouse(Window window) {
-		this.window = window;
-	}
-	
-	
     @Override
     public void mouseClicked(MouseEvent e) {
         //System.out.println("Click");
-    	JFrame frame = window.getFrame();
-        Point p = frame.getMousePosition();
-        p.x -= frame.getInsets().left;
+        Point p = Main.w.getDisplay().getMousePosition();
         p.x += Main.w.getHorizontalOffset();
-        p.y -= frame.getInsets().top;
         p.y += Main.w.getVerticalOffset();
-        Main.cb.board.get(p.x/Gate.GATE_PIXEL_SIZE).get((p.y)/Gate.GATE_PIXEL_SIZE).type = Gate.GateType.Edit;
-        Main.render();
-
+        int grabRow = p.x/Gate.GATE_PIXEL_SIZE;
+        int grabColumn = (p.y)/Gate.GATE_PIXEL_SIZE;
+//        if(grabRow < Main.cb.board.size() && grabColumn < Main.cb.board.get(0).size()) {
+        	Main.cb.board.get(grabRow).get(grabColumn).type = Gate.GateType.Edit;
+        	Main.render();
+//        }
     }
 
     @Override

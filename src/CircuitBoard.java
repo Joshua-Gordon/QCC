@@ -16,21 +16,24 @@ public class CircuitBoard implements Serializable{
 	private static final long serialVersionUID = -6921131331890897905L;
 
 	private transient URI fileLocation = null;
+	private transient boolean mutated = false;
 	
     ArrayList<ArrayList<Gate>> board;
 
     public static EnumMap<Gate.GateType,Supplier<Gate>> gatemap;
-
+    
+    public static CircuitBoard getDefaultCircuitBoard() {
+    	CircuitBoard board = new CircuitBoard();
+    	for(int i = 0; i < 5; ++i){
+    		board.addRow();
+    		board.addColumn();
+        }
+    	board.resetMutate();
+    	return board;
+    }
+    
     public CircuitBoard() {
         board = new ArrayList<>();
-        int numGatesX = Window.WIDTH/Gate.GATE_PIXEL_SIZE;
-        int numGatesY = Window.HEIGHT/Gate.GATE_PIXEL_SIZE;
-        for(int x = 0; x < numGatesX; ++x) {
-            board.add(new ArrayList<>());
-            for(int y = 0; y < numGatesY; ++y) {
-                board.get(x).add(Gate.identity());
-            }
-        }
 
         gatemap = new EnumMap<Gate.GateType, Supplier<Gate>>(Gate.GateType.class);
         gatemap.put(Gate.GateType.I,Gate::identity);
@@ -43,19 +46,35 @@ public class CircuitBoard implements Serializable{
         gatemap.put(Gate.GateType.SWAP,Gate::swap);
     }
 
-    public void addRow(){
-        board.add(new ArrayList<>());
-        for(int i = 0; i < board.get(0).size(); ++i) {
-            board.get(board.size()-1).add(Gate.identity());
-        }
-    }
-
-    public void addColumn() {
-        for(ArrayList<Gate> a : board) {
+    public void addRow() {
+    	mutate();
+        for(ArrayList<Gate> a : board)
             a.add(Gate.identity());
-        }
     }
 
+    public void removeRow() {
+    	if(board.size() > 1) {
+	    	mutate();
+	        for(ArrayList<Gate> a : board)
+	            a.remove(a.size() - 1);
+    	}else {
+    		
+    	}
+    }
+    
+    public void addColumn(){
+    	mutate();
+        board.add(new ArrayList<>());
+        for(int i = 0; i < board.get(0).size(); ++i)
+            board.get(board.size()-1).add(Gate.identity());
+    }
+    
+    public void removeColumn(){
+       	if(board.get(0).size() > 1) {
+	    	mutate();
+	        board.remove(board.size() - 1);
+       	}
+    }
 
     public BufferedImage render(){
         int unit = Gate.GATE_PIXEL_SIZE;
@@ -144,6 +163,7 @@ public class CircuitBoard implements Serializable{
     }
 
     public void edit(Gate.GateType g) {
+    	mutate();
         int counter = 0;
         for(int x = 0; x < board.size(); ++x) {
             for(int y = 0; y < board.get(0).size(); ++y) {
@@ -172,6 +192,10 @@ public class CircuitBoard implements Serializable{
         Main.render();
     }
 
+    
+    
+    
+    
 	public URI getFileLocation() {
 		return fileLocation;
 	}
@@ -180,7 +204,17 @@ public class CircuitBoard implements Serializable{
 		this.fileLocation = fileLocation;
 	}
     
+	public void mutate() {
+		mutated = true;
+	}
+	
+	public void resetMutate() {
+		mutated = false;
+	}
     
+	public boolean hasBeenEdited() {
+		return mutated;
+	}
     
     
 

@@ -9,16 +9,12 @@ public class Main {
         w = new Window();
         w.init();
 
-        cb = new CircuitBoard();
+        cb = CircuitBoard.getDefaultCircuitBoard();
         /*cb.board = Translator.loadQuil("H 0\n" +
                 "X 1\n" +
                 "Y 0\n" +
                 "CNOT 0 1\n" +
                 "MEASURE 1 [1]");*/
-        for(int i = 0; i < 10; ++i){
-            cb.addRow();
-            cb.addColumn();
-        }
         w.display(cb.render());
         while(true);
 

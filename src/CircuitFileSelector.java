@@ -12,6 +12,7 @@ import javax.swing.filechooser.FileFilter;
 
 public class CircuitFileSelector {
 	
+    public static final String UNSAVED_FILE_NAME = "Untitled";
 	public static final String CIRCUIT_BOARD_EXT;
 	public static final String CIRCUIT_BOARD_DES;
 	
@@ -22,18 +23,30 @@ public class CircuitFileSelector {
 	
 	
 	public static void selectBoardFromFileSystem() {
-		try{
-			Main.cb = open(null);
-			Main.w.setTitle(new File(Main.cb.getFileLocation()).getName());
-			Main.render();
-		}catch(IOException e) {
-			AppDialogs.errorIO(Main.w.getFrame());
-			AppDialogs.couldNotOpenFile(Main.w.getFrame());
-			e.printStackTrace();
-		}catch(ClassNotFoundException e) {
-			AppDialogs.errorProg(Main.w.getFrame());
-			AppDialogs.couldNotOpenFile(Main.w.getFrame());
-			e.printStackTrace();
+		int option = 0;
+		if(Main.cb.hasBeenEdited()) {
+			String notSavedFileName;
+			if(Main.cb.getFileLocation() != null)
+				notSavedFileName = new File(Main.cb.getFileLocation()).getName();
+			else
+				notSavedFileName = UNSAVED_FILE_NAME;
+			option = AppDialogs.openFileWithoutSaving(Main.w.getFrame(), notSavedFileName);
+		}
+		if(option == 0) {
+			try{
+				Main.cb = open(null);
+				if(Main.cb.getFileLocation() != null)
+					Main.w.setTitle(new File(Main.cb.getFileLocation()).getName());
+				Main.render();
+			}catch(IOException e) {
+				AppDialogs.errorIO(Main.w.getFrame());
+				AppDialogs.couldNotOpenFile(Main.w.getFrame());
+				e.printStackTrace();
+			}catch(ClassNotFoundException e) {
+				AppDialogs.errorProg(Main.w.getFrame());
+				AppDialogs.couldNotOpenFile(Main.w.getFrame());
+				e.printStackTrace();
+			}
 		}
 	}
 	
@@ -43,6 +56,7 @@ public class CircuitFileSelector {
 			Main.cb.setFileLocation(location);
 			if(location != null) 
 				Main.w.setTitle(new File(location).getName());
+			Main.cb.resetMutate();
 		} catch (IOException e) {
 			AppDialogs.errorIO(Main.w.getFrame());
 			AppDialogs.couldNotSaveFile(Main.w.getFrame());
@@ -56,6 +70,7 @@ public class CircuitFileSelector {
 		}else {
 			try {
 				save(Main.cb);
+				Main.cb.resetMutate();
 			} catch (IOException e) {
 				AppDialogs.errorIO(Main.w.getFrame());
 				AppDialogs.couldNotSaveFile(Main.w.getFrame());
@@ -100,6 +115,8 @@ public class CircuitFileSelector {
 		
 		return fetchedBoard;
 	}
+	
+	
 	
 	
 	
@@ -157,18 +174,15 @@ public class CircuitFileSelector {
 	
 	
 	private static class CircuitBoardFilter extends FileFilter{
-
 		@Override
 		public boolean accept(File f) {
 			if(f.isDirectory()) return true;
 			return f.getName().toLowerCase().endsWith(CIRCUIT_BOARD_EXT);
 		}
-
 		@Override
 		public String getDescription() {
 			return CIRCUIT_BOARD_DES;
 		}
-		
 	}
 	
 }

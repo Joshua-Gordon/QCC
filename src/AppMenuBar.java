@@ -41,6 +41,11 @@ public class AppMenuBar extends JMenuBar {
 			subMenu.add(addItem("CNot", KeyEvent.VK_C));
 			subMenu.add(addItem("Swap", KeyEvent.VK_W));
 		menu.add(subMenu);
+		menu.addSeparator();
+		menu.add(addItem("Add Row", KeyEvent.VK_DOWN));
+		menu.add(addItem("Add Column", KeyEvent.VK_RIGHT));
+		menu.add(addItem("Remove Last Row", KeyEvent.VK_UP));
+		menu.add(addItem("Remove Last Column", KeyEvent.VK_LEFT));
 		add(menu);
 	}
 	
