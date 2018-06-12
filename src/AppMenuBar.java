@@ -47,6 +47,11 @@ public class AppMenuBar extends JMenuBar {
 		menu.add(addItem("Remove Last Row", KeyEvent.VK_UP));
 		menu.add(addItem("Remove Last Column", KeyEvent.VK_LEFT));
 		add(menu);
+		menu = new JMenu("Run");
+			subMenu = new JMenu("Language");
+			subMenu.add(addItem("Run QUIL",KeyEvent.VK_R));
+		menu.add(subMenu);
+		add(menu);
 	}
 	
 	private JMenuItem addItem(String label, int mnemonic) {
