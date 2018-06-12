@@ -22,7 +22,7 @@ public class Executor {
         fw.close();
         Process p = Runtime.getRuntime().exec("python temp.py");
         BufferedReader isr = new BufferedReader(new InputStreamReader(p.getInputStream()));
-        String res = isr.readLine();
+        String res = isr.lines().reduce("",(x,y)-> x+"\n"+y);
         System.out.println(res);
         return res;
     }
