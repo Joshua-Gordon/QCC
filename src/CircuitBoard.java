@@ -53,12 +53,12 @@ public class CircuitBoard implements Serializable{
     }
 
     public void removeRow() {
-    	if(board.size() > 1) {
+    	if(board.get(0).size() > 1) {
 	    	mutate();
 	        for(ArrayList<Gate> a : board)
 	            a.remove(a.size() - 1);
     	}else {
-    		
+    		AppDialogs.couldNotRemoveRow(Main.w.getFrame());
     	}
     }
     
@@ -70,9 +70,11 @@ public class CircuitBoard implements Serializable{
     }
     
     public void removeColumn(){
-       	if(board.get(0).size() > 1) {
+       	if(board.size() > 1) {
 	    	mutate();
 	        board.remove(board.size() - 1);
+       	}else {
+       		AppDialogs.couldNotRemoveColumn(Main.w.getFrame());
        	}
     }
 

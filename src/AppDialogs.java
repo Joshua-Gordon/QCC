@@ -59,6 +59,14 @@ public class AppDialogs {
 		errorMsg(parent, "Could not save File");
 	}
 	
+	public static void couldNotRemoveRow(Component parent) {
+		errorMsg(parent, "Rows cannot be less than 1 unit");
+	}
+	
+	public static void couldNotRemoveColumn(Component parent) {
+		errorMsg(parent, "Columns cannot be less than 1 unit");
+	}
+	
 	public static void fileIsntValid(Component parent, File file) {
 		errorMsg(parent, "The file \"" + file.getName() + "\" is not valid.\n"
 				+ "File Path: " + file.getAbsolutePath());
