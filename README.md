@@ -1,3 +1,3 @@
 # QuantumCircuit
 
-Allows the user to draw a quantum circuit, and then perform a superposition of compilation/decompilation into QUIL.
+Tool for designin quantum circuits, and performing cross-compilation between several quantum programming languages such as QUIL, openQASM, and Quipper.
