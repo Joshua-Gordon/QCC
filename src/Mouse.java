@@ -8,16 +8,15 @@ public class Mouse implements MouseListener {
 	
     @Override
     public void mouseClicked(MouseEvent e) {
-        //System.out.println("Click");
+    	
         Point p = Main.w.getDisplay().getMousePosition();
         p.x += Main.w.getHorizontalOffset();
         p.y += Main.w.getVerticalOffset();
         int grabRow = p.x/Gate.GATE_PIXEL_SIZE;
         int grabColumn = (p.y)/Gate.GATE_PIXEL_SIZE;
-//        if(grabRow < Main.cb.board.size() && grabColumn < Main.cb.board.get(0).size()) {
-        	Main.cb.board.get(grabRow).get(grabColumn).type = Gate.GateType.Edit;
-        	Main.render();
-//        }
+        Main.cb.board.get(grabRow).get(grabColumn).type = Gate.GateType.Edit;
+        Main.render();
+
     }
 
     @Override
