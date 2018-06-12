@@ -1,5 +1,6 @@
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 
 public class Keyboard implements ActionListener {
 
@@ -39,6 +40,15 @@ public class Keyboard implements ActionListener {
         case "Quipper":
             System.out.println(Translator.translateQuipper());
             break;
-		}
+            case "Run QUIL":
+                System.out.println("Running QUIL");
+                String quil = Translator.translateQUIL();
+                quil.trim();
+                try {
+                    Executor.runQuil(quil);
+                } catch (IOException e1) {
+                    System.err.println("Could not create file!");
+                }
+        }
 	}
 }
