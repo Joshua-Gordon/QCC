@@ -1,11 +1,15 @@
 import javax.swing.*;
+
+import java.io.Serializable;
 import java.util.EnumMap;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class Gate {
-
-    public enum GateType{
+public class Gate implements Serializable{
+	private static final long serialVersionUID = 6220371128991814182L;
+	
+	
+	public enum GateType{
         I,X,Y,Z,H,Custom, Edit, Measure, CNOT, SWAP
     }
     public enum LangType{

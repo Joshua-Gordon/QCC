@@ -64,6 +64,11 @@ public class AppDialogs {
 				+ "File Path: " + file.getAbsolutePath());
 	}
 	
+	public static void fileExtIsntValid(Component parent, File file, String extention) {
+		errorMsg(parent, "The file \"" + file.getName() + "\" must have\n\""
+				+ extention + "\" as a file extention.");
+	}
+	
 	public static int fileReplacePrompt(Component parent, File file){
 		return warningMsg(parent, "File exists", "The file \"" + file.getName() + "\" already exists.\n"
 				+ "Do you want to replace this file?",

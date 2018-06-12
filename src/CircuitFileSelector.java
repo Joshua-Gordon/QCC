@@ -23,7 +23,8 @@ public class CircuitFileSelector {
 	
 	public static void selectBoardFromFileSystem() {
 		try{
-			Main.cb = open();
+			Main.cb = open(null);
+			Main.w.setTitle(new File(Main.cb.getFileLocation()).getName());
 			Main.render();
 		}catch(IOException e) {
 			AppDialogs.errorIO(Main.w.getFrame());
@@ -38,9 +39,10 @@ public class CircuitFileSelector {
 	
 	public static void saveBoardToFileSystem() {
 		try {
-			URI location = saveAs();
+			URI location = saveAs(null);
 			Main.cb.setFileLocation(location);
-			Main.w.setTitle(new File(location).getName());
+			if(location != null) 
+				Main.w.setTitle(new File(location).getName());
 		} catch (IOException e) {
 			AppDialogs.errorIO(Main.w.getFrame());
 			AppDialogs.couldNotSaveFile(Main.w.getFrame());
@@ -49,7 +51,7 @@ public class CircuitFileSelector {
 	}
 	
 	public static void saveBoard() {
-		if(Main.cb.getFileLocation() != null) {
+		if(Main.cb.getFileLocation() == null) {
 			saveBoardToFileSystem();
 		}else {
 			try {
@@ -68,7 +70,7 @@ public class CircuitFileSelector {
 	
 	
 	
-	private static CircuitBoard open() throws IOException, ClassNotFoundException {
+	private static CircuitBoard open(File focusedDirectory) throws IOException, ClassNotFoundException {
 		CircuitBoard fetchedBoard =  Main.cb;
 		
 		final JFileChooser fileChooser = new JFileChooser();
@@ -77,6 +79,7 @@ public class CircuitFileSelector {
 		fileChooser.setFileFilter(new CircuitBoardFilter());
 		fileChooser.setDialogTitle("Select Circuit Board File");
 		fileChooser.setAcceptAllFileFilterUsed(false);
+		fileChooser.setCurrentDirectory(focusedDirectory);
 		
 		final int option = fileChooser.showDialog(Main.w.getFrame(), "Open");
 		
@@ -91,7 +94,7 @@ public class CircuitFileSelector {
 				fetchedBoard.setFileLocation(choosenFile.toURI());
 			}else {
 				AppDialogs.fileIsntValid(Main.w.getFrame(), choosenFile);
-				fetchedBoard = open();
+				fetchedBoard = open(choosenFile.getParentFile());
 			}
 		}
 		
@@ -100,7 +103,7 @@ public class CircuitFileSelector {
 	
 	
 	
-	private static URI saveAs() throws IOException {
+	private static URI saveAs(File focusedDirectory) throws IOException {
 		URI fetchedURI = Main.cb.getFileLocation();
 		
 		final JFileChooser fileChooser = new JFileChooser();
@@ -109,6 +112,7 @@ public class CircuitFileSelector {
 		fileChooser.setFileFilter(new CircuitBoardFilter());
 		fileChooser.setDialogTitle("Save Circuit Board File");
 		fileChooser.setAcceptAllFileFilterUsed(false);
+		fileChooser.setCurrentDirectory(focusedDirectory);
 		
 		final int option1 = fileChooser.showDialog(Main.w.getFrame(), "Save");
 		
@@ -116,8 +120,11 @@ public class CircuitFileSelector {
 			File choosenFile = fileChooser.getSelectedFile();
 			if(choosenFile.exists() && choosenFile.isDirectory()) {
 				AppDialogs.fileIsntValid(Main.w.getFrame(), choosenFile);
-				fetchedURI = saveAs();
-			}else{
+				fetchedURI = saveAs(choosenFile.getParentFile());
+			}else if(!choosenFile.getName().endsWith(CIRCUIT_BOARD_EXT)) {
+				AppDialogs.fileExtIsntValid(Main.w.getFrame(), choosenFile, CIRCUIT_BOARD_EXT);
+				fetchedURI = saveAs(choosenFile.getParentFile());
+			}else {
 				int option2 = 0;
 				if(choosenFile.exists()) {
 					option2 = AppDialogs.fileReplacePrompt(Main.w.getFrame(), choosenFile);
@@ -127,8 +134,9 @@ public class CircuitFileSelector {
 					ObjectOutputStream oos = new ObjectOutputStream(fos);
 					oos.writeObject(Main.cb);
 					fos.close();
+					fetchedURI = choosenFile.toURI();
 				}else {
-					fetchedURI = saveAs();
+					fetchedURI = saveAs(choosenFile.getParentFile());
 				}
 			}
 		}
@@ -138,7 +146,7 @@ public class CircuitFileSelector {
 	
 	
 	
-	public static void save(CircuitBoard cb) throws IOException {
+	private static void save(CircuitBoard cb) throws IOException {
 		File file = new File(cb.getFileLocation());
 		FileOutputStream fos = new FileOutputStream(file);
 		ObjectOutputStream oos = new ObjectOutputStream(fos);

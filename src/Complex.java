@@ -1,5 +1,9 @@
-public class Complex {
-    double a, b;
+import java.io.Serializable;
+
+public class Complex implements Serializable{
+	private static final long serialVersionUID = -9099395460757557732L;
+	
+	double a, b;
     public Complex(double a, double b) {
         this.a = a;
         this.b = b;
