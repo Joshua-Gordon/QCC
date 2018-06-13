@@ -23,7 +23,7 @@ public class Window {
 
     public Window() {
         this.frame = new JFrame();
-        setTitle(CircuitFileSelector.UNSAVED_FILE_NAME);
+        //setTitle(CircuitFileSelector.UNSAVED_FILE_NAME);
         frame.setSize(WIDTH,HEIGHT);
         frame.setResizable(true);
         frame.setLocationRelativeTo(null);

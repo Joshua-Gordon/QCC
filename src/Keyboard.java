@@ -7,8 +7,8 @@ public class Keyboard implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		switch(e.getActionCommand()){
-		
-		
+
+
 //		Gates
         case "Hadamard":
             Main.cb.edit(Gate.GateType.H);
@@ -34,8 +34,8 @@ public class Keyboard implements ActionListener {
         case "Swap":
             Main.cb.edit(Gate.GateType.SWAP);
             break;
-            
-            
+
+
 //		Export Types
         case "QUIL":
             System.out.println(Translator.translateQUIL());
@@ -46,38 +46,38 @@ public class Keyboard implements ActionListener {
         case "Quipper":
             System.out.println(Translator.translateQuipper());
             break;
-            
+
 //      File Selections
-            
+
         case "Open Circuit":
         	CircuitFileSelector.selectBoardFromFileSystem();
-        	break;            
+        	break;
         case "Save Circuit as":
         	CircuitFileSelector.saveBoardToFileSystem();
-        	break;            
+        	break;
         case "Save":
         	CircuitFileSelector.saveBoard();
         	break;
-		
-		
+
+
 //    	Grid Selections
-        
+
         case "Add Row":
         	Main.cb.addRow();
         	Main.render();
-        	break;            
+        	break;
         case "Add Column":
         	Main.cb.addColumn();
         	Main.render();
-        	break;            
+        	break;
         case "Remove Last Row":
         	Main.cb.removeRow();
         	Main.render();
-        	break;	
+        	break;
         case "Remove Last Column":
         	Main.cb.removeColumn();
         	Main.render();
-        	break;		
+        	break;
         case "Run QUIL":
             System.out.println("Running QUIL");
             String quil = Translator.translateQUIL();
@@ -88,7 +88,17 @@ public class Keyboard implements ActionListener {
                 System.err.println("Could not create file!");
             }
             break;
+        case "Run QASM":
+        System.out.println("Running QASM");
+        String qasm = Translator.translateQASM();
+        qasm.trim();
+        try {
+            Executor.runQASM(qasm);
+        } catch (IOException e1) {
+            System.err.println("Could not create file!");
         }
+        break;
+    }
 
 	}
 }

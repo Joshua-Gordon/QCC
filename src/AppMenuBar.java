@@ -50,6 +50,7 @@ public class AppMenuBar extends JMenuBar {
 		menu = new JMenu("Run");
 			subMenu = new JMenu("Language");
 			subMenu.add(addItem("Run QUIL",KeyEvent.VK_R));
+			subMenu.add(addItem("Run QASM",KeyEvent.VK_S));
 		menu.add(subMenu);
 		add(menu);
 	}
