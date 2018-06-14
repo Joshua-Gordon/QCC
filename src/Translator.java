@@ -79,6 +79,9 @@ public class Translator {
                     code += ";\n";
                 }
             }
+            for(int i = 0; i < numQubits; ++i) {
+                code += "measure q[" + i + "] -> c[" + i + "];\n";
+            }
         }
 
         return fixQASM(code,offset);
