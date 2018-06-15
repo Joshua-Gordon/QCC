@@ -56,7 +56,6 @@ public class CircuitFileSelector {
 			Main.cb.setFileLocation(location);
 			if(location != null) 
 				Main.w.setTitle(new File(location).getName());
-			Main.cb.resetMutate();
 		} catch (IOException e) {
 			AppDialogs.errorIO(Main.w.getFrame());
 			AppDialogs.couldNotSaveFile(Main.w.getFrame());
@@ -70,7 +69,6 @@ public class CircuitFileSelector {
 		}else {
 			try {
 				save(Main.cb);
-				Main.cb.resetMutate();
 			} catch (IOException e) {
 				AppDialogs.errorIO(Main.w.getFrame());
 				AppDialogs.couldNotSaveFile(Main.w.getFrame());
@@ -152,6 +150,7 @@ public class CircuitFileSelector {
 					oos.writeObject(Main.cb);
 					fos.close();
 					fetchedURI = choosenFile.toURI();
+					Main.cb.resetMutate();
 				}else {
 					fetchedURI = saveAs(choosenFile.getParentFile());
 				}
@@ -169,6 +168,7 @@ public class CircuitFileSelector {
 		ObjectOutputStream oos = new ObjectOutputStream(fos);
 		oos.writeObject(cb);
 		fos.close();
+		cb.resetMutate();
 	}
 	
 	
