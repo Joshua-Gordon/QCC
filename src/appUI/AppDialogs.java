@@ -1,3 +1,4 @@
+package appUI;
 import java.awt.Component;
 import java.io.File;
 
@@ -42,6 +43,18 @@ public class AppDialogs {
 	
 //	Specific Messages
 	
+	public static int restoreToDefaults(Component parent, String titlePrefs) {
+		return warningMsg(parent, "Restore To Defaults", 
+				"Are you sure you want to\n"
+				+ "restore all " + titlePrefs + "\n"
+						+ "back to defaults values?", "Yes, Restore All", "Cancel");
+	}
+	
+	public static int changePreferences(Component parent) {
+		return warningMsg(parent, "Apply changes", 
+				"Are you sure you want to\n"
+				+ "Apply these changes?", "Yes", "Cancel");
+	}
 	
 	public static void errorIO(Component parent) {
 		errorMsg(parent, "IOException");
