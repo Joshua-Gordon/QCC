@@ -1,7 +1,6 @@
-import qiskit
-qp = qiskit.QuantumProgram()
-name = "test"
-qp.load_qasm_file("test.qasm",name=name)
-if __name__ == "__main__":
-   ret = qp.execute([name])
-   print(ret.get_counts(name))
+from pyquil.parser import parse_program
+from pyquil.api import QVMConnection
+qvm = QVMConnection()
+p = parse_program("""H 0
+""")
+print(qvm.wavefunction(p).amplitudes)

@@ -1,3 +1,4 @@
+package appUI;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -9,6 +10,9 @@ import java.net.URI;
 
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
+
+import framework.CircuitBoard;
+import framework.Main;
 
 public class CircuitFileSelector {
 	
@@ -22,58 +26,75 @@ public class CircuitFileSelector {
 	}
 	
 	
-	public static void selectBoardFromFileSystem() {
-		int option = 0;
+//	returns "0" if operation is canceled, "1" if continued with or without saving, "2" if file needs to be saved
+	public static int warnIfBoardIsEdited() {
+		int option = 1;
 		if(Main.cb.hasBeenEdited()) {
 			String notSavedFileName;
 			if(Main.cb.getFileLocation() != null)
 				notSavedFileName = new File(Main.cb.getFileLocation()).getName();
 			else
 				notSavedFileName = UNSAVED_FILE_NAME;
-			option = AppDialogs.openFileWithoutSaving(Main.w.getFrame(), notSavedFileName);
+			option += AppDialogs.continueWithoutSaving(Main.w.getFrame(), notSavedFileName);
 		}
-		if(option == 0) {
-			try{
-				Main.cb = open(null);
-				if(Main.cb.getFileLocation() != null)
-					Main.w.setTitle(new File(Main.cb.getFileLocation()).getName());
-				Main.render();
-			}catch(IOException e) {
-				AppDialogs.errorIO(Main.w.getFrame());
-				AppDialogs.couldNotOpenFile(Main.w.getFrame());
-				e.printStackTrace();
-			}catch(ClassNotFoundException e) {
-				AppDialogs.errorProg(Main.w.getFrame());
-				AppDialogs.couldNotOpenFile(Main.w.getFrame());
-				e.printStackTrace();
+		return option;
+	}
+	
+	
+	public static void selectBoardFromFileSystem() {
+		final int option = warnIfBoardIsEdited();
+		if(option > 0) {
+			boolean followThrough = true;
+			if(option == 2) 
+				followThrough = saveBoard();
+			if(followThrough) {
+				try{
+					Main.cb = open(null);
+					if(Main.cb.getFileLocation() != null)
+						Main.w.setTitle(new File(Main.cb.getFileLocation()).getName());
+					Main.render();
+				}catch(IOException e) {
+					AppDialogs.errorIO(Main.w.getFrame());
+					AppDialogs.couldNotOpenFile(Main.w.getFrame());
+					e.printStackTrace();
+				}catch(ClassNotFoundException e) {
+					AppDialogs.errorProg(Main.w.getFrame());
+					AppDialogs.couldNotOpenFile(Main.w.getFrame());
+					e.printStackTrace();
+				}
 			}
 		}
 	}
 	
-	public static void saveBoardToFileSystem() {
+	public static boolean saveBoardToFileSystem() {
+		URI location = null;
 		try {
-			URI location = saveAs(null);
-			Main.cb.setFileLocation(location);
-			if(location != null) 
+			location = saveAs(null);
+			if(location != null) {
+				Main.cb.setFileLocation(location);
 				Main.w.setTitle(new File(location).getName());
+			}
 		} catch (IOException e) {
 			AppDialogs.errorIO(Main.w.getFrame());
 			AppDialogs.couldNotSaveFile(Main.w.getFrame());
 			e.printStackTrace();
 		}
+		return location != null;
 	}
 	
-	public static void saveBoard() {
+	public static boolean saveBoard() {
 		if(Main.cb.getFileLocation() == null) {
-			saveBoardToFileSystem();
+			return saveBoardToFileSystem();
 		}else {
 			try {
 				save(Main.cb);
+				return true;
 			} catch (IOException e) {
 				AppDialogs.errorIO(Main.w.getFrame());
 				AppDialogs.couldNotSaveFile(Main.w.getFrame());
 				e.printStackTrace();
 			}
+			return false;
 		}
 	}
 	
@@ -119,7 +140,7 @@ public class CircuitFileSelector {
 	
 	
 	private static URI saveAs(File focusedDirectory) throws IOException {
-		URI fetchedURI = Main.cb.getFileLocation();
+		URI fetchedURI = null;
 		
 		final JFileChooser fileChooser = new JFileChooser();
 		fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
@@ -169,6 +190,26 @@ public class CircuitFileSelector {
 		oos.writeObject(cb);
 		fos.close();
 		cb.resetMutate();
+	}
+	
+	public static CircuitBoard openFile(File circuitBoardFile) {
+		CircuitBoard board = null;
+		try {
+			FileInputStream fis = new FileInputStream(circuitBoardFile);
+			ObjectInputStream ois = new ObjectInputStream(fis);
+			board = (CircuitBoard) ois.readObject();
+			fis.close();
+		}catch(IOException e) {
+			AppDialogs.errorIO(Main.w.getFrame());
+			AppDialogs.couldNotOpenFile(Main.w.getFrame());
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			AppDialogs.errorProg(Main.w.getFrame());
+			AppDialogs.couldNotOpenFile(Main.w.getFrame());
+			e.printStackTrace();
+		}
+		board.setFileLocation(circuitBoardFile.toURI());
+		return board;
 	}
 	
 	

@@ -1,4 +1,4 @@
-import java.awt.BorderLayout;
+package appUI;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.image.BufferedImage;
@@ -8,7 +8,9 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.SpringLayout;
+
+import framework.Keyboard;
+import framework.Mouse;
 
 public class Window {
 
@@ -23,7 +25,7 @@ public class Window {
 
     public Window() {
         this.frame = new JFrame();
-        //setTitle(CircuitFileSelector.UNSAVED_FILE_NAME);
+        setTitle(CircuitFileSelector.UNSAVED_FILE_NAME);
         frame.setSize(WIDTH,HEIGHT);
         frame.setResizable(true);
         frame.setLocationRelativeTo(null);

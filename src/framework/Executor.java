@@ -1,4 +1,13 @@
-import java.io.*;
+package framework;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
+import java.util.function.Consumer;
+
+import preferences.AppPreferences;
 
 public class Executor {
 
@@ -33,10 +42,13 @@ public class Executor {
         FileWriter fw = new FileWriter(src);
         fw.write(quilTemplate.replace("CODE",code));
         fw.close();
-        Process p = Runtime.getRuntime().exec("python temp.py");
+        String interpretorLocation = AppPreferences.get("Python", "Interpreter Location");
+        Process p = Runtime.getRuntime().exec(interpretorLocation + " temp.py");
         BufferedReader isr = new BufferedReader(new InputStreamReader(p.getInputStream()));
+        BufferedReader isr1 = new BufferedReader(new InputStreamReader(p.getErrorStream()));
         String res = isr.lines().reduce("",(x,y)-> x+"\n"+y);
         System.out.println(res);
+        isr.close();
         return res;
     }
 
@@ -51,10 +63,11 @@ public class Executor {
         fw = new FileWriter(src);
         fw.write(qasmTemplate);
         fw.close();
-        Process p = Runtime.getRuntime().exec("python temp.py");
+        Process p = Runtime.getRuntime().exec(new String[]{"python temp.py"});
         BufferedReader isr = new BufferedReader(new InputStreamReader(p.getInputStream()));
         String res = isr.lines().reduce("",(x,y)-> x+"\n"+y);
         System.out.println(res);
+        isr.close();
         return res;
     }
 

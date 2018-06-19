@@ -1,3 +1,4 @@
+package framework;
 import javax.swing.*;
 
 import java.io.Serializable;
@@ -10,7 +11,7 @@ public class Gate implements Serializable{
 	
 	
 	public enum GateType{
-        I,X,Y,Z,H,Custom, Edit, Measure, CNOT, SWAP
+        I,X,Y,Z,H,CUSTOM, EDIT, MEASURE, CNOT, SWAP
     }
     public enum LangType{
         QUIL,QASM,QUIPPER
@@ -31,10 +32,10 @@ public class Gate implements Serializable{
                     return "Z";
                 case H:
                     return "H";
-                case Edit:
+                case EDIT:
                     System.err.println("Incomplete circuit!!!!");
                     return "ERROR";
-                case Measure:
+                case MEASURE:
                     return "MEASURE";
                 case CNOT:
                     return "CNOT";
@@ -55,7 +56,7 @@ public class Gate implements Serializable{
                     return "z";
                 case CNOT:
                     return "cx";
-                case Measure:
+                case MEASURE:
                     return "measure";
                 case SWAP:
                     return "cx"; //Don't worry, this is intentional
@@ -74,7 +75,7 @@ public class Gate implements Serializable{
                     return "QGate[\"Z\"]";
                 case CNOT:
                     return "QGate[\"not\"]";
-                case Measure:
+                case MEASURE:
                     return "measure";
                 case SWAP:
                     return "QGate[\"not\"]"; //Don't worry, this is intentional
@@ -144,7 +145,7 @@ public class Gate implements Serializable{
     }
 
     public static Gate measure(){
-        return new Gate(GateType.Measure);
+        return new Gate(GateType.MEASURE);
     }
     public static Gate cnot(){
         /*Complex[][] mat = new Complex[4][4];

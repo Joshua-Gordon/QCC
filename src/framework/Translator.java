@@ -1,5 +1,9 @@
+package framework;
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import framework.Gate.GateType;
+import framework.Gate.LangType;
 
 public class Translator {
 
@@ -27,7 +31,7 @@ public class Translator {
                         code += " ";
                         code += (idx + g.length);
                     }
-                    if (g.type == Gate.GateType.Measure) {
+                    if (g.type == Gate.GateType.MEASURE) {
                         code += " [";
                         code += idx;
                         code += "]";
@@ -73,7 +77,7 @@ public class Translator {
                         code += "cx q[" + (idx + g.length) + "],q[" + idx + "]";
                         //Three CNOTs do a swap
                     }
-                    if (g.type == Gate.GateType.Measure) {
+                    if (g.type == Gate.GateType.MEASURE) {
                         code += " -> c[" + idx + "]";
                     }
                     code += ";\n";

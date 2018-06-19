@@ -1,3 +1,4 @@
+package framework;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
@@ -12,6 +13,10 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 
+import appUI.AppDialogs;
+import appUI.CircuitFileSelector;
+import preferences.AppPreferences;
+
 public class CircuitBoard implements Serializable{
 	private static final long serialVersionUID = -6921131331890897905L;
 
@@ -21,6 +26,18 @@ public class CircuitBoard implements Serializable{
     ArrayList<ArrayList<Gate>> board;
 
     public static EnumMap<Gate.GateType,Supplier<Gate>> gatemap;
+    
+    static {
+    	gatemap = new EnumMap<Gate.GateType, Supplier<Gate>>(Gate.GateType.class);
+        gatemap.put(Gate.GateType.I,Gate::identity);
+        gatemap.put(Gate.GateType.H,Gate::hadamard);
+        gatemap.put(Gate.GateType.X,Gate::x);
+        gatemap.put(Gate.GateType.Y,Gate::y);
+        gatemap.put(Gate.GateType.Z,Gate::z);
+        gatemap.put(Gate.GateType.MEASURE,Gate::measure);
+        gatemap.put(Gate.GateType.CNOT,Gate::cnot);
+        gatemap.put(Gate.GateType.SWAP,Gate::swap);
+    }
     
     public static CircuitBoard getDefaultCircuitBoard() {
     	CircuitBoard board = new CircuitBoard();
@@ -34,16 +51,6 @@ public class CircuitBoard implements Serializable{
     
     public CircuitBoard() {
         board = new ArrayList<>();
-
-        gatemap = new EnumMap<Gate.GateType, Supplier<Gate>>(Gate.GateType.class);
-        gatemap.put(Gate.GateType.I,Gate::identity);
-        gatemap.put(Gate.GateType.H,Gate::hadamard);
-        gatemap.put(Gate.GateType.X,Gate::x);
-        gatemap.put(Gate.GateType.Y,Gate::y);
-        gatemap.put(Gate.GateType.Z,Gate::z);
-        gatemap.put(Gate.GateType.Measure,Gate::measure);
-        gatemap.put(Gate.GateType.CNOT,Gate::cnot);
-        gatemap.put(Gate.GateType.SWAP,Gate::swap);
     }
 
     public void addRow() {
@@ -125,11 +132,11 @@ public class CircuitBoard implements Serializable{
                         g.setColor(Color.BLACK);
                         g.drawString("Z",x*unit,y*unit + (unit>>2));
                         break;
-                    case Edit:
+                    case EDIT:
                         g.setColor(Color.RED);
                         g.drawRect(x*unit,y*unit,unit,unit);
                         break;
-                    case Measure:
+                    case MEASURE:
                         g.setColor(Color.BLACK);
                         g.drawLine(x*unit,y*unit + (unit>>1),(x+1)*unit,y*unit + (unit>>1));
                         g.setColor(Color.WHITE);
@@ -170,7 +177,7 @@ public class CircuitBoard implements Serializable{
         for(int x = 0; x < board.size(); ++x) {
             for(int y = 0; y < board.get(0).size(); ++y) {
                 Gate gate = board.get(x).get(y);
-                if(gate.type == Gate.GateType.Edit) {
+                if(gate.type == Gate.GateType.EDIT) {
                     Gate newGate = gatemap.get(g).get();
                     board.get(x).set(y,newGate);
                     ++counter;
@@ -204,6 +211,20 @@ public class CircuitBoard implements Serializable{
 		return mutated;
 	}
     
+    public void saveFileLocationToPreferences() {
+    	if(fileLocation != null) {
+    		AppPreferences.put("File IO", "Previous File Location", new File(fileLocation).getAbsolutePath());
+    	}else {
+    		AppPreferences.put("File IO", "Previous File Location", null);
+    	}
+    }
     
+    public String getName() {
+    	if(fileLocation == null) {
+    		return CircuitFileSelector.UNSAVED_FILE_NAME;
+    	}
+    	File file = new File(fileLocation);
+    	return file.getName();
+    }
 
 }

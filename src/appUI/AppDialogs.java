@@ -96,10 +96,16 @@ public class AppDialogs {
 				"Yes, replace file", "Cancel");
 	}
 	
-	public static int openFileWithoutSaving(Component parent, String fileName) {
+//	public static int openFileWithoutSaving(Component parent, String fileName) {
+//		return warningMsg(parent, "File is not saved", "The file \"" + fileName + "\" is not saved.\n"
+//				+ "Do you want continue without saving?",
+//				"Yes", "Cancel");
+//	}
+	
+	public static int continueWithoutSaving(Component parent, String fileName) {
 		return warningMsg(parent, "File is not saved", "The file \"" + fileName + "\" is not saved.\n"
 				+ "Do you want continue without saving?",
-				"Yes", "Cancel");
+				"Continue Without Saving", "Save File");
 	}
 	
 }

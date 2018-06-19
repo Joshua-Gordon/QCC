@@ -20,6 +20,7 @@ public class AppMenuBar extends JMenuBar {
 		JMenu menu, subMenu, subSubMenu;
 		
 		menu = new JMenu("File");
+		menu.add(mkItem("New Circuit"));
 		menu.add(mkItem("Open Circuit"));
 		menu.add(mkItem("Save Circuit as"));
 		menu.add(mkItem("Save"));

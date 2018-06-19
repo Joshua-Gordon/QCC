@@ -1,3 +1,10 @@
+package framework;
+import java.io.File;
+
+import appUI.CircuitFileSelector;
+import appUI.Window;
+import preferences.AppPreferences;
+
 public class Main {
 
 
@@ -8,13 +15,12 @@ public class Main {
 
         w = new Window();
         w.init();
-
-        cb = CircuitBoard.getDefaultCircuitBoard();
-        /*cb.board = Translator.loadQuil("H 0\n" +
-                "X 1\n" +
-                "Y 0\n" +
-                "CNOT 0 1\n" +
-                "MEASURE 1 [1]");*/
+        
+        
+        cb = loadPreviousCircuitBoard();
+        w.setTitle(cb.getName());
+        System.out.println(cb.gatemap == null);
+        
         w.display(cb.render());
         while(true);
 
@@ -24,6 +30,22 @@ public class Main {
         w.display(cb.render());
     }
 
+    
+    private static CircuitBoard loadPreviousCircuitBoard() {
+    	CircuitBoard board = null;
+    	String url = AppPreferences.get("File IO", "Previous File Location");
+        File file = new File(url);
+        if(url != "" && file.exists()) {
+        	board = CircuitFileSelector.openFile(file);
+        	if(board == null)
+        		board = CircuitBoard.getDefaultCircuitBoard();
+        }else {
+        	board = CircuitBoard.getDefaultCircuitBoard();
+        }
+        return board;
+    }
+    
+    
     /**
      * Note, the following code is needed to run the output program
      * from pyquil.parser import parse_program

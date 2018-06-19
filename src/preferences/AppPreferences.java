@@ -21,6 +21,9 @@ public final class AppPreferences {
 		add(new ActionCommandPreferencesView());
 		
 //		Added Default Values for Preferences
+		setType("File IO");
+		add("Previous File Location", "");
+		
 		setType("Python");
 		add("Interpreter Location", "python");
 		
@@ -51,7 +54,7 @@ public final class AppPreferences {
 	
 	
 	
-	static void putInt(String type, String name, Integer value) {
+	public static void putInt(String type, String name, Integer value) {
 		if(!prefExists(type, name)) {
 			try {
 				final String message = ERROR_MESSAGE.replace("TYPE", type).replace("NAME", name);
@@ -70,7 +73,7 @@ public final class AppPreferences {
 	}
 	
 	
-	static void put(String type, String name, String value) {
+	public static void put(String type, String name, String value) {
 		if(!prefExists(type, name)) {
 			try {
 				final String message = ERROR_MESSAGE.replace("TYPE", type).replace("NAME", name);
@@ -88,7 +91,7 @@ public final class AppPreferences {
 		}
 	}
 	
-	static void putBoolean(String type, String name, Boolean value) {
+	public static void putBoolean(String type, String name, Boolean value) {
 		if(!prefExists(type, name)) {
 			try {
 				final String message = ERROR_MESSAGE.replace("TYPE", type).replace("NAME", name);
@@ -106,7 +109,7 @@ public final class AppPreferences {
 		}
 	}
 	
-	static void putFloat(String type, String name, Float value) {
+	public static void putFloat(String type, String name, Float value) {
 		if(!prefExists(type, name)) {
 			try {
 				final String message = ERROR_MESSAGE.replace("TYPE", type).replace("NAME", name);
@@ -204,7 +207,6 @@ public final class AppPreferences {
 		return DEFAULT_VALUES.containsKey(type) && 
 				DEFAULT_VALUES.get(type).containsKey(name);
 	}
-	
 	
 	
 	

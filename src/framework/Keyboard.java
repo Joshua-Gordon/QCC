@@ -1,6 +1,12 @@
+package framework;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+
+import appUI.CircuitFileSelector;
+import framework.Gate.GateType;
+import preferences.AppPreferences;
+import preferences.AppPreferencesWindow;
 
 public class Keyboard implements ActionListener {
 
@@ -26,7 +32,7 @@ public class Keyboard implements ActionListener {
             Main.cb.edit(Gate.GateType.Z);
             break;
         case "Measure":
-            Main.cb.edit(Gate.GateType.Measure);
+            Main.cb.edit(Gate.GateType.MEASURE);
             break;
         case "CNot":
             Main.cb.edit(Gate.GateType.CNOT);
@@ -48,20 +54,43 @@ public class Keyboard implements ActionListener {
             break;
 
 //      File Selections
-
+        case "New Circuit":
+        	final int option = CircuitFileSelector.warnIfBoardIsEdited();
+        	if(option > 0) {
+        		boolean followThrough = true;
+        		if(option == 2) {
+        			followThrough = CircuitFileSelector.saveBoard();
+        		}
+        		if(followThrough) {
+	        		Main.cb = CircuitBoard.getDefaultCircuitBoard();
+	        		Main.w.setTitle(Main.cb.getName());
+	        		Main.cb.saveFileLocationToPreferences();
+	        		Main.render();
+        		}
+        	}
+        	Main.cb.saveFileLocationToPreferences();
+        	break;
         case "Open Circuit":
         	CircuitFileSelector.selectBoardFromFileSystem();
+        	Main.cb.saveFileLocationToPreferences();
         	break;
         case "Save Circuit as":
         	CircuitFileSelector.saveBoardToFileSystem();
+        	Main.cb.saveFileLocationToPreferences();
         	break;
         case "Save":
         	CircuitFileSelector.saveBoard();
+        	Main.cb.saveFileLocationToPreferences();
         	break;
 
+//      Preferences
+        case "Preferences":
+        	AppPreferencesWindow apui = new AppPreferencesWindow(Main.w.getFrame());
+        	apui.setVisible(true);
+        	break;	
+        	
 
 //    	Grid Selections
-
         case "Add Row":
         	Main.cb.addRow();
         	Main.render();
@@ -86,19 +115,21 @@ public class Keyboard implements ActionListener {
                 Executor.runQuil(quil);
             } catch (IOException e1) {
                 System.err.println("Could not create file!");
+                e1.printStackTrace();
             }
             break;
         case "Run QASM":
-        System.out.println("Running QASM");
-        String qasm = Translator.translateQASM();
-        qasm.trim();
-        try {
-            Executor.runQASM(qasm);
-        } catch (IOException e1) {
-            System.err.println("Could not create file!");
-        }
-        break;
-    }
+	        System.out.println("Running QASM");
+	        String qasm = Translator.translateQASM();
+	        qasm.trim();
+	        try {
+	            Executor.runQASM(qasm);
+	        } catch (IOException e1) {
+	            System.err.println("Could not create file!");
+	            e1.printStackTrace();
+	        }
+	        break;
+		}
 
 	}
 }
