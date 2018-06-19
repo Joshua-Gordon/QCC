@@ -1,0 +1,66 @@
+Notes on installing quipper on Ubuntu Linux (Xenial 16.04 LTS)
+
+1. sudo apt-get install haskell-platform
+
+   Troubleshooting: 
+   Make sure ghc is *NOT* version 7.10.
+   Otherwise install the latest ghc (from website): generic 64-bit
+   - wget https://haskell.org/platform/download/8.4.3/haskell-platform-8.4.3-unknown-posix--full-x86_64.tar.gz
+   - extract and install
+
+2. cabal update
+3. cabal install mtl
+4. cabal install primes (*further issues)
+5. cabal install Lattices (*further issues)
+6. cabal install zlib
+7. cabal install easyrender (*further issues)
+8. cabal install fixedprec
+9. cabal install newsynth
+10. cabal install containers
+11. cabal install set-monad
+
+   - Issue with set-monad:
+   Redeclaration error. Use wget on set-monad from hackage.
+   Comment out the instance of Monoid in Data/Set/Monad.hs.
+   Move the Data directory in the quipper-0.8 directory.
+
+12. Download the quipper tarball. Extract and install.
+
+   - ISSUE: Data.Map
+     Goto quipper-0.8/quipper/Quipper:
+	 In Printing.hs: 
+		change "import Data.Map (Map)" to "import Data.Map.Strict (Map)"
+		change next line to "import qualified Data.Map.Strict as Map"
+		find both instances of "insertWith'" to "insertWith"
+
+   - ISSUE: ShowAll
+	 Goto quipper-0.8/Libraries:
+     In ShowAll.hs: 
+		comment out Show instance a -> b.
+
+   - ISSUE: Lattices.Math conflicts with HaskellForMaths.Math.
+     	both import Math.Algebra.LinearAlgebra and/or Math.LinearAlgebra.
+     	HaskellForMaths contains missing items used by Lattices.Math.
+	 Grab Lattices and HaskellForMaths from hackage (via wget)
+     Extract both. From Lattices.Math directory, there are 2 subdirectories,
+     Lattices and LinearAlgebra. Move them both into the HaskellForMaths/src/Math directory.
+     Finally, move that Math directory into quipper-0.8.
+
+   - ISSUE: Primes
+	 wget from hackage. Move the Numbers folder from Data into quipper-0.8/Data.
+     This is the same folder that set-monad is in earlier.
+
+   - ISSUE: Graphics in easyrender
+     wget from hackage. Move the Graphics folder into quipper-0.8. [Josh: is this good?]
+
+13. Install acroread (for viewing circuits)
+	Do the following commands:
+		sudo apt-get install gtk2-engines-murrine:i386 libcanberra-gtk-module:i386 libatk-adaptor:i386 libgail-common:i386
+		sudo add-apt-repository "deb http://archive.canonical.com/ precise partner"
+		sudo apt-get update
+		sudo apt-get install adobereader-enu
+		sudo add-apt-repository -r "deb http://archive.canonical.com/ precise partner"
+		sudo apt-get update
+
+
+
