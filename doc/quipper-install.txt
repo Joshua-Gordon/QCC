@@ -53,6 +53,12 @@ Notes on installing quipper on Ubuntu Linux (Xenial 16.04 LTS)
    - ISSUE: Graphics in easyrender
      wget from hackage. Move the Graphics folder into quipper-0.8. [Josh: is this good?]
 
+   - ISSUE: newsynth
+	 wget from hackage. Move the Quantum folder into quipper-0.8.
+
+   - ISSUE: fixedprec
+	 wget from hackage. Move the Number folder into the Data folder in quipper-0.8.
+
 13. Install acroread (for viewing circuits)
 	Do the following commands:
 		sudo apt-get install gtk2-engines-murrine:i386 libcanberra-gtk-module:i386 libatk-adaptor:i386 libgail-common:i386
