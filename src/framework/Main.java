@@ -19,7 +19,6 @@ public class Main {
         
         cb = loadPreviousCircuitBoard();
         w.setTitle(cb.getName());
-        System.out.println(cb.gatemap == null);
         
         w.display(cb.render());
         while(true);

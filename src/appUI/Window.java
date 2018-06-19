@@ -1,6 +1,9 @@
 package appUI;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 
 import javax.swing.ImageIcon;
@@ -10,9 +13,10 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import framework.Keyboard;
+import framework.Main;
 import framework.Mouse;
 
-public class Window {
+public class Window extends WindowAdapter{
 
     public static final int WIDTH = 500;
     public static final int HEIGHT = 400;
@@ -29,7 +33,7 @@ public class Window {
         frame.setSize(WIDTH,HEIGHT);
         frame.setResizable(true);
         frame.setLocationRelativeTo(null);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         display = new JLabel();
         
         JPanel panel = new JPanel(new GridBagLayout());
@@ -46,6 +50,7 @@ public class Window {
         this.keyboard = new Keyboard();
         frame.add(jsp);
         frame.setJMenuBar(new AppMenuBar(this));
+        frame.addWindowListener(this);
     }
 
     public void init() {
@@ -83,4 +88,25 @@ public class Window {
     public void setTitle(String fileName) {
     	frame.setTitle(TITLE + " - " + fileName);
     }
+    
+    @Override
+    public void windowClosing(WindowEvent e) {
+    	if(Main.cb.hasBeenEdited()) {
+    		final int option = AppDialogs.continueWithoutSaving(frame, Main.cb.getName());
+    		if(option == 0) {
+    			frame.dispose();
+            	System.exit(0);
+    		}else if(option == 1) {
+    			if(CircuitFileSelector.saveBoard()) {
+    				Main.cb.saveFileLocationToPreferences();
+    				frame.dispose();
+                	System.exit(0);
+    			}
+    		}
+    	}else {
+        	frame.dispose();
+        	System.exit(0);
+    	}
+    }
+    
 }
