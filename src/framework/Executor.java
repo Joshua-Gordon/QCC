@@ -35,7 +35,7 @@ public class Executor {
         fw.write(quilTemplate.replace("CODE",code));
         fw.close();
         String interpretorLocation = AppPreferences.get("Python", "Interpreter Location");
-        Process p = Runtime.getRuntime().exec(interpretorLocation + " temp.py");
+        Process p = Runtime.getRuntime().exec(interpretorLocation + " " + src.getAbsolutePath());
         BufferedReader isr = new BufferedReader(new InputStreamReader(p.getInputStream()));
         BufferedReader isr1 = new BufferedReader(new InputStreamReader(p.getErrorStream()));
         String res = isr.lines().reduce("",(x,y)-> x+"\n"+y);
@@ -59,7 +59,7 @@ public class Executor {
         fw.write(qasmTemplate);
         fw.close();
         String interpretorLocation = AppPreferences.get("Python", "Interpreter Location");
-        Process p = Runtime.getRuntime().exec(interpretorLocation + " temp.py");
+        Process p = Runtime.getRuntime().exec(interpretorLocation + " " + src.getAbsolutePath());
         BufferedReader isr = new BufferedReader(new InputStreamReader(p.getInputStream()));
         BufferedReader isr1 = new BufferedReader(new InputStreamReader(p.getErrorStream()));
         String res = isr.lines().reduce("",(x,y)-> x+"\n"+y);
