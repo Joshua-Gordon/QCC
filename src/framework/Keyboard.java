@@ -45,12 +45,15 @@ public class Keyboard implements ActionListener {
 //		Export Types
         case "QUIL":
             System.out.println(Translator.translateQUIL());
+            Main.w.getConsole().println(Translator.translateQUIL());
             break;
         case "QASM":
             System.out.println(Translator.translateQASM());
+            Main.w.getConsole().println(Translator.translateQASM());
             break;
         case "Quipper":
             System.out.println(Translator.translateQuipper());
+            Main.w.getConsole().println(Translator.translateQuipper());
             break;
 
 //      File Selections
@@ -109,6 +112,7 @@ public class Keyboard implements ActionListener {
         	break;
         case "Run QUIL":
             System.out.println("Running QUIL");
+            Main.w.getConsole().println("Running QUIL");
             String quil = Translator.translateQUIL();
             quil.trim();
             try {
@@ -120,6 +124,7 @@ public class Keyboard implements ActionListener {
             break;
         case "Run QASM":
 	        System.out.println("Running QASM");
+	        Main.w.getConsole().println("Running QASM");
 	        String qasm = Translator.translateQASM();
 	        qasm.trim();
 	        try {

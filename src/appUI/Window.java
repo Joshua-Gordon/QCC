@@ -1,7 +1,7 @@
 package appUI;
+import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
@@ -11,6 +11,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 
 import framework.Keyboard;
 import framework.Main;
@@ -26,14 +27,20 @@ public class Window extends WindowAdapter{
     private JScrollPane jsp;
     private JLabel display;
     private Keyboard keyboard;
-
+    private ConsoleUI console = new ConsoleUI();
+    private JSplitPane consoleSplitPane;
+    
     public Window() {
         this.frame = new JFrame();
         setTitle(CircuitFileSelector.UNSAVED_FILE_NAME);
         frame.setSize(WIDTH,HEIGHT);
         frame.setResizable(true);
         frame.setLocationRelativeTo(null);
+        
+        // This Allows for prompting save before exiting application
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        frame.setLayout(new BorderLayout());
+        
         display = new JLabel();
         
         JPanel panel = new JPanel(new GridBagLayout());
@@ -48,7 +55,13 @@ public class Window extends WindowAdapter{
         
         jsp = new JScrollPane(panel);
         this.keyboard = new Keyboard();
-        frame.add(jsp);
+        consoleSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+        consoleSplitPane.setResizeWeight(.7);
+        consoleSplitPane.setTopComponent(jsp);
+        consoleSplitPane.setBottomComponent(console);
+        consoleSplitPane.setEnabled(false);
+        frame.add(consoleSplitPane, BorderLayout.CENTER);
+//        frame.add(console, BorderLayout.SOUTH);
         frame.setJMenuBar(new AppMenuBar(this));
         frame.addWindowListener(this);
     }
@@ -89,6 +102,14 @@ public class Window extends WindowAdapter{
     	frame.setTitle(TITLE + " - " + fileName);
     }
     
+    public ConsoleUI getConsole() {
+    	return console;
+    }
+    
+    public JSplitPane getConsoleSplitPane() {
+    	return consoleSplitPane;
+    }
+    
     @Override
     public void windowClosing(WindowEvent e) {
     	if(Main.cb.hasBeenEdited()) {
@@ -108,5 +129,6 @@ public class Window extends WindowAdapter{
         	System.exit(0);
     	}
     }
+    
     
 }

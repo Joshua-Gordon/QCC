@@ -8,17 +8,12 @@ import javax.swing.DefaultListModel;
 
 public final class AppPreferences {
 	
-	final static DefaultListModel<AbstractPreferenceView> PREFERENCES_VIEWS = new DefaultListModel<>();
-	
 	private static final HashMap<String, HashMap<String, Object>> DEFAULT_VALUES = new HashMap<>();
 	private static final String ERROR_MESSAGE = "Preference of type \"TYPE\" with name \"NAME\" does not exist.";
 	
 	private static HashMap<String, Object> currentPrefType = null;
 	
 	static {
-//		Added Views
-		add(new PythonPreferencesView());
-		add(new ActionCommandPreferencesView());
 		
 //		Added Default Values for Preferences
 		setType("File IO");
@@ -193,9 +188,6 @@ public final class AppPreferences {
 		currentPrefType = DEFAULT_VALUES.get(prefType);
 	}
 	
-	private static void add(AbstractPreferenceView apv) {
-		PREFERENCES_VIEWS.addElement(apv);
-	}
 	
 	private static void add(String prefName, Object defaultValue) {
 		currentPrefType.put(prefName, defaultValue);

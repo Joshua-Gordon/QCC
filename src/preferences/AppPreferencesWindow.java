@@ -21,8 +21,20 @@ public class AppPreferencesWindow extends JDialog {
 	
 	public static final int WIDTH = 500;
 	public static final int HEIGHT = 300;
+	final static DefaultListModel<AbstractPreferenceView> PREFERENCES_VIEWS = new DefaultListModel<>();
 		
 	private final JList<AbstractPreferenceView> PREFERENCE_PANELS;
+	
+	
+	static {
+//		Added Views Here:
+		add(new PythonPreferencesView());
+		add(new ActionCommandPreferencesView());
+	}
+	
+	
+	
+	
 	
 	public AppPreferencesWindow(JFrame parent){
 		super(parent);
@@ -56,9 +68,11 @@ public class AppPreferencesWindow extends JDialog {
 	}
 	
 	
+	
+	
 	private JList<AbstractPreferenceView> mkJList(JPanel preferenceView) {
 		
-		JList<AbstractPreferenceView> app = new JList<>(AppPreferences.PREFERENCES_VIEWS);
+		JList<AbstractPreferenceView> app = new JList<>(PREFERENCES_VIEWS);
 		app.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		app.setLayoutOrientation(JList.VERTICAL);
 		app.addListSelectionListener(new ListSelectionListener() {
@@ -73,4 +87,11 @@ public class AppPreferencesWindow extends JDialog {
 		return app;
 	}
 	
+	
+	
+	
+	
+	private static void add(AbstractPreferenceView apv) {
+		PREFERENCES_VIEWS.addElement(apv);
+	}
 }

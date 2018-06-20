@@ -47,6 +47,7 @@ public class ActionCommandPreferencesView extends AbstractPreferenceView{
 		content.add(label, gbc);
 		gbc.gridy++;
 		
+//		Added Action Commands Here: (Must be added as a preference first in AppPreferences)
 		addTableItem("Open Circuit");
 		addTableItem("Save Circuit as");
 		addTableItem("Save");
