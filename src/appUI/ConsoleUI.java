@@ -32,6 +32,7 @@ public class ConsoleUI extends AbstractAppViewUI{
 	
 	public ConsoleUI() {
 		super("Console");
+		setVisible(false);
 		setLayout(new GridBagLayout());
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.fill = GridBagConstraints.BOTH;

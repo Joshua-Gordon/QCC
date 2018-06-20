@@ -84,8 +84,7 @@ public class AppMenuBar extends JMenuBar {
 	
 	private JMenuItem mkViewItem(AbstractAppViewUI view){
 		JCheckBoxMenuItem checkBox = new JCheckBoxMenuItem(view.getName());
-		checkBox.setSelected(false);
-		view.setVisible(false);
+		checkBox.setSelected(view.isVisible());
 		checkBox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
