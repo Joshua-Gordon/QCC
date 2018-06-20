@@ -109,6 +109,7 @@ public class ConsoleUI extends AbstractAppViewUI{
 		} catch (BadLocationException e) {
 			e.printStackTrace();
 		}
+        console.setCaretPosition(d.getLength());
     }
 
 	@Override
