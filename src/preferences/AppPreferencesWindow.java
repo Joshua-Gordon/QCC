@@ -25,7 +25,54 @@ public class AppPreferencesWindow extends JDialog {
 		
 	private final JList<AbstractPreferenceView> PREFERENCE_PANELS;
 	
-	
+	/*
+	 * 
+	 * To Josh or whomever this may concern,
+	 * 
+	 * 
+	 * 
+	 * --All Preference User-Interfaces are added Here--
+	 * 
+	 * This class, AppPreferencesWindow, creates Preference user-interface
+	 * Window that allows the user to change preferences to his/her desire
+	 * 
+	 * To create a tab for your preference within this window,
+	 * create a new class that extends AbstractPreferenceView,
+	 * then added the unimplemented methods to your class.
+	 * 
+	 * In the constructor of your newly created class,
+	 * add the super() method with the name of your preference view's
+	 * name as it's argument (ie. super("My Preference View"));
+	 * 
+	 * Finally, use the add() method within the static "block" below 
+	 * with an instance of your newly created class as a parameter.
+	 * 
+	 * This will add your view to the window!
+	 * 
+	 * 
+	 * However, There is no UI elements within the (aka. a blank view)
+	 * To added UI elements to your view, use the getContent() method within your
+	 * newly created class. This method returns the JPanel where the elements will be
+	 * shown when your view is opened. With this JPanel, added Swing UI elements until
+	 * you get the desired look of your preference view.
+	 * 
+	 * The importPreferences() method is called every time The Preference Window is opened
+	 * In this method, the AppPreferences.get() Methods should be called to
+	 * load the preference values into your Swing UI elements.
+	 * 
+	 * The applyChanges() and restoreToDefaults() methods are called when the UI buttons
+	 * "Apply Changes" and "Restore To Defaults" are pressed on the Preference Window.
+	 * These methods should use the AppPreferences.put() methods to load the Swing UI elements
+	 * selected Preferences to change the current AppPreferences.
+	 * 
+	 * After this is done, The your Preference View should be functioning to your desire
+	 * 
+	 * 
+	 * 
+	 * Best,
+	 * Max 
+	 * 
+	 */
 	static {
 //		Added Views Here:
 		add(new PythonPreferencesView());
@@ -55,7 +102,7 @@ public class AppPreferencesWindow extends JDialog {
 		for(int i = 0; i < PREFERENCE_PANELS.getModel().getSize(); i++) {
 			app = PREFERENCE_PANELS.getModel().getElementAt(i);
 			app.importPreferences();
-			preferenceView.add(app, app.toString());
+			preferenceView.add(app.getViewToRender(), app.toString());
 		}
 		
 		JScrollPane pane = new JScrollPane(PREFERENCE_PANELS);

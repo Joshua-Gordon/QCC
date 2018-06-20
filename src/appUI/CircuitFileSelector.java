@@ -99,6 +99,33 @@ public class CircuitFileSelector {
 	}
 	
 	
+	public static CircuitBoard openFile(File circuitBoardFile) {
+		CircuitBoard board = null;
+		try {
+			FileInputStream fis = new FileInputStream(circuitBoardFile);
+			ObjectInputStream ois = new ObjectInputStream(fis);
+			board = (CircuitBoard) ois.readObject();
+			fis.close();
+		}catch(IOException e) {
+			AppDialogs.errorIO(Main.w.getFrame());
+			AppDialogs.couldNotOpenFile(Main.w.getFrame());
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			AppDialogs.errorProg(Main.w.getFrame());
+			AppDialogs.couldNotOpenFile(Main.w.getFrame());
+			e.printStackTrace();
+		}
+		board.setFileLocation(circuitBoardFile.toURI());
+		return board;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	
@@ -190,26 +217,6 @@ public class CircuitFileSelector {
 		oos.writeObject(cb);
 		fos.close();
 		cb.resetMutate();
-	}
-	
-	public static CircuitBoard openFile(File circuitBoardFile) {
-		CircuitBoard board = null;
-		try {
-			FileInputStream fis = new FileInputStream(circuitBoardFile);
-			ObjectInputStream ois = new ObjectInputStream(fis);
-			board = (CircuitBoard) ois.readObject();
-			fis.close();
-		}catch(IOException e) {
-			AppDialogs.errorIO(Main.w.getFrame());
-			AppDialogs.couldNotOpenFile(Main.w.getFrame());
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			AppDialogs.errorProg(Main.w.getFrame());
-			AppDialogs.couldNotOpenFile(Main.w.getFrame());
-			e.printStackTrace();
-		}
-		board.setFileLocation(circuitBoardFile.toURI());
-		return board;
 	}
 	
 	

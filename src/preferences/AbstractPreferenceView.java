@@ -16,12 +16,12 @@ import javax.swing.border.BevelBorder;
 
 import appUI.AppDialogs;
 
-@SuppressWarnings("serial")
-public abstract class AbstractPreferenceView extends JPanel implements ActionListener{
+public abstract class AbstractPreferenceView implements ActionListener{
 	
 	private final String TITLE;
 	
-	protected JPanel content = new JPanel();
+	private JPanel content = new JPanel();
+	private JPanel completeView = new JPanel();
 	
 	protected abstract void applyChanges();
 	protected abstract void restoreToDefaults();
@@ -30,17 +30,17 @@ public abstract class AbstractPreferenceView extends JPanel implements ActionLis
 	public AbstractPreferenceView(String title) {
 		super();
 		this.TITLE = title;
-		setLayout(new BorderLayout());
+		completeView.setLayout(new BorderLayout());
 		JLabel label = new JLabel();
 		label.setText(TITLE + " Preferences");
 		label.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 8));
 		label.setBackground(Color.LIGHT_GRAY);
 		label.setOpaque(true);
-		add(label, BorderLayout.NORTH);
-		add(new JScrollPane(content), BorderLayout.CENTER);
+		completeView.add(label, BorderLayout.NORTH);
+		completeView.add(new JScrollPane(content), BorderLayout.CENTER);
 		content.setOpaque(true);
 		content.setBackground(new Color(225, 225, 225));
-		setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
+		completeView.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
 		
 		JPanel bottom = new JPanel();
 		SpringLayout layout = new SpringLayout();
@@ -58,7 +58,7 @@ public abstract class AbstractPreferenceView extends JPanel implements ActionLis
 		layout.putConstraint(SpringLayout.NORTH, button2, 3, SpringLayout.NORTH, bottom);
 		bottom.setPreferredSize(new Dimension(200, 50));
 		
-		add(bottom, BorderLayout.SOUTH);
+		completeView.add(bottom, BorderLayout.SOUTH);
 	}
 	
 	@Override
@@ -70,13 +70,21 @@ public abstract class AbstractPreferenceView extends JPanel implements ActionLis
 	public void actionPerformed(ActionEvent e) {
 		switch(e.getActionCommand()) {
 		case "Apply Changes":
-			if(AppDialogs.changePreferences(this) == 0)
+			if(AppDialogs.changePreferences(completeView) == 0)
 				applyChanges();
 			break;
 		case "Restore To Defaults":
-			if(AppDialogs.restoreToDefaults(this, TITLE + " Preferences") == 0)
+			if(AppDialogs.restoreToDefaults(completeView, TITLE + " Preferences") == 0)
 				restoreToDefaults();
 			break;
 		}
+	}
+	
+	public JPanel getContent() {
+		return content;
+	}
+	
+	public JPanel getViewToRender() {
+		return completeView;
 	}
 }

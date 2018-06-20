@@ -37,14 +37,14 @@ public class ActionCommandPreferencesView extends AbstractPreferenceView{
 	
 	public ActionCommandPreferencesView() {
 		super("Action Commands");
-		content.setLayout(new GridBagLayout());
+		getContent().setLayout(new GridBagLayout());
 		gbc.insets = new Insets(4, 7, 7, 0);
 		gbc.fill= GridBagConstraints.BOTH;
 		gbc.anchor = GridBagConstraints.WEST;
 		gbc.gridx = 0;
 		gbc.gridy = 0;
 		JLabel label = new JLabel("<html><u><b>Keyboard Shortcuts</b></u></html>");
-		content.add(label, gbc);
+		getContent().add(label, gbc);
 		gbc.gridy++;
 		
 //		Added Action Commands Here: (Must be added as a preference first in AppPreferences)
@@ -117,7 +117,7 @@ public class ActionCommandPreferencesView extends AbstractPreferenceView{
 		label.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1));
 		label.setOpaque(true);
 		labels.add(label);
-		content.add(label, gbc);
+		getContent().add(label, gbc);
 		gbc.insets = new Insets(2, 0, 2, 0);
 		gbc.gridx++;
 		gbc.weightx = .3;
@@ -125,14 +125,14 @@ public class ActionCommandPreferencesView extends AbstractPreferenceView{
 		field.setPreferredSize(new Dimension(90, 25));
 		field.setEditable(false);
 		fields.add(field);
-		content.add(field, gbc);
+		getContent().add(field, gbc);
 		gbc.insets = new Insets(2, 0, 2, 5);
 		gbc.gridx++;
 		gbc.weightx = 0;
 		JButton button = new JButton("Change");
 		button.addActionListener(new ButtonActionListener(buttons.size()));
 		buttons.add(button);
-		content.add(button, gbc);
+		getContent().add(button, gbc);
 		gbc.gridx -= 2;
 		gbc.gridy++;
 	}
@@ -156,7 +156,7 @@ public class ActionCommandPreferencesView extends AbstractPreferenceView{
 		}
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			KeyChooserDialog dialog = new KeyChooserDialog(getParent(), keyIndex);
+			KeyChooserDialog dialog = new KeyChooserDialog(getContent().getParent(), keyIndex);
 			dialog.setVisible(true);
 		}
 		
@@ -166,12 +166,10 @@ public class ActionCommandPreferencesView extends AbstractPreferenceView{
 	private class KeyChooserDialog extends JDialog implements KeyListener{
 		
 		private int keyIndex;
-		private Component parent;
 		
 		private KeyChooserDialog(Component parent, int keyIndex) {
 			super(JOptionPane.getFrameForComponent(parent));
 			this.keyIndex = keyIndex;
-			this.parent = parent;
 			setModal(true);
 			setSize(new Dimension(120, 80));
 			setLayout(new BorderLayout());

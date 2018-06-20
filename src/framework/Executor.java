@@ -8,6 +8,7 @@ import java.nio.charset.Charset;
 import java.util.function.Consumer;
 
 import preferences.AppPreferences;
+import utils.ResourceLoader;
 
 public class Executor {
 
@@ -27,18 +28,9 @@ public class Executor {
                     "   ret = qp.execute([name])\n" +
                     "   print(ret.get_counts(name))";
 
-    private static void fixFile(File src) throws IOException {
-        if(!src.exists()) {
-            src.createNewFile();
-        } else {
-            src.delete();
-            src.createNewFile();
-        }
-    }
 
     public static String runQuil(String code) throws IOException {
-        File src = new File("temp.py");
-        fixFile(src);
+        File src = ResourceLoader.addTempFile("temp.py");
         FileWriter fw = new FileWriter(src);
         fw.write(quilTemplate.replace("CODE",code));
         fw.close();
@@ -58,10 +50,8 @@ public class Executor {
     }
 
     public static String runQASM(String code) throws IOException {
-        File qsrc = new File("test.qasm");
-        fixFile(qsrc);
-        File src = new File("temp.py");
-        fixFile(src);
+        File qsrc = ResourceLoader.addTempFile("test.qasm");
+        File src = ResourceLoader.addTempFile("temp.py");
         FileWriter fw = new FileWriter(qsrc);
         fw.write(code);
         fw.close();

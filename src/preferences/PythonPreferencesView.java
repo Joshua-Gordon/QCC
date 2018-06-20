@@ -15,7 +15,6 @@ import javax.swing.JTextField;
 
 import appUI.AppDialogs;
 
-@SuppressWarnings("serial")
 public class PythonPreferencesView extends AbstractPreferenceView{
 	
 	private JTextField field = new JTextField();
@@ -24,7 +23,7 @@ public class PythonPreferencesView extends AbstractPreferenceView{
 		super("Python");
 		
 		
-		content.setLayout(new GridBagLayout());
+		getContent().setLayout(new GridBagLayout());
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		gbc.anchor = GridBagConstraints.NORTHWEST;
@@ -33,17 +32,17 @@ public class PythonPreferencesView extends AbstractPreferenceView{
 		gbc.gridx = 0;
 		gbc.gridy = 0;
 		JLabel label = new JLabel("Set Interpreter Location:");
-		content.add(label, gbc);
+		getContent().add(label, gbc);
 		gbc.gridx = 0;
 		gbc.gridy = 1;
 		field.setPreferredSize(new Dimension(100, 25));
-		content.add(field, gbc);
+		getContent().add(field, gbc);
 		gbc.weightx = 0;
 		gbc.gridx = 1;
 		gbc.gridy = 1;
 		JButton button = new JButton("Browse");
 		button.addActionListener(new FileBrowser());
-		content.add(button, gbc);
+		getContent().add(button, gbc);
 	}
 	
 	
@@ -55,14 +54,14 @@ public class PythonPreferencesView extends AbstractPreferenceView{
 			fileChooser.setMultiSelectionEnabled(false);
 			fileChooser.setDialogTitle("Find Python Interpreter Path");
 			
-			final int option1 = fileChooser.showDialog(getParent(), "Select");
+			final int option1 = fileChooser.showDialog(getContent().getParent(), "Select");
 			if(option1 == JFileChooser.APPROVE_OPTION) {
 				File file = fileChooser.getSelectedFile();
 				if(file.exists() && file.isFile()) {
 					field.setText(file.getAbsolutePath());
 					field.setCaretPosition(0);
 				}else {
-					AppDialogs.fileIsntValid(getParent(), file);
+					AppDialogs.fileIsntValid(getContent().getParent(), file);
 				}
 			}
 		}

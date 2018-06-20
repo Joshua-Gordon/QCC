@@ -16,6 +16,7 @@ import javax.swing.JSplitPane;
 import framework.Keyboard;
 import framework.Main;
 import framework.Mouse;
+import utils.ResourceLoader;
 
 public class Window extends WindowAdapter{
 

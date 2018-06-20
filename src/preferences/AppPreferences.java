@@ -13,9 +13,59 @@ public final class AppPreferences {
 	
 	private static HashMap<String, Object> currentPrefType = null;
 	
+	
+	
+	/*
+	 * To Josh or whomever this may concern,
+	 * 
+	 *  --All of the Application's Preferences Options are created Here (under the static "block")--
+	 *  
+	 *  (Do the following under the static "block")-->
+	 *  		To create a preference option, First use the setType() method to give your
+	 *  		preference a group name... This is so preferences are organized according
+	 * 			to a "group name" or a "type name"
+	 *  
+	 *  		Then, Under the setType() Method used, you can give a list of preference names
+	 *  		with their corresponding default values using the add() method
+	 *  <--(Do the following under the static "block")
+	 *  
+	 *  
+	 *  
+	 *  Thats it! your preference option is created!
+	 *  
+	 *  
+	 *  
+	 *  However, the preference option is only set to its default value.
+	 *  To put a value into the preference option, use any of the following methods:
+	 *  	put()	      
+	 *  	putInt()
+	 *  	putFloat()
+	 *  	putBoolean()
+	 *  
+	 *  Use these methods throughout any of the classes when a preference option needs
+	 *  to be changed. To change the preference back to its default value, put null as
+	 *  a parameter.
+	 *  
+	 *  To access a preference use any of the following methods:
+	 *  	get()	      
+	 *  	getInt()
+	 *  	getFloat()
+	 *  	getBoolean()
+	 *  
+	 *  
+	 *  Note : 
+	 *  Most of the user defined preferences should be set by a user within 
+	 *  the Preference user-interface Window (aka. AppPreferenceWindow.java)  
+	 *  To create user-interface within this window for your newly created preferences
+	 *  Go to AppPreferenceWindow.java File and follow the comments there.
+	 *  
+	 *  Best,
+	 *  -Max
+	 */
 	static {
 		
-//		Added Default Values for Preferences
+//		All Created Preferences with their Default Values
+		
 		setType("File IO");
 		add("Previous File Location", "");
 		

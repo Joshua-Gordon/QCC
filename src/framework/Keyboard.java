@@ -3,16 +3,18 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 
+
 import appUI.CircuitFileSelector;
-import framework.Gate.GateType;
-import preferences.AppPreferences;
 import preferences.AppPreferencesWindow;
 
-public class Keyboard implements ActionListener {
+public class Keyboard implements ActionListener, Runnable {
+	
+	private Thread thread;
+	private String actionCommand;
 
 	@Override
-	public void actionPerformed(ActionEvent e) {
-		switch(e.getActionCommand()){
+	public void run() {
+		switch(actionCommand){
 
 
 //		Gates
@@ -135,6 +137,13 @@ public class Keyboard implements ActionListener {
 	        }
 	        break;
 		}
-
+	}
+	
+	
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		actionCommand = e.getActionCommand();
+		thread = new Thread(this);
+		thread.start();
 	}
 }
