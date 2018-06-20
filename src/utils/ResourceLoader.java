@@ -17,7 +17,7 @@ public class ResourceLoader {
 	static {
 		try {
 			File fontFile = new File("res" + File.separator + "fonts" + File.separator + "mplus-2m-bold.ttf");
-			MPLUS = Font.createFont(Font.TRUETYPE_FONT, fontFile).deriveFont(14f);
+			MPLUS = Font.createFont(Font.TRUETYPE_FONT, fontFile).deriveFont(12f);
 		    GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		    ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, fontFile));
 		} catch (IOException e) {
