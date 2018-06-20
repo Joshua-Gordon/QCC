@@ -56,6 +56,14 @@ public class AppDialogs {
 				+ "Apply these changes?", "Yes", "Cancel");
 	}
 	
+	public static void keyCodeUsed(Component parent) {
+		errorMsg(parent, "This keycode is already used");
+	}
+	
+	public static void keyCodeNotValid(Component parent) {
+		errorMsg(parent, "This keycode is not valid");
+	}
+	
 	public static void errorIO(Component parent) {
 		errorMsg(parent, "IOException");
 	}

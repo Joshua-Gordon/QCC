@@ -38,6 +38,8 @@ public abstract class AbstractPreferenceView extends JPanel implements ActionLis
 		label.setOpaque(true);
 		add(label, BorderLayout.NORTH);
 		add(new JScrollPane(content), BorderLayout.CENTER);
+		content.setOpaque(true);
+		content.setBackground(new Color(225, 225, 225));
 		setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
 		
 		JPanel bottom = new JPanel();
