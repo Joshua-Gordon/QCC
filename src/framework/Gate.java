@@ -11,12 +11,18 @@ public class Gate implements Serializable{
 	
 	
 	public enum GateType{
-        I,X,Y,Z,H,CUSTOM, EDIT, MEASURE, CNOT, SWAP
+        I,X,Y,Z,H,CUSTOM, MEASURE, CNOT, SWAP
     }
     public enum LangType{
         QUIL,QASM,QUIPPER
     }
+    
+    public static int GATE_PIXEL_SIZE = 64;
 
+    public Complex[][] matrix;
+    public GateType type;
+    private boolean selected = false;
+    
     int length = 0;
 
     public static String typeToString(GateType gt, LangType lt){
@@ -32,9 +38,6 @@ public class Gate implements Serializable{
                     return "Z";
                 case H:
                     return "H";
-                case EDIT:
-                    System.err.println("Incomplete circuit!!!!");
-                    return "ERROR";
                 case MEASURE:
                     return "MEASURE";
                 case CNOT:
@@ -83,11 +86,6 @@ public class Gate implements Serializable{
         }
         return "ERROR";
     }
-
-    public static int GATE_PIXEL_SIZE = 64;
-
-    public Complex[][] matrix;
-    public GateType type;
 
     public Gate(Complex[][] mat, GateType gt) {
         this.matrix = mat;
@@ -167,5 +165,12 @@ public class Gate implements Serializable{
         g0.length = Integer.parseInt(JOptionPane.showInputDialog("Length of SWAP?"));
         return g0;
     }
-
+    
+    public boolean isSelected() {
+    	return selected;
+    }
+    
+    public void setSelected(boolean selected) {
+    	this.selected = selected;
+    }
 }

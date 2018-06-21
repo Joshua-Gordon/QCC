@@ -20,8 +20,8 @@ import utils.ResourceLoader;
 
 public class Window extends WindowAdapter{
 
-    public static final int WIDTH = 500;
-    public static final int HEIGHT = 400;
+    public static final int WIDTH = 700;
+    public static final int HEIGHT = 600;
     public static final String TITLE = "Quantum Circuit Board";
     
     private JFrame frame;
@@ -114,7 +114,7 @@ public class Window extends WindowAdapter{
     @Override
     public void windowClosing(WindowEvent e) {
     	if(Main.cb.hasBeenEdited()) {
-    		final int option = AppDialogs.continueWithoutSaving(frame, Main.cb.getName());
+    		final int option = AppDialogs.closeWithoutSaving(frame, Main.cb.getName());
     		if(option == 0) {
     			frame.dispose();
             	System.exit(0);

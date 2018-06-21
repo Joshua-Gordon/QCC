@@ -1,7 +1,4 @@
 package framework;
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.Serializable;
 import java.net.URI;
@@ -9,9 +6,6 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.function.Supplier;
 
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
 
 import appUI.AppDialogs;
 import appUI.CircuitFileSelector;
@@ -47,6 +41,20 @@ public class CircuitBoard implements Serializable{
         }
     	board.resetMutate();
     	return board;
+    }
+    
+    public static CircuitBoard loadPreviousCircuitBoard() {
+    	CircuitBoard board = null;
+    	String url = AppPreferences.get("File IO", "Previous File Location");
+        File file = new File(url);
+        if(url != "" && file.exists()) {
+        	board = CircuitFileSelector.openFile(file);
+        	if(board == null)
+        		board = CircuitBoard.getDefaultCircuitBoard();
+        }else {
+        	board = CircuitBoard.getDefaultCircuitBoard();
+        }
+        return board;
     }
     
     public CircuitBoard() {
@@ -85,102 +93,15 @@ public class CircuitBoard implements Serializable{
        	}
     }
 
-    public BufferedImage render(){
-        int unit = Gate.GATE_PIXEL_SIZE;
-        BufferedImage image = new BufferedImage(board.size()*unit,board.get(0).size()*unit,BufferedImage.TYPE_INT_RGB);
-        Graphics g = image.getGraphics();
-        g.setColor(Color.WHITE);
-        g.fillRect(0,0,image.getWidth(),image.getHeight());
-        for(int x = 0; x < board.size(); ++x) {
-            for(int y = 0; y < board.get(0).size(); ++y) {
-                g.setColor(Color.GREEN);
-                g.drawRect(x*unit,y*unit,unit,unit);
-                switch(board.get(x).get(y).type){
-                    case I:
-                        g.setColor(Color.BLACK);
-                        g.drawLine(x*unit,y*unit + 32,(x+1)*unit,y*unit + 32);
-                        break;
-                    case H:
-                        g.setColor(Color.BLACK);
-                        g.drawLine(x*unit,y*unit + (unit>>1),(x+1)*unit,y*unit + (unit>>1));
-                        g.setColor(Color.WHITE);
-                        g.fillRect(x*unit + (unit>>2),y*unit + (unit>>2),unit>>1,unit>>1);
-                        g.setColor(Color.BLACK);
-                        g.drawString("Hadamard",x*unit,y*unit + (unit>>2));
-                        break;
-                    case X:
-                        g.setColor(Color.BLACK);
-                        g.drawLine(x*unit,y*unit + (unit>>1),(x+1)*unit,y*unit + (unit>>1));
-                        g.setColor(Color.WHITE);
-                        g.fillRect(x*unit + (unit>>2),y*unit + (unit>>2),unit>>1,unit>>1);
-                        g.setColor(Color.BLACK);
-                        g.drawString("X",x*unit,y*unit + (unit>>2));
-                        break;
-                    case Y:
-                        g.setColor(Color.BLACK);
-                        g.drawLine(x*unit,y*unit + (unit>>1),(x+1)*unit,y*unit + (unit>>1));
-                        g.setColor(Color.WHITE);
-                        g.fillRect(x*unit + (unit>>2),y*unit + (unit>>2),unit>>1,unit>>1);
-                        g.setColor(Color.BLACK);
-                        g.drawString("Y",x*unit,y*unit + (unit>>2));
-                        break;
-                    case Z:
-                        g.setColor(Color.BLACK);
-                        g.drawLine(x*unit,y*unit + (unit>>1),(x+1)*unit,y*unit + (unit>>1));
-                        g.setColor(Color.WHITE);
-                        g.fillRect(x*unit + (unit>>2),y*unit + (unit>>2),unit>>1,unit>>1);
-                        g.setColor(Color.BLACK);
-                        g.drawString("Z",x*unit,y*unit + (unit>>2));
-                        break;
-                    case EDIT:
-                        g.setColor(Color.RED);
-                        g.drawRect(x*unit,y*unit,unit,unit);
-                        break;
-                    case MEASURE:
-                        g.setColor(Color.BLACK);
-                        g.drawLine(x*unit,y*unit + (unit>>1),(x+1)*unit,y*unit + (unit>>1));
-                        g.setColor(Color.WHITE);
-                        g.fillRect(x*unit + (unit>>2),y*unit + (unit>>2),unit>>1,unit>>1);
-                        g.setColor(Color.BLACK);
-                        g.drawString("Measure",x*unit,y*unit + (unit>>2));
-                        break;
-                    case CNOT:
-                        g.setColor(Color.BLACK);
-                        g.drawLine(x*unit,y*unit + (unit>>1),(x+1)*unit,y*unit + (unit>>1));
-                        int len = board.get(x).get(y).length;
-                        g.drawLine(x*unit + (unit>>1),y*unit + (unit>>1),x*unit + (unit>>1),(y+len)*unit + (unit>>1) + (unit>>2));
-                        int centerX = x*unit + (unit>>2);
-                        int centerY = (y+len)*unit + (unit>>2);
-                        g.drawOval(centerX,centerY,unit>>1,unit>>1);
-                        break;
-                    case SWAP:
-                        g.setColor(Color.BLACK);
-                        g.drawLine(x*unit,y*unit + (unit>>1),(x+1)*unit,y*unit + (unit>>1));
-                        //Diagonal lines
-                        g.drawLine(x*unit + (unit>>2),y*unit + (unit>>2),(x+1)*unit - (unit >> 2), (y+1)*unit - (unit>>2));
-                        g.drawLine(x*unit + (unit>>2),(y+1)*unit - (unit>>2),(x+1)*unit - (unit >> 2), y*unit + (unit>>2));
-                        int swaplen = board.get(x).get(y).length;
-                        g.drawLine(x*unit + (unit>>1),y*unit + (unit>>1),x*unit + (unit>>1),(y+swaplen)*unit + (unit>>1));
-                        //More diagonal lines
-                        g.drawLine(x*unit + (unit>>2),(y+swaplen)*unit + (unit>>2),(x+1)*unit - (unit >> 2), (y+swaplen+1)*unit - (unit>>2));
-                        g.drawLine(x*unit + (unit>>2),(y+1+swaplen)*unit - (unit>>2),(x+1)*unit - (unit >> 2), (y+swaplen)*unit + (unit>>2));
-
-                }
-            }
-        }
-        return image;
-    }
 
     public void edit(Gate.GateType g) {
     	mutate();
-        int counter = 0;
         for(int x = 0; x < board.size(); ++x) {
             for(int y = 0; y < board.get(0).size(); ++y) {
                 Gate gate = board.get(x).get(y);
-                if(gate.type == Gate.GateType.EDIT) {
+                if(gate.isSelected()) {
                     Gate newGate = gatemap.get(g).get();
                     board.get(x).set(y,newGate);
-                    ++counter;
                 }
             }
         }

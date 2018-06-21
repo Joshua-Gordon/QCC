@@ -13,7 +13,8 @@ public class Mouse implements MouseListener {
         Point p = Main.w.getDisplay().getMousePosition();
         int grabRow = p.x/Gate.GATE_PIXEL_SIZE;
         int grabColumn = (p.y)/Gate.GATE_PIXEL_SIZE;
-        Main.cb.board.get(grabRow).get(grabColumn).type = Gate.GateType.EDIT;
+        Gate gate = Main.cb.board.get(grabRow).get(grabColumn);
+        gate.setSelected(!gate.isSelected());
         Main.render();
 
     }

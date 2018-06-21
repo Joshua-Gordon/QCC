@@ -116,4 +116,10 @@ public class AppDialogs {
 				"Continue Without Saving", "Save File");
 	}
 	
+	public static int closeWithoutSaving(Component parent, String fileName) {
+		return warningMsg(parent, "File is not saved", "The file \"" + fileName + "\" is not saved.\n"
+				+ "Do you want close without saving?",
+				"Close", "Save File");
+	}
+	
 }

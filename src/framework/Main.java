@@ -1,9 +1,6 @@
 package framework;
-import java.io.File;
 
-import appUI.CircuitFileSelector;
 import appUI.Window;
-import preferences.AppPreferences;
 
 public class Main {
 
@@ -17,31 +14,16 @@ public class Main {
         w.init();
         
         
-        cb = loadPreviousCircuitBoard();
+        cb = CircuitBoard.loadPreviousCircuitBoard();
         w.setTitle(cb.getName());
         
-        w.display(cb.render());
+        w.display(CircuitBoardRenderContext.render(cb));
         while(true);
 
     }
 
     public static void render(){
-        w.display(cb.render());
-    }
-
-    
-    private static CircuitBoard loadPreviousCircuitBoard() {
-    	CircuitBoard board = null;
-    	String url = AppPreferences.get("File IO", "Previous File Location");
-        File file = new File(url);
-        if(url != "" && file.exists()) {
-        	board = CircuitFileSelector.openFile(file);
-        	if(board == null)
-        		board = CircuitBoard.getDefaultCircuitBoard();
-        }else {
-        	board = CircuitBoard.getDefaultCircuitBoard();
-        }
-        return board;
+    	w.display(CircuitBoardRenderContext.render(cb));
     }
     
     

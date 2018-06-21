@@ -10,14 +10,22 @@ import java.util.Hashtable;
 public class ResourceLoader {
 	
 	public static Font MPLUS;
+	public static Font VAST_SHADOW;
 	
 	private static final Hashtable<String, File> TEMP_FILES = new Hashtable<>();
 	public static final String TEMP_FILE_URL = "res" + File.separator + "tempFiles";
 	
 	static {
+		MPLUS = loadFont("mplus-2m-bold.ttf");
+		VAST_SHADOW = loadFont("VastShadow-Regular.ttf").deriveFont(35f);
+	}
+	
+	
+	private static Font loadFont(String fileName) {
+		Font font = null;
 		try {
-			File fontFile = new File("res" + File.separator + "fonts" + File.separator + "mplus-2m-bold.ttf");
-			MPLUS = Font.createFont(Font.TRUETYPE_FONT, fontFile).deriveFont(12f);
+			File fontFile = new File("res" + File.separator + "fonts" + File.separator + fileName);
+			font = Font.createFont(Font.TRUETYPE_FONT, fontFile).deriveFont(12f);
 		    GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		    ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, fontFile));
 		} catch (IOException e) {
@@ -25,8 +33,8 @@ public class ResourceLoader {
 		} catch(FontFormatException e) {
 		    e.printStackTrace();
 		}
+		return font;
 	}
-	
 	
 	/**
 	 * 

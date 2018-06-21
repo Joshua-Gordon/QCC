@@ -19,8 +19,8 @@ import javax.swing.event.ListSelectionListener;
 @SuppressWarnings("serial")
 public class AppPreferencesWindow extends JDialog {
 	
-	public static final int WIDTH = 500;
-	public static final int HEIGHT = 300;
+	public static final int WIDTH = 600;
+	public static final int HEIGHT = 400;
 	final static DefaultListModel<AbstractPreferenceView> PREFERENCES_VIEWS = new DefaultListModel<>();
 		
 	private final JList<AbstractPreferenceView> PREFERENCE_PANELS;
