@@ -101,7 +101,9 @@ public class CircuitBoard implements Serializable{
                 Gate gate = board.get(x).get(y);
                 if(gate.isSelected()) {
                     Gate newGate = gatemap.get(g).get();
-                    board.get(x).set(y,newGate);
+                    if(newGate != null) {
+                    	board.get(x).set(y,newGate);
+                    }
                 }
             }
         }

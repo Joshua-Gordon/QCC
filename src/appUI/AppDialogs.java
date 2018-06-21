@@ -43,6 +43,8 @@ public class AppDialogs {
 	
 //	Specific Messages
 	
+	
+	
 	public static int restoreToDefaults(Component parent, String titlePrefs) {
 		return warningMsg(parent, "Restore To Defaults", 
 				"Are you sure you want to\n"
@@ -54,6 +56,10 @@ public class AppDialogs {
 		return warningMsg(parent, "Apply changes", 
 				"Are you sure you want to\n"
 				+ "Apply these changes?", "Yes", "Cancel");
+	}
+	
+	public static void lengthNotValid(Component parent, String length) {
+		errorMsg(parent, "\"" + length + "\" is not a valid length.");
 	}
 	
 	public static void keyCodeUsed(Component parent) {

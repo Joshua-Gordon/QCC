@@ -1,6 +1,8 @@
 package framework;
 import javax.swing.*;
 
+import appUI.AppDialogs;
+
 import java.io.Serializable;
 import java.util.EnumMap;
 import java.util.function.Function;
@@ -146,23 +148,36 @@ public class Gate implements Serializable{
         return new Gate(GateType.MEASURE);
     }
     public static Gate cnot(){
-        /*Complex[][] mat = new Complex[4][4];
-        for(int x = 0; x < 4; ++x){
-            for(int y = 0; y < 4; ++y){
-                mat[x][y] = x == y ? Complex.ONE() : Complex.ZERO();
-            }
-        }
-        mat[2][2] = mat[3][3] = Complex.ZERO();
-        mat[2][3] = mat[3][2] = Complex.ONE();*/
         Gate g = new Gate(GateType.CNOT);
-
-        g.length = Integer.parseInt(JOptionPane.showInputDialog("Length of CNOT?"));
+        String s = null;
+        while(true) {
+	        try {
+	        	s = JOptionPane.showInputDialog("Length of CNOT?");
+	        	if(s == null)
+	        		return null;
+	        	g.length = Integer.parseInt(s);
+	        	break;
+	        }catch(NumberFormatException fne) {
+	        	AppDialogs.lengthNotValid(Main.w.getFrame(), s);
+	        }
+        }
         return g;
     }
     public static Gate swap(){
 
         Gate g0 = new Gate(GateType.SWAP);
-        g0.length = Integer.parseInt(JOptionPane.showInputDialog("Length of SWAP?"));
+        String s = null;
+        while(true) {
+	        try {
+	        	s = JOptionPane.showInputDialog("Length of SWAP?");
+	        	if(s == null)
+	        		return null;
+	        	g0.length = Integer.parseInt(s);
+	        	break;
+	        }catch(NumberFormatException fne) {
+	        	AppDialogs.lengthNotValid(Main.w.getFrame(), s);
+	        }
+        }
         return g0;
     }
     
