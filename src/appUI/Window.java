@@ -16,7 +16,7 @@ import javax.swing.JSplitPane;
 import framework.Keyboard;
 import framework.Main;
 import framework.Mouse;
-import utils.ResourceLoader;
+import preferences.AppPreferences;
 
 public class Window extends WindowAdapter{
 
@@ -28,11 +28,12 @@ public class Window extends WindowAdapter{
     private JScrollPane jsp;
     private JLabel display;
     private Keyboard keyboard;
-    private ConsoleUI console = new ConsoleUI();
+    private ConsoleUI console;
     private JSplitPane consoleSplitPane;
     
     public Window() {
         this.frame = new JFrame();
+        this.keyboard = new Keyboard();
         setTitle(CircuitFileSelector.UNSAVED_FILE_NAME);
         frame.setSize(WIDTH,HEIGHT);
         frame.setResizable(true);
@@ -53,20 +54,24 @@ public class Window extends WindowAdapter{
         gbc.gridy = 0;
         panel.add(display, gbc);
         display.addMouseListener(new Mouse());
-        
-        jsp = new JScrollPane(panel);
-        this.keyboard = new Keyboard();
-        consoleSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
-        consoleSplitPane.setResizeWeight(.7);
-        consoleSplitPane.setTopComponent(jsp);
-        consoleSplitPane.setBottomComponent(console);
-        consoleSplitPane.setEnabled(false);
-        frame.add(consoleSplitPane, BorderLayout.CENTER);
-//        frame.add(console, BorderLayout.SOUTH);
+        addConsole(panel);
         frame.setJMenuBar(new AppMenuBar(this));
         frame.addWindowListener(this);
     }
-
+    
+    private void addConsole(JPanel panel) {
+    	jsp = new JScrollPane(panel);
+    	boolean consoleOpened = AppPreferences.getBoolean("Opened Views", "Console");
+        consoleSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+        consoleSplitPane.setResizeWeight(.7);
+        consoleSplitPane.setTopComponent(jsp);
+        console = new ConsoleUI(this);
+        consoleSplitPane.setBottomComponent(console);
+        console.changeVisibility(consoleOpened);
+        frame.add(consoleSplitPane, BorderLayout.CENTER);
+    }
+    
+    
     public void init() {
         frame.setVisible(true);
     }
@@ -116,20 +121,20 @@ public class Window extends WindowAdapter{
     	if(Main.cb.hasBeenEdited()) {
     		final int option = AppDialogs.closeWithoutSaving(frame, Main.cb.getName());
     		if(option == 0) {
-    			frame.dispose();
-            	System.exit(0);
+    			closeProgram();
     		}else if(option == 1) {
-    			if(CircuitFileSelector.saveBoard()) {
-    				Main.cb.saveFileLocationToPreferences();
-    				frame.dispose();
-                	System.exit(0);
-    			}
+    			if(CircuitFileSelector.saveBoard())
+    				closeProgram();
     		}
     	}else {
-        	frame.dispose();
-        	System.exit(0);
+    		closeProgram();
     	}
     }
     
-    
+    private void closeProgram() {
+    	Main.cb.saveFileLocationToPreferences();
+    	AppPreferences.putBoolean("Opened Views", "Console", console.isVisible());
+    	frame.dispose();
+    	System.exit(0);
+    }
 }

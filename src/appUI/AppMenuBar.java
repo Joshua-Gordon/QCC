@@ -88,8 +88,7 @@ public class AppMenuBar extends JMenuBar {
 		checkBox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				view.setVisible(checkBox.isSelected());
-				view.visibilityChanged(checkBox.isSelected());
+				view.changeVisibility(checkBox.isSelected());
 			}
 		});
 		return checkBox;

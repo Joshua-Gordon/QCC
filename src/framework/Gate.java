@@ -23,7 +23,7 @@ public class Gate implements Serializable{
 
     public Complex[][] matrix;
     public GateType type;
-    private boolean selected = false;
+    private transient boolean selected = false;
     
     int length = 0;
 

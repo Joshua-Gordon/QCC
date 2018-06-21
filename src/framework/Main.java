@@ -13,10 +13,8 @@ public class Main {
         w = new Window();
         w.init();
         
-        
         cb = CircuitBoard.loadPreviousCircuitBoard();
         w.setTitle(cb.getName());
-        
         w.display(CircuitBoardRenderContext.render(cb));
         while(true);
 

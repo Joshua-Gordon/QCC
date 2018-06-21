@@ -4,7 +4,6 @@ import java.awt.event.KeyEvent;
 import java.util.HashMap;
 import java.util.prefs.Preferences;
 
-import javax.swing.DefaultListModel;
 
 public final class AppPreferences {
 	
@@ -68,6 +67,9 @@ public final class AppPreferences {
 		
 		setType("File IO");
 		add("Previous File Location", "");
+		
+		setType("Opened Views");
+		add("Console", false);
 		
 		setType("Python");
 		add("Interpreter Location", "python");

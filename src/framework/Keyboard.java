@@ -60,32 +60,16 @@ public class Keyboard implements ActionListener, Runnable {
 
 //      File Selections
         case "New Circuit":
-        	final int option = CircuitFileSelector.warnIfBoardIsEdited();
-        	if(option > 0) {
-        		boolean followThrough = true;
-        		if(option == 2) {
-        			followThrough = CircuitFileSelector.saveBoard();
-        		}
-        		if(followThrough) {
-	        		Main.cb = CircuitBoard.getDefaultCircuitBoard();
-	        		Main.w.setTitle(Main.cb.getName());
-	        		Main.cb.saveFileLocationToPreferences();
-	        		Main.render();
-        		}
-        	}
-        	Main.cb.saveFileLocationToPreferences();
+        	CircuitFileSelector.createNewBoard();
         	break;
         case "Open Circuit":
         	CircuitFileSelector.selectBoardFromFileSystem();
-        	Main.cb.saveFileLocationToPreferences();
         	break;
         case "Save Circuit as":
         	CircuitFileSelector.saveBoardToFileSystem();
-        	Main.cb.saveFileLocationToPreferences();
         	break;
         case "Save":
         	CircuitFileSelector.saveBoard();
-        	Main.cb.saveFileLocationToPreferences();
         	break;
 
 //      Preferences

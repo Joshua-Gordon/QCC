@@ -22,17 +22,17 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 
-import framework.Main;
 import utils.ResourceLoader;
 
 @SuppressWarnings("serial")
 public class ConsoleUI extends AbstractAppViewUI{
 	
 	private JTextPane console = new JTextPane();
+	private Window w;
 	
-	public ConsoleUI() {
+	public ConsoleUI(Window w) {
 		super("Console");
-		setVisible(false);
+		this.w = w;
 		setLayout(new GridBagLayout());
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.fill = GridBagConstraints.BOTH;
@@ -113,8 +113,9 @@ public class ConsoleUI extends AbstractAppViewUI{
     }
 
 	@Override
-	public void visibilityChanged(boolean visible) {
-		JSplitPane splitPane = Main.w.getConsoleSplitPane();
+	public void changeVisibility(boolean visible) {
+		setVisible(visible);
+		JSplitPane splitPane = w.getConsoleSplitPane();
 		if(visible) {
 			splitPane.setDividerLocation(-100);
 		}

@@ -7,7 +7,7 @@ public abstract class AbstractAppViewUI extends JPanel{
 	
 	private final String NAME;
 	
-	public abstract void visibilityChanged(boolean visible);
+	public abstract void changeVisibility(boolean visible);
 	
 	public AbstractAppViewUI(String name) {
 		this.NAME = name;

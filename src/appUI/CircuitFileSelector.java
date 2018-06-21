@@ -40,6 +40,21 @@ public class CircuitFileSelector {
 		return option;
 	}
 	
+	public static void createNewBoard() {
+		final int option = CircuitFileSelector.warnIfBoardIsEdited();
+    	if(option > 0) {
+    		boolean followThrough = true;
+    		if(option == 2) {
+    			followThrough = CircuitFileSelector.saveBoard();
+    		}
+    		if(followThrough) {
+        		Main.cb = CircuitBoard.getDefaultCircuitBoard();
+        		Main.w.setTitle(Main.cb.getName());
+        		Main.render();
+    		}
+    	}
+	}
+	
 	
 	public static void selectBoardFromFileSystem() {
 		final int option = warnIfBoardIsEdited();
