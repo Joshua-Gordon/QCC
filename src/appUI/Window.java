@@ -65,11 +65,11 @@ public class Window extends WindowAdapter{
         consoleSplitPane.setDividerLocation(-100);
         
         frame.add(consoleSplitPane, BorderLayout.CENTER);
+        console.changeVisibility(false);
         frame.setJMenuBar(new AppMenuBar(this));
         frame.addWindowListener(this);
         
 //        boolean consoleOpened = AppPreferences.getBoolean("Opened Views", "Console");
-        console.changeVisibility(false);
     }
     
     
