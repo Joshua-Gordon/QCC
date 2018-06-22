@@ -139,7 +139,7 @@ public class ActionCommandPreferencesView extends AbstractPreferenceView{
 	
 	
 	private String getKeyText(int keycode) {
-		return KeyEvent.getModifiersExText(KeyEvent.SHIFT_DOWN_MASK) + " + "
+		return KeyEvent.getModifiersExText(KeyEvent.CTRL_DOWN_MASK) + " + "
 				+ KeyEvent.getKeyText(keycode);
 	}
 	

@@ -16,8 +16,6 @@ public class Main {
         cb = CircuitBoard.loadPreviousCircuitBoard();
         w.setTitle(cb.getName());
         w.display(CircuitBoardRenderContext.render(cb));
-        while(true);
-
     }
 
     public static void render(){

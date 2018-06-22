@@ -1,5 +1,6 @@
 package appUI;
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.WindowAdapter;
@@ -27,13 +28,12 @@ public class Window extends WindowAdapter{
     private JFrame frame;
     private JScrollPane jsp;
     private JLabel display;
-    private Keyboard keyboard;
+    private Keyboard keyboard = new Keyboard();
     private ConsoleUI console;
     private JSplitPane consoleSplitPane;
     
     public Window() {
         this.frame = new JFrame();
-        this.keyboard = new Keyboard();
         setTitle(CircuitFileSelector.UNSAVED_FILE_NAME);
         frame.setSize(WIDTH,HEIGHT);
         frame.setResizable(true);
@@ -54,21 +54,21 @@ public class Window extends WindowAdapter{
         gbc.gridy = 0;
         panel.add(display, gbc);
         display.addMouseListener(new Mouse());
-        addConsole(panel);
-        frame.setJMenuBar(new AppMenuBar(this));
-        frame.addWindowListener(this);
-    }
-    
-    private void addConsole(JPanel panel) {
-    	jsp = new JScrollPane(panel);
-    	boolean consoleOpened = AppPreferences.getBoolean("Opened Views", "Console");
+        jsp = new JScrollPane(panel);
+        
         consoleSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
-        consoleSplitPane.setResizeWeight(.7);
         consoleSplitPane.setTopComponent(jsp);
         console = new ConsoleUI(this);
         consoleSplitPane.setBottomComponent(console);
-        console.changeVisibility(consoleOpened);
+        consoleSplitPane.setResizeWeight(.7);
+        consoleSplitPane.setDividerLocation(-100);
+        
         frame.add(consoleSplitPane, BorderLayout.CENTER);
+        frame.setJMenuBar(new AppMenuBar(this));
+        frame.addWindowListener(this);
+        
+        boolean consoleOpened = AppPreferences.getBoolean("Opened Views", "Console");
+        console.changeVisibility(consoleOpened);
     }
     
     

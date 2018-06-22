@@ -82,7 +82,6 @@ public class ConsoleUI extends AbstractAppViewUI{
 	
 	public void println(Object o) {
 		consoleWrite(o.toString() + "\n", Color.BLACK);
-		console.validate();
 	}
 	
 	public void print(Object o) {
@@ -103,7 +102,6 @@ public class ConsoleUI extends AbstractAppViewUI{
         aset = sc.addAttribute(aset, StyleConstants.Alignment, StyleConstants.ALIGN_JUSTIFIED);
         Document d = console.getDocument();
         int len = d.getLength();
-        console.replaceSelection(msg);
         try {
 			d.insertString(len, msg, aset);
 		} catch (BadLocationException e) {

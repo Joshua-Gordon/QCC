@@ -7,10 +7,8 @@ import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
-import framework.Main;
 import preferences.AppPreferences;
 
 @SuppressWarnings("serial")
