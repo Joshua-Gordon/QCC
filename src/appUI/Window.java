@@ -28,12 +28,13 @@ public class Window extends WindowAdapter{
     private JFrame frame;
     private JScrollPane jsp;
     private JLabel display;
-    private Keyboard keyboard = new Keyboard();
+    private Keyboard keyboard;
     private ConsoleUI console;
     private JSplitPane consoleSplitPane;
     
     public Window() {
         this.frame = new JFrame();
+        this.keyboard = new Keyboard();
         setTitle(CircuitFileSelector.UNSAVED_FILE_NAME);
         frame.setSize(WIDTH,HEIGHT);
         frame.setResizable(true);
@@ -67,8 +68,8 @@ public class Window extends WindowAdapter{
         frame.setJMenuBar(new AppMenuBar(this));
         frame.addWindowListener(this);
         
-        boolean consoleOpened = AppPreferences.getBoolean("Opened Views", "Console");
-        console.changeVisibility(consoleOpened);
+//        boolean consoleOpened = AppPreferences.getBoolean("Opened Views", "Console");
+        console.changeVisibility(false);
     }
     
     
