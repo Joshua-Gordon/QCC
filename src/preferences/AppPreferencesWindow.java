@@ -75,8 +75,9 @@ public class AppPreferencesWindow extends JDialog {
 	 */
 	static {
 //		Added Views Here:
-		add(new PythonPreferencesView());
 		add(new ActionCommandPreferencesView());
+		add(new PyQuilPreferencesView());
+		add(new QASMPreferencesView());
 	}
 	
 	

@@ -2,6 +2,7 @@ package preferences;
 
 import java.awt.event.KeyEvent;
 import java.util.HashMap;
+import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 
@@ -62,6 +63,9 @@ public final class AppPreferences {
 	 *  -Max
 	 */
 	static {
+		//deleteAllPreferences();
+		
+		
 		
 //		All Created Preferences with their Default Values
 		
@@ -71,7 +75,10 @@ public final class AppPreferences {
 		setType("Opened Views");
 		add("Console", false);
 		
-		setType("Python");
+		setType("PyQuil");
+		add("Interpreter Location", "python");
+
+		setType("QASM");
 		add("Interpreter Location", "python");
 		
 		setType("Action Commands");
@@ -253,5 +260,29 @@ public final class AppPreferences {
 	}
 	
 	
-	
+
+	/**
+	 * 
+	 * This method should be used <b> only </b> <br>
+	 * used to clear all preferences related to this application
+	 * in case a preferences previous preference had been refactored or
+	 * removed.
+	 * 
+	 */
+	public static void deleteAllPreferences() {
+		Preferences prefs = Preferences.userRoot();
+		try {
+			String[] children = prefs.childrenNames();
+			if(children != null) {
+				Preferences prefType;
+				for(String child : children) {
+					prefType = prefs.node(child);
+					prefType.removeNode();
+					prefType.flush();
+				}
+			}
+		} catch (BackingStoreException e) {
+			e.printStackTrace();
+		}
+	}
 }

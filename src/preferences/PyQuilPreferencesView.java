@@ -15,12 +15,12 @@ import javax.swing.JTextField;
 
 import appUI.AppDialogs;
 
-public class PythonPreferencesView extends AbstractPreferenceView{
+public class PyQuilPreferencesView extends AbstractPreferenceView{
 	
 	private JTextField field = new JTextField();
 	
-	public PythonPreferencesView() {
-		super("Python");
+	public PyQuilPreferencesView() {
+		super("PyQuil");
 		
 		
 		getContent().setLayout(new GridBagLayout());
@@ -31,7 +31,7 @@ public class PythonPreferencesView extends AbstractPreferenceView{
 		gbc.weightx = 1;
 		gbc.gridx = 0;
 		gbc.gridy = 0;
-		JLabel label = new JLabel("Set Interpreter Location:");
+		JLabel label = new JLabel("Set PyQuil Interpreter Location:");
 		getContent().add(label, gbc);
 		gbc.gridx = 0;
 		gbc.gridy = 1;
@@ -52,7 +52,7 @@ public class PythonPreferencesView extends AbstractPreferenceView{
 			final JFileChooser fileChooser = new JFileChooser();
 			fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 			fileChooser.setMultiSelectionEnabled(false);
-			fileChooser.setDialogTitle("Find Python Interpreter Path");
+			fileChooser.setDialogTitle("Find PyQuil Interpreter Path");
 			
 			final int option1 = fileChooser.showDialog(getContent().getParent(), "Select");
 			if(option1 == JFileChooser.APPROVE_OPTION) {
@@ -73,18 +73,18 @@ public class PythonPreferencesView extends AbstractPreferenceView{
 	
 	@Override
 	protected void applyChanges() {
-		AppPreferences.put("Python", "Interpreter Location", field.getText().trim());
+		AppPreferences.put("PyQuil", "Interpreter Location", field.getText().trim());
 	}
 
 	@Override
 	protected void restoreToDefaults() {
-		AppPreferences.put("Python", "Interpreter Location", null);
-		field.setText(AppPreferences.get("Python", "Interpreter Location"));
+		AppPreferences.put("PyQuil", "Interpreter Location", null);
+		field.setText(AppPreferences.get("PyQuil", "Interpreter Location"));
 	}
 
 	@Override
 	protected void importPreferences() {
-		field.setText(AppPreferences.get("Python", "Interpreter Location"));
+		field.setText(AppPreferences.get("PyQuil", "Interpreter Location"));
 		field.setCaretPosition(0);
 	}
 	
