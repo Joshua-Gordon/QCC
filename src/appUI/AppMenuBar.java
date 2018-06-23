@@ -49,6 +49,7 @@ public class AppMenuBar extends JMenuBar {
 			subMenu.add(mkItem("Measure"));
 			subMenu.add(mkItem("CNot"));
 			subMenu.add(mkItem("Swap"));
+			subMenu.add(mkItem("Custom"));
 		menu.add(subMenu);
 		menu.addSeparator();
 		menu.add(mkItem("Add Row"));

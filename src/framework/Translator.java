@@ -1,6 +1,7 @@
 package framework;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 
 import framework.Gate.GateType;
 import framework.Gate.LangType;
@@ -11,6 +12,7 @@ public class Translator {
         String code = "";
         ArrayList<ArrayList<Gate>> boardTemp = Main.cb.board;
         ArrayList<ArrayList<Gate>> board = new ArrayList<>();
+        ArrayList<String> customGates = new ArrayList<>();
         for(int i = 0; i < boardTemp.size(); ++i) {
             board.add(boardTemp.get(i));
         }
@@ -19,7 +21,7 @@ public class Translator {
             ArrayList<Gate> instructions = board.get(x);
             for(int i = 0; i < instructions.size(); ++i){ //i represents the column
                 Gate g = instructions.get(i);
-                if(g.type != Gate.GateType.I) {
+                if(g.type != Gate.GateType.I && g.type != GateType.CUSTOM) {
                     int idx = i;// - offset;
                     if(idx+g.length < offset) {
                         offset = idx+g.length;
@@ -35,6 +37,32 @@ public class Translator {
                         code += " [";
                         code += idx;
                         code += "]";
+                    }
+                    code += "\n";
+                } else if(g.type == GateType.CUSTOM) {
+                    MultiQubitGate mqg = (MultiQubitGate) g;
+                    int idx = i;
+                    if(idx + g.length < offset) {
+                        offset = idx + mqg.length;
+                    }
+                    if(!customGates.contains(mqg.name)) {
+                        customGates.add(mqg.name);
+                        String dec = "DEFGATE " + mqg.name + ":";
+                        Complex[][] m = mqg.matrix;
+                        for(int my = 0; my < m.length; ++my) {
+                            dec += "\n    ";
+                            for(int mx = 0; mx < m.length; ++mx) {
+                                dec += m[mx][my].toString();
+                                if(mx+1 < m.length)
+                                    dec += ", ";
+                            }
+                        }
+                        code += dec;
+                        code += "\n";
+                    }
+                    code += g.name + " ";
+                    for (int r : mqg.registers) {
+                        code += r + " ";
                     }
                     code += "\n";
                 }
@@ -99,10 +127,15 @@ public class Translator {
             String[] components = line.split(" ");
             if(components[0].equals("MEASURE")){
                 output += "MEASURE " + (Integer.parseInt(components[1])-offset) + " [" + (Integer.parseInt(components[2].substring(1,2))-offset) + "]";
+            } else if(components[0].startsWith("DEFGATE")){
+                output += line;
+            } else if(isNumber(line.trim())){
+                output += line;
             } else {
                 output += components[0];
                 for(int i = 1; i < components.length; ++i) {
-                    output += " " + (Integer.parseInt(components[i])-offset);
+                    if(!components[i].equals(""))
+                        output += " " + (Integer.parseInt(components[i])-offset);
                 }
             }
             output += "\n";
@@ -283,5 +316,15 @@ public class Translator {
             newCode += "\n";
         }
         return newCode;
+    }
+
+    private static boolean isNumber(String s){
+        String[] ss = s.split(",");
+        try{
+            Complex.parseComplex(ss[0]);
+            return true;
+        } catch (NumberFormatException nfe) {
+            return false;
+        }
     }
 }

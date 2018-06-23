@@ -42,7 +42,9 @@ public class Keyboard implements ActionListener, Runnable {
         case "Swap":
             Main.cb.edit(Gate.GateType.SWAP);
             break;
-
+        case "Custom":
+            Main.cb.edit(Gate.GateType.CUSTOM);
+            break;
 
 //		Export Types
         case "QUIL":

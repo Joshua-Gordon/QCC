@@ -13,7 +13,8 @@ public class Main {
         w = new Window();
         w.init();
 
-        Gate g = Gate.customGate();
+        String s = "0.5-0.5i";
+        System.out.println(Complex.parseComplex(s));
 
         cb = CircuitBoard.loadPreviousCircuitBoard();
         w.setTitle(cb.getName());

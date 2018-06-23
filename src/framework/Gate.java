@@ -24,6 +24,7 @@ public class Gate implements Serializable{
 
     public Complex[][] matrix;
     public GateType type;
+    public String name;
     private transient boolean selected = false;
     
     int length = 0;
@@ -186,6 +187,8 @@ public class Gate implements Serializable{
         String s;
         boolean done = false;
         ArrayList<Integer> regs = new ArrayList<>();
+        String name = JOptionPane.showInputDialog("What is the gate called?");
+
         while(!done) {
             s = JOptionPane.showInputDialog("Which qubits?");
             try{
@@ -194,6 +197,13 @@ public class Gate implements Serializable{
                 done = true;
             }
         }
+        if(Main.cb.customGates.containsKey(name)){
+            MultiQubitGate gOld = ((MultiQubitGate) Main.cb.customGates.get(name));
+            Gate g = new MultiQubitGate(gOld.matrix,GateType.CUSTOM,regs);
+            g.name = name;
+            g.length = regs.stream().max(Math::max).get() - regs.stream().min(Math::min).get();
+            return g;
+        }
         int len = 1 << regs.size();
         Complex[][] m = new Complex[len][len];
         for(int y = 0; y < len; ++y) {
@@ -201,7 +211,11 @@ public class Gate implements Serializable{
                 m[x][y] = Complex.parseComplex(JOptionPane.showInputDialog("Element (" + x + "," + y + ")"));
             }
         }
-        return new MultiQubitGate(m,GateType.CUSTOM,regs);
+        Gate g = new MultiQubitGate(m,GateType.CUSTOM,regs);
+        g.name = name;
+        g.length = regs.stream().max(Math::max).get() - regs.stream().min(Math::min).get();
+        Main.cb.customGates.put(name,g);
+        return g;
     }
 
     

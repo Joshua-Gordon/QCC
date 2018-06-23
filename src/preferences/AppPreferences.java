@@ -97,12 +97,13 @@ public final class AppPreferences {
 		add("Measure", 	   			KeyEvent.VK_M);
 		add("CNot", 	   			KeyEvent.VK_C);
 		add("Swap", 	   			KeyEvent.VK_W);
+		add("Custom",				KeyEvent.VK_T);
 		add("Add Row", 	   			KeyEvent.VK_DOWN);
 		add("Add Column", 	   		KeyEvent.VK_RIGHT);
 		add("Remove Last Row", 		KeyEvent.VK_UP);
 		add("Remove Last Column", 	KeyEvent.VK_LEFT);
 		add("Run QUIL", 	   		KeyEvent.VK_R);
-		add("Run QASM", 	   		KeyEvent.VK_S);
+		add("Run QASM", 	   		KeyEvent.VK_S); //Conflicts with Save, we will discuss this on Tuesday
 	}
 	
 	

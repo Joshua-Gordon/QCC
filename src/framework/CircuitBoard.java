@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.function.Supplier;
 
 
@@ -18,6 +19,7 @@ public class CircuitBoard implements Serializable{
 	private transient boolean mutated = false;
 	
     ArrayList<ArrayList<Gate>> board;
+    HashMap<String,Gate> customGates;
 
     public static EnumMap<Gate.GateType,Supplier<Gate>> gatemap;
     
@@ -31,6 +33,7 @@ public class CircuitBoard implements Serializable{
         gatemap.put(Gate.GateType.MEASURE,Gate::measure);
         gatemap.put(Gate.GateType.CNOT,Gate::cnot);
         gatemap.put(Gate.GateType.SWAP,Gate::swap);
+        gatemap.put(Gate.GateType.CUSTOM,Gate::customGate);
     }
     
     public static CircuitBoard getDefaultCircuitBoard() {
@@ -40,6 +43,7 @@ public class CircuitBoard implements Serializable{
     		board.addColumn();
         }
     	board.resetMutate();
+		board.customGates = new HashMap<>();
     	return board;
     }
     

@@ -61,6 +61,9 @@ public class Complex implements Serializable{
             } else if (s.contains("-i")) {
                 return new Complex(Double.parseDouble(s.substring(0,s.length()-2)),-1);
             }
+            if(s.contains("-")){
+                return new Complex(Double.parseDouble(ssplit[0]), -Double.parseDouble(ssplit[1].substring(0, ssplit[1].length() - 1)));
+            }
             return new Complex(Double.parseDouble(ssplit[0]), Double.parseDouble(ssplit[1].substring(0, ssplit[1].length() - 1)));
         }
         return new Complex(Double.parseDouble(s),0);
@@ -68,6 +71,10 @@ public class Complex implements Serializable{
 
     @Override
     public String toString(){
-        return a+"+"+b+"i";
+        if(b >= 0)
+            return a+"+"+b+"i";
+        else{
+            return a+"-"+(-b)+"i";
+        }
     }
 }
