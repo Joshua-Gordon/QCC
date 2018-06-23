@@ -47,6 +47,25 @@ public class Complex implements Serializable{
         return new Complex(-a,-b);
     }
 
+    public static Complex parseComplex(String s) {
+        String[] ssplit = s.split("[+-]");
+        if(s.equals("i")) {
+            return Complex.I();
+        }
+        if(ssplit.length == 1 && s.contains("i")) {
+            return new Complex(0,Double.parseDouble(s.substring(0,s.length()-1)));
+        }
+        if(s.contains("i")) {
+            if(s.contains("+i")) {
+                return new Complex(Double.parseDouble(s.substring(0,s.length()-2)),1);
+            } else if (s.contains("-i")) {
+                return new Complex(Double.parseDouble(s.substring(0,s.length()-2)),-1);
+            }
+            return new Complex(Double.parseDouble(ssplit[0]), Double.parseDouble(ssplit[1].substring(0, ssplit[1].length() - 1)));
+        }
+        return new Complex(Double.parseDouble(s),0);
+    }
+
     @Override
     public String toString(){
         return a+"+"+b+"i";

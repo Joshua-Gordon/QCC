@@ -4,6 +4,7 @@ import javax.swing.*;
 import appUI.AppDialogs;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -180,6 +181,29 @@ public class Gate implements Serializable{
         }
         return g0;
     }
+
+    public static Gate customGate() {
+        String s;
+        boolean done = false;
+        ArrayList<Integer> regs = new ArrayList<>();
+        while(!done) {
+            s = JOptionPane.showInputDialog("Which qubits?");
+            try{
+                regs.add(Integer.parseInt(s));
+            } catch (NumberFormatException nfe) {
+                done = true;
+            }
+        }
+        int len = 1 << regs.size();
+        Complex[][] m = new Complex[len][len];
+        for(int y = 0; y < len; ++y) {
+            for(int x = 0; x < len; ++x) {
+                m[x][y] = Complex.parseComplex(JOptionPane.showInputDialog("Element (" + x + "," + y + ")"));
+            }
+        }
+        return new MultiQubitGate(m,GateType.CUSTOM,regs);
+    }
+
     
     public boolean isSelected() {
     	return selected;
