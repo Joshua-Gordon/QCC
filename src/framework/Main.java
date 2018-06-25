@@ -13,8 +13,7 @@ public class Main {
         w = new Window();
         w.init();
 
-        String s = "0.5-0.5i";
-        System.out.println(Complex.parseComplex(s));
+        Oracle.createPhaseOracle();
 
         cb = CircuitBoard.loadPreviousCircuitBoard();
         w.setTitle(cb.getName());
@@ -26,7 +25,7 @@ public class Main {
     }
     
     
-    /**
+    /*
      * Note, the following code is needed to run the output program
      * from pyquil.parser import parse_program
      * from pyquil.api import QVMConnection
@@ -35,7 +34,7 @@ public class Main {
      * qvm.wavefunction(p).amplitudes
      */
 
-    /**
+    /*
      * Alternatively, to use the QASM output, this code will work:
      * import qiskit
      * qp = qiskit.QuantumProgram()

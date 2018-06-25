@@ -34,8 +34,8 @@ public class Executor {
         FileWriter fw = new FileWriter(src);
         fw.write(quilTemplate.replace("CODE",code));
         fw.close();
-        String interpretorLocation = AppPreferences.get("PyQuil", "Interpreter Location");
-        Process p = Runtime.getRuntime().exec(interpretorLocation + " " + src.getAbsolutePath());
+        String interpreterLocation = AppPreferences.get("PyQuil", "Interpreter Location");
+        Process p = Runtime.getRuntime().exec(interpreterLocation + " " + src.getAbsolutePath());
         BufferedReader isr = new BufferedReader(new InputStreamReader(p.getInputStream()));
         BufferedReader isr1 = new BufferedReader(new InputStreamReader(p.getErrorStream()));
         String res = isr.lines().reduce("",(x,y)-> x+"\n"+y);
@@ -58,8 +58,8 @@ public class Executor {
         fw = new FileWriter(src);
         fw.write(qasmTemplate);
         fw.close();
-        String interpretorLocation = AppPreferences.get("QASM", "Interpreter Location");
-        Process p = Runtime.getRuntime().exec(interpretorLocation + " " + src.getAbsolutePath());
+        String interpreterLocation = AppPreferences.get("QASM", "Interpreter Location");
+        Process p = Runtime.getRuntime().exec(interpreterLocation + " " + src.getAbsolutePath());
         BufferedReader isr = new BufferedReader(new InputStreamReader(p.getInputStream()));
         BufferedReader isr1 = new BufferedReader(new InputStreamReader(p.getErrorStream()));
         String res = isr.lines().reduce("",(x,y)-> x+"\n"+y);
