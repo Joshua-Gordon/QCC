@@ -226,4 +226,19 @@ public class Gate implements Serializable{
     public void setSelected(boolean selected) {
     	this.selected = selected;
     }
+
+    @Override
+    public String toString() {
+        String out = "Gate type: " + this.type.toString() + "\n";
+        if(this.type == GateType.CUSTOM) {
+            out += "Matrix:\n";
+            for(int x = 0; x < this.matrix.length; ++x) {
+                for(int y = 0; y < this.matrix.length; ++y) {
+                    out += this.matrix[x][y].toString() + " ";
+                }
+                out += "\n";
+            }
+        }
+        return out;
+    }
 }

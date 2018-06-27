@@ -16,7 +16,7 @@ public class Oracle { //I really hope this doesn't conflict with any standard li
     private static int width = 300;
     private static int height = 250;
 
-    public static MultiQubitGate createPhaseOracle() throws ScriptException, NoSuchMethodException {
+    public static MultiQubitGate createAncillaOracle() throws ScriptException, NoSuchMethodException {
         int numQubits = Integer.parseInt(JOptionPane.showInputDialog("How many qubits?"));
         String javascript = textDialog(numQubits);
 
@@ -24,30 +24,40 @@ public class Oracle { //I really hope this doesn't conflict with any standard li
         engine.eval(javascript);
 
         Invocable runtime = (Invocable) engine;
+        int size = 1<<(1+numQubits);
 
-        Complex[][] mat = new Complex[numQubits << 1][numQubits << 1];
-        for(int x = 0; x < numQubits; ++x) {
-            for(int y = 0; y < numQubits; ++y) {
-                //Placeholder. Have to figure out how this works
-                mat[x][y] = Complex.parseComplex(runtime.invokeFunction("oracle",x,y).toString());
-                
+        Complex[][] mat = new Complex[size][size];
+        for(int x = 0; x < size; ++x){
+            int length = (int)Math.ceil(Math.log(size));
+            String binary = Integer.toBinaryString(x);
+            for(int i = 0; binary.length() < length; ++i) {
+                binary = "0" + binary;
+            }
+            System.out.println("Binary " + binary);
+            boolean[] qubits = new boolean[binary.length()];
+            for(int i = 0; i < binary.length(); ++i) {
+                qubits[i] = binary.charAt(i) == '1';
+            }
+            boolean out = (boolean)runtime.invokeFunction("oracle",qubits);
+            System.out.println("X: " + x +"\nOut: " + out);
+            for(int y = 0; y < size; ++y){
+                if(!out && x == y){
+                    mat[x][y] = Complex.ONE();
+                } else if(out && (size-1-x) == y){
+                    mat[x][y] = Complex.ONE();
+                } else {
+                    mat[x][y] = Complex.ZERO();
+                }
             }
         }
 
-
-        boolean done = false;
         ArrayList<Integer> regs = new ArrayList<>();
-        while(!done) {
-            String s = JOptionPane.showInputDialog("Which qubits?");
-            try{
-                regs.add(Integer.parseInt(s));
-            } catch (NumberFormatException nfe) {
-                done = true;
-            }
+        for(int i = 0; i < numQubits; ++i) {
+            regs.add(Integer.parseInt(JOptionPane.showInputDialog("Register for qubit " + i)));
         }
-
         return new MultiQubitGate(mat, Gate.GateType.CUSTOM,regs);
     }
+
 
     private static String textDialog(int numQubits) {
         code = "";
@@ -74,11 +84,8 @@ public class Oracle { //I really hope this doesn't conflict with any standard li
     }
 
     private static String getText(int numQubits) {
-        String function = "function oracle(q0";
-        for(int i = 1; i < numQubits; ++i){
-            function += ", q" + i;
-        }
-        function += "){\n\n}";
+        String function = "function oracle(qbitarray)"; //Switched to array
+        function += "{\n\n}\n//Predicate function on array of bools";
         return function;
     }
 }

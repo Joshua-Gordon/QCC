@@ -13,7 +13,18 @@ public class Main {
         w = new Window();
         w.init();
 
-        Oracle.createPhaseOracle();
+        //Oracle test code
+        /*boolean in = false;
+        while(!in) {
+            try {
+                MultiQubitGate g = Oracle.createAncillaOracle();
+                System.out.println(g);
+                in = true;
+            } catch (Exception e) {
+                System.out.println("Bad script!");
+                e.printStackTrace();
+            }
+        }*/
 
         cb = CircuitBoard.loadPreviousCircuitBoard();
         w.setTitle(cb.getName());
