@@ -103,7 +103,7 @@ public final class AppPreferences {
 		add("Remove Last Row", 		KeyEvent.VK_UP);
 		add("Remove Last Column", 	KeyEvent.VK_LEFT);
 		add("Run QUIL", 	   		KeyEvent.VK_R);
-		add("Run QASM", 	   		KeyEvent.VK_S); //Conflicts with Save, we will discuss this on Tuesday
+		add("Run QASM", 	   		KeyEvent.VK_N); //Conflicts with Save, we will discuss this on Tuesday
 	}
 	
 	

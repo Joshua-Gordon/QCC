@@ -127,9 +127,15 @@ public class AppPreferencesWindow extends JDialog {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
 				int index = app.getSelectedIndex();
-				AbstractPreferenceView selectedView = app.getModel().getElementAt(index);
-				CardLayout layout = (CardLayout)preferenceView.getLayout();
-				layout.show(preferenceView, selectedView.toString());
+				if(index != -1) {
+					AbstractPreferenceView selectedView = app.getModel().getElementAt(index);
+					CardLayout layout = (CardLayout)preferenceView.getLayout();
+					layout.show(preferenceView, selectedView.toString());
+				}else if(app.getModel().getSize() > 0){
+					app.setSelectedIndex(0);
+					CardLayout layout = (CardLayout)preferenceView.getLayout();
+					layout.show(preferenceView, app.getModel().getElementAt(0).toString());
+				}
 			}
 		});
 		return app;

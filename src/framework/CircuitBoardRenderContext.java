@@ -16,7 +16,11 @@ import utils.ResourceLoader;
 
 public class CircuitBoardRenderContext {
 	
-		
+	
+	private static final BasicStroke DASHED = new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, new float[]{5.f}, 0.0f);
+	private static final BasicStroke HEAVY = new BasicStroke(3, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+	private static final BasicStroke BASIC = new BasicStroke(1);
+	
 	private static void drawCenteredString(Graphics g, String text, int x, int y, int width, int height) {
 		FontMetrics fm = g.getFontMetrics();
 		Rectangle2D r2 = fm.getStringBounds(text, g);
@@ -25,9 +29,6 @@ public class CircuitBoardRenderContext {
 		g.drawString(text, xc, yc);
 	}
 	
-	private static final BasicStroke DASHED = new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, new float[]{5.f}, 0.0f);
-	private static final BasicStroke HEAVY = new BasicStroke(3, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
-	private static final BasicStroke BASIC = new BasicStroke(1);
 	@SuppressWarnings("incomplete-switch")
 	public static BufferedImage render(CircuitBoard circuitBoard){
 		ArrayList<ArrayList<Gate>> board = circuitBoard.board;
@@ -78,7 +79,7 @@ public class CircuitBoardRenderContext {
                         drawCenteredString(g, "M", x*unit, y*unit, unit, unit);
                         break;
                     case CNOT:
-                        g.setColor(Color.DARK_GRAY);
+                    	g.setColor(Color.BLACK);
                         g.drawLine(x*unit,y*unit + (unit>>1),(x+1)*unit,y*unit + (unit>>1));
                     	g2d.setStroke(HEAVY);
                         int len = board.get(x).get(y).length;
@@ -94,7 +95,7 @@ public class CircuitBoardRenderContext {
                         g2d.setStroke(BASIC);
                         break;
                     case SWAP:
-                    	g.setColor(Color.DARK_GRAY);
+                    	g.setColor(Color.BLACK);
                         g.drawLine(x*unit,y*unit + (unit>>1),(x+1)*unit,y*unit + (unit>>1));
                         //Diagonal lines
                     	g2d.setStroke(HEAVY);
