@@ -81,6 +81,10 @@ public final class AppPreferences {
 		setType("QASM");
 		add("Interpreter Location", "python");
 		
+		
+//		If you want to be able to add action commands to the preferences window (so the user can change them)...
+//		add the name of your preference in ActionCommandPreferencesView.java using the addTableItem() function in the constructor
+		
 		setType("Action Commands");
 		add("Open Circuit",    		KeyEvent.VK_O);
 		add("Save Circuit as", 		KeyEvent.VK_A);
@@ -103,7 +107,7 @@ public final class AppPreferences {
 		add("Remove Last Row", 		KeyEvent.VK_UP);
 		add("Remove Last Column", 	KeyEvent.VK_LEFT);
 		add("Run QUIL", 	   		KeyEvent.VK_R);
-		add("Run QASM", 	   		KeyEvent.VK_N); //Conflicts with Save, we will discuss this on Tuesday
+		add("Run QASM", 	   		KeyEvent.VK_N);
 	}
 	
 	

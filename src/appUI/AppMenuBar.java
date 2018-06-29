@@ -29,6 +29,7 @@ public class AppMenuBar extends JMenuBar {
 		menu.add(mkItem("Save"));
 		menu.addSeparator();
 			subMenu = new JMenu("Export to");
+			subMenu.add(mkItem("PNG Image"));
 			subMenu.add(mkItem("QUIL"));
 			subMenu.add(mkItem("QASM"));
 			subMenu.add(mkItem("Quipper"));
@@ -69,6 +70,7 @@ public class AppMenuBar extends JMenuBar {
 		add(menu);
 		
 	}
+	
 	
 	private JMenuItem mkItem(String label) {
 		JMenuItem item = new JMenuItem(label);

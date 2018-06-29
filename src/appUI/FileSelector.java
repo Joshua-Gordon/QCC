@@ -1,30 +1,73 @@
 package appUI;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.URI;
 
+import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 
 import framework.CircuitBoard;
 import framework.Main;
 
-public class CircuitFileSelector {
+public class FileSelector {
 	
     public static final String UNSAVED_FILE_NAME = "Untitled";
 	public static final String CIRCUIT_BOARD_EXT;
 	public static final String CIRCUIT_BOARD_DES;
+	public static final String PNG_EXT;
+	public static final String PNG_DES;
 	
 	static {
+		PNG_EXT = ".png";
+		PNG_DES = "Portable Network Graphic PNG (*" + PNG_EXT + ")";
 		CIRCUIT_BOARD_EXT = ".qcir";
 		CIRCUIT_BOARD_DES = "Quantum Circuit Boards (*" + CIRCUIT_BOARD_EXT + ")";
 	}
 	
+	public static void exportPNG(CircuitBoard cb, File focusedDirectory){
+		final JFileChooser fileChooser = new JFileChooser();
+		fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		fileChooser.setMultiSelectionEnabled(false);
+		fileChooser.setFileFilter(new PNGBoardFilter());
+		fileChooser.setDialogTitle("Export To PNG");
+		fileChooser.setAcceptAllFileFilterUsed(false);
+		fileChooser.setCurrentDirectory(focusedDirectory);
+		
+		final int option1 = fileChooser.showDialog(Main.w.getFrame(), "Export");
+		
+		if(option1 == JFileChooser.APPROVE_OPTION) {
+			File choosenFile = fileChooser.getSelectedFile();
+			if(choosenFile.exists() && choosenFile.isDirectory()) {
+				AppDialogs.fileIsntValid(Main.w.getFrame(), choosenFile);
+				exportPNG(cb, choosenFile.getParentFile());
+			}else if(!choosenFile.getName().endsWith(PNG_EXT)) {
+				AppDialogs.fileExtIsntValid(Main.w.getFrame(), choosenFile, PNG_EXT);
+				exportPNG(cb, choosenFile.getParentFile());
+			}else {
+				int option2 = 0;
+				if(choosenFile.exists()) {
+					option2 = AppDialogs.fileReplacePrompt(Main.w.getFrame(), choosenFile);
+				}
+				if(option2 == 0) {
+					BufferedImage picture = CircuitBoardRenderContext.render(cb, false);
+					try {
+						ImageIO.write(picture, "png", choosenFile);
+					} catch (IOException e) {
+						AppDialogs.couldNotExport(Main.w.getFrame());
+						e.printStackTrace();
+					}
+				}else {
+					exportPNG(cb, choosenFile.getParentFile());
+				}
+			}
+		}
+	}
 	
 //	returns "0" if operation is canceled, "1" if continued with or without saving, "2" if file needs to be saved
 	public static int warnIfBoardIsEdited() {
@@ -41,11 +84,11 @@ public class CircuitFileSelector {
 	}
 	
 	public static void createNewBoard() {
-		final int option = CircuitFileSelector.warnIfBoardIsEdited();
+		final int option = FileSelector.warnIfBoardIsEdited();
     	if(option > 0) {
     		boolean followThrough = true;
     		if(option == 2) {
-    			followThrough = CircuitFileSelector.saveBoard();
+    			followThrough = FileSelector.saveBoard();
     		}
     		if(followThrough) {
         		Main.cb = CircuitBoard.getDefaultCircuitBoard();
@@ -245,6 +288,18 @@ public class CircuitFileSelector {
 		@Override
 		public String getDescription() {
 			return CIRCUIT_BOARD_DES;
+		}
+	}
+	
+	private static class PNGBoardFilter extends FileFilter{
+		@Override
+		public boolean accept(File f) {
+			if(f.isDirectory()) return true;
+			return f.getName().toLowerCase().endsWith(PNG_EXT);
+		}
+		@Override
+		public String getDescription() {
+			return PNG_DES;
 		}
 	}
 	

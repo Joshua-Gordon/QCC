@@ -1,5 +1,6 @@
 package framework;
 
+import appUI.CircuitBoardRenderContext;
 import appUI.Window;
 
 public class Main {
@@ -28,11 +29,11 @@ public class Main {
 
         cb = CircuitBoard.loadPreviousCircuitBoard();
         w.setTitle(cb.getName());
-        w.display(CircuitBoardRenderContext.render(cb));
+        w.display(CircuitBoardRenderContext.render(cb, true));
     }
 
     public static void render(){
-    	w.display(CircuitBoardRenderContext.render(cb));
+    	w.display(CircuitBoardRenderContext.render(cb, true));
     }
     
     

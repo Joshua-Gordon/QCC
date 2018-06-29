@@ -9,7 +9,7 @@ import java.util.function.Supplier;
 
 
 import appUI.AppDialogs;
-import appUI.CircuitFileSelector;
+import appUI.FileSelector;
 import preferences.AppPreferences;
 
 public class CircuitBoard implements Serializable{
@@ -18,7 +18,7 @@ public class CircuitBoard implements Serializable{
 	private transient URI fileLocation = null;
 	private transient boolean mutated = false;
 	
-    ArrayList<ArrayList<Gate>> board;
+    public ArrayList<ArrayList<Gate>> board;
     HashMap<String,Gate> customGates;
 
     public static EnumMap<Gate.GateType,Supplier<Gate>> gatemap;
@@ -52,7 +52,7 @@ public class CircuitBoard implements Serializable{
     	String url = AppPreferences.get("File IO", "Previous File Location");
         File file = new File(url);
         if(url != "" && file.exists()) {
-        	board = CircuitFileSelector.openFile(file);
+        	board = FileSelector.openFile(file);
         	if(board == null)
         		board = CircuitBoard.getDefaultCircuitBoard();
         }else {
@@ -148,7 +148,7 @@ public class CircuitBoard implements Serializable{
     
     public String getName() {
     	if(fileLocation == null) {
-    		return CircuitFileSelector.UNSAVED_FILE_NAME;
+    		return FileSelector.UNSAVED_FILE_NAME;
     	}
     	File file = new File(fileLocation);
     	return file.getName();

@@ -1,4 +1,4 @@
-package framework;
+package appUI;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -11,6 +11,8 @@ import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
+import framework.CircuitBoard;
+import framework.Gate;
 import utils.ResourceLoader;
 
 
@@ -30,7 +32,7 @@ public class CircuitBoardRenderContext {
 	}
 	
 	@SuppressWarnings("incomplete-switch")
-	public static BufferedImage render(CircuitBoard circuitBoard){
+	public static BufferedImage render(CircuitBoard circuitBoard, boolean withGrid){
 		ArrayList<ArrayList<Gate>> board = circuitBoard.board;
         int unit = Gate.GATE_PIXEL_SIZE;
         BufferedImage image = new BufferedImage(board.size()*unit, board.get(0).size()*unit,BufferedImage.TYPE_INT_RGB);
@@ -42,10 +44,12 @@ public class CircuitBoardRenderContext {
     	g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         for(int x = 0; x < board.size(); ++x) {
             for(int y = 0; y < board.get(0).size(); ++y) {
-                g.setColor(Color.LIGHT_GRAY);
-                g2d.setStroke(DASHED);
-                g2d.draw(new RoundRectangle2D.Double(x*unit,y*unit,unit,unit, 10, 10));
-                g.drawRect(x*unit,y*unit,unit-1,unit-1);
+            	if(withGrid) {
+            		g.setColor(Color.LIGHT_GRAY);
+                	g2d.setStroke(DASHED);
+                	g2d.draw(new RoundRectangle2D.Double(x*unit,y*unit,unit,unit, 10, 10));
+                	g.drawRect(x*unit,y*unit,unit-1,unit-1);
+            	}
                 g2d.setStroke(BASIC);
                 Gate gate = board.get(x).get(y);
                 switch(gate.type){

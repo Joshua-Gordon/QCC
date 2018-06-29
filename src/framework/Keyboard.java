@@ -4,7 +4,7 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 
 
-import appUI.CircuitFileSelector;
+import appUI.FileSelector;
 import preferences.AppPreferencesWindow;
 
 public class Keyboard implements ActionListener, Runnable {
@@ -47,6 +47,10 @@ public class Keyboard implements ActionListener, Runnable {
             break;
 
 //		Export Types
+            
+        case "PNG Image":
+        	FileSelector.exportPNG(Main.cb, null);
+        	break;
         case "QUIL":
             System.out.println(Translator.translateQUIL());
             Main.w.getConsole().println(Translator.translateQUIL());
@@ -62,16 +66,16 @@ public class Keyboard implements ActionListener, Runnable {
 
 //      File Selections
         case "New Circuit":
-        	CircuitFileSelector.createNewBoard();
+        	FileSelector.createNewBoard();
         	break;
         case "Open Circuit":
-        	CircuitFileSelector.selectBoardFromFileSystem();
+        	FileSelector.selectBoardFromFileSystem();
         	break;
         case "Save Circuit as":
-        	CircuitFileSelector.saveBoardToFileSystem();
+        	FileSelector.saveBoardToFileSystem();
         	break;
         case "Save":
-        	CircuitFileSelector.saveBoard();
+        	FileSelector.saveBoard();
         	break;
 
 //      Preferences

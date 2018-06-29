@@ -27,7 +27,7 @@ public class Gate implements Serializable{
     public String name;
     private transient boolean selected = false;
     
-    int length = 0;
+    public int length = 0;
 
     public static String typeToString(GateType gt, LangType lt){
         if(lt == LangType.QUIL) {

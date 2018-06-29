@@ -35,7 +35,7 @@ public class Window extends WindowAdapter{
     public Window() {
         this.frame = new JFrame();
         this.keyboard = new Keyboard();
-        setTitle(CircuitFileSelector.UNSAVED_FILE_NAME);
+        setTitle(FileSelector.UNSAVED_FILE_NAME);
         frame.setSize(WIDTH,HEIGHT);
         frame.setResizable(true);
         frame.setLocationRelativeTo(null);
@@ -126,7 +126,7 @@ public class Window extends WindowAdapter{
     		if(option == 0) {
     			closeProgram();
     		}else if(option == 1) {
-    			if(CircuitFileSelector.saveBoard())
+    			if(FileSelector.saveBoard())
     				closeProgram();
     		}
     	}else {

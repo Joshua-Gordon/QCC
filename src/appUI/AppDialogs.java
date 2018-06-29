@@ -78,6 +78,10 @@ public class AppDialogs {
 		errorMsg(parent, "Programic Error");
 	}
 	
+	public static void couldNotExport(Component parent) {
+		errorMsg(parent, "Could not export File");
+	}
+	
 	public static void couldNotOpenFile(Component parent) {
 		errorMsg(parent, "Could not open File");
 	}
