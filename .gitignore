@@ -359,4 +359,4 @@ TSWLatexianTemp*
 # End of https://www.gitignore.io/api/latex,eclipse,intellij
 # More stuff now
 *.class
-*.xml
+.idea/workspace.xml

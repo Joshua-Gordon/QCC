@@ -10,15 +10,25 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
+/**
+ * Methods to construct a quantum oracle as a multi-qubit gate
+ */
 public class Oracle { //I really hope this doesn't conflict with any standard library components
+
 
     private static String code;
     private static int width = 300;
     private static int height = 250;
 
+    /**
+     *
+     * @return A multi-qubit gate that computes the oracle using an ancilla. Asks user to input a boolean function with Nashorn.
+     * @throws ScriptException When the user writes code that throws an error
+     * @throws NoSuchMethodException If the user changes the name of the provided function
+     */
     public static MultiQubitGate createAncillaOracle() throws ScriptException, NoSuchMethodException {
         int numQubits = Integer.parseInt(JOptionPane.showInputDialog("How many qubits?"));
-        String javascript = textDialog(numQubits);
+        String javascript = textDialog();
 
         ScriptEngine engine = new ScriptEngineManager().getEngineByName("nashorn");
         engine.eval(javascript);
@@ -58,8 +68,11 @@ public class Oracle { //I really hope this doesn't conflict with any standard li
         return new MultiQubitGate(mat, Gate.GateType.CUSTOM,regs);
     }
 
-
-    private static String textDialog(int numQubits) {
+    /**
+     * Creates a dialog that allows the user to input code
+     * @return The javascript code for  the oracle
+     */
+    private static String textDialog() {
         code = "";
         final JFrame frame = new JFrame("Not an oracle product");
         frame.setSize(width,height);
@@ -69,7 +82,7 @@ public class Oracle { //I really hope this doesn't conflict with any standard li
         JButton button = new JButton("Submit function");
         d.add(button,BorderLayout.SOUTH);
         JTextArea textfield = new JTextArea();
-        textfield.setText(getText(numQubits));
+        textfield.setText(getText());
         d.add(textfield,BorderLayout.CENTER);
         button.addActionListener(e -> {
             code = textfield.getText();
@@ -83,7 +96,11 @@ public class Oracle { //I really hope this doesn't conflict with any standard li
         return code;
     }
 
-    private static String getText(int numQubits) {
+    /**
+     * Generates the code for the oracle function
+     * @return
+     */
+    private static String getText() {
         String function = "function oracle(qbitarray)"; //Switched to array
         function += "{\n\n}\n//Predicate function on array of bools";
         return function;

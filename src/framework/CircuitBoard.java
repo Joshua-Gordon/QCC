@@ -22,8 +22,9 @@ public class CircuitBoard implements Serializable{
     HashMap<String,Gate> customGates;
 
     public static EnumMap<Gate.GateType,Supplier<Gate>> gatemap;
-    
-    static {
+
+    //initialize gatemap
+	static {
     	gatemap = new EnumMap<Gate.GateType, Supplier<Gate>>(Gate.GateType.class);
         gatemap.put(Gate.GateType.I,Gate::identity);
         gatemap.put(Gate.GateType.H,Gate::hadamard);
@@ -35,7 +36,8 @@ public class CircuitBoard implements Serializable{
         gatemap.put(Gate.GateType.SWAP,Gate::swap);
         gatemap.put(Gate.GateType.CUSTOM,Gate::customGate);
     }
-    
+
+    //Empty 5x5 board
     public static CircuitBoard getDefaultCircuitBoard() {
     	CircuitBoard board = new CircuitBoard();
     	for(int i = 0; i < 5; ++i){
@@ -97,7 +99,7 @@ public class CircuitBoard implements Serializable{
        	}
     }
 
-
+	//Takes all selected gates and sets them to type g
     public void edit(Gate.GateType g) {
     	mutate();
         for(int x = 0; x < board.size(); ++x) {

@@ -8,22 +8,27 @@ import framework.Gate.LangType;
 
 public class Translator {
 
+    /**
+     * Takes the main circuitboard and outputs QUIL code
+     * @return QUIL code
+     */
     public static String translateQUIL(){ //Translates to Quil
         String code = "";
         ArrayList<ArrayList<Gate>> boardTemp = Main.cb.board;
         ArrayList<ArrayList<Gate>> board = new ArrayList<>();
         ArrayList<String> customGates = new ArrayList<>();
         for(int i = 0; i < boardTemp.size(); ++i) {
-            board.add(boardTemp.get(i));
+            board.add(boardTemp.get(i)); //Copy to other circuitboard because safety
         }
-        int offset = 20;
+        int offset = 20; //Hardcoded right now, should be height of circuit board. This is the offset from the top of the circuitboard
+                         //and is computed as the board is parsed
         for(int x = 0; x < board.size(); ++x){
-            ArrayList<Gate> instructions = board.get(x);
-            for(int i = 0; i < instructions.size(); ++i){ //i represents the column
+            ArrayList<Gate> instructions = board.get(x); //Current column of instructions
+            for(int i = 0; i < instructions.size(); ++i){
                 Gate g = instructions.get(i);
                 if(g.type != Gate.GateType.I && g.type != GateType.CUSTOM) {
-                    int idx = i;// - offset;
-                    if(idx+g.length < offset) {
+                    int idx = i;
+                    if(idx+g.length < offset) { //Don't cut off a long gate at the bottom of the circuit
                         offset = idx+g.length;
                     }
                     code += Gate.typeToString(g.type, Gate.LangType.QUIL);
@@ -31,7 +36,7 @@ public class Translator {
                     code += idx;
                     if (g.type == Gate.GateType.CNOT || g.type == Gate.GateType.SWAP) {
                         code += " ";
-                        code += (idx + g.length);
+                        code += (idx + g.length); //Second index
                     }
                     if (g.type == Gate.GateType.MEASURE) {
                         code += " [";
@@ -39,39 +44,43 @@ public class Translator {
                         code += "]";
                     }
                     code += "\n";
-                } else if(g.type == GateType.CUSTOM) {
+                } else if(g.type == GateType.CUSTOM) { //All bets are off. Special code to handle these
                     MultiQubitGate mqg = (MultiQubitGate) g;
                     int idx = i;
                     if(idx + g.length < offset) {
                         offset = idx + mqg.length;
                     }
-                    if(!customGates.contains(mqg.name)) {
-                        customGates.add(mqg.name);
-                        String dec = "DEFGATE " + mqg.name + ":";
+                    if(!customGates.contains(mqg.name)) { //If this is a new gate
+                        customGates.add(mqg.name);        //Then add it to the known gates
+                        String dec = "DEFGATE " + mqg.name + ":"; //And define it in the code
                         Complex[][] m = mqg.matrix;
                         for(int my = 0; my < m.length; ++my) {
                             dec += "\n    ";
-                            for(int mx = 0; mx < m.length; ++mx) {
+                            for(int mx = 0; mx < m.length; ++mx) { //This copies down the matrix into the code
                                 dec += m[mx][my].toString();
                                 if(mx+1 < m.length)
                                     dec += ", ";
                             }
                         }
-                        code += dec;
+                        code += dec; //Delcaration of gate
                         code += "\n";
                     }
                     code += g.name + " ";
                     for (int r : mqg.registers) {
-                        code += r + " ";
+                        code += r + " "; //Apply the gate to all the registers it's on
                     }
                     code += "\n";
                 }
             }
         }
-        return fixQUIL(code,offset);
+        return fixQUIL(code,offset); //Fix offset
     }
 
-    public static String translateQASM(){ //Translates to QASM
+    /**
+     * Takes the main circuit board and translates it to QASM
+     * @return
+     */
+    public static String translateQASM(){ //Translates to QASM. Same idea as the quil one
         String code = "OPENQASM 2.0;\ninclude \"qelib1.inc\";\nqreg q[";
 
         ArrayList<ArrayList<Gate>> boardTemp = Main.cb.board;
@@ -119,7 +128,7 @@ public class Translator {
         return fixQASM(code,offset);
     }
 
-    private static String fixQUIL(String code, int offset) {
+    private static String fixQUIL(String code, int offset) { //Subtract offset from all registers
         String[] lines = code.split("\n");
         String output = "";
         for(String line : code.split("\n")){
@@ -144,7 +153,7 @@ public class Translator {
         return output;
     }
 
-    private static String fixQASM(String code, int offset) {
+    private static String fixQASM(String code, int offset) { //Subtract offset from all registers
         String[] lines = code.split("\n");
         String output = "";
         for(int i = 0; i < 4; ++i) {
@@ -169,7 +178,7 @@ public class Translator {
         return output;
     }
 
-    private static int getQubits(ArrayList<ArrayList<Gate>> board) {
+    private static int getQubits(ArrayList<ArrayList<Gate>> board) { //Counts number of qubits used in circuit
         boolean[] hasGate = new boolean[board.size()];
         for(int i = 0; i < hasGate.length; ++i) {
             hasGate[i] = false;
@@ -191,7 +200,12 @@ public class Translator {
         return sum+1;
     }
 
-    public static ArrayList<ArrayList<Gate>> loadQuil(String quil) {
+    /**
+     *
+     * @param quil A string containing quil code
+     * @return A double arraylist of gates representing a circuit
+     */
+    public static ArrayList<ArrayList<Gate>> loadQuil(String quil) { //Parses quil into a circuit diagram
         ArrayList<ArrayList<Gate>> board = new ArrayList<>();
         int maxLen = 0;
         for(String line : quil.split("\n")) {
@@ -258,6 +272,10 @@ public class Translator {
         return transpose;
     }
 
+    /**
+     * Outputs quipper ASCII
+     * @return Quipper ASCII representing the main circuit
+     */
     public static String translateQuipper(){
         String code = "Inputs: None\n";
         ArrayList<ArrayList<Gate>> board = Main.cb.board;
@@ -318,6 +336,11 @@ public class Translator {
         return newCode;
     }
 
+    /**
+     *
+     * @param s String possibly being a complex number
+     * @return true if it is a complex number
+     */
     private static boolean isNumber(String s){
         String[] ss = s.split(",");
         try{

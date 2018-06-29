@@ -29,6 +29,12 @@ public class Executor {
                     "   print(ret.get_counts(name))";
 
 
+    /**
+     * This runs the current circuit using a QUIL backend
+     * @param code A quil program as a string
+     * @return The output of the QUIL simulator
+     * @throws IOException if the file cannot be run
+     */
     public static String runQuil(String code) throws IOException {
         File src = ResourceLoader.addTempFile("temp.py");
         FileWriter fw = new FileWriter(src);
@@ -49,6 +55,12 @@ public class Executor {
         return res;
     }
 
+    /**
+     * Runs circuit with QASM backend.
+     * @param code
+     * @return
+     * @throws IOException
+     */
     public static String runQASM(String code) throws IOException {
         File qsrc = ResourceLoader.addTempFile("test.qasm");
         File src = ResourceLoader.addTempFile("temp.py");
