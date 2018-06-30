@@ -1,17 +1,21 @@
 package framework;
 
+import java.awt.BorderLayout;
+import java.util.ArrayList;
+
 import javax.script.Invocable;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JTextArea;
+import javax.swing.WindowConstants;
 
 import mathLib.Complex;
-
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
+import mathLib.Matrix;
 
 /**
  * Methods to construct a quantum oracle as a multi-qubit gate
@@ -39,7 +43,7 @@ public class Oracle { //I really hope this doesn't conflict with any standard li
         Invocable runtime = (Invocable) engine;
         int size = 1<<(1+numQubits);
 
-        Complex[][] mat = new Complex[size][size];
+        Matrix<Complex> mat = new Matrix<Complex>(Complex.ZERO(), size, size);
         for(int x = 0; x < size; ++x){
             int length = (int)Math.ceil(Math.log(size));
             String binary = Integer.toBinaryString(x);
@@ -55,11 +59,11 @@ public class Oracle { //I really hope this doesn't conflict with any standard li
             System.out.println("X: " + x +"\nOut: " + out);
             for(int y = 0; y < size; ++y){
                 if(!out && x == y){
-                    mat[x][y] = Complex.ONE();
+                    mat.r(Complex.ONE(), x, y);
                 } else if(out && (size-1-x) == y){
-                    mat[x][y] = Complex.ONE();
+                	mat.r(Complex.ONE(), x, y);
                 } else {
-                    mat[x][y] = Complex.ZERO();
+                	mat.r(Complex.ZERO(), x, y);
                 }
             }
         }
@@ -68,7 +72,7 @@ public class Oracle { //I really hope this doesn't conflict with any standard li
         for(int i = 0; i < numQubits; ++i) {
             regs.add(Integer.parseInt(JOptionPane.showInputDialog("Register for qubit " + i)));
         }
-        return new MultiQubitGate(mat, Gate.GateType.CUSTOM,regs);
+        return new MultiQubitGate(mat, DefaultGate.GateType.CUSTOM,regs);
     }
 
     /**

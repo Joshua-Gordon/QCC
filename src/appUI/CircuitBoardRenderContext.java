@@ -12,7 +12,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 import framework.CircuitBoard;
-import framework.Gate;
+import framework.DefaultGate;
 import utils.ResourceLoader;
 
 
@@ -33,8 +33,8 @@ public class CircuitBoardRenderContext {
 	
 	@SuppressWarnings("incomplete-switch")
 	public static BufferedImage render(CircuitBoard circuitBoard, boolean withGrid){
-		ArrayList<ArrayList<Gate>> board = circuitBoard.board;
-        int unit = Gate.GATE_PIXEL_SIZE;
+		ArrayList<ArrayList<DefaultGate>> board = circuitBoard.board;
+        int unit = DefaultGate.GATE_PIXEL_SIZE;
         BufferedImage image = new BufferedImage(board.size()*unit, board.get(0).size()*unit,BufferedImage.TYPE_INT_RGB);
         Graphics g = image.getGraphics();
         g.setColor(Color.WHITE);
@@ -51,8 +51,8 @@ public class CircuitBoardRenderContext {
                 	g.drawRect(x*unit,y*unit,unit-1,unit-1);
             	}
                 g2d.setStroke(BASIC);
-                Gate gate = board.get(x).get(y);
-                switch(gate.type){
+                DefaultGate gate = board.get(x).get(y);
+                switch(gate.getType()){
                     case I:
                         g.setColor(Color.BLACK);
                         g.drawLine(x*unit,y*unit + 32,(x+1)*unit,y*unit + 32);

@@ -18,23 +18,22 @@ public class CircuitBoard implements Serializable{
 	private transient URI fileLocation = null;
 	private transient boolean mutated = false;
 	
-    public ArrayList<ArrayList<Gate>> board;
-    HashMap<String,Gate> customGates;
+    public ArrayList<ArrayList<DefaultGate>> board;
+    HashMap<String,DefaultGate> customGates;
 
-    public static EnumMap<Gate.GateType,Supplier<Gate>> gatemap;
+    public static EnumMap<DefaultGate.GateType,Supplier<DefaultGate>> gatemap;
 
     //initialize gatemap
 	static {
-    	gatemap = new EnumMap<Gate.GateType, Supplier<Gate>>(Gate.GateType.class);
-        gatemap.put(Gate.GateType.I,Gate::identity);
-        gatemap.put(Gate.GateType.H,Gate::hadamard);
-        gatemap.put(Gate.GateType.X,Gate::x);
-        gatemap.put(Gate.GateType.Y,Gate::y);
-        gatemap.put(Gate.GateType.Z,Gate::z);
-        gatemap.put(Gate.GateType.MEASURE,Gate::measure);
-        gatemap.put(Gate.GateType.CNOT,Gate::cnot);
-        gatemap.put(Gate.GateType.SWAP,Gate::swap);
-        gatemap.put(Gate.GateType.CUSTOM,Gate::customGate);
+    	gatemap = new EnumMap<DefaultGate.GateType, Supplier<DefaultGate>>(DefaultGate.GateType.class);
+        gatemap.put(DefaultGate.GateType.I,DefaultGate::identity);
+        gatemap.put(DefaultGate.GateType.H,DefaultGate::hadamard);
+        gatemap.put(DefaultGate.GateType.X,DefaultGate::x);
+        gatemap.put(DefaultGate.GateType.Y,DefaultGate::y);
+        gatemap.put(DefaultGate.GateType.Z,DefaultGate::z);
+        gatemap.put(DefaultGate.GateType.MEASURE,DefaultGate::measure);
+        gatemap.put(DefaultGate.GateType.CNOT,DefaultGate::cnot);
+        gatemap.put(DefaultGate.GateType.SWAP,DefaultGate::swap);
     }
 
     //Empty 5x5 board
@@ -69,14 +68,14 @@ public class CircuitBoard implements Serializable{
 
     public void addRow() {
     	mutate();
-        for(ArrayList<Gate> a : board)
-            a.add(Gate.identity());
+        for(ArrayList<DefaultGate> a : board)
+            a.add(DefaultGate.identity());
     }
 
     public void removeRow() {
     	if(board.get(0).size() > 1) {
 	    	mutate();
-	        for(ArrayList<Gate> a : board)
+	        for(ArrayList<DefaultGate> a : board)
 	            a.remove(a.size() - 1);
     	}else {
     		AppDialogs.couldNotRemoveRow(Main.w.getFrame());
@@ -87,7 +86,7 @@ public class CircuitBoard implements Serializable{
     	mutate();
         board.add(new ArrayList<>());
         for(int i = 0; i < board.get(0).size(); ++i)
-            board.get(board.size()-1).add(Gate.identity());
+            board.get(board.size()-1).add(DefaultGate.identity());
     }
     
     public void removeColumn(){
@@ -100,13 +99,13 @@ public class CircuitBoard implements Serializable{
     }
 
 	//Takes all selected gates and sets them to type g
-    public void edit(Gate.GateType g) {
+    public void edit(DefaultGate.GateType g) {
     	mutate();
         for(int x = 0; x < board.size(); ++x) {
             for(int y = 0; y < board.get(0).size(); ++y) {
-                Gate gate = board.get(x).get(y);
+                DefaultGate gate = board.get(x).get(y);
                 if(gate.isSelected()) {
-                    Gate newGate = gatemap.get(g).get();
+                    DefaultGate newGate = gatemap.get(g).get();
                     if(newGate != null) {
                     	board.get(x).set(y,newGate);
                     }

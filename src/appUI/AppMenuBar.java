@@ -67,7 +67,6 @@ public class AppMenuBar extends JMenuBar {
 		
 		menu = new JMenu("View");
 		menu.add(mkViewItem(window.getConsole()));
-		menu.add(mkViewItem(window.getGateConstructor()));
 		add(menu);
 		
 	}

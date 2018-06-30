@@ -1,16 +1,14 @@
 package framework;
-import javax.swing.*;
+import java.io.Serializable;
+
+import javax.swing.JOptionPane;
 
 import appUI.AppDialogs;
+import appUI.CustomGateConstructorUI;
 import mathLib.Complex;
+import mathLib.Matrix;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.function.Function;
-import java.util.function.Supplier;
-
-public class Gate implements Serializable{
+public class DefaultGate extends AbstractGate implements Serializable{
 	private static final long serialVersionUID = 6220371128991814182L;
 	
 	
@@ -23,9 +21,8 @@ public class Gate implements Serializable{
     
     public static int GATE_PIXEL_SIZE = 64;
 
-    public Complex[][] matrix;
-    public GateType type;
-    public String name;
+    private GateType type;
+    private String name;
     private transient boolean selected = false;
     
     public int length = 0;
@@ -92,66 +89,57 @@ public class Gate implements Serializable{
         return "ERROR";
     }
 
-    public Gate(Complex[][] mat, GateType gt) {
-        this.matrix = mat;
+    public DefaultGate(Matrix<Complex> mat, GateType gt) {
+        setMatrix(mat);
         this.type = gt;
     }
 
-    public Gate(GateType gt){
-        matrix = identity().matrix;
+    public DefaultGate(GateType gt){
+        setMatrix(identity().getMatrix());
         this.type = gt;
     }
 
-    public static Gate identity() {
-        Complex[][] mat = new Complex[2][2];
-        mat[0][0] = Complex.ONE();
-        mat[0][1] = Complex.ZERO();
-        mat[1][0] = Complex.ZERO();
-        mat[1][1] = Complex.ONE();
-        return new Gate(mat,GateType.I);
+    public static DefaultGate identity() {
+        Matrix<Complex> mat = new Matrix<>(2, 2, 
+        		Complex.ONE(), Complex.ZERO(),
+        		Complex.ZERO(), Complex.ONE());
+        return new DefaultGate(mat,GateType.I);
     }
 
-    public static Gate hadamard() { //bam
-        Complex[][] mat = new Complex[2][2];
-        mat[0][0] = Complex.ONE().mult(Complex.ISQRT2());
-        mat[0][1] = Complex.ONE().mult(Complex.ISQRT2());
-        mat[1][0] = Complex.ONE().mult(Complex.ISQRT2());
-        mat[1][1] = Complex.ONE().mult(Complex.ISQRT2()).negative();
-        return new Gate(mat,GateType.H);
+    public static DefaultGate hadamard() { //bam
+        Matrix<Complex> mat = new Matrix<>(2, 2, 
+        		Complex.ONE(), Complex.ONE(), 
+        		Complex.ONE(), Complex.ONE().negative())
+        		.mult(Complex.ISQRT2());
+        return new DefaultGate(mat,GateType.H);
     }
 
-    public static Gate x(){
-        Complex[][] mat = new Complex[2][2];
-        mat[0][0] = Complex.ZERO();
-        mat[0][1] = Complex.ONE();
-        mat[1][0] = Complex.ONE();
-        mat[1][1] = Complex.ZERO();
-        return new Gate(mat,GateType.X);
+    public static DefaultGate x(){
+    	Matrix<Complex> mat = new Matrix<>(2, 2, 
+    			Complex.ZERO(), Complex.ONE(), 
+    			Complex.ONE(), Complex.ZERO());
+        return new DefaultGate(mat,GateType.X);
     }
 
-    public static Gate y(){
-        Complex[][] mat = new Complex[2][2];
-        mat[0][0] = Complex.ZERO();
-        mat[0][1] = Complex.I().negative();
-        mat[1][0] = Complex.I();
-        mat[1][1] = Complex.ZERO();
-        return new Gate(mat,GateType.Y);
+    public static DefaultGate y(){
+    	Matrix<Complex> mat = new Matrix<>(2, 2, 
+    			Complex.ZERO(), Complex.I().negative(), 
+    			Complex.I(), Complex.ZERO());
+        return new DefaultGate(mat,GateType.Y);
     }
 
-    public static Gate z(){
-        Complex[][] mat = new Complex[2][2];
-        mat[0][0] = Complex.ONE();
-        mat[0][1] = Complex.ZERO();
-        mat[1][0] = Complex.ZERO();
-        mat[1][1] = Complex.ONE().negative();
-        return new Gate(mat,GateType.Z);
+    public static DefaultGate z(){
+    	Matrix<Complex> mat = new Matrix<>(2, 2, 
+    			Complex.ONE(), Complex.ZERO(), 
+    			Complex.ZERO(), Complex.ONE().negative());
+        return new DefaultGate(mat,GateType.Z);
     }
 
-    public static Gate measure(){
-        return new Gate(GateType.MEASURE);
+    public static DefaultGate measure(){
+        return new DefaultGate(GateType.MEASURE);
     }
-    public static Gate cnot(){
-        Gate g = new Gate(GateType.CNOT);
+    public static DefaultGate cnot(){
+        DefaultGate g = new DefaultGate(GateType.CNOT);
         String s = null;
         while(true) {
 	        try {
@@ -166,9 +154,9 @@ public class Gate implements Serializable{
         }
         return g;
     }
-    public static Gate swap(){
+    public static DefaultGate swap(){
 
-        Gate g0 = new Gate(GateType.SWAP);
+        DefaultGate g0 = new DefaultGate(GateType.SWAP);
         String s = null;
         while(true) {
 	        try {
@@ -184,40 +172,49 @@ public class Gate implements Serializable{
         return g0;
     }
 
-    public static Gate customGate() {
-        String s;
-        boolean done = false;
-        ArrayList<Integer> regs = new ArrayList<>();
-        String name = JOptionPane.showInputDialog("What is the gate called?");
-
-        while(!done) {
-            s = JOptionPane.showInputDialog("Which qubits?");
-            try{
-                regs.add(Integer.parseInt(s));
-            } catch (NumberFormatException nfe) {
-                done = true;
-            }
-        }
-        if(Main.cb.customGates.containsKey(name)){
-            MultiQubitGate gOld = ((MultiQubitGate) Main.cb.customGates.get(name));
-            Gate g = new MultiQubitGate(gOld.matrix,GateType.CUSTOM,regs);
-            g.name = name;
-            g.length = regs.stream().max(Math::max).get() - regs.stream().min(Math::min).get();
-            return g;
-        }
-        int len = 1 << regs.size();
-        Complex[][] m = new Complex[len][len];
-        for(int y = 0; y < len; ++y) {
-            for(int x = 0; x < len; ++x) {
-                m[x][y] = Complex.parseComplex(JOptionPane.showInputDialog("Element (" + x + "," + y + ")"));
-            }
-        }
-        Gate g = new MultiQubitGate(m,GateType.CUSTOM,regs);
-        g.name = name;
-        g.length = regs.stream().max(Math::max).get() - regs.stream().min(Math::min).get();
-        Main.cb.customGates.put(name,g);
-        return g;
+    public static void makeCustom() {
+    	CustomGateConstructorUI window = new CustomGateConstructorUI(Main.w.getFrame());
+    	window.setVisible(true);
+    	
     }
+    
+    
+    
+//    public static Gate customGate() {
+//        String s;
+//        boolean done = false;
+//        ArrayList<Integer> regs = new ArrayList<>();
+//        String name = JOptionPane.showInputDialog("What is the gate called?");
+//
+//        while(!done) {
+//            s = JOptionPane.showInputDialog("Which qubits?");
+//            try{
+//                regs.add(Integer.parseInt(s));
+//            } catch (NumberFormatException nfe) {
+//                done = true;
+//            }
+//        }
+//        if(Main.cb.customGates.containsKey(name)){
+//            MultiQubitGate gOld = ((MultiQubitGate) Main.cb.customGates.get(name));
+//            Gate g = new MultiQubitGate(gOld.matrix,GateType.CUSTOM,regs);
+//            g.name = name;
+//            g.length = regs.stream().max(Math::max).get() - regs.stream().min(Math::min).get();
+//            return g;
+//        }
+//        int len = 1 << regs.size();
+//        Complex[][] m = new Complex[len][len];
+//        for(int y = 0; y < len; ++y) {
+//            for(int x = 0; x < len; ++x) {
+//                m[x][y] = Complex.parseComplex(JOptionPane.showInputDialog("Element (" + x + "," + y + ")"));
+//            }
+//        }
+//        Gate g = new MultiQubitGate(m,GateType.CUSTOM,regs);
+//        g.name = name;
+//        g.length = regs.stream().max(Math::max).get() - regs.stream().min(Math::min).get();
+//        Main.cb.customGates.put(name,g);
+//        return g;    	
+//    	return null;
+//    }
 
     
     public boolean isSelected() {
@@ -232,14 +229,22 @@ public class Gate implements Serializable{
     public String toString() {
         String out = "Gate type: " + this.type.toString() + "\n";
         if(this.type == GateType.CUSTOM) {
-            out += "Matrix:\n";
-            for(int x = 0; x < this.matrix.length; ++x) {
-                for(int y = 0; y < this.matrix.length; ++y) {
-                    out += this.matrix[x][y].toString() + " ";
-                }
-                out += "\n";
-            }
+            out += "Matrix:\n" + getMatrix();
         }
         return out;
     }
+
+	public GateType getType() {
+		return type;
+	}
+
+	public void setType(GateType type) {
+		this.type = type;
+	}
+
+	public String getName() {
+		return name;
+	}
+    
+    
 }

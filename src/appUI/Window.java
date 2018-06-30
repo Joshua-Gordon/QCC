@@ -1,6 +1,5 @@
 package appUI;
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.WindowAdapter;
@@ -30,9 +29,7 @@ public class Window extends WindowAdapter{
     private JLabel display;
     private Keyboard keyboard;
     private ConsoleUI console;
-    private GateConstructorUI gateConstructor;
     private JSplitPane consoleSplitPane;
-    private JSplitPane rightSplitPane;
     
     public Window() {
         this.frame = new JFrame();
@@ -66,17 +63,9 @@ public class Window extends WindowAdapter{
         consoleSplitPane.setResizeWeight(.7);
         consoleSplitPane.setDividerLocation(-100);
         
-        
-        gateConstructor = new GateConstructorUI(this);
-        rightSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-        rightSplitPane.setLeftComponent(consoleSplitPane);
-        rightSplitPane.setRightComponent(gateConstructor);
-        rightSplitPane.setResizeWeight(.7);
-        rightSplitPane.setDividerLocation(-100);
-        frame.add(rightSplitPane, BorderLayout.CENTER);
+        frame.add(consoleSplitPane, BorderLayout.CENTER);
         
         console.changeVisibility(false);
-        gateConstructor.changeVisibility(false);
         
         frame.setJMenuBar(new AppMenuBar(this));
         frame.addWindowListener(this);
@@ -123,14 +112,6 @@ public class Window extends WindowAdapter{
     public ConsoleUI getConsole() {
     	return console;
     }
-    
-    public GateConstructorUI getGateConstructor() {
-		return gateConstructor;
-	}
-
-	public JSplitPane getRightSplitPane() {
-		return rightSplitPane;
-	}
 
 
 	public JSplitPane getConsoleSplitPane() {

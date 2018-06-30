@@ -3,7 +3,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 
-
+import appUI.CustomGateConstructorUI;
 import appUI.FileSelector;
 import preferences.AppPreferencesWindow;
 
@@ -19,31 +19,31 @@ public class Keyboard implements ActionListener, Runnable {
 
 //		Gates
         case "Hadamard":
-            Main.cb.edit(Gate.GateType.H);
+            Main.cb.edit(DefaultGate.GateType.H);
             break;
         case "I":
-            Main.cb.edit(Gate.GateType.I);
+            Main.cb.edit(DefaultGate.GateType.I);
             break;
         case "X":
-            Main.cb.edit(Gate.GateType.X);
+            Main.cb.edit(DefaultGate.GateType.X);
             break;
         case "Y":
-            Main.cb.edit(Gate.GateType.Y);
+            Main.cb.edit(DefaultGate.GateType.Y);
             break;
         case "Z":
-            Main.cb.edit(Gate.GateType.Z);
+            Main.cb.edit(DefaultGate.GateType.Z);
             break;
         case "Measure":
-            Main.cb.edit(Gate.GateType.MEASURE);
+            Main.cb.edit(DefaultGate.GateType.MEASURE);
             break;
         case "CNot":
-            Main.cb.edit(Gate.GateType.CNOT);
+            Main.cb.edit(DefaultGate.GateType.CNOT);
             break;
         case "Swap":
-            Main.cb.edit(Gate.GateType.SWAP);
+            Main.cb.edit(DefaultGate.GateType.SWAP);
             break;
         case "Custom":
-            Main.cb.edit(Gate.GateType.CUSTOM);
+        	DefaultGate.makeCustom();
             break;
 
 //		Export Types

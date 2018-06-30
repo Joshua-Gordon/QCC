@@ -11,6 +11,13 @@ public class Matrix<T extends Scalar<T>> implements Serializable {
 	protected final T m;
 	
 	
+	/**
+	 * Creates a Matrix of elements
+	 * 
+	 * @param rows
+	 * @param columns
+	 * @param components a non-zero size array
+	 */
 	@SuppressWarnings("unchecked")
 	public Matrix(int rows, int columns, T ... components){
 		m = (T) components[0].get0();
@@ -19,6 +26,18 @@ public class Matrix<T extends Scalar<T>> implements Serializable {
 		this.columns = columns;
 	}
 	
+	/**
+	 * Creates a Matrix of elements
+	 * @param component dummy variable to infer type of this Matrix
+	 * @param rows
+	 * @param columns
+	 */
+	public Matrix(T component, int rows, int columns){
+		m = component;
+		this.comps = m.mkArray(rows * columns);
+		this.rows = rows;
+		this.columns = columns;
+	}
 	
 	public Matrix<T> add(Matrix<T> mat){
 		Matrix<T> temp = new Matrix<T>(rows, columns, m.mkArray(rows * columns));
@@ -106,14 +125,23 @@ public class Matrix<T extends Scalar<T>> implements Serializable {
 		return temp;
 	}
 	
-	public void print(){
-		System.out.println(toString());
-	}
 	
+	/**
+	 * Returns the value at a specific index of this matrix
+	 * @param row
+	 * @param column
+	 * @return The element at the specified row and column
+	 */
 	public T v(int row, int column){
 		return comps[column + row * columns];
 	}
 	
+	/**
+	 * Replaces a value at a specific index of this matrix
+	 * @param value
+	 * @param row
+	 * @param column
+	 */
 	public void r(T value, int row, int column){
 		comps[column + row * columns] = value;
 	}

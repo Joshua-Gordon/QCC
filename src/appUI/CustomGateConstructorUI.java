@@ -12,12 +12,13 @@ import java.util.ArrayList;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
-import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SpinnerModel;
@@ -31,7 +32,7 @@ import mathLib.Complex;
 import mathLib.Matrix;
 
 @SuppressWarnings("serial")
-public class GateConstructorUI extends AbstractAppViewUI implements ChangeListener, ActionListener{
+public class CustomGateConstructorUI extends JDialog implements ChangeListener, ActionListener{
 	private Window w;
 	
 	private JLabel[] labels = new JLabel[6];
@@ -44,12 +45,17 @@ public class GateConstructorUI extends AbstractAppViewUI implements ChangeListen
 	private JScrollPane fullMatrix;
 	private JScrollPane kroneckerMatrix;
 	private JPanel blank;
+	private ArrayList<Matrix<Complex>> outputMatrixes = null;
 	
-	public GateConstructorUI(Window w) {
-		super("Gate Constructor");
-		this.w = w;
+	public CustomGateConstructorUI(JFrame parent) {
+		super(parent);
 		
-		labels[0] = new JLabel("  " + getName());
+		setTitle("Custom Gate");
+		setSize(new Dimension(500, 700));
+		setLocationRelativeTo(parent);
+		setModal(true);
+		
+		labels[0] = new JLabel("  " + "Custom Gate");
 		labels[0].setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
 		labels[0].setBackground(Color.LIGHT_GRAY);
 		labels[0].setOpaque(true);
@@ -168,18 +174,6 @@ public class GateConstructorUI extends AbstractAppViewUI implements ChangeListen
 		gbc.anchor = GridBagConstraints.EAST;
 		add(buttons[0], gbc);
 	}
-	
-	
-
-	@Override
-	public void changeVisibility(boolean visible) {
-		setVisible(visible);
-		JSplitPane splitPane = w.getRightSplitPane();
-		if(visible) {
-			splitPane.setDividerLocation(-100);
-		}
-		splitPane.setEnabled(visible);
-	}
 
 	@Override
 	public void stateChanged(ChangeEvent e) {
@@ -222,7 +216,8 @@ public class GateConstructorUI extends AbstractAppViewUI implements ChangeListen
 				}
 				return;
 			}
-			
+			outputMatrixes = matrixes;
+			dispose();
 			
 		} else {
 			if(radioButtons[0].isSelected()) {
@@ -235,6 +230,10 @@ public class GateConstructorUI extends AbstractAppViewUI implements ChangeListen
 			revalidate();
 			repaint();
 		}
+	}
+	
+	public ArrayList<Matrix<Complex>> getCustomMatrix(){
+		return outputMatrixes;
 	}
 	
 }
