@@ -68,6 +68,32 @@ public class Complex implements Serializable, Scalar<Complex>{
         return new Complex(Double.parseDouble(s),0);
     }
 
+    
+    public static Complex parseInputFromFilter(String s) throws NumberFormatException {
+    	if(s == null || s.equals(""))
+    		return new Complex(0, 0);
+    	char c;
+    	String temp = "";
+    	int a = 0;
+    	int b = 0;
+    	int index = s.length();
+    	while(--index >= 0) {
+    		c = s.charAt(index);
+	    	temp = c + temp;
+    		if(c == '+' || c == '-' || index == 0) {
+    			if(temp.endsWith("i"))
+    				b += Double.parseDouble(temp.substring(0, temp.length() - 1) + (temp.length() < 3? '1':""));
+    			else
+    				a += Double.parseDouble(temp);
+    			temp = "";
+    		}
+    	}
+    	return new Complex(a, b);
+    }
+    
+    
+    
+    
     @Override
     public String toString(){
         if(b >= 0)

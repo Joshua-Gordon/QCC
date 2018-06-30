@@ -58,8 +58,21 @@ public class AppDialogs {
 				+ "Apply these changes?", "Yes", "Cancel");
 	}
 	
+	public static void paramsMissing(Component parent, String paramsList) {
+		errorMsg(parent, "The following necessary parameters are not filled: <br>" + paramsList);
+	}
+	
 	public static void lengthNotValid(Component parent, String length) {
 		errorMsg(parent, "\"" + length + "\" is not a valid length.");
+	}
+	
+	public static void notValidComplexNumber(Component parent, String entry, int row, int column) {
+		errorMsg(parent, "The Complex Number \"" + entry + "\" at row " + row + " column " + column + "<br>is not a valid format.");
+	}
+	
+	public static void notValidComplexNumber(Component parent, String entry, int matrix, int row, int column) {
+		errorMsg(parent, "The Complex Number \"" + entry + "\" in matrix " + matrix + " of row " 
+				+ row + " column " + column + "<br>is not a valid format.");
 	}
 	
 	public static void keyCodeUsed(Component parent) {

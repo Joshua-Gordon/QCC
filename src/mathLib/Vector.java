@@ -27,14 +27,14 @@ public class Vector<T extends Scalar<T>> extends Matrix<T>{
 	}
 	
 	public T mag(int cutoff){
-		T sum = M.get0();
+		T sum = m.get0();
 		for(int i = 0; i < cutoff; i++)
 			sum = sum.add(v(i).mult(v(i)));
 		return sum.sqrt();
 	}
 	
 	public T dot(Vector<T> vec){
-		T sum = M.get0();
+		T sum = m.get0();
 		for(int i = 0; i < length(); i++)
 			sum = sum.add(v(i).mult(vec.v(i)));
 		return sum;
