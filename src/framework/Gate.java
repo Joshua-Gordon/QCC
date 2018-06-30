@@ -2,6 +2,7 @@ package framework;
 import javax.swing.*;
 
 import appUI.AppDialogs;
+import mathLib.Complex;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -112,10 +113,10 @@ public class Gate implements Serializable{
 
     public static Gate hadamard() { //bam
         Complex[][] mat = new Complex[2][2];
-        mat[0][0] = Complex.ONE().multiply(Complex.ISQRT2());
-        mat[0][1] = Complex.ONE().multiply(Complex.ISQRT2());
-        mat[1][0] = Complex.ONE().multiply(Complex.ISQRT2());
-        mat[1][1] = Complex.ONE().multiply(Complex.ISQRT2()).negative();
+        mat[0][0] = Complex.ONE().mult(Complex.ISQRT2());
+        mat[0][1] = Complex.ONE().mult(Complex.ISQRT2());
+        mat[1][0] = Complex.ONE().mult(Complex.ISQRT2());
+        mat[1][1] = Complex.ONE().mult(Complex.ISQRT2()).negative();
         return new Gate(mat,GateType.H);
     }
 

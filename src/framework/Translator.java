@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import framework.Gate.GateType;
 import framework.Gate.LangType;
+import mathLib.Complex;
 
 public class Translator {
 

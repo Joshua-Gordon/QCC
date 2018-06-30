@@ -2,6 +2,8 @@ package framework;
 
 import java.util.ArrayList;
 
+import mathLib.Complex;
+
 
 public class MultiQubitGate extends Gate {
 	private static final long serialVersionUID = 8692251843065026400L;

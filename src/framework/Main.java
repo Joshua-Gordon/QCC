@@ -2,6 +2,8 @@ package framework;
 
 import appUI.CircuitBoardRenderContext;
 import appUI.Window;
+import mathLib.Complex;
+import mathLib.Matrix;
 
 public class Main {
 
@@ -13,7 +15,7 @@ public class Main {
 
         w = new Window();
         w.init();
-
+        
         //Oracle test code
         /*boolean in = false;
         while(!in) {
