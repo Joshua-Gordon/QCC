@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 import javax.swing.AbstractCellEditor;
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
@@ -138,6 +139,7 @@ public class GateMatrixEditable extends JPanel{
 			
 			DefaultTableCellRenderer render = new DefaultTableCellRenderer();
 			render.setHorizontalAlignment(SwingConstants.CENTER);
+			table.setDefaultRenderer(Object.class, render);
 			table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 			
 			for(int i = 0; i < size; i++)
@@ -153,10 +155,13 @@ public class GateMatrixEditable extends JPanel{
 			int rows = model.getRowCount();
 			int columns = model.getColumnCount();
 			String value;
-			Matrix<Complex> mat = new Matrix<>(rows, columns, new Complex[rows * columns]);
+			Matrix<Complex> mat = new Matrix<>(rows, columns, Complex.ONE().mkArray(rows * columns));
 			for(int i = 0; i < model.getRowCount(); i++) {
 				for(int j = 0; j < model.getColumnCount(); j++) {
-					value = model.getValueAt(i, j).toString();
+					if(model.getValueAt(i, j) == null)
+						value = "0";
+					else
+						value = model.getValueAt(i, j).toString();
 					try {
 						mat.r(Complex.parseComplex(value), i, j);
 					}catch(NumberFormatException e) {
@@ -231,6 +236,5 @@ public class GateMatrixEditable extends JPanel{
 			return kroneckerFormat;
 		}
 	}
-	
 	
 }

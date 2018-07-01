@@ -29,11 +29,16 @@ public class Window extends WindowAdapter{
     private JLabel display;
     private Keyboard keyboard;
     private ConsoleUI console;
+    private GateChooserUI gateChooser;
     private JSplitPane consoleSplitPane;
+    private JSplitPane gateChooserSplitPane;
     
     public Window() {
         this.frame = new JFrame();
         this.keyboard = new Keyboard();
+        this.console = new ConsoleUI(this);
+        this.gateChooser = new GateChooserUI(this);
+        
         setTitle(FileSelector.UNSAVED_FILE_NAME);
         frame.setSize(WIDTH,HEIGHT);
         frame.setResizable(true);
@@ -58,14 +63,22 @@ public class Window extends WindowAdapter{
         
         consoleSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
         consoleSplitPane.setTopComponent(jsp);
-        console = new ConsoleUI(this);
         consoleSplitPane.setBottomComponent(console);
         consoleSplitPane.setResizeWeight(.7);
         consoleSplitPane.setDividerLocation(-100);
         
-        frame.add(consoleSplitPane, BorderLayout.CENTER);
+        gateChooserSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+        gateChooserSplitPane.setLeftComponent(consoleSplitPane);
+        gateChooserSplitPane.setRightComponent(gateChooser);
+        gateChooserSplitPane.setResizeWeight(.7);
+        gateChooserSplitPane.setDividerLocation(-100);
+        
+        
+        
+        frame.add(gateChooserSplitPane, BorderLayout.CENTER);
         
         console.changeVisibility(false);
+        gateChooser.changeVisibility(false);
         
         frame.setJMenuBar(new AppMenuBar(this));
         frame.addWindowListener(this);
@@ -109,10 +122,19 @@ public class Window extends WindowAdapter{
     	frame.setTitle(TITLE + " - " + fileName);
     }
     
-    public ConsoleUI getConsole() {
+    public GateChooserUI getGateChooser() {
+		return gateChooser;
+	}
+
+
+	public JSplitPane getGateChooserSplitPane() {
+		return gateChooserSplitPane;
+	}
+
+
+	public ConsoleUI getConsole() {
     	return console;
     }
-
 
 	public JSplitPane getConsoleSplitPane() {
     	return consoleSplitPane;

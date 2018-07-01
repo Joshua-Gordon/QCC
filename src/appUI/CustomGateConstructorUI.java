@@ -26,6 +26,10 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.border.BevelBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.text.AbstractDocument;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DocumentFilter;
 
 import appUI.GateMatrixEditable.MatrixFormatException;
 import mathLib.Complex;
@@ -33,7 +37,10 @@ import mathLib.Matrix;
 
 @SuppressWarnings("serial")
 public class CustomGateConstructorUI extends JDialog implements ChangeListener, ActionListener{
-	private Window w;
+
+	private static final String GATE_NAME = "Gate Name";
+	private static final String MATRIX_REP = "Matrix Representation";
+	private static final int MAX_QUBITS = 8;
 	
 	private JLabel[] labels = new JLabel[6];
 	private JTextField[] textFields = new JTextField[1];
@@ -46,6 +53,8 @@ public class CustomGateConstructorUI extends JDialog implements ChangeListener, 
 	private JScrollPane kroneckerMatrix;
 	private JPanel blank;
 	private ArrayList<Matrix<Complex>> outputMatrixes = null;
+	private String gateName;
+	private GateIcon icon;
 	
 	public CustomGateConstructorUI(JFrame parent) {
 		super(parent);
@@ -61,14 +70,15 @@ public class CustomGateConstructorUI extends JDialog implements ChangeListener, 
 		labels[0].setOpaque(true);
 		labels[0].setMinimumSize(new Dimension(100,  30));
 		labels[0].setPreferredSize(new Dimension(100,  30));
-		labels[1] = new JLabel("Gate Name: ");
+		labels[1] = new JLabel(GATE_NAME + ": ");
 		labels[2] = new JLabel("Number of Qubits: ");
-		labels[3] = new JLabel("Matrix Representation: ");
+		labels[3] = new JLabel(MATRIX_REP + ": ");
 		labels[4] = new JLabel("Description: ");
 		textFields[0] = new JTextField();
 		textFields[0].setMinimumSize(new Dimension(150, 20));
 		textFields[0].setPreferredSize(new Dimension(150, 20));
-		SpinnerModel spinnerModel = new SpinnerNumberModel(1, 1, 8, 1);
+		((AbstractDocument)textFields[0].getDocument()).setDocumentFilter(new IconImageChanger());
+		SpinnerModel spinnerModel = new SpinnerNumberModel(1, 1, MAX_QUBITS, 1);
 		spinner.setModel(spinnerModel);
 		spinner.addChangeListener(this);
 		spinner.setMinimumSize(new Dimension(50, 20));
@@ -97,6 +107,7 @@ public class CustomGateConstructorUI extends JDialog implements ChangeListener, 
 		blank = new JPanel();
 		blank.setPreferredSize(new Dimension(10, 10));
 		blank.setMinimumSize(new Dimension(10, 10));
+		icon = new GateIcon();
 		
 		initLayout();
 	}
@@ -104,12 +115,12 @@ public class CustomGateConstructorUI extends JDialog implements ChangeListener, 
 	private void initLayout() {
 		setLayout(new GridBagLayout());
 		GridBagConstraints gbc = new GridBagConstraints();
-		Insets basic = new Insets(2, 4, 2, 4);
+		Insets basic = new Insets(2, 8, 2,8);
 		gbc.anchor = GridBagConstraints.NORTHWEST;
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		gbc.weightx = 1;
 		gbc.weighty = 0;
-		gbc.gridwidth = 2;
+		gbc.gridwidth = 3;
 		gbc.insets = new Insets(0, 0, 18, 0);
 		gbc.gridx = 0;
 		gbc.gridy = 0;
@@ -125,14 +136,14 @@ public class CustomGateConstructorUI extends JDialog implements ChangeListener, 
 		add(textFields[0], gbc);
 		gbc.gridx = 0;
 		gbc.gridy++;
-		gbc.insets = new Insets(2, 4, 18, 2);
+		gbc.insets = new Insets(2, 8, 18, 8);
 		add(labels[2], gbc);
 		gbc.gridx++;
 		add(spinner, gbc);
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		gbc.gridx = 0;
 		gbc.gridy++;
-		gbc.gridwidth = 2;
+		gbc.gridwidth = 3;
 		gbc.insets = basic;
 		add(labels[3], gbc);
 		gbc.gridy++;
@@ -167,16 +178,21 @@ public class CustomGateConstructorUI extends JDialog implements ChangeListener, 
 		gbc.weighty = .1;
 		add(textArea, gbc);
 		gbc.weighty = 0;
-		gbc.gridx = 1;
+		gbc.gridx = 2;
 		gbc.gridy++;
 		gbc.gridwidth = 1;
 		gbc.fill = GridBagConstraints.NONE;
 		gbc.anchor = GridBagConstraints.EAST;
 		add(buttons[0], gbc);
+		gbc.anchor = GridBagConstraints.CENTER;
+		gbc.gridx = 2;
+		gbc.gridy = 1;
+		add(new JLabel(icon), gbc);
 	}
 
 	@Override
 	public void stateChanged(ChangeEvent e) {
+		icon.setMultiQubit(!spinner.getValue().toString().equals("1"));
 		((GateMatrixEditable)fullMatrix.getViewport().getView()).changeSize(Integer.parseInt(spinner.getValue().toString()));
 		((GateMatrixEditable)kroneckerMatrix.getViewport().getView()).changeSize(Integer.parseInt(spinner.getValue().toString()));
 		revalidate();
@@ -197,9 +213,9 @@ public class CustomGateConstructorUI extends JDialog implements ChangeListener, 
 			String temp = "";
 			String param = textFields[0].getText();
 			if(param == null || param.equals(""))
-				temp += labels[1].getText();
-			if(buttonGroup.getSelection().isSelected())
-				temp += (temp.isEmpty()? "": ", ") + labels[3].getText();
+				temp += GATE_NAME;
+			if(!buttonGroup.getSelection().isSelected())
+				temp += (temp.isEmpty()? "": ", ") + MATRIX_REP;
 			if(!temp.isEmpty()) {
 				AppDialogs.paramsMissing(this, temp);
 				return;
@@ -217,6 +233,7 @@ public class CustomGateConstructorUI extends JDialog implements ChangeListener, 
 				return;
 			}
 			outputMatrixes = matrixes;
+			gateName = param;
 			dispose();
 			
 		} else {
@@ -236,4 +253,37 @@ public class CustomGateConstructorUI extends JDialog implements ChangeListener, 
 		return outputMatrixes;
 	}
 	
+	public String getGateName() {
+		return gateName;
+	}
+	
+	public GateIcon getIcon() {
+		return icon;
+	}
+
+	public String getDescription() {
+		return ((JTextArea)textArea.getViewport().getView()).getText();
+	}
+
+	private class IconImageChanger extends DocumentFilter{
+		@Override
+		public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs)
+				throws BadLocationException {
+			StringBuilder s = new StringBuilder(fb.getDocument().getText(0, fb.getDocument().getLength()));
+			s.replace(offset, offset + length, text);
+			icon.setName(s.toString());
+			revalidate();
+			repaint();
+			super.replace(fb, offset, length, text, attrs);
+		}
+		@Override
+		public void remove(FilterBypass fb, int offset, int length) throws BadLocationException {
+			StringBuilder s = new StringBuilder(fb.getDocument().getText(0, fb.getDocument().getLength()));
+			s.replace(offset, offset + length, "");
+			icon.setName(s.toString());
+			revalidate();
+			repaint();
+			super.remove(fb, offset, length);
+		}
+	}
 }

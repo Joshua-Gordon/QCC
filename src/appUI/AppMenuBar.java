@@ -50,7 +50,7 @@ public class AppMenuBar extends JMenuBar {
 			subMenu.add(mkItem("Measure"));
 			subMenu.add(mkItem("CNot"));
 			subMenu.add(mkItem("Swap"));
-			subMenu.add(mkItem("Custom"));
+			subMenu.add(mkItem("Make Custom Gate..."));
 		menu.add(subMenu);
 		menu.addSeparator();
 		menu.add(mkItem("Add Row"));
@@ -67,6 +67,7 @@ public class AppMenuBar extends JMenuBar {
 		
 		menu = new JMenu("View");
 		menu.add(mkViewItem(window.getConsole()));
+		menu.add(mkViewItem(window.getGateChooser()));
 		add(menu);
 		
 	}

@@ -1,5 +1,6 @@
 package framework;
 import java.io.Serializable;
+import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
 
@@ -10,16 +11,6 @@ import mathLib.Matrix;
 
 public class DefaultGate extends AbstractGate implements Serializable{
 	private static final long serialVersionUID = 6220371128991814182L;
-	
-	
-	public enum GateType{
-        I,X,Y,Z,H,CUSTOM, MEASURE, CNOT, SWAP
-    }
-    public enum LangType{
-        QUIL,QASM,QUIPPER
-    }
-    
-    public static int GATE_PIXEL_SIZE = 64;
 
     private GateType type;
     private String name;
@@ -171,12 +162,6 @@ public class DefaultGate extends AbstractGate implements Serializable{
         }
         return g0;
     }
-
-    public static void makeCustom() {
-    	CustomGateConstructorUI window = new CustomGateConstructorUI(Main.w.getFrame());
-    	window.setVisible(true);
-    	
-    }
     
     
     
@@ -244,6 +229,10 @@ public class DefaultGate extends AbstractGate implements Serializable{
 
 	public String getName() {
 		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
     
     

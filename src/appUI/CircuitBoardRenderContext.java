@@ -2,9 +2,11 @@ package appUI;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
@@ -18,12 +20,20 @@ import utils.ResourceLoader;
 
 public class CircuitBoardRenderContext {
 	
+	public static final int GATE_PIXEL_SIZE = 64;
+	public static final BasicStroke DASHED = new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, new float[]{5.f}, 0.0f);
+	public static final BasicStroke HEAVY = new BasicStroke(3, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+	public static final BasicStroke BASIC = new BasicStroke(1);
 	
-	private static final BasicStroke DASHED = new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, new float[]{5.f}, 0.0f);
-	private static final BasicStroke HEAVY = new BasicStroke(3, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
-	private static final BasicStroke BASIC = new BasicStroke(1);
+	private static final BufferedImage DUMMY = new BufferedImage(1, 1, BufferedImage.TYPE_3BYTE_BGR);
 	
-	private static void drawCenteredString(Graphics g, String text, int x, int y, int width, int height) {
+	public static Rectangle2D getStringBounds(Font f, String text) {
+		Graphics g = DUMMY.getGraphics();
+		g.setFont(f);
+		return g.getFontMetrics().getStringBounds(text, g);
+	}
+	
+	public static void drawCenteredString(Graphics g, String text, int x, int y, int width, int height) {
 		FontMetrics fm = g.getFontMetrics();
 		Rectangle2D r2 = fm.getStringBounds(text, g);
 		int xc = (int) (x + (width - r2.getWidth()) / 2);
@@ -34,7 +44,7 @@ public class CircuitBoardRenderContext {
 	@SuppressWarnings("incomplete-switch")
 	public static BufferedImage render(CircuitBoard circuitBoard, boolean withGrid){
 		ArrayList<ArrayList<DefaultGate>> board = circuitBoard.board;
-        int unit = DefaultGate.GATE_PIXEL_SIZE;
+        int unit = GATE_PIXEL_SIZE;
         BufferedImage image = new BufferedImage(board.size()*unit, board.get(0).size()*unit,BufferedImage.TYPE_INT_RGB);
         Graphics g = image.getGraphics();
         g.setColor(Color.WHITE);

@@ -5,14 +5,16 @@ import java.awt.event.MouseListener;
 
 import javax.swing.JFrame;
 
+import appUI.CircuitBoardRenderContext;
+
 public class Mouse implements MouseListener {
 	
     @Override
     public void mouseClicked(MouseEvent e) {
     	
         Point p = Main.w.getDisplay().getMousePosition();
-        int grabRow = p.x/DefaultGate.GATE_PIXEL_SIZE;
-        int grabColumn = (p.y)/DefaultGate.GATE_PIXEL_SIZE;
+        int grabRow = p.x/CircuitBoardRenderContext.GATE_PIXEL_SIZE;
+        int grabColumn = (p.y)/CircuitBoardRenderContext.GATE_PIXEL_SIZE;
         DefaultGate gate = Main.cb.board.get(grabRow).get(grabColumn);
         gate.setSelected(!gate.isSelected());
         Main.render();

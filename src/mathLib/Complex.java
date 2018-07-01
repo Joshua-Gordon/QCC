@@ -70,7 +70,7 @@ public class Complex implements Serializable, Scalar<Complex>{
 
     
     public static Complex parseInputFromFilter(String s) throws NumberFormatException {
-    	if(s == null || s.equals(""))
+    	if(s.equals(""))
     		return new Complex(0, 0);
     	char c;
     	String temp = "";

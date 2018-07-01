@@ -19,7 +19,7 @@ public class CircuitBoard implements Serializable{
 	private transient boolean mutated = false;
 	
     public ArrayList<ArrayList<DefaultGate>> board;
-    HashMap<String,DefaultGate> customGates;
+    ArrayList<CustomQubitGate> customGates;
 
     public static EnumMap<DefaultGate.GateType,Supplier<DefaultGate>> gatemap;
 
@@ -44,7 +44,7 @@ public class CircuitBoard implements Serializable{
     		board.addColumn();
         }
     	board.resetMutate();
-		board.customGates = new HashMap<>();
+		board.customGates = new ArrayList<>();
     	return board;
     }
     
@@ -55,11 +55,17 @@ public class CircuitBoard implements Serializable{
         if(url != "" && file.exists()) {
         	board = FileSelector.openFile(file);
         	if(board == null)
-        		board = CircuitBoard.getDefaultCircuitBoard();
+        		return CircuitBoard.getDefaultCircuitBoard();
+        	prepareLoadedBoard(board);
         }else {
-        	board = CircuitBoard.getDefaultCircuitBoard();
+        	return CircuitBoard.getDefaultCircuitBoard();
         }
         return board;
+    }
+    
+    private static void prepareLoadedBoard(CircuitBoard cb) {
+    	for(CustomQubitGate cqg : cb.customGates)
+    		cqg.loadIcon();
     }
     
     public CircuitBoard() {

@@ -33,7 +33,7 @@ public class Oracle { //I really hope this doesn't conflict with any standard li
      * @throws ScriptException When the user writes code that throws an error
      * @throws NoSuchMethodException If the user changes the name of the provided function
      */
-    public static MultiQubitGate createAncillaOracle() throws ScriptException, NoSuchMethodException {
+    public static CustomQubitGate createAncillaOracle() throws ScriptException, NoSuchMethodException {
         int numQubits = Integer.parseInt(JOptionPane.showInputDialog("How many qubits?"));
         String javascript = textDialog();
 
@@ -68,11 +68,12 @@ public class Oracle { //I really hope this doesn't conflict with any standard li
             }
         }
 
-        ArrayList<Integer> regs = new ArrayList<>();
-        for(int i = 0; i < numQubits; ++i) {
-            regs.add(Integer.parseInt(JOptionPane.showInputDialog("Register for qubit " + i)));
-        }
-        return new MultiQubitGate(mat, DefaultGate.GateType.CUSTOM,regs);
+//        ArrayList<Integer> regs = new ArrayList<>();
+//        for(int i = 0; i < numQubits; ++i) {
+//            regs.add(Integer.parseInt(JOptionPane.showInputDialog("Register for qubit " + i)));
+//        }
+//        return new MultiQubitGate(mat, DefaultGate.GateType.CUSTOM,regs);
+        return new CustomQubitGate(mat, DefaultGate.GateType.CUSTOM);
     }
 
     /**

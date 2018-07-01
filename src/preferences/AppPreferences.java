@@ -101,7 +101,7 @@ public final class AppPreferences {
 		add("Measure", 	   			KeyEvent.VK_M);
 		add("CNot", 	   			KeyEvent.VK_C);
 		add("Swap", 	   			KeyEvent.VK_W);
-		add("Custom",				KeyEvent.VK_T);
+		add("Make Custom Gate...",	KeyEvent.VK_T);
 		add("Add Row", 	   			KeyEvent.VK_DOWN);
 		add("Add Column", 	   		KeyEvent.VK_RIGHT);
 		add("Remove Last Row", 		KeyEvent.VK_UP);

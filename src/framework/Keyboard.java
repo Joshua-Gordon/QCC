@@ -42,8 +42,8 @@ public class Keyboard implements ActionListener, Runnable {
         case "Swap":
             Main.cb.edit(DefaultGate.GateType.SWAP);
             break;
-        case "Custom":
-        	DefaultGate.makeCustom();
+        case "Make Custom Gate...":
+        	CustomQubitGate.makeCustom();
             break;
 
 //		Export Types

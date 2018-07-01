@@ -2,7 +2,7 @@ package framework;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import framework.DefaultGate.GateType;
+import framework.AbstractGate.GateType;
 import mathLib.Complex;
 import mathLib.Matrix;
 
@@ -26,8 +26,8 @@ public class Translator {
             ArrayList<DefaultGate> instructions = board.get(x); //Current column of instructions
             for(int i = 0; i < instructions.size(); ++i){
                 DefaultGate g = instructions.get(i);
-                DefaultGate.GateType type = g.getType();
-                if(type != DefaultGate.GateType.I && type != GateType.CUSTOM) {
+                GateType type = g.getType();
+                if(type != GateType.I && type != GateType.CUSTOM) {
                     int idx = i;
                     if(idx+g.length < offset) { //Don't cut off a long gate at the bottom of the circuit
                         offset = idx+g.length;
@@ -35,44 +35,45 @@ public class Translator {
                     code += DefaultGate.typeToString(type, DefaultGate.LangType.QUIL);
                     code += " ";
                     code += idx;
-                    if (type == DefaultGate.GateType.CNOT || type == DefaultGate.GateType.SWAP) {
+                    if (type == GateType.CNOT || type == GateType.SWAP) {
                         code += " ";
                         code += (idx + g.length); //Second index
                     }
-                    if (type == DefaultGate.GateType.MEASURE) {
+                    if (type == GateType.MEASURE) {
                         code += " [";
                         code += idx;
                         code += "]";
                     }
                     code += "\n";
-                } else if(type == GateType.CUSTOM) { //All bets are off. Special code to handle these
-                    MultiQubitGate mqg = (MultiQubitGate) g;
-                    String name = mqg.getName();
-                    int idx = i;
-                    if(idx + g.length < offset) {
-                        offset = idx + mqg.length;
-                    }
-                    if(!customGates.contains(name)) { //If this is a new gate
-                        customGates.add(name);        //Then add it to the known gates
-                        String dec = "DEFGATE " + name + ":"; //And define it in the code
-                        Matrix<Complex> m = mqg.getMatrix();
-                        for(int my = 0; my < m.getRows(); ++my) {
-                            dec += "\n    ";
-                            for(int mx = 0; mx < m.getRows(); ++mx) { //This copies down the matrix into the code
-                                dec += m.v(mx,my).toString();
-                                if(mx+1 < m.getRows())
-                                    dec += ", ";
-                            }
-                        }
-                        code += dec; //Declaration of gate
-                        code += "\n";
-                    }
-                    code += name + " ";
-                    for (int r : mqg.registers) {
-                        code += r + " "; //Apply the gate to all the registers it's on
-                    }
-                    code += "\n";
                 }
+//                } else if(type == GateType.CUSTOM) { //All bets are off. Special code to handle these
+//                    MultiQubitGate mqg = (MultiQubitGate) g;
+//                    String name = mqg.getName();
+//                    int idx = i;
+//                    if(idx + g.length < offset) {
+//                        offset = idx + mqg.length;
+//                    }
+//                    if(!customGates.contains(name)) { //If this is a new gate
+//                        customGates.add(name);        //Then add it to the known gates
+//                        String dec = "DEFGATE " + name + ":"; //And define it in the code
+//                        Matrix<Complex> m = mqg.getMatrix();
+//                        for(int my = 0; my < m.getRows(); ++my) {
+//                            dec += "\n    ";
+//                            for(int mx = 0; mx < m.getRows(); ++mx) { //This copies down the matrix into the code
+//                                dec += m.v(mx,my).toString();
+//                                if(mx+1 < m.getRows())
+//                                    dec += ", ";
+//                            }
+//                        }
+//                        code += dec; //Declaration of gate
+//                        code += "\n";
+//                    }
+//                    code += name + " ";
+//                    for (int r : mqg.registers) {
+//                        code += r + " "; //Apply the gate to all the registers it's on
+//                    }
+//                    code += "\n";
+//                }
             }
         }
         return fixQUIL(code,offset); //Fix offset
@@ -98,8 +99,8 @@ public class Translator {
             ArrayList<DefaultGate> instructions = board.get(x);
             for(int i = 0; i < instructions.size(); ++i){ //i represents the column
                 DefaultGate g = instructions.get(i);
-                DefaultGate.GateType type = g.getType();
-                if(type != DefaultGate.GateType.I) {
+                GateType type = g.getType();
+                if(type != GateType.I) {
                     int idx = i;// - offset;
                     if(idx < offset) {
                         offset = idx;
@@ -108,16 +109,16 @@ public class Translator {
                     code += " q[";
                     code += idx;
                     code += "]";
-                    if (type == DefaultGate.GateType.CNOT) {
+                    if (type == GateType.CNOT) {
                         code += ",q[" + (idx + g.length) + "]";
                     }
-                    if(type == DefaultGate.GateType.SWAP){
+                    if(type == GateType.SWAP){
                         code += ",q[" + (idx + g.length) + "];\n";
                         code += "cx q[" + idx + "],q[" + (idx + g.length) + "];\n";
                         code += "cx q[" + (idx + g.length) + "],q[" + idx + "]";
                         //Three CNOTs do a swap
                     }
-                    if (type == DefaultGate.GateType.MEASURE) {
+                    if (type == GateType.MEASURE) {
                         code += " -> c[" + idx + "]";
                     }
                     code += ";\n";
@@ -189,7 +190,7 @@ public class Translator {
         for(int x = 0; x < board.size(); ++x) {
             ArrayList<DefaultGate> column = board.get(x);
             for(int y = 0; y < board.get(0).size(); ++y) {
-                if(column.get(y).getType() != DefaultGate.GateType.I) {
+                if(column.get(y).getType() != GateType.I) {
                     hasGate[y] = true;
                     hasGate[y+column.get(y).length] = true;
                 }
@@ -229,7 +230,7 @@ public class Translator {
                     break;
                 case "CNOT":
                     g = DefaultGate.identity();
-                    g.setType(DefaultGate.GateType.CNOT);
+                    g.setType(GateType.CNOT);
                     break;
                 case "MEASURE":
                     g = DefaultGate.measure();
@@ -291,16 +292,16 @@ public class Translator {
             ArrayList<DefaultGate> instructions = board.get(x);
             for(int y = 0; y < instructions.size(); y++) {
                 DefaultGate g = instructions.get(y);
-                DefaultGate.GateType type = g.getType();
-                if(type != DefaultGate.GateType.I) {
+                GateType type = g.getType();
+                if(type != GateType.I) {
                     int idx = y;
                     if(idx < offset) offset = idx;
                     code += DefaultGate.typeToString(type,DefaultGate.LangType.QUIPPER);
                     code += "(" + idx + ")";
-                    if(type == DefaultGate.GateType.CNOT || type == DefaultGate.GateType.SWAP) {
+                    if(type == GateType.CNOT || type == GateType.SWAP) {
                         code += " with controls=[+" + (idx+g.length) + "]";
                     }
-                    if(type == DefaultGate.GateType.SWAP){
+                    if(type == GateType.SWAP){
                         code += "\nQGate[\"not\"](" + (idx + g.length) + ") with controls=[+" + idx + "]\n";
                         code += "QGate[\"not\"](" + idx + ") with controls=[+" + (idx + g.length) + "]";
                         //Three CNOTs do a swap
