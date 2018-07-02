@@ -1,82 +1,51 @@
 package framework;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import appUI.CustomGateConstructorUI;
-import appUI.GateIcon;
 import mathLib.Complex;
 import mathLib.Matrix;
 
 
-public class CustomQubitGate extends DefaultGate {
+public class CustomGate extends AbstractGate implements Serializable {
 	private static final long serialVersionUID = 8692251843065026400L;
-	
 	
 	 //render the gate on the first index
 	private ArrayList<Matrix<Complex>> matrixes = new ArrayList<>();
-	private String description;
-	private transient GateIcon icon;
 
 	
 	
-	public CustomQubitGate(Matrix<Complex> mat, GateType gt) {
-        super(null, gt);
+	public CustomGate(Matrix<Complex> mat) {
         matrixes.add(mat);
+        setType(GateType.CUSTOM);
     }
     
-    public CustomQubitGate(String name, ArrayList<Matrix<Complex>> mats) {
-        super(null, DefaultGate.GateType.CUSTOM);
+    public CustomGate(String name, ArrayList<Matrix<Complex>> mats) {
         this.matrixes = mats;
+        setType(GateType.CUSTOM);
         setName(name);
-    }
-    
-    
+    }   
     
     public static void makeCustom() {
-    	CustomGateConstructorUI window = new CustomGateConstructorUI(Main.w.getFrame());
+    	CustomGateConstructorUI window = new CustomGateConstructorUI(Main.getWindow().getFrame());
     	window.setVisible(true);
     	ArrayList<Matrix<Complex>> matrixes = window.getCustomMatrix();
     	if(matrixes != null) {
-    		CustomQubitGate mqg = new CustomQubitGate(window.getGateName(), matrixes);
+    		CustomGate mqg = new CustomGate(window.getGateName(), matrixes);
     		mqg.setDescription(window.getDescription());
     		mqg.setIcon(window.getIcon());
-    		Main.cb.customGates.add(mqg);
+    		Main.getWindow().getSelectedBoard().getCustomGates().addElement(mqg);
+    		Main.getWindow().getSelectedBoard().setUnsaved();
     	}
     }
     
-    
-    public void loadIcon() {
-    	icon = new GateIcon(getName(), isMultiQubitGate());
-    }
-    
+    @Override
     public boolean isMultiQubitGate() {
     	if(matrixes.size() > 1)
     		return true;
     	return matrixes.get(0).getColumns() > 2;
-    }
-    
-    
-    
-    
-    
-    public GateIcon getIcon() {
-		return icon;
-	}
-
-	public void setIcon(GateIcon icon) {
-		this.icon = icon;
-	}
-    
-    public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	
-	
+    }	
 	
 	
 	@Override

@@ -79,8 +79,8 @@ public class ActionCommandPreferencesView extends AbstractPreferenceView{
 			AppPreferences.putInt("Action Commands", labels.get(index).getText().trim(), keycodes.get(index));
 		}
 		keyIndexModified.clear();
-		Main.w.getFrame().setJMenuBar(new AppMenuBar(Main.w));
-		Main.w.getFrame().validate();
+		Main.getWindow().getFrame().setJMenuBar(new AppMenuBar(Main.getWindow()));
+		Main.getWindow().getFrame().validate();
 	}
 
 	@Override
@@ -93,8 +93,8 @@ public class ActionCommandPreferencesView extends AbstractPreferenceView{
 			keycodes.set(i, keyCode);
 			fields.get(i).setText(getKeyText(keyCode));
 		}
-		Main.w.getFrame().setJMenuBar(new AppMenuBar(Main.w));
-		Main.w.getFrame().validate();
+		Main.getWindow().getFrame().setJMenuBar(new AppMenuBar(Main.getWindow()));
+		Main.getWindow().getFrame().validate();
 	}
 
 	@Override

@@ -1,21 +1,12 @@
 package framework;
 
-import appUI.CircuitBoardRenderContext;
 import appUI.Window;
-import mathLib.Complex;
-import mathLib.Matrix;
 
 public class Main {
-
-
-    public static CircuitBoard cb;
-    public static Window w;
-
+	
+	private static Window window;
+	
     public static void main(String[] args) {
-
-        w = new Window();
-        w.init();
-        
         //Oracle test code
         /*boolean in = false;
         while(!in) {
@@ -28,16 +19,15 @@ public class Main {
                 e.printStackTrace();
             }
         }*/
-
-        cb = CircuitBoard.loadPreviousCircuitBoard();
-        w.setTitle(cb.getName());
-        w.display(CircuitBoardRenderContext.render(cb, true));
+    	DefaultGate.loadGates();
+        
+    	window = new Window();
+    	window.setVisible(true);
     }
 
-    public static void render(){
-    	w.display(CircuitBoardRenderContext.render(cb, true));
+    public static Window getWindow() {
+    	return window;
     }
-    
     
     /*
      * Note, the following code is needed to run the output program

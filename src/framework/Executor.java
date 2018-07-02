@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.charset.Charset;
-import java.util.function.Consumer;
 
 import preferences.AppPreferences;
 import utils.ResourceLoader;
@@ -46,10 +44,10 @@ public class Executor {
         BufferedReader isr1 = new BufferedReader(new InputStreamReader(p.getErrorStream()));
         String res = isr.lines().reduce("",(x,y)-> x+"\n"+y);
         System.out.println(res);
-        Main.w.getConsole().println(res);
+        Main.getWindow().getConsole().println(res);
         String s;
         while((s = isr1.readLine()) != null) {
-        	Main.w.getConsole().printlnErr(s);
+        	Main.getWindow().getConsole().printlnErr(s);
         }
         isr.close();
         return res;
@@ -76,10 +74,10 @@ public class Executor {
         BufferedReader isr1 = new BufferedReader(new InputStreamReader(p.getErrorStream()));
         String res = isr.lines().reduce("",(x,y)-> x+"\n"+y);
         System.out.println(res);
-        Main.w.getConsole().println(res);
+        Main.getWindow().getConsole().println(res);
         String s;
         while((s = isr1.readLine()) != null) {
-        	Main.w.getConsole().printlnErr(s);
+        	Main.getWindow().getConsole().printlnErr(s);
         }
         isr.close();
         return res;

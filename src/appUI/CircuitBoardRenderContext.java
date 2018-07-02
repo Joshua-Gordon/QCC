@@ -6,15 +6,16 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
+import framework.AbstractGate;
 import framework.CircuitBoard;
-import framework.DefaultGate;
+import framework.Main;
+import framework.SolderedRegister;
 import utils.ResourceLoader;
 
 
@@ -24,8 +25,11 @@ public class CircuitBoardRenderContext {
 	public static final BasicStroke DASHED = new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, new float[]{5.f}, 0.0f);
 	public static final BasicStroke HEAVY = new BasicStroke(3, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
 	public static final BasicStroke BASIC = new BasicStroke(1);
-	
 	private static final BufferedImage DUMMY = new BufferedImage(1, 1, BufferedImage.TYPE_3BYTE_BGR);
+	
+	private Window w;
+	private BufferedImage baseImage = new BufferedImage(1, 1, BufferedImage.TYPE_3BYTE_BGR);
+	private BufferedImage editedImage;
 	
 	public static Rectangle2D getStringBounds(Font f, String text) {
 		Graphics g = DUMMY.getGraphics();
@@ -41,9 +45,17 @@ public class CircuitBoardRenderContext {
 		g.drawString(text, xc, yc);
 	}
 	
+	public CircuitBoardRenderContext(Window w) {
+		this.w = w;
+	}
+	
+	public BufferedImage renderOverlay() {
+		
+	}
+	
 	@SuppressWarnings("incomplete-switch")
-	public static BufferedImage render(CircuitBoard circuitBoard, boolean withGrid){
-		ArrayList<ArrayList<DefaultGate>> board = circuitBoard.board;
+	public BufferedImage renderBaseImage(boolean withGrid){
+		ArrayList<ArrayList<SolderedRegister>> board = w.getSelectedBoard().getBoard();
         int unit = GATE_PIXEL_SIZE;
         BufferedImage image = new BufferedImage(board.size()*unit, board.get(0).size()*unit,BufferedImage.TYPE_INT_RGB);
         Graphics g = image.getGraphics();
@@ -61,7 +73,7 @@ public class CircuitBoardRenderContext {
                 	g.drawRect(x*unit,y*unit,unit-1,unit-1);
             	}
                 g2d.setStroke(BASIC);
-                DefaultGate gate = board.get(x).get(y);
+                AbstractGate gate = board.get(x).get(y).getSolderedGate().getAbstractGate();
                 switch(gate.getType()){
                     case I:
                         g.setColor(Color.BLACK);
@@ -96,7 +108,7 @@ public class CircuitBoardRenderContext {
                     	g.setColor(Color.BLACK);
                         g.drawLine(x*unit,y*unit + (unit>>1),(x+1)*unit,y*unit + (unit>>1));
                     	g2d.setStroke(HEAVY);
-                        int len = board.get(x).get(y).length;
+                        int len = board.get(x).get(y).getSolderedGate().getAbstractGate().length;
                         int tx = 1;
                         if(len < 0)
                         	tx = -1;
@@ -115,7 +127,7 @@ public class CircuitBoardRenderContext {
                     	g2d.setStroke(HEAVY);
                         g2d.drawLine(x*unit + (unit>>2),y*unit + (unit>>2),(x+1)*unit - (unit >> 2), (y+1)*unit - (unit>>2));
                         g2d.drawLine(x*unit + (unit>>2),(y+1)*unit - (unit>>2),(x+1)*unit - (unit >> 2), y*unit + (unit>>2));
-                        int swaplen = board.get(x).get(y).length;
+                        int swaplen = board.get(x).get(y).getSolderedGate().getAbstractGate().length;
                         g2d.drawLine(x*unit + (unit>>1),y*unit + (unit>>1),x*unit + (unit>>1),(y+swaplen)*unit + (unit>>1));
                         //More diagonal lines
                         g2d.drawLine(x*unit + (unit>>2),(y+swaplen)*unit + (unit>>2),(x+1)*unit - (unit >> 2), (y+swaplen+1)*unit - (unit>>2));
@@ -123,13 +135,19 @@ public class CircuitBoardRenderContext {
                         g2d.setStroke(BASIC);
                         break;
                 }
-                if(gate.isSelected()) {
-                	g.setColor(Color.RED);
-                    g.drawRect(x*unit,y*unit,unit-1,unit-1);
-                }
             }
         }
         return image;
-    }	
+    }
+
+	public BufferedImage getBaseImage() {
+		return baseImage;
+	}
+
+	public BufferedImage getEditedImage() {
+		return editedImage;
+	}	
+	
+	
 	
 }

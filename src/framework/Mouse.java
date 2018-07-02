@@ -1,23 +1,20 @@
 package framework;
-import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import appUI.Window;
 
-import javax.swing.JFrame;
-
-import appUI.CircuitBoardRenderContext;
-
-public class Mouse implements MouseListener {
+public class Mouse implements MouseListener, MouseMotionListener {
+	private Window window;
+	
+	public Mouse(Window window) {
+		this.window = window;
+	}
+	
 	
     @Override
     public void mouseClicked(MouseEvent e) {
     	
-        Point p = Main.w.getDisplay().getMousePosition();
-        int grabRow = p.x/CircuitBoardRenderContext.GATE_PIXEL_SIZE;
-        int grabColumn = (p.y)/CircuitBoardRenderContext.GATE_PIXEL_SIZE;
-        DefaultGate gate = Main.cb.board.get(grabRow).get(grabColumn);
-        gate.setSelected(!gate.isSelected());
-        Main.render();
 
     }
 
@@ -40,4 +37,20 @@ public class Mouse implements MouseListener {
     public void mouseExited(MouseEvent e) {
 
     }
+
+
+	@Override
+	public void mouseDragged(MouseEvent e) {
+		
+		
+	}
+
+
+	@Override
+	public void mouseMoved(MouseEvent e) {
+		if(window.getGateChooser().isSelected()) {
+			
+		}
+		
+	}
 }

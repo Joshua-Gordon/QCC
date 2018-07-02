@@ -3,108 +3,116 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 
-import appUI.CustomGateConstructorUI;
-import appUI.FileSelector;
+import appUI.CircuitBoardSelector;
+import appUI.Window;
 import preferences.AppPreferencesWindow;
 
 public class Keyboard implements ActionListener, Runnable {
 	
 	private Thread thread;
 	private String actionCommand;
-
+	private Window window;
+	
+	public Keyboard(Window window) {
+		this.window = window;
+	}
+	
+	
 	@Override
 	public void run() {
 		switch(actionCommand){
 
 
 //		Gates
-        case "Hadamard":
-            Main.cb.edit(DefaultGate.GateType.H);
-            break;
-        case "I":
-            Main.cb.edit(DefaultGate.GateType.I);
-            break;
-        case "X":
-            Main.cb.edit(DefaultGate.GateType.X);
-            break;
-        case "Y":
-            Main.cb.edit(DefaultGate.GateType.Y);
-            break;
-        case "Z":
-            Main.cb.edit(DefaultGate.GateType.Z);
-            break;
-        case "Measure":
-            Main.cb.edit(DefaultGate.GateType.MEASURE);
-            break;
-        case "CNot":
-            Main.cb.edit(DefaultGate.GateType.CNOT);
-            break;
-        case "Swap":
-            Main.cb.edit(DefaultGate.GateType.SWAP);
-            break;
+//        case "Hadamard":
+//            Main.cb.edit(DefaultGate.GateType.H);
+//            break;
+//        case "I":
+//            Main.cb.edit(DefaultGate.GateType.I);
+//            break;
+//        case "X":
+//            Main.cb.edit(DefaultGate.GateType.X);
+//            break;
+//        case "Y":
+//            Main.cb.edit(DefaultGate.GateType.Y);
+//            break;
+//        case "Z":
+//            Main.cb.edit(DefaultGate.GateType.Z);
+//            break;
+//        case "Measure":
+//            Main.cb.edit(DefaultGate.GateType.MEASURE);
+//            break;
+//        case "CNot":
+//            Main.cb.edit(DefaultGate.GateType.CNOT);
+//            break;
+//        case "Swap":
+//            Main.cb.edit(DefaultGate.GateType.SWAP);
+//            break;
         case "Make Custom Gate...":
-        	CustomQubitGate.makeCustom();
+        	CustomGate.makeCustom();
             break;
 
 //		Export Types
             
         case "PNG Image":
-        	FileSelector.exportPNG(Main.cb, null);
+        	window.getFileSelector().exportPNG(window.getSelectedBoard(), null);
         	break;
         case "QUIL":
             System.out.println(Translator.translateQUIL());
-            Main.w.getConsole().println(Translator.translateQUIL());
+            window.getConsole().println(Translator.translateQUIL());
             break;
         case "QASM":
             System.out.println(Translator.translateQASM());
-            Main.w.getConsole().println(Translator.translateQASM());
+            window.getConsole().println(Translator.translateQASM());
             break;
         case "Quipper":
             System.out.println(Translator.translateQuipper());
-            Main.w.getConsole().println(Translator.translateQuipper());
+            window.getConsole().println(Translator.translateQuipper());
             break;
 
 //      File Selections
         case "New Circuit":
-        	FileSelector.createNewBoard();
+        	window.setSelectedBoard(window.getFileSelector().createNewBoard(window.getSelectedBoard()));
         	break;
         case "Open Circuit":
-        	FileSelector.selectBoardFromFileSystem();
+        	window.setSelectedBoard(window.getFileSelector().selectBoardFromFileSystem(window.getSelectedBoard()));
         	break;
         case "Save Circuit as":
-        	FileSelector.saveBoardToFileSystem();
+        	if(window.getFileSelector().saveBoardToFileSystem(window.getSelectedBoard()))
+        		window.updateSelectedBoardTitle();
         	break;
         case "Save":
-        	FileSelector.saveBoard();
+        	if(window.getFileSelector().saveBoard(window.getSelectedBoard()))
+        		window.updateSelectedBoardTitle();
         	break;
 
 //      Preferences
         case "Preferences":
-        	AppPreferencesWindow apui = new AppPreferencesWindow(Main.w.getFrame());
+        	AppPreferencesWindow apui = new AppPreferencesWindow(window.getFrame());
         	apui.setVisible(true);
         	break;	
         	
 
 //    	Grid Selections
         case "Add Row":
-        	Main.cb.addRow();
-        	Main.render();
+        	window.getSelectedBoard().addRow();
+        	window.repaint();
         	break;
         case "Add Column":
-        	Main.cb.addColumn();
-        	Main.render();
+        	window.getSelectedBoard().addColumn();
+        	window.repaint();
         	break;
         case "Remove Last Row":
-        	Main.cb.removeRow();
-        	Main.render();
+        	window.getSelectedBoard().removeRow();
+        	window.repaint();
         	break;
         case "Remove Last Column":
-        	Main.cb.removeColumn();
-        	Main.render();
+        	window.getSelectedBoard().removeColumn();
+        	window.repaint();
         	break;
         case "Run QUIL":
             System.out.println("Running QUIL");
-            Main.w.getConsole().println("Running QUIL");
+            window.getConsole().println("Running QUIL");
             String quil = Translator.translateQUIL();
             quil.trim();
             try {
@@ -116,7 +124,7 @@ public class Keyboard implements ActionListener, Runnable {
             break;
         case "Run QASM":
 	        System.out.println("Running QASM");
-	        Main.w.getConsole().println("Running QASM");
+	        window.getConsole().println("Running QASM");
 	        String qasm = Translator.translateQASM();
 	        qasm.trim();
 	        try {

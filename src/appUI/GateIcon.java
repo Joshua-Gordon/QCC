@@ -2,6 +2,7 @@ package appUI;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.geom.Rectangle2D;
@@ -18,6 +19,7 @@ import utils.ResourceLoader;
 public class GateIcon extends ImageIcon{
 
 	public static final BasicStroke THICK = new BasicStroke(5, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER);
+	public static final BasicStroke THIN = new BasicStroke(2, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER);
 	
 	private BufferedImage image;
 	private boolean multiQubit;
@@ -32,17 +34,76 @@ public class GateIcon extends ImageIcon{
 		setImage(getBufferedImage());
 	}
 	
+	private GateIcon(String name, boolean multiQubit, BufferedImage bi) {
+		super();
+		this.image = bi;
+		this.name = name;
+		this.multiQubit = multiQubit;
+		setImage(bi);
+	}
+	
 	public GateIcon() {
 		this("", false);
 	}
-
+	
+	public static GateIcon getSwapIcon() {
+		final int vertLineLength = 25;
+		final int xRadius = 10;
+		final int lineLength = PADDING + LINE_LENGTH;
+		final int vertPadding = 2;
+		
+		BufferedImage bi = new BufferedImage(2 * (lineLength + xRadius),
+				2 * vertPadding + vertLineLength + 2 * xRadius, BufferedImage.TYPE_4BYTE_ABGR);
+		Graphics2D g2d = (Graphics2D) bi.getGraphics();
+    	g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		g2d.setColor(Color.BLACK);
+		
+        g2d.drawLine(0, vertPadding + xRadius, bi.getWidth(), vertPadding + xRadius);
+        g2d.drawLine(0, bi.getHeight() - vertPadding - xRadius, bi.getWidth(), bi.getHeight() - vertPadding - xRadius);
+        
+    	g2d.setStroke(THIN);
+    	g2d.drawLine(lineLength, bi.getHeight() - vertPadding - 2 * xRadius, bi.getWidth() - lineLength, bi.getHeight() - vertPadding);
+    	g2d.drawLine(lineLength, bi.getHeight() - vertPadding, bi.getWidth() - lineLength, bi.getHeight() - vertPadding - 2 * xRadius);
+    	g2d.drawLine(lineLength, vertPadding, bi.getWidth() - lineLength, vertPadding + 2 * xRadius);
+    	g2d.drawLine(lineLength, vertPadding + 2 * xRadius, bi.getWidth() - lineLength, vertPadding);
+    	g2d.drawLine(lineLength + xRadius, bi.getHeight() - vertPadding - xRadius, lineLength + xRadius, vertPadding + xRadius);
+    	g2d.dispose();
+    	return new GateIcon("SWAP", true, bi);
+	}
+	
+	public static GateIcon getCNotIcon() {
+		final int vertLineLength = 25;
+		final int circleRadius = 10;
+		final int smallCircleRadius = 3;
+		final int lineLength = PADDING + LINE_LENGTH;
+		final int vertPadding = 2;
+		
+		BufferedImage bi = new BufferedImage(2 * (lineLength + circleRadius),
+				2 * vertPadding + vertLineLength + 2 * circleRadius, BufferedImage.TYPE_4BYTE_ABGR);
+		Graphics2D g2d = (Graphics2D) bi.getGraphics();
+    	g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		g2d.setColor(Color.BLACK);
+		
+        g2d.drawLine(0, vertPadding + circleRadius, bi.getWidth(), vertPadding + circleRadius);
+        g2d.drawLine(0, bi.getHeight() - vertPadding - circleRadius, bi.getWidth(), bi.getHeight() - vertPadding - circleRadius);
+        
+    	g2d.setStroke(THIN);
+    	g2d.drawOval(lineLength, bi.getHeight() - vertPadding - 2 * circleRadius, 2 * circleRadius, 2 * circleRadius);
+    	g2d.drawLine(lineLength, bi.getHeight() - vertPadding - circleRadius, lineLength + 2 * circleRadius, bi.getHeight() - vertPadding - circleRadius);
+    	g2d.drawLine(lineLength + circleRadius, bi.getHeight() - vertPadding, lineLength + circleRadius, vertPadding + circleRadius);
+    	g2d.fillOval(lineLength + circleRadius - smallCircleRadius, vertPadding + circleRadius - smallCircleRadius, 2 * smallCircleRadius, 2 * smallCircleRadius);
+    	g2d.dispose();
+    	return new GateIcon("CNOT", true, bi);
+	}
+	
 	private BufferedImage getBufferedImage() {
-		Rectangle2D rect = CircuitBoardRenderContext.getStringBounds(ResourceLoader.VAST_SHADOW, name);
+		Font f = ResourceLoader.VAST_SHADOW.deriveFont(12f);
+		Rectangle2D rect = CircuitBoardRenderContext.getStringBounds(f, name);
 		BufferedImage bi = new BufferedImage(2 * (PADDING + LINE_LENGTH) + (int) rect.getWidth(),
 				2 * PADDING + (int) rect.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
 		Graphics2D g2d = (Graphics2D) bi.getGraphics();
     	g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		g2d.setFont(ResourceLoader.VAST_SHADOW);
+		g2d.setFont(f);
 		g2d.setColor(Color.WHITE);
 		g2d.fillRect(LINE_LENGTH, 0, bi.getWidth() - 2*LINE_LENGTH, bi.getHeight() - 1);
 		g2d.setColor(Color.BLACK);

@@ -1,12 +1,20 @@
 package appUI;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Paint;
+import java.awt.PaintContext;
+import java.awt.Rectangle;
+import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.ColorModel;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
@@ -63,7 +71,7 @@ public class CustomGateConstructorUI extends JDialog implements ChangeListener, 
 		setSize(new Dimension(500, 700));
 		setLocationRelativeTo(parent);
 		setModal(true);
-		
+		setLayout(new BorderLayout());
 		labels[0] = new JLabel("  " + "Custom Gate");
 		labels[0].setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
 		labels[0].setBackground(Color.LIGHT_GRAY);
@@ -109,11 +117,18 @@ public class CustomGateConstructorUI extends JDialog implements ChangeListener, 
 		blank.setMinimumSize(new Dimension(10, 10));
 		icon = new GateIcon();
 		
-		initLayout();
+		add(initLayout(), BorderLayout.CENTER);
 	}
 	
-	private void initLayout() {
-		setLayout(new GridBagLayout());
+	private JPanel initLayout() {
+		JPanel panel = new JPanel();
+		panel.setLayout(new GridBagLayout());
+		panel.setBorder(BorderFactory.createCompoundBorder(
+				BorderFactory.createBevelBorder(BevelBorder.LOWERED), 
+				BorderFactory.createCompoundBorder(
+						BorderFactory.createEmptyBorder(10, 10, 10, 10),
+						BorderFactory.createLineBorder(Color.GRAY, 1))));
+		
 		GridBagConstraints gbc = new GridBagConstraints();
 		Insets basic = new Insets(2, 8, 2,8);
 		gbc.anchor = GridBagConstraints.NORTHWEST;
@@ -124,70 +139,71 @@ public class CustomGateConstructorUI extends JDialog implements ChangeListener, 
 		gbc.insets = new Insets(0, 0, 18, 0);
 		gbc.gridx = 0;
 		gbc.gridy = 0;
-		add(labels[0], gbc);
+		panel.add(labels[0], gbc);
 		gbc.anchor = GridBagConstraints.WEST;
 		gbc.insets = basic;
 		gbc.gridwidth = 1;
 		gbc.weightx = 0;
 		gbc.gridy++;
 		gbc.fill = GridBagConstraints.NONE;
-		add(labels[1], gbc);
+		panel.add(labels[1], gbc);
 		gbc.gridx++;
-		add(textFields[0], gbc);
+		panel.add(textFields[0], gbc);
 		gbc.gridx = 0;
 		gbc.gridy++;
 		gbc.insets = new Insets(2, 8, 18, 8);
-		add(labels[2], gbc);
+		panel.add(labels[2], gbc);
 		gbc.gridx++;
-		add(spinner, gbc);
+		panel.add(spinner, gbc);
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		gbc.gridx = 0;
 		gbc.gridy++;
 		gbc.gridwidth = 3;
 		gbc.insets = basic;
-		add(labels[3], gbc);
+		panel.add(labels[3], gbc);
 		gbc.gridy++;
-		add(radioButtons[0], gbc);
+		panel.add(radioButtons[0], gbc);
 		gbc.gridy++;
 		gbc.weightx = 1;
 		gbc.weighty = 1;
 		gbc.fill = GridBagConstraints.BOTH;
-		add(fullMatrix, gbc);
+		panel.add(fullMatrix, gbc);
 		gbc.gridy++;
 		gbc.weightx = 0;
 		gbc.weighty = 0;
 		gbc.fill = GridBagConstraints.HORIZONTAL;
-		add(radioButtons[1], gbc);
+		panel.add(radioButtons[1], gbc);
 		gbc.gridy++;
 		gbc.weightx = 1;
 		gbc.weighty = 1;
 		gbc.fill = GridBagConstraints.BOTH;
-		add(kroneckerMatrix, gbc);
+		panel.add(kroneckerMatrix, gbc);
 		gbc.gridx = 0;
 		gbc.gridy++;
 		gbc.weighty = .2;
-		add(blank, gbc);
+		panel.add(blank, gbc);
 		gbc.weighty = 0;
 		gbc.weightx = 0;
 		gbc.weighty = 0;
 		gbc.gridy++;
 		gbc.fill = GridBagConstraints.HORIZONTAL;
-		add(labels[4], gbc);
+		panel.add(labels[4], gbc);
 		gbc.gridy++;
 		gbc.fill = GridBagConstraints.BOTH;
 		gbc.weighty = .1;
-		add(textArea, gbc);
+		panel.add(textArea, gbc);
 		gbc.weighty = 0;
 		gbc.gridx = 2;
 		gbc.gridy++;
 		gbc.gridwidth = 1;
 		gbc.fill = GridBagConstraints.NONE;
 		gbc.anchor = GridBagConstraints.EAST;
-		add(buttons[0], gbc);
+		panel.add(buttons[0], gbc);
 		gbc.anchor = GridBagConstraints.CENTER;
 		gbc.gridx = 2;
-		gbc.gridy = 1;
-		add(new JLabel(icon), gbc);
+		gbc.gridy = 2;
+		panel.add(new JLabel(icon), gbc);
+		return panel;
 	}
 
 	@Override
@@ -214,7 +230,7 @@ public class CustomGateConstructorUI extends JDialog implements ChangeListener, 
 			String param = textFields[0].getText();
 			if(param == null || param.equals(""))
 				temp += GATE_NAME;
-			if(!buttonGroup.getSelection().isSelected())
+			if(buttonGroup.getSelection() == null)
 				temp += (temp.isEmpty()? "": ", ") + MATRIX_REP;
 			if(!temp.isEmpty()) {
 				AppDialogs.paramsMissing(this, temp);
