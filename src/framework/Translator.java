@@ -1,8 +1,15 @@
 package framework;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 
 import framework.AbstractGate.GateType;
+import framework.AbstractGate.LangType;
 import mathLib.Complex;
 import mathLib.Matrix;
 
@@ -14,8 +21,8 @@ public class Translator {
      */
     public static String translateQUIL(){ //Translates to Quil
         String code = "";
-        ArrayList<ArrayList<SolderedRegister>> boardTemp = Main.getWindow().getSelectedBoard().getBoard();
-        ArrayList<ArrayList<SolderedRegister>> board = new ArrayList<>();
+        ArrayList<ArrayList<DefaultGate>> boardTemp = Main.cb.board;
+        ArrayList<ArrayList<DefaultGate>> board = new ArrayList<>();
         ArrayList<String> customGates = new ArrayList<>();
         for(int i = 0; i < boardTemp.size(); ++i) {
             board.add(boardTemp.get(i)); //Copy to other circuitboard because safety
@@ -23,22 +30,21 @@ public class Translator {
         int offset = 20; //Hardcoded right now, should be height of circuit board. This is the offset from the top of the circuitboard
                          //and is computed as the board is parsed
         for(int x = 0; x < board.size(); ++x){
-            ArrayList<SolderedRegister> instructions = board.get(x); //Current column of instructions
+            ArrayList<DefaultGate> instructions = board.get(x); //Current column of instructions
             for(int i = 0; i < instructions.size(); ++i){
-            	ExportedGate eg = new ExportedGate(instructions, i);
-            	AbstractGate g = eg.getAbstractGate();
+                DefaultGate g = instructions.get(i);
                 GateType type = g.getType();
                 if(type != GateType.I && type != GateType.CUSTOM) {
                     int idx = i;
-                    if(idx+eg.getHeight() < offset) { //Don't cut off a long gate at the bottom of the circuit
-                        offset = idx+eg.getHeight();
+                    if(idx+g.length < offset) { //Don't cut off a long gate at the bottom of the circuit
+                        offset = idx+g.length;
                     }
                     code += DefaultGate.typeToString(type, DefaultGate.LangType.QUIL);
                     code += " ";
                     code += idx;
                     if (type == GateType.CNOT || type == GateType.SWAP) {
                         code += " ";
-                        code += (idx + eg.getHeight()); //Second index
+                        code += (idx + g.length); //Second index
                     }
                     if (type == GateType.MEASURE) {
                         code += " [";
@@ -46,38 +52,35 @@ public class Translator {
                         code += "]";
                     }
                     code += "\n";
-                } else if(type == GateType.CUSTOM) { //All bets are off. Special code to handle these
-                    String name = g.getName();
-                    int idx = i;
-                    if(idx + eg.getHeight() < offset) {
-                        offset = idx + eg.getHeight();
-                    }
-                    if(!customGates.contains(name)) { //If this is a new gate
-                        customGates.add(name);        //Then add it to the known gates
-                        String dec = "DEFGATE " + name + ":"; //And define it in the code
-                        Matrix<Complex> m = g.getMatrix();
-                        for(int my = 0; my < m.getRows(); ++my) {
-                            dec += "\n    ";
-                            for(int mx = 0; mx < m.getRows(); ++mx) { //This copies down the matrix into the code
-                                dec += m.v(mx,my).toString();
-                                if(mx+1 < m.getRows())
-                                    dec += ", ";
-                            }
-                        }
-                        code += dec; //Declaration of gate
-                        code += "\n";
-                    }
-                    code += name + " ";
-                    
-                    if(((CustomGate)g).isMultiQubitGate()) { 
-                    	for (int r : eg.getRegisters()) {
-                            code += r + " "; //Apply the gate to all the registers it's on
-                    	}
-                    }else {
-                    	code += idx + " ";
-                    }
-                    code += "\n";
                 }
+//                } else if(type == GateType.CUSTOM) { //All bets are off. Special code to handle these
+//                    MultiQubitGate mqg = (MultiQubitGate) g;
+//                    String name = mqg.getName();
+//                    int idx = i;
+//                    if(idx + g.length < offset) {
+//                        offset = idx + mqg.length;
+//                    }
+//                    if(!customGates.contains(name)) { //If this is a new gate
+//                        customGates.add(name);        //Then add it to the known gates
+//                        String dec = "DEFGATE " + name + ":"; //And define it in the code
+//                        Matrix<Complex> m = mqg.getMatrix();
+//                        for(int my = 0; my < m.getRows(); ++my) {
+//                            dec += "\n    ";
+//                            for(int mx = 0; mx < m.getRows(); ++mx) { //This copies down the matrix into the code
+//                                dec += m.v(mx,my).toString();
+//                                if(mx+1 < m.getRows())
+//                                    dec += ", ";
+//                            }
+//                        }
+//                        code += dec; //Declaration of gate
+//                        code += "\n";
+//                    }
+//                    code += name + " ";
+//                    for (int r : mqg.registers) {
+//                        code += r + " "; //Apply the gate to all the registers it's on
+//                    }
+//                    code += "\n";
+//                }
             }
         }
         return fixQUIL(code,offset); //Fix offset
@@ -90,8 +93,8 @@ public class Translator {
     public static String translateQASM(){ //Translates to QASM. Same idea as the quil one
         String code = "OPENQASM 2.0;\ninclude \"qelib1.inc\";\nqreg q[";
 
-        ArrayList<ArrayList<SolderedRegister>> boardTemp = Main.getWindow().getSelectedBoard().getBoard();
-        ArrayList<ArrayList<SolderedRegister>> board = new ArrayList<>();
+        ArrayList<ArrayList<DefaultGate>> boardTemp = Main.cb.board;
+        ArrayList<ArrayList<DefaultGate>> board = new ArrayList<>();
         for(int i = 0; i < boardTemp.size(); ++i) {
             board.add(boardTemp.get(i));
         }
@@ -100,10 +103,9 @@ public class Translator {
         code += numQubits + "];\ncreg c["+numQubits+"];\n";
         int offset = 20;
         for(int x = 0; x < board.size(); ++x){
-            ArrayList<SolderedRegister> instructions = board.get(x);
+            ArrayList<DefaultGate> instructions = board.get(x);
             for(int i = 0; i < instructions.size(); ++i){ //i represents the column
-            	SolderedGate sg = instructions.get(i).getSolderedGate();
-            	AbstractGate g = sg.getAbstractGate();
+                DefaultGate g = instructions.get(i);
                 GateType type = g.getType();
                 if(type != GateType.I) {
                     int idx = i;// - offset;
@@ -129,11 +131,10 @@ public class Translator {
                     code += ";\n";
                 }
             }
-            for(int i = 0; i < numQubits; ++i) {
-                code += "measure q[" + i + "] -> c[" + i + "];\n";
-            }
         }
-
+        for(int i = 0; i < numQubits; ++i) {
+            code += "measure q[" + i + "] -> c[" + i + "];\n";
+        }
         return fixQASM(code,offset);
     }
 
@@ -187,17 +188,17 @@ public class Translator {
         return output;
     }
 
-    private static int getQubits(ArrayList<ArrayList<SolderedRegister>> board) { //Counts number of qubits used in circuit
+    private static int getQubits(ArrayList<ArrayList<DefaultGate>> board) { //Counts number of qubits used in circuit
         boolean[] hasGate = new boolean[board.size()];
         for(int i = 0; i < hasGate.length; ++i) {
             hasGate[i] = false;
         }
         for(int x = 0; x < board.size(); ++x) {
-            ArrayList<SolderedRegister> column = board.get(x);
+            ArrayList<DefaultGate> column = board.get(x);
             for(int y = 0; y < board.get(0).size(); ++y) {
-                if(column.get(y).getSolderedGate().getAbstractGate().getType() != GateType.I) {
+                if(column.get(y).getType() != GateType.I) {
                     hasGate[y] = true;
-                    hasGate[y+column.get(y).getSolderedGate().getAbstractGate().length] = true;
+                    hasGate[y+column.get(y).length] = true;
                 }
             }
         }
@@ -214,34 +215,34 @@ public class Translator {
      * @param quil A string containing quil code
      * @return A double arraylist of gates representing a circuit
      */
-    public static ArrayList<ArrayList<SolderedRegister>> loadQuil(String quil) { //Parses quil into a circuit diagram
-        ArrayList<ArrayList<SolderedRegister>> board = new ArrayList<>();
+    public static ArrayList<ArrayList<DefaultGate>> parseQuil(String quil) { //Parses quil into a circuit diagram
+        ArrayList<ArrayList<DefaultGate>> board = new ArrayList<>();
         int maxLen = 0;
         for(String line : quil.split("\n")) {
             String gate = line.split(" ")[0];
-            AbstractGate g;
+            DefaultGate g;
             switch(gate) {
                 case "H":
-                    g = DefaultGate.getHadmard();
+                    g = DefaultGate.hadamard();
                     break;
                 case "X":
-                    g = DefaultGate.getX();
+                    g = DefaultGate.x();
                     break;
                 case "Y":
-                    g = DefaultGate.getY();
+                    g = DefaultGate.y();
                     break;
                 case "Z":
-                    g = DefaultGate.getZ();
+                    g = DefaultGate.z();
                     break;
                 case "CNOT":
-                    g = DefaultGate.getIdentity();
+                    g = DefaultGate.identity();
                     g.setType(GateType.CNOT);
                     break;
                 case "MEASURE":
-                    g = DefaultGate.getMeasure();
+                    g = DefaultGate.measure();
                     break;
                 default:
-                    g = DefaultGate.getIdentity();
+                    g = DefaultGate.identity();
             }
             int register = Integer.parseInt(line.split(" ")[1]);
             while(board.size()-1 < register) {
@@ -254,8 +255,8 @@ public class Translator {
                     while(board.size()-1 < register+g.length) {
                         board.add(new ArrayList<>());
                     }
-                    board.get(register+g.length).add(DefaultGate.getIdentity());
-                    board.get(register+g.length).add(DefaultGate.getIdentity());
+                    board.get(register+g.length).add(DefaultGate.identity());
+                    board.get(register+g.length).add(DefaultGate.identity());
                 }
             }
             board.get(register).add(g);
@@ -264,21 +265,48 @@ public class Translator {
             }
         }
         //Fill
-        for(ArrayList<AbstractGate> a : board) {
+        for(ArrayList<DefaultGate> a : board) {
             while(a.size() < maxLen) {
-                a.add(DefaultGate.getIdentity());
+                a.add(DefaultGate.identity());
             }
         }
         //Transpose
-        ArrayList<ArrayList<AbstractGate>> transpose = new ArrayList<>();
+        ArrayList<ArrayList<DefaultGate>> transpose = new ArrayList<>();
         for(int y = 0; y < board.get(0).size(); ++y) {
-            ArrayList<AbstractGate> col = new ArrayList<>();
-            for(ArrayList<AbstractGate> row : board) {
+            ArrayList<DefaultGate> col = new ArrayList<>();
+            for(ArrayList<DefaultGate> row : board) {
                 col.add(row.get(y));
             }
             transpose.add(col);
         }
         return transpose;
+    }
+
+    public ArrayList<ArrayList<DefaultGate>> loadProgram(LangType lt, String filepath) {
+        ArrayList<ArrayList<DefaultGate>> gates = null;
+        String code = "";
+        try {
+            FileReader fr = new FileReader(new File(filepath));
+            BufferedReader br = new BufferedReader(fr);
+            code = br.lines().reduce("",(a,c) -> a+"\n"+c);
+        } catch (IOException e) {
+            System.err.println("ERROR LOADING FILE");
+            e.printStackTrace();
+        }
+        switch(lt){
+            case QUIL:
+                gates = parseQuil(code);
+                break;
+            case QASM:
+                String unqasm = translateQASMToQuil(code);
+                gates = parseQuil(unqasm);
+                break;
+            case QUIPPER:
+                String unquipper = translateQuipperToQuil(code);
+                gates = parseQuil(unquipper);
+                break;
+        }
+        return gates;
     }
 
     /**
@@ -287,17 +315,16 @@ public class Translator {
      */
     public static String translateQuipper(){
         String code = "Inputs: None\n";
-        ArrayList<ArrayList<SolderedRegister>> board = Main.getWindow().getSelectedBoard().getBoard();
+        ArrayList<ArrayList<DefaultGate>> board = Main.cb.board;
         int numQubits = getQubits(board);
         for(int i = 0; i < numQubits; ++i) {
             code += "QInit0(" + i + ")\n";
         }
         int offset = 20;
         for(int x = 0; x < board.size(); ++x) {
-            ArrayList<SolderedRegister> instructions = board.get(x);
+            ArrayList<DefaultGate> instructions = board.get(x);
             for(int y = 0; y < instructions.size(); y++) {
-            	SolderedGate sg = instructions.get(y).getSolderedGate();
-            	AbstractGate g = sg.getAbstractGate();
+                DefaultGate g = instructions.get(y);
                 GateType type = g.getType();
                 if(type != GateType.I) {
                     int idx = y;
@@ -360,5 +387,70 @@ public class Translator {
         } catch (NumberFormatException nfe) {
             return false;
         }
+    }
+
+    public static String translateQuipperToQuil(String quipper) {
+        String quil = "";
+        String[] tempLines = quipper.split("\n");
+        ArrayList<String> quipperLines = new ArrayList<>();
+        Collections.addAll(quipperLines,tempLines); //Make list of  lines into arraylist
+        quipperLines.remove(0); //Pop off "Inputs: None"
+        String line = quipperLines.remove(0); //Grab first line, should be a QInit
+        while(line.startsWith("QInit")) {
+            line = quipperLines.remove(0); //This is Quil, we do not need to compute the number of qubits
+        }
+        //At this point, line contains the first actual line of code
+        while(!line.startsWith("Outputs:")) {
+            if(line.startsWith("QMeas")){
+                String num = line.substring(6,line.length()-1);
+                quil += "MEASURE " + num + " [" + num +"]\n";
+            } else {
+                String gateName = line.substring(7); //Cut off QGate["
+                gateName = gateName.substring(0, gateName.indexOf("\"")); //Now it is the actual gate name
+                String idx = line.substring(line.indexOf("(")+1, line.indexOf(")")); //Target register
+                switch (gateName) {
+                    case "not":
+                        if (line.contains("with controls")) {
+                            String controlIdx = line.substring(line.indexOf("+")+1, line.length() - 1); //Control register
+                            quil += "CNOT " + idx + " " + controlIdx + "\n";
+                        } else {
+                            quil += "X " + idx + "\n";
+                        }
+                        break;
+                    default:
+                        quil += gateName + " " + idx + "\n"; //hits H,Z,Y gates
+                }
+            }
+            line = quipperLines.remove(0);
+        }
+        return quil;
+    }
+
+    public static String translateQASMToQuil(String qasm) {
+        String quil = "";
+        String[] tempLines = qasm.split("\n");
+        ArrayList<String> qasmLines = new ArrayList<>();
+        Collections.addAll(qasmLines,tempLines); //Make list of lines into arraylist
+        qasmLines.remove(0);
+        qasmLines.remove(0);
+        qasmLines.remove(0);
+        qasmLines.remove(0); //Clear out header lines
+        while(qasmLines.size() > 0) {
+            String line = qasmLines.remove(0);
+            String idx = line.substring(line.indexOf("[")+1,line.indexOf("]"));
+            String gateName = line.substring(0,line.indexOf(" "));
+            switch(gateName) {
+                case "cx":
+                    String target = line.substring(line.indexOf(">")+4,line.length()-2);
+                    quil += "CNOT " + idx + " " + target;
+                    break;
+                case "measure":
+                    quil += "MEASURE " + idx + " [" + idx + "]";
+                    break;
+                default:
+                    quil += gateName.toUpperCase() + " " + idx;
+            }
+        }
+        return quil;
     }
 }

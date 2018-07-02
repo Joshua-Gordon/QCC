@@ -136,7 +136,7 @@ public class DefaultGate extends AbstractGate implements Serializable{
                 case CNOT:
                     return "QGate[\"not\"]";
                 case MEASURE:
-                    return "measure";
+                    return "QMeas";
                 case SWAP:
                     return "QGate[\"not\"]"; //Don't worry, this is intentional
             }
