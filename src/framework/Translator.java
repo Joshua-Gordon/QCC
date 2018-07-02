@@ -133,8 +133,13 @@ public class Translator {
             }
         }
         for(int i = 0; i < numQubits; ++i) {
+<<<<<<< Upstream, based on Custom_Gate_Branch
             code += "measure q[" + (i+offset) + "] -> c[" + (i+offset) + "];\n"; //Offset is added so that fixing the registers later
         }                                                                        //doesn't make this negative
+=======
+            code += "measure q[" + i + "] -> c[" + i + "];\n";
+        }
+>>>>>>> d102294 Add quipper and qasm parsing
         return fixQASM(code,offset);
     }
 
