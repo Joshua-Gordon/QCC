@@ -11,10 +11,7 @@ import mathLib.Matrix;
 public class CustomGate extends AbstractGate implements Serializable {
 	private static final long serialVersionUID = 8692251843065026400L;
 	
-	 //render the gate on the first index
 	private ArrayList<Matrix<Complex>> matrixes = new ArrayList<>();
-
-	
 	
 	public CustomGate(Matrix<Complex> mat) {
         matrixes.add(mat);

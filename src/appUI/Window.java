@@ -64,7 +64,7 @@ public class Window extends WindowAdapter{
     
     private void addComponents() {
     	frame.setLayout(new BorderLayout());
-        frame.add(new ToolBar(), BorderLayout.NORTH);
+        frame.add(new AppToolBar(), BorderLayout.NORTH);
         
         JPanel panel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -103,16 +103,11 @@ public class Window extends WindowAdapter{
     
     public void setVisible(boolean visible) {
         frame.setVisible(visible);
-        repaint();
+        renderContext.paintRerenderedBaseImageOnly();
     }
 
     public boolean isActive() {
         return frame.isVisible();
-    }
-
-    public void repaint() {
-    	drawable = renderContext.renderBaseImage(true);
-        display.setIcon(new ImageIcon(drawable));
     }
 
     public CircuitBoardRenderContext getRenderContext() {
@@ -204,7 +199,7 @@ public class Window extends WindowAdapter{
 			setTitle(CircuitBoardSelector.UNSAVED_FILE_NAME);
 		}
 		gateChooser.updateListModels();
-		repaint();
+        renderContext.paintRerenderedBaseImageOnly();
 	}
 	
 	public void updateSelectedBoardTitle() {
@@ -213,6 +208,10 @@ public class Window extends WindowAdapter{
 		}else {
 			setTitle(CircuitBoardSelector.UNSAVED_FILE_NAME);
 		}
+	}
+
+	public JLabel getDisplay() {
+		return display;
 	}
 	
 	

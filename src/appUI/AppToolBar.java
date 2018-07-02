@@ -6,12 +6,12 @@ import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 
 @SuppressWarnings("serial")
-public class ToolBar extends JToolBar{
+public class AppToolBar extends JToolBar{
 	private JToggleButton[] tools = new JToggleButton[2];
 	private ButtonGroup toolGroup = new ButtonGroup();
 	
 	
-	public ToolBar() {
+	public AppToolBar() {
 		super();
 		tools[0] = new JToggleButton("Editor");
 		tools[1] = new JToggleButton("Move");

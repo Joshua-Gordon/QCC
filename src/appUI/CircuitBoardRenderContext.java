@@ -12,9 +12,9 @@ import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
+import javax.swing.ImageIcon;
+
 import framework.AbstractGate;
-import framework.CircuitBoard;
-import framework.Main;
 import framework.SolderedRegister;
 import utils.ResourceLoader;
 
@@ -28,8 +28,7 @@ public class CircuitBoardRenderContext {
 	private static final BufferedImage DUMMY = new BufferedImage(1, 1, BufferedImage.TYPE_3BYTE_BGR);
 	
 	private Window w;
-	private BufferedImage baseImage = new BufferedImage(1, 1, BufferedImage.TYPE_3BYTE_BGR);
-	private BufferedImage editedImage;
+	private BufferedImage baseImage;
 	
 	public static Rectangle2D getStringBounds(Font f, String text) {
 		Graphics g = DUMMY.getGraphics();
@@ -47,10 +46,6 @@ public class CircuitBoardRenderContext {
 	
 	public CircuitBoardRenderContext(Window w) {
 		this.w = w;
-	}
-	
-	public BufferedImage renderOverlay() {
-		
 	}
 	
 	@SuppressWarnings("incomplete-switch")
@@ -139,15 +134,26 @@ public class CircuitBoardRenderContext {
         }
         return image;
     }
-
-	public BufferedImage getBaseImage() {
-		return baseImage;
+	
+	
+	
+	public synchronized void paintRerenderedBaseImageOnly() {
+		baseImage = renderBaseImage(true);
+		w.getDisplay().setIcon(new ImageIcon(baseImage));
 	}
-
-	public BufferedImage getEditedImage() {
-		return editedImage;
-	}	
+	
+	public BufferedImage getOverlay() {
+		return new BufferedImage(baseImage.getWidth(), baseImage.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
+	}
 	
 	
+	public synchronized void paintBaseImageWithOverlay(BufferedImage overlay) {
+		BufferedImage baseImageWithOverlay = new BufferedImage(baseImage.getWidth(), baseImage.getHeight(), BufferedImage.TYPE_3BYTE_BGR);
+		Graphics2D g2d = (Graphics2D) baseImageWithOverlay.getGraphics();
+    	g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+    	g2d.drawImage(baseImage, 0, 0, baseImage.getWidth(), baseImage.getHeight(), null);
+    	g2d.drawImage(overlay, 0, 0, overlay.getWidth(), overlay.getHeight(), null);
+		w.getDisplay().setIcon(new ImageIcon(baseImageWithOverlay));
+	}
 	
 }

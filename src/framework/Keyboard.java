@@ -96,19 +96,19 @@ public class Keyboard implements ActionListener, Runnable {
 //    	Grid Selections
         case "Add Row":
         	window.getSelectedBoard().addRow();
-        	window.repaint();
+        	window.getRenderContext().paintRerenderedBaseImageOnly();
         	break;
         case "Add Column":
         	window.getSelectedBoard().addColumn();
-        	window.repaint();
+        	window.getRenderContext().paintRerenderedBaseImageOnly();
         	break;
         case "Remove Last Row":
         	window.getSelectedBoard().removeRow();
-        	window.repaint();
+        	window.getRenderContext().paintRerenderedBaseImageOnly();
         	break;
         case "Remove Last Column":
         	window.getSelectedBoard().removeColumn();
-        	window.repaint();
+        	window.getRenderContext().paintRerenderedBaseImageOnly();
         	break;
         case "Run QUIL":
             System.out.println("Running QUIL");
