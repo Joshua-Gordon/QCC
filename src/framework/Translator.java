@@ -133,8 +133,8 @@ public class Translator {
             }
         }
         for(int i = 0; i < numQubits; ++i) {
-            code += "measure q[" + i + "] -> c[" + i + "];\n";
-        }
+            code += "measure q[" + (i+offset) + "] -> c[" + (i+offset) + "];\n"; //Offset is added so that fixing the registers later
+        }                                                                        //doesn't make this negative
         return fixQASM(code,offset);
     }
 
@@ -207,7 +207,7 @@ public class Translator {
             if(hasGate[i]) sum++;
         }
         //System.out.println("Num qubits: " + sum);
-        return sum+1;
+        return sum;
     }
 
     /**
