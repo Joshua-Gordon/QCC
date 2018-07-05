@@ -21,7 +21,7 @@ public class Executor {
             "import qiskit\n" +
                     "qp = qiskit.QuantumProgram()\n" +
                     "name = \"test\"\n" +
-                    "qp.load_qasm_file(\"test.qasm\",name=name)\n" +
+                    "qp.load_qasm_file(\"{}\",name=name)\n" +
                     "if __name__ == \"__main__\":\n" +
                     "   ret = qp.execute([name])\n" +
                     "   print(ret.get_counts(name))";
@@ -60,13 +60,14 @@ public class Executor {
      * @throws IOException
      */
     public static String runQASM(String code) throws IOException {
-        File qsrc = ResourceLoader.addTempFile("test.qasm");
-        File src = ResourceLoader.addTempFile("temp.py");
+        File qsrc = ResourceLoader.addTempFile("/test.qasm");
+        File src = ResourceLoader.addTempFile("/temp.py");
+
         FileWriter fw = new FileWriter(qsrc);
         fw.write(code);
         fw.close();
-        fw = new FileWriter(src);
-        fw.write(qasmTemplate);
+        fw = new FileWriter(src);                                                                       //e s c a p e
+        fw.write(qasmTemplate.replace("{}",qsrc.getCanonicalPath().replace("\\","\\\\")));
         fw.close();
         String interpreterLocation = AppPreferences.get("QASM", "Interpreter Location");
         Process p = Runtime.getRuntime().exec(interpreterLocation + " " + src.getAbsolutePath());
