@@ -1,8 +1,15 @@
 package framework;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 
 import framework.AbstractGate.GateType;
+import framework.AbstractGate.LangType;
 import mathLib.Complex;
 import mathLib.Matrix;
 
@@ -124,11 +131,10 @@ public class Translator {
                     code += ";\n";
                 }
             }
-            for(int i = 0; i < numQubits; ++i) {
-                code += "measure q[" + i + "] -> c[" + i + "];\n";
-            }
         }
-
+        for(int i = 0; i < numQubits; ++i) {
+            code += "measure q[" + (i+offset) + "] -> c[" + (i+offset) + "];\n"; //Offset is added so that fixing the registers later
+        }                                                                        //doesn't make this negative
         return fixQASM(code,offset);
     }
 
@@ -201,7 +207,7 @@ public class Translator {
             if(hasGate[i]) sum++;
         }
         //System.out.println("Num qubits: " + sum);
-        return sum+1;
+        return sum;
     }
 
     /**
@@ -209,7 +215,7 @@ public class Translator {
      * @param quil A string containing quil code
      * @return A double arraylist of gates representing a circuit
      */
-    public static ArrayList<ArrayList<DefaultGate>> loadQuil(String quil) { //Parses quil into a circuit diagram
+    public static ArrayList<ArrayList<DefaultGate>> parseQuil(String quil) { //Parses quil into a circuit diagram
         ArrayList<ArrayList<DefaultGate>> board = new ArrayList<>();
         int maxLen = 0;
         for(String line : quil.split("\n")) {
@@ -274,6 +280,33 @@ public class Translator {
             transpose.add(col);
         }
         return transpose;
+    }
+
+    public ArrayList<ArrayList<DefaultGate>> loadProgram(LangType lt, String filepath) {
+        ArrayList<ArrayList<DefaultGate>> gates = null;
+        String code = "";
+        try {
+            FileReader fr = new FileReader(new File(filepath));
+            BufferedReader br = new BufferedReader(fr);
+            code = br.lines().reduce("",(a,c) -> a+"\n"+c);
+        } catch (IOException e) {
+            System.err.println("ERROR LOADING FILE");
+            e.printStackTrace();
+        }
+        switch(lt){
+            case QUIL:
+                gates = parseQuil(code);
+                break;
+            case QASM:
+                String unqasm = translateQASMToQuil(code);
+                gates = parseQuil(unqasm);
+                break;
+            case QUIPPER:
+                String unquipper = translateQuipperToQuil(code);
+                gates = parseQuil(unquipper);
+                break;
+        }
+        return gates;
     }
 
     /**
@@ -354,5 +387,70 @@ public class Translator {
         } catch (NumberFormatException nfe) {
             return false;
         }
+    }
+
+    public static String translateQuipperToQuil(String quipper) {
+        String quil = "";
+        String[] tempLines = quipper.split("\n");
+        ArrayList<String> quipperLines = new ArrayList<>();
+        Collections.addAll(quipperLines,tempLines); //Make list of  lines into arraylist
+        quipperLines.remove(0); //Pop off "Inputs: None"
+        String line = quipperLines.remove(0); //Grab first line, should be a QInit
+        while(line.startsWith("QInit")) {
+            line = quipperLines.remove(0); //This is Quil, we do not need to compute the number of qubits
+        }
+        //At this point, line contains the first actual line of code
+        while(!line.startsWith("Outputs:")) {
+            if(line.startsWith("QMeas")){
+                String num = line.substring(6,line.length()-1);
+                quil += "MEASURE " + num + " [" + num +"]\n";
+            } else {
+                String gateName = line.substring(7); //Cut off QGate["
+                gateName = gateName.substring(0, gateName.indexOf("\"")); //Now it is the actual gate name
+                String idx = line.substring(line.indexOf("(")+1, line.indexOf(")")); //Target register
+                switch (gateName) {
+                    case "not":
+                        if (line.contains("with controls")) {
+                            String controlIdx = line.substring(line.indexOf("+")+1, line.length() - 1); //Control register
+                            quil += "CNOT " + idx + " " + controlIdx + "\n";
+                        } else {
+                            quil += "X " + idx + "\n";
+                        }
+                        break;
+                    default:
+                        quil += gateName + " " + idx + "\n"; //hits H,Z,Y gates
+                }
+            }
+            line = quipperLines.remove(0);
+        }
+        return quil;
+    }
+
+    public static String translateQASMToQuil(String qasm) {
+        String quil = "";
+        String[] tempLines = qasm.split("\n");
+        ArrayList<String> qasmLines = new ArrayList<>();
+        Collections.addAll(qasmLines,tempLines); //Make list of lines into arraylist
+        qasmLines.remove(0);
+        qasmLines.remove(0);
+        qasmLines.remove(0);
+        qasmLines.remove(0); //Clear out header lines
+        while(qasmLines.size() > 0) {
+            String line = qasmLines.remove(0);
+            String idx = line.substring(line.indexOf("[")+1,line.indexOf("]"));
+            String gateName = line.substring(0,line.indexOf(" "));
+            switch(gateName) {
+                case "cx":
+                    String target = line.substring(line.indexOf(">")+4,line.length()-2);
+                    quil += "CNOT " + idx + " " + target;
+                    break;
+                case "measure":
+                    quil += "MEASURE " + idx + " [" + idx + "]";
+                    break;
+                default:
+                    quil += gateName.toUpperCase() + " " + idx;
+            }
+        }
+        return quil;
     }
 }

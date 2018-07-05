@@ -30,7 +30,7 @@
          [translated (map translateLine lines)])
     (map (lambda (s) (printf (string-append s "\n"))) translated)))
     
-
+(translate (vector-ref (current-command-line-arguments) 0))
 
 
     
