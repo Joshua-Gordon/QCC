@@ -10,20 +10,9 @@ public class Main {
     	
     	
     	DefaultGate.loadGates();
-        
-<<<<<<< Upstream, based on Custom_Gate_Branch
-<<<<<<< Upstream, based on Custom_Gate_Branch
+
     	window = new Window();
     	window.setVisible(true);
-=======
-=======
->>>>>>> d102294 Add quipper and qasm parsing
-
-
-        cb = CircuitBoard.loadPreviousCircuitBoard();
-        w.setTitle(cb.getName());
-        w.display(CircuitBoardRenderContext.render(cb, true));
->>>>>>> d102294 Add quipper and qasm parsing
     }
 
     public static Window getWindow() {

@@ -3,16 +3,23 @@
   <component name="ChangeListManager">
     <list default="true" id="c736768e-d3ef-4607-9580-20064898655e" name="Default" comment="">
 <<<<<<< Upstream, based on Custom_Gate_Branch
+<<<<<<< Upstream, based on Custom_Gate_Branch
 =======
       <change type="MOVED" beforePath="$PROJECT_DIR$/main.rkt" afterPath="$PROJECT_DIR$/qasmToQuil.rkt" />
 >>>>>>> d102294 Add quipper and qasm parsing
+=======
+>>>>>>> 6637c50 Fix QASM bug There were two bugs in using QASM with the program.
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+<<<<<<< Upstream, based on Custom_Gate_Branch
 <<<<<<< Upstream, based on Custom_Gate_Branch
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/framework/Executor.java" afterPath="$PROJECT_DIR$/src/framework/Executor.java" />
 =======
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/framework/DefaultGate.java" afterPath="$PROJECT_DIR$/src/framework/DefaultGate.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/framework/Main.java" afterPath="$PROJECT_DIR$/src/framework/Main.java" />
 >>>>>>> d102294 Add quipper and qasm parsing
+=======
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/framework/Executor.java" afterPath="$PROJECT_DIR$/src/framework/Executor.java" />
+>>>>>>> 6637c50 Fix QASM bug There were two bugs in using QASM with the program.
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/framework/Translator.java" afterPath="$PROJECT_DIR$/src/framework/Translator.java" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
@@ -29,12 +36,17 @@
         <entry file="file://$PROJECT_DIR$/src/framework/Main.java">
           <provider selected="true" editor-type-id="text-editor">
 <<<<<<< Upstream, based on Custom_Gate_Branch
+<<<<<<< Upstream, based on Custom_Gate_Branch
             <state relative-caret-position="0">
               <caret line="23" column="5" lean-forward="false" selection-start-line="23" selection-start-column="5" selection-end-line="23" selection-end-column="5" />
 =======
             <state relative-caret-position="171">
               <caret line="18" column="0" lean-forward="false" selection-start-line="18" selection-start-column="0" selection-end-line="18" selection-end-column="0" />
 >>>>>>> d102294 Add quipper and qasm parsing
+=======
+            <state relative-caret-position="0">
+              <caret line="23" column="5" lean-forward="false" selection-start-line="23" selection-start-column="5" selection-end-line="23" selection-end-column="5" />
+>>>>>>> 6637c50 Fix QASM bug There were two bugs in using QASM with the program.
               <folding>
                 <marker date="1530561622728" expanded="true" signature="314:472" ph="{...}" />
                 <marker date="1530561622728" expanded="true" signature="565:572" ph="{...}" />
@@ -44,12 +56,17 @@
         </entry>
       </file>
 <<<<<<< Upstream, based on Custom_Gate_Branch
+<<<<<<< Upstream, based on Custom_Gate_Branch
       <file leaf-file-name="Translator.java" pinned="false" current-in-tab="false">
 =======
       <file leaf-file-name="Translator.java" pinned="false" current-in-tab="true">
 >>>>>>> d102294 Add quipper and qasm parsing
+=======
+      <file leaf-file-name="Translator.java" pinned="false" current-in-tab="false">
+>>>>>>> 6637c50 Fix QASM bug There were two bugs in using QASM with the program.
         <entry file="file://$PROJECT_DIR$/src/framework/Translator.java">
           <provider selected="true" editor-type-id="text-editor">
+<<<<<<< Upstream, based on Custom_Gate_Branch
 <<<<<<< Upstream, based on Custom_Gate_Branch
             <state relative-caret-position="1600">
               <caret line="136" column="109" lean-forward="false" selection-start-line="136" selection-start-column="109" selection-end-line="136" selection-end-column="109" />
@@ -59,6 +76,10 @@
 =======
             <state relative-caret-position="-2275">
               <caret line="285" column="54" lean-forward="false" selection-start-line="285" selection-start-column="54" selection-end-line="285" selection-end-column="54" />
+=======
+            <state relative-caret-position="1600">
+              <caret line="136" column="109" lean-forward="false" selection-start-line="136" selection-start-column="109" selection-end-line="136" selection-end-column="109" />
+>>>>>>> 6637c50 Fix QASM bug There were two bugs in using QASM with the program.
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -69,8 +90,8 @@
       <file leaf-file-name="AppMenuBar.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/appUI/AppMenuBar.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="703">
-              <caret line="51" column="40" lean-forward="true" selection-start-line="51" selection-start-column="40" selection-end-line="51" selection-end-column="40" />
+            <state relative-caret-position="779">
+              <caret line="51" column="40" lean-forward="false" selection-start-line="51" selection-start-column="40" selection-end-line="51" selection-end-column="40" />
               <folding />
 >>>>>>> d102294 Add quipper and qasm parsing
             </state>
@@ -86,10 +107,14 @@
 >>>>>>> d102294 Add quipper and qasm parsing
           <provider selected="true" editor-type-id="text-editor">
 <<<<<<< Upstream, based on Custom_Gate_Branch
+<<<<<<< Upstream, based on Custom_Gate_Branch
             <state relative-caret-position="779">
               <caret line="51" column="40" lean-forward="false" selection-start-line="51" selection-start-column="40" selection-end-line="51" selection-end-column="40" />
 =======
             <state relative-caret-position="498">
+=======
+            <state relative-caret-position="608">
+>>>>>>> 6637c50 Fix QASM bug There were two bugs in using QASM with the program.
               <caret line="32" column="22" lean-forward="false" selection-start-line="32" selection-start-column="22" selection-end-line="32" selection-end-column="22" />
 >>>>>>> d102294 Add quipper and qasm parsing
               <folding />
@@ -131,12 +156,17 @@
         <entry file="file://$PROJECT_DIR$/src/framework/Executor.java">
           <provider selected="true" editor-type-id="text-editor">
 <<<<<<< Upstream, based on Custom_Gate_Branch
+<<<<<<< Upstream, based on Custom_Gate_Branch
             <state relative-caret-position="133">
               <caret line="70" column="117" lean-forward="false" selection-start-line="70" selection-start-column="117" selection-end-line="70" selection-end-column="117" />
 =======
             <state relative-caret-position="171">
               <caret line="36" column="7" lean-forward="true" selection-start-line="36" selection-start-column="7" selection-end-line="36" selection-end-column="7" />
 >>>>>>> d102294 Add quipper and qasm parsing
+=======
+            <state relative-caret-position="133">
+              <caret line="70" column="117" lean-forward="false" selection-start-line="70" selection-start-column="117" selection-end-line="70" selection-end-column="117" />
+>>>>>>> 6637c50 Fix QASM bug There were two bugs in using QASM with the program.
               <folding />
             </state>
           </provider>
@@ -176,6 +206,7 @@
           </provider>
         </entry>
       </file>
+<<<<<<< Upstream, based on Custom_Gate_Branch
       <file leaf-file-name="MathUtils.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/mathLib/MathUtils.java">
           <provider selected="true" editor-type-id="text-editor">
@@ -187,6 +218,8 @@
           </provider>
         </entry>
       </file>
+=======
+>>>>>>> 6637c50 Fix QASM bug There were two bugs in using QASM with the program.
     </leaf>
   </component>
   <component name="FileTemplateManagerImpl">
@@ -225,22 +258,33 @@
         <option value="$PROJECT_DIR$/src/framework/CircuitBoard.java" />
         <option value="$PROJECT_DIR$/src/framework/Complex.java" />
 <<<<<<< Upstream, based on Custom_Gate_Branch
+<<<<<<< Upstream, based on Custom_Gate_Branch
 =======
         <option value="$PROJECT_DIR$/src/framework/Executor.java" />
 >>>>>>> d102294 Add quipper and qasm parsing
+=======
+>>>>>>> 6637c50 Fix QASM bug There were two bugs in using QASM with the program.
         <option value="$PROJECT_DIR$/src/framework/Gate.java" />
         <option value="$PROJECT_DIR$/src/framework/Oracle.java" />
         <option value="$PROJECT_DIR$/.gitignore" />
         <option value="$PROJECT_DIR$/src/framework/DefaultGate.java" />
         <option value="$PROJECT_DIR$/qasmToQuil.rkt" />
 <<<<<<< Upstream, based on Custom_Gate_Branch
+<<<<<<< Upstream, based on Custom_Gate_Branch
         <option value="$PROJECT_DIR$/src/framework/Main.java" />
         <option value="$PROJECT_DIR$/src/framework/Translator.java" />
         <option value="$PROJECT_DIR$/src/framework/Executor.java" />
 =======
         <option value="$PROJECT_DIR$/src/framework/Translator.java" />
+=======
+>>>>>>> 6637c50 Fix QASM bug There were two bugs in using QASM with the program.
         <option value="$PROJECT_DIR$/src/framework/Main.java" />
+<<<<<<< Upstream, based on Custom_Gate_Branch
 >>>>>>> d102294 Add quipper and qasm parsing
+=======
+        <option value="$PROJECT_DIR$/src/framework/Translator.java" />
+        <option value="$PROJECT_DIR$/src/framework/Executor.java" />
+>>>>>>> 6637c50 Fix QASM bug There were two bugs in using QASM with the program.
       </list>
     </option>
   </component>
@@ -267,13 +311,17 @@
     <panes>
       <pane id="PackagesPane" />
 <<<<<<< Upstream, based on Custom_Gate_Branch
+<<<<<<< Upstream, based on Custom_Gate_Branch
       <pane id="Scratches" />
       <pane id="AndroidView" />
 =======
 >>>>>>> d102294 Add quipper and qasm parsing
       <pane id="Scope" />
+=======
+>>>>>>> 6637c50 Fix QASM bug There were two bugs in using QASM with the program.
       <pane id="Scratches" />
       <pane id="AndroidView" />
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -515,6 +563,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
@@ -529,7 +578,7 @@
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32980973" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25572917" sideWeight="0.5" order="4" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25572917" sideWeight="0.5" order="4" side_tool="false" content_ui="combo" />
       <window_info id="Statistic" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32980973" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -541,6 +590,7 @@
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="7" side_tool="false" content_ui="combo" />
+<<<<<<< Upstream, based on Custom_Gate_Branch
 <<<<<<< Upstream, based on Custom_Gate_Branch
 =======
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -554,6 +604,8 @@
       <window_info id="Image Layers" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
 >>>>>>> d102294 Add quipper and qasm parsing
+=======
+>>>>>>> 6637c50 Fix QASM bug There were two bugs in using QASM with the program.
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
     </layout>
@@ -596,6 +648,7 @@
   <component name="XDebuggerManager">
     <breakpoint-manager>
 <<<<<<< Upstream, based on Custom_Gate_Branch
+<<<<<<< Upstream, based on Custom_Gate_Branch
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/framework/Translator.java</url>
@@ -608,10 +661,22 @@
 =======
       <option name="time" value="38" />
 >>>>>>> d102294 Add quipper and qasm parsing
+=======
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/framework/Translator.java</url>
+          <line>191</line>
+          <properties />
+          <option name="timeStamp" value="38" />
+        </line-breakpoint>
+      </breakpoints>
+      <option name="time" value="39" />
+>>>>>>> 6637c50 Fix QASM bug There were two bugs in using QASM with the program.
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
+<<<<<<< Upstream, based on Custom_Gate_Branch
 <<<<<<< Upstream, based on Custom_Gate_Branch
 =======
     <entry file="jar://C:/Program Files (x86)/Java/jdk1.8.0_144/src.zip!/javax/swing/JScrollBar.java">
@@ -622,6 +687,8 @@
       </provider>
     </entry>
 >>>>>>> d102294 Add quipper and qasm parsing
+=======
+>>>>>>> 6637c50 Fix QASM bug There were two bugs in using QASM with the program.
     <entry file="file://$PROJECT_DIR$/translation.png">
       <provider selected="true" editor-type-id="images">
         <state />
@@ -727,6 +794,7 @@
         <state relative-caret-position="6460">
           <caret line="340" column="0" lean-forward="false" selection-start-line="340" selection-start-column="0" selection-end-line="340" selection-end-column="0" />
 <<<<<<< Upstream, based on Custom_Gate_Branch
+<<<<<<< Upstream, based on Custom_Gate_Branch
         </state>
       </provider>
     </entry>
@@ -744,6 +812,8 @@
 =======
 >>>>>>> d102294 Add quipper and qasm parsing
           <folding />
+=======
+>>>>>>> 6637c50 Fix QASM bug There were two bugs in using QASM with the program.
         </state>
       </provider>
     </entry>
@@ -753,7 +823,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="306">
           <caret line="61" column="13" lean-forward="false" selection-start-line="61" selection-start-column="13" selection-end-line="61" selection-end-column="13" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -785,10 +854,14 @@
     <entry file="file://$PROJECT_DIR$/src/mathLib/MathUtils.java">
       <provider selected="true" editor-type-id="text-editor">
 <<<<<<< Upstream, based on Custom_Gate_Branch
+<<<<<<< Upstream, based on Custom_Gate_Branch
         <state relative-caret-position="38">
 =======
         <state relative-caret-position="-1119">
 >>>>>>> d102294 Add quipper and qasm parsing
+=======
+        <state relative-caret-position="38">
+>>>>>>> 6637c50 Fix QASM bug There were two bugs in using QASM with the program.
           <caret line="2" column="13" lean-forward="false" selection-start-line="2" selection-start-column="13" selection-end-line="2" selection-end-column="13" />
           <folding />
         </state>
@@ -803,6 +876,9 @@
       </provider>
     </entry>
 <<<<<<< Upstream, based on Custom_Gate_Branch
+<<<<<<< Upstream, based on Custom_Gate_Branch
+=======
+>>>>>>> 6637c50 Fix QASM bug There were two bugs in using QASM with the program.
     <entry file="file://$PROJECT_DIR$/src/framework/DefaultGate.java">
 =======
     <entry file="file://$PROJECT_DIR$/src/mathLib/Complex.java">
@@ -826,6 +902,9 @@
 >>>>>>> d102294 Add quipper and qasm parsing
       <provider selected="true" editor-type-id="text-editor">
 <<<<<<< Upstream, based on Custom_Gate_Branch
+<<<<<<< Upstream, based on Custom_Gate_Branch
+=======
+>>>>>>> 6637c50 Fix QASM bug There were two bugs in using QASM with the program.
         <state relative-caret-position="209">
           <caret line="12" column="22" lean-forward="false" selection-start-line="12" selection-start-column="22" selection-end-line="12" selection-end-column="22" />
           <folding />
@@ -840,6 +919,7 @@
         </state>
       </provider>
     </entry>
+<<<<<<< Upstream, based on Custom_Gate_Branch
     <entry file="file://$PROJECT_DIR$/qasmToQuil.rkt">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="608">
@@ -928,9 +1008,11 @@
         </state>
       </provider>
     </entry>
+=======
+>>>>>>> 6637c50 Fix QASM bug There were two bugs in using QASM with the program.
     <entry file="file://$PROJECT_DIR$/qasmToQuil.rkt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="498">
+        <state relative-caret-position="608">
           <caret line="32" column="22" lean-forward="false" selection-start-line="32" selection-start-column="22" selection-end-line="32" selection-end-column="22" />
           <folding />
         </state>
@@ -938,20 +1020,9 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/appUI/AppMenuBar.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="703">
-          <caret line="51" column="40" lean-forward="true" selection-start-line="51" selection-start-column="40" selection-end-line="51" selection-end-column="40" />
+        <state relative-caret-position="779">
+          <caret line="51" column="40" lean-forward="false" selection-start-line="51" selection-start-column="40" selection-end-line="51" selection-end-column="40" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/framework/Main.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="171">
-          <caret line="18" column="0" lean-forward="false" selection-start-line="18" selection-start-column="0" selection-end-line="18" selection-end-column="0" />
-          <folding>
-            <marker date="1530561622728" expanded="true" signature="314:472" ph="{...}" />
-            <marker date="1530561622728" expanded="true" signature="565:572" ph="{...}" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -965,8 +1036,47 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/framework/Main.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="23" column="5" lean-forward="false" selection-start-line="23" selection-start-column="5" selection-end-line="23" selection-end-column="5" />
+          <folding>
+            <marker date="1530561622728" expanded="true" signature="314:472" ph="{...}" />
+            <marker date="1530561622728" expanded="true" signature="565:572" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/mathLib/Complex.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="19">
+          <caret line="3" column="13" lean-forward="false" selection-start-line="3" selection-start-column="13" selection-end-line="3" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files (x86)/Java/jdk1.8.0_144/src.zip!/java/io/File.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="185">
+          <caret line="554" column="18" lean-forward="false" selection-start-line="554" selection-start-column="18" selection-end-line="554" selection-end-column="18" />
+          <folding>
+            <element signature="e#23018#23019#0" expanded="true" />
+            <element signature="e#23057#23058#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/utils/ResourceLoader.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="185">
+          <caret line="64" column="23" lean-forward="false" selection-start-line="64" selection-start-column="23" selection-end-line="64" selection-end-column="23" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/framework/Translator.java">
       <provider selected="true" editor-type-id="text-editor">
+<<<<<<< Upstream, based on Custom_Gate_Branch
 <<<<<<< Upstream, based on Custom_Gate_Branch
         <state relative-caret-position="1600">
           <caret line="136" column="109" lean-forward="false" selection-start-line="136" selection-start-column="109" selection-end-line="136" selection-end-column="109" />
@@ -984,10 +1094,22 @@
 =======
         <state relative-caret-position="-2275">
           <caret line="285" column="54" lean-forward="false" selection-start-line="285" selection-start-column="54" selection-end-line="285" selection-end-column="54" />
+=======
+        <state relative-caret-position="1600">
+          <caret line="136" column="109" lean-forward="false" selection-start-line="136" selection-start-column="109" selection-end-line="136" selection-end-column="109" />
+>>>>>>> 6637c50 Fix QASM bug There were two bugs in using QASM with the program.
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
 >>>>>>> d102294 Add quipper and qasm parsing
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/framework/Executor.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="133">
+          <caret line="70" column="117" lean-forward="false" selection-start-line="70" selection-start-column="117" selection-end-line="70" selection-end-column="117" />
+          <folding />
         </state>
       </provider>
     </entry>

@@ -134,12 +134,17 @@ public class Translator {
         }
         for(int i = 0; i < numQubits; ++i) {
 <<<<<<< Upstream, based on Custom_Gate_Branch
+<<<<<<< Upstream, based on Custom_Gate_Branch
             code += "measure q[" + (i+offset) + "] -> c[" + (i+offset) + "];\n"; //Offset is added so that fixing the registers later
         }                                                                        //doesn't make this negative
 =======
             code += "measure q[" + i + "] -> c[" + i + "];\n";
         }
 >>>>>>> d102294 Add quipper and qasm parsing
+=======
+            code += "measure q[" + (i+offset) + "] -> c[" + (i+offset) + "];\n"; //Offset is added so that fixing the registers later
+        }                                                                        //doesn't make this negative
+>>>>>>> 6637c50 Fix QASM bug There were two bugs in using QASM with the program.
         return fixQASM(code,offset);
     }
 
