@@ -58,16 +58,16 @@ public class Keyboard implements ActionListener, Runnable {
         	window.getFileSelector().exportPNG(window.getSelectedBoard(), null);
         	break;
         case "QUIL":
-            System.out.println(Translator.translateQUIL());
-            window.getConsole().println(Translator.translateQUIL());
+            System.out.println(Translator.exportQUIL());
+            window.getConsole().println(Translator.exportQUIL());
             break;
         case "QASM":
-            System.out.println(Translator.translateQASM());
-            window.getConsole().println(Translator.translateQASM());
+            //System.out.println(Translator.translateQASM());
+            //window.getConsole().println(Translator.translateQASM());
             break;
         case "Quipper":
-            System.out.println(Translator.translateQuipper());
-            window.getConsole().println(Translator.translateQuipper());
+            //System.out.println(Translator.translateQuipper());
+            //window.getConsole().println(Translator.translateQuipper());
             break;
 
 //      File Selections
@@ -113,7 +113,7 @@ public class Keyboard implements ActionListener, Runnable {
         case "Run QUIL":
             System.out.println("Running QUIL");
             window.getConsole().println("Running QUIL");
-            String quil = Translator.translateQUIL();
+            String quil = Translator.exportQUIL();
             quil.trim();
             try {
                 Executor.runQuil(quil);
@@ -125,7 +125,7 @@ public class Keyboard implements ActionListener, Runnable {
         case "Run QASM":
 	        System.out.println("Running QASM");
 	        window.getConsole().println("Running QASM");
-	        String qasm = Translator.translateQASM();
+	        String qasm = "TEMPORARY";// Translator.translateQASM();
 	        qasm.trim();
 	        try {
 	            Executor.runQASM(qasm);

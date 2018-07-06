@@ -20,4 +20,8 @@ public class SolderedRegister implements Serializable{
 	public int getGateRegisterNumber() {
 		return gateRegisterNumber;
 	}
+
+	public static SolderedRegister identity() {
+		return new SolderedRegister(new SolderedGate(DefaultGate.getIdentity()),0);
+	}
 }

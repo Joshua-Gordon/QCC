@@ -13,13 +13,14 @@ public class DefaultGate extends AbstractGate implements Serializable{
 	private static final long serialVersionUID = 6220371128991814182L;
 	
     public static final DefaultListModel<AbstractGate> DEFAULT_GATES = new DefaultListModel<>();
+    public static final GateMap GATE_MAP = new GateMap();
 	
     public static enum LangType{
         QUIL,QASM,QUIPPER
     }
     
 	public static void loadGates(){
-		
+	/*
 //		Gates with default icons :
 		
 		Matrix<Complex> identity = new Matrix<>(2, 2, 
@@ -80,6 +81,8 @@ public class DefaultGate extends AbstractGate implements Serializable{
 	    gate = new DefaultGate("CNOT", mat,GateType.CNOT);
 	    gate.setIcon(GateIcon.getCNotIcon());
 		DEFAULT_GATES.addElement(gate);
+		*/
+	GateMap.loadGates();
 	}
 	
     public static String typeToString(GateType gt, LangType lt){
@@ -144,42 +147,42 @@ public class DefaultGate extends AbstractGate implements Serializable{
         return "ERROR";
     }
 
-    private DefaultGate(String name, Matrix<Complex> mat, GateType gt) {
+    protected DefaultGate(String name, Matrix<Complex> mat, GateType gt) { //public for use in gatemap
     	setName(name);
         setMatrix(mat);
         setType(gt);
     }
     
     public static AbstractGate getIdentity() {
-    	return DEFAULT_GATES.getElementAt(0);
+    	return GateMap.lookup("I");
     }
     
     public static AbstractGate getHadmard() {
-    	return DEFAULT_GATES.getElementAt(1);
+    	return GateMap.lookup("H");
     }
 
     public static AbstractGate getX() {
-    	return DEFAULT_GATES.getElementAt(2);
+    	return GateMap.lookup("X");
     }
 
     public static AbstractGate getY() {
-    	return DEFAULT_GATES.getElementAt(3);
+    	return GateMap.lookup("Y");
     }
 
     public static AbstractGate getZ() {
-    	return DEFAULT_GATES.getElementAt(4);
+    	return GateMap.lookup("Z");
     }
 
     public static AbstractGate getMeasure() {
-    	return DEFAULT_GATES.getElementAt(5);
+    	return GateMap.lookup("MEASURE");
     }
     
     public static AbstractGate getSwap() {
-    	return DEFAULT_GATES.getElementAt(6);
+    	return GateMap.lookup("SWAP");
     }
     
     public static AbstractGate getCNot() {
-    	return DEFAULT_GATES.getElementAt(7);
+    	return GateMap.lookup("CNOT");
     }
 //    private DefaultGate(GateType gt){
 //        setMatrix(identity().getMatrix());
