@@ -273,7 +273,7 @@ public class Translator {
         int maxLen = 0;
         for(String line : quil.split("\n")) {
             String gate = line.split(" ")[0];
-            AbstractGate g = GateMap.lookup(gate);
+            AbstractGate g = DefaultGate.DEFAULT_GATES.get(gate);
             int register = Integer.parseInt(line.split(" ")[1]);
             while(board.size()-1 < register) {
                 board.add(new ArrayList<>());
