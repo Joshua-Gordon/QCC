@@ -7,18 +7,7 @@ public class Main {
 	private static Window window;
 	
     public static void main(String[] args) {
-        //Oracle test code
-        /*boolean in = false;
-        while(!in) {
-            try {
-                MultiQubitGate g = Oracle.createAncillaOracle();
-                System.out.println(g);
-                in = true;
-            } catch (Exception e) {
-                System.out.println("Bad script!");
-                e.printStackTrace();
-            }
-        }*/
+    	
     	DefaultGate.loadGates();
         
     	window = new Window();
