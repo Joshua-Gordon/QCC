@@ -10,7 +10,7 @@ public class Main {
     	
     	
     	DefaultGate.loadGates();
-
+    	
     	window = new Window();
     	window.setVisible(true);
     }
