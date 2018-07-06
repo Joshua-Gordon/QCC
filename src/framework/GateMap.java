@@ -9,7 +9,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 public class GateMap extends DefaultListModel<AbstractGate> {
-    private static HashMap<String,AbstractGate> map = new HashMap<>();
+	private static final long serialVersionUID = -6321945775286009079L;
+	
+	private static HashMap<String,AbstractGate> map = new HashMap<>();
 
     public static void loadGates(){
 
