@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
+import appUI.Window;
+
 
 public final class AppPreferences {
 	
@@ -74,6 +76,15 @@ public final class AppPreferences {
 		
 		setType("Opened Views");
 		add("Console", false);
+		add("Gate Chooser", true);
+		
+		setType("View Attributes");
+		add("Window Width", 700);
+		add("Window Height", 600);
+		add("Console Divider Location", -100);
+		add("Gate Chooser Divider Location", -100);
+		
+		
 		
 		setType("PyQuil");
 		add("Interpreter Location", "python");

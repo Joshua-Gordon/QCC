@@ -19,9 +19,7 @@ import preferences.AppPreferences;
 import utils.AppDialogs;
 
 public class Window extends WindowAdapter{
-
-    public static final int WIDTH = 700;
-    public static final int HEIGHT = 600;
+	
     public static final String TITLE = "Quantum Circuit Board";
     
     private JFrame frame;
@@ -46,7 +44,8 @@ public class Window extends WindowAdapter{
         this.renderContext = new CircuitBoardRenderContext(this);
         setSelectedBoard(fileSelector.loadPreviousCircuitBoard());
         
-        frame.setSize(WIDTH,HEIGHT);
+        frame.setSize(AppPreferences.getInt("View Attributes", "Window Width"),
+        		AppPreferences.getInt("View Attributes", "Window Height"));
         frame.setResizable(true);
         frame.setLocationRelativeTo(null);
         // This allows for prompting save before exiting application
@@ -80,18 +79,18 @@ public class Window extends WindowAdapter{
         consoleSplitPane.setTopComponent(panel);
         consoleSplitPane.setBottomComponent(console);
         consoleSplitPane.setResizeWeight(.7);
-        consoleSplitPane.setDividerLocation(-100);
+        consoleSplitPane.setDividerLocation(AppPreferences.getInt("View Attributes", "Console Divider Location"));
         
         gateChooserSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
         gateChooserSplitPane.setLeftComponent(consoleSplitPane);
         gateChooserSplitPane.setRightComponent(gateChooser);
         gateChooserSplitPane.setResizeWeight(.7);
-        gateChooserSplitPane.setDividerLocation(-100);
+        gateChooserSplitPane.setDividerLocation(AppPreferences.getInt("View Attributes", "Gate Chooser Divider Location"));
         
         frame.add(gateChooserSplitPane, BorderLayout.CENTER);
         
-        console.changeVisibility(false);
-        gateChooser.changeVisibility(false);
+        console.changeVisibility(AppPreferences.getBoolean("Opened Views", "Console"));
+        gateChooser.changeVisibility(AppPreferences.getBoolean("Opened Views", "Gate Chooser"));
         
         frame.setJMenuBar(new AppMenuBar(this));
         frame.addWindowListener(this);
@@ -168,6 +167,11 @@ public class Window extends WindowAdapter{
     private void closeProgram() {
     	selectedBoard.saveFileLocationToPreferences();
     	AppPreferences.putBoolean("Opened Views", "Console", console.isVisible());
+    	AppPreferences.putBoolean("Opened Views", "Gate Chooser", gateChooser.isVisible());
+    	AppPreferences.putInt("View Attributes", "Window Width", frame.getWidth());
+    	AppPreferences.putInt("View Attributes", "Window Height", frame.getHeight());
+    	AppPreferences.putInt("View Attributes", "Console Divider Location", consoleSplitPane.getDividerLocation());
+    	AppPreferences.putInt("View Attributes", "Gate Chooser Divider Location", gateChooserSplitPane.getDividerLocation());
     	frame.dispose();
     	System.exit(0);
     }

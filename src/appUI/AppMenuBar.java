@@ -39,7 +39,7 @@ public class AppMenuBar extends JMenuBar {
 		add(menu);
 		
 		menu = new JMenu("Edit");
-			subMenu = new JMenu("Set Gate");
+			subMenu = new JMenu("Get Gate");
 			subMenu.add(mkItem("Hadamard"));
 				subSubMenu = new JMenu("Pauli Gates");
 				subSubMenu.add(mkItem("I"));

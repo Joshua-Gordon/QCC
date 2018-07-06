@@ -114,9 +114,6 @@ public class ConsoleUI extends AbstractAppViewUI{
 	public void changeVisibility(boolean visible) {
 		setVisible(visible);
 		JSplitPane splitPane = w.getConsoleSplitPane();
-		if(visible) {
-			splitPane.setDividerLocation(-100);
-		}
 		splitPane.setEnabled(visible);
 	}
 	

@@ -106,9 +106,6 @@ public class GateChooserUI extends AbstractAppViewUI implements ListSelectionLis
 	public void changeVisibility(boolean visible) {
 		setVisible(visible);
 		JSplitPane splitPane = w.getGateChooserSplitPane();
-		if(visible) {
-			splitPane.setDividerLocation(-100);
-		}
 		splitPane.setEnabled(visible);
 	}
 

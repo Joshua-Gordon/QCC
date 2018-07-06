@@ -95,7 +95,10 @@ public class SolderingTool extends Tool{
 	}
 	
 	
-	
+	@Override
+	public void keyTyped(KeyEvent e) {
+		System.out.println(e.getKeyChar());
+	}
 	
 	
 	
