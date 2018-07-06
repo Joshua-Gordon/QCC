@@ -4,10 +4,10 @@ import java.io.Serializable;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 
-import appUI.AppDialogs;
-import appUI.GateIcon;
 import mathLib.Complex;
 import mathLib.Matrix;
+import utils.AppDialogs;
+import utils.GateIcon;
 
 public class DefaultGate extends AbstractGate implements Serializable{
 	private static final long serialVersionUID = 6220371128991814182L;
@@ -27,28 +27,30 @@ public class DefaultGate extends AbstractGate implements Serializable{
         		Complex.ZERO(), Complex.ONE());
         DefaultGate gate = new DefaultGate("I", identity,GateType.I);
 		DEFAULT_GATES.addElement(gate);
+		
 		Matrix<Complex> mat = new Matrix<>(2, 2, 
         		Complex.ONE(), Complex.ONE(), 
         		Complex.ONE(), Complex.ONE().negative())
         		.mult(Complex.ISQRT2());
 		gate = new DefaultGate("H", mat,GateType.H);
 		DEFAULT_GATES.addElement(gate);
+		
 		mat = new Matrix<>(2, 2, 
     			Complex.ZERO(), Complex.ONE(), 
     			Complex.ONE(), Complex.ZERO());
 		gate = new DefaultGate("X", mat,GateType.X);
 		DEFAULT_GATES.addElement(gate);
+		
 	    mat = new Matrix<>(2, 2, 
 	    			Complex.ZERO(), Complex.I().negative(), 
 	    			Complex.I(), Complex.ZERO());
 	    gate = new DefaultGate("Y", mat,GateType.Y);
 		DEFAULT_GATES.addElement(gate);
+		
     	mat = new Matrix<>(2, 2, 
     			Complex.ONE(), Complex.ZERO(), 
     			Complex.ZERO(), Complex.ONE().negative());
 	    gate = new DefaultGate("Z", mat,GateType.Z);
-		DEFAULT_GATES.addElement(gate);
-	    gate = new DefaultGate("M", identity, GateType.MEASURE);
 		DEFAULT_GATES.addElement(gate);
 		
 		for(int i = 0 ; i < DEFAULT_GATES.size(); i++)
@@ -56,6 +58,10 @@ public class DefaultGate extends AbstractGate implements Serializable{
 		
 		
 //		Gates with custom icons:
+		
+		gate = new DefaultGate("M", identity, GateType.MEASURE);
+		gate.setIcon(GateIcon.getMeasureIcon());
+		DEFAULT_GATES.addElement(gate);
 		
 		mat = new Matrix<>(4, 4, 
     			Complex.ONE(), Complex.ZERO(), Complex.ZERO(), Complex.ZERO(),

@@ -13,7 +13,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
-import appUI.AppDialogs;
+import utils.AppDialogs;
 
 
 public class QASMPreferencesView extends AbstractPreferenceView{

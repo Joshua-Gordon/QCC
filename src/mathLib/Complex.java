@@ -81,10 +81,14 @@ public class Complex implements Serializable, Scalar<Complex>{
     		c = s.charAt(index);
 	    	temp = c + temp;
     		if(c == '+' || c == '-' || index == 0) {
-    			if(temp.endsWith("i"))
-    				b += Double.parseDouble(temp.substring(0, temp.length() - 1) + (temp.length() < 3? '1':""));
-    			else
+    			if(temp.endsWith("i")) {
+    				temp = temp.substring(0, temp.length() - 1);
+    				if(temp.equals("+") || temp.equals("-") || temp.equals(""))
+    					temp += "1";
+    				b += Double.parseDouble(temp);
+    			}else {
     				a += Double.parseDouble(temp);
+    			}
     			temp = "";
     		}
     	}
@@ -155,7 +159,7 @@ public class Complex implements Serializable, Scalar<Complex>{
 	/**
 	 * This Function can ONLY take in a Real Number as an exponent and a complex base <strong> OR </strong>
 	 * <br> can take a Real Number as a Base and a complex number as a Exponent. 
-	 * <br> will throw an error if the base and the exponent is Complex!!!
+	 * <br> will throw an error if the base and the exponent are both Complex!!!
 	 * <p> ie. new Complex(K<sub>1</sub>,K<sub>2</sub>).pow(new Complex(K<sub>3</sub>, 0)); 
 	 * <br>...for any value K<sub>1</sub>, K<sub>2</sub>, K<sub>3</sub> 
 	 * <br><strong>OR</strong><br> ie. new Complex(K<sub>1</sub>, 0).pow(new Complex(K<sub>2</sub>, K<sub>3</sub>)); 

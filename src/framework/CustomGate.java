@@ -1,11 +1,15 @@
 package framework;
 
+import java.awt.geom.Rectangle2D;
+import java.awt.image.renderable.RenderContext;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import appUI.CircuitBoardRenderContext;
 import appUI.CustomGateConstructorUI;
 import mathLib.Complex;
 import mathLib.Matrix;
+import utils.ResourceLoader;
 
 
 public class CustomGate extends AbstractGate implements Serializable {
@@ -29,10 +33,17 @@ public class CustomGate extends AbstractGate implements Serializable {
     	window.setVisible(true);
     	ArrayList<Matrix<Complex>> matrixes = window.getCustomMatrix();
     	if(matrixes != null) {
-    		CustomGate mqg = new CustomGate(window.getGateName(), matrixes);
-    		mqg.setDescription(window.getDescription());
-    		mqg.setIcon(window.getIcon());
-    		Main.getWindow().getSelectedBoard().getCustomGates().addElement(mqg);
+    		CustomGate cg = new CustomGate(window.getGateName(), matrixes);
+    		cg.setDescription(window.getDescription());
+    		cg.setIcon(window.getIcon());
+    		
+    		Rectangle2D rect = CircuitBoardRenderContext.getStringBounds(ResourceLoader.VAST_SHADOW, cg.getName());
+    		int offset = (int) (2 * CircuitBoardRenderContext.REGISTER_NUM_PADDING + 
+    				CircuitBoardRenderContext.getStringBounds(ResourceLoader.VAST_SHADOW, Integer.toString(cg.getNumberOfRegisters() - 1)).getWidth());
+    		int width = (int)Math.ceil((double) (rect.getWidth() + offset)/ (double) CircuitBoardRenderContext.GATE_PIXEL_SIZE);
+    		cg.setWidth(width);
+    		
+    		Main.getWindow().getSelectedBoard().getCustomGates().addElement(cg);
     		Main.getWindow().getSelectedBoard().setUnsaved();
     	}
     }

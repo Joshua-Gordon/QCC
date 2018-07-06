@@ -3,11 +3,10 @@ package appUI;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Event;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.util.Collection;
-import java.util.Hashtable;
-import java.util.function.Consumer;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
@@ -30,12 +29,18 @@ import framework.DefaultGate;
 public class GateChooserUI extends AbstractAppViewUI implements ListSelectionListener{
 	private JTabbedPane tabPane;
 	private Window w;
-	private Hashtable<String, JList<AbstractGate>> lists = new Hashtable<>();
+	private ArrayList<JList<AbstractGate>> lists = new ArrayList<>();
 	
-	private static final String DEFAULT_GATES = "Default Gates";
-	private static final String CUSTOM_GATES = "Custom Gates";
-	private static final String CUSTOM_ORACLES = "Custom Oracles";
+	private static final String DEFAULT_GATES_NAME = "Default Gates";
+	private static final String CUSTOM_GATES_NAME = "Custom Gates";
+	private static final String CUSTOM_ORACLES_NAME = "Custom Oracles";
+	
+	public static final int DEFAULT_GATES = 0;
+	public static final int CUSTOM_GATES = 1;
+	public static final int CUSTOM_ORACLES = 2;
+	
 	private AbstractGate selectedGate;
+	private boolean isChanging = false;
 	
 	public GateChooserUI(Window w) {
 		super("Gates");
@@ -43,9 +48,9 @@ public class GateChooserUI extends AbstractAppViewUI implements ListSelectionLis
 		setBackground(Color.LIGHT_GRAY);
 		setLayout(new BorderLayout());
 		tabPane = new JTabbedPane();
-		tabPane.add(DEFAULT_GATES, makeListTab(DEFAULT_GATES));
-		tabPane.add(CUSTOM_GATES, makeListTab(CUSTOM_GATES));
-		tabPane.add(CUSTOM_ORACLES, makeListTab(CUSTOM_ORACLES));
+		tabPane.add(DEFAULT_GATES_NAME, makeListTab());
+		tabPane.add(CUSTOM_GATES_NAME, makeListTab());
+		tabPane.add(CUSTOM_ORACLES_NAME, makeListTab());
 		add(tabPane, BorderLayout.CENTER);
 		lists.get(DEFAULT_GATES).setModel(DefaultGate.DEFAULT_GATES);
 	}
@@ -56,10 +61,10 @@ public class GateChooserUI extends AbstractAppViewUI implements ListSelectionLis
 		lists.get(CUSTOM_ORACLES).setModel(cb.getCustomOracles());
 	}
 	
-	private JPanel makeListTab(String listName) {
+	private JPanel makeListTab() {
 		JPanel panel = new JPanel(new BorderLayout());
 		JList<AbstractGate> list = new JList<>();
-		lists.put(listName, list);
+		lists.add(list);
 		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		list.setLayoutOrientation(JList.HORIZONTAL_WRAP);
 		list.setVisibleRowCount(-1);
@@ -77,8 +82,6 @@ public class GateChooserUI extends AbstractAppViewUI implements ListSelectionLis
 				JPanel panel = new JPanel(new GridBagLayout());
 				if(isSelected) {
 					panel.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
-				}
-				if(cellHasFocus) {
 					panel.setOpaque(true);
 					panel.setBackground(color);
 				}else {
@@ -112,13 +115,20 @@ public class GateChooserUI extends AbstractAppViewUI implements ListSelectionLis
 	@SuppressWarnings("unchecked")
 	@Override
 	public void valueChanged(ListSelectionEvent e) {
-		if(!e.getValueIsAdjusting()) {
-			JList<AbstractGate> list = (JList<AbstractGate>)e.getSource();
+		if(!e.getValueIsAdjusting() && !isChanging) {
+			isChanging = true;
+			JList<AbstractGate> list = (JList<AbstractGate>) e.getSource();
 			selectedGate = list.getSelectedValue();
+			for(int i = 0; i < lists.size(); i++) {
+				if(!list.equals(lists.get(i))) {
+					lists.get(i).clearSelection();
+				}
+			}
+			isChanging = false;
 		}
 	}
 	
-	public AbstractGate getGate() {
+	public AbstractGate getSelectedGate() {
 		return selectedGate;
 	}
 	

@@ -20,9 +20,9 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
-import appUI.AppDialogs;
 import appUI.AppMenuBar;
 import framework.Main;
+import utils.AppDialogs;
 
 @SuppressWarnings("serial")
 public class ActionCommandPreferencesView extends AbstractPreferenceView{

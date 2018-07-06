@@ -4,22 +4,19 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.image.BufferedImage;
 import java.io.File;
 
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 
+import appTools.AppToolBar;
 import framework.CircuitBoard;
-import framework.SolderingGun;
 import framework.Keyboard;
-import framework.Main;
-import framework.Mouse;
 import preferences.AppPreferences;
+import utils.AppDialogs;
 
 public class Window extends WindowAdapter{
 
@@ -35,7 +32,6 @@ public class Window extends WindowAdapter{
     private GateChooserUI gateChooser;
     private JSplitPane consoleSplitPane;
     private JSplitPane gateChooserSplitPane;
-    private SolderingGun gsg;
     private CircuitBoardSelector fileSelector;
     private CircuitBoard selectedBoard;
     private CircuitBoardRenderContext renderContext;
@@ -45,7 +41,6 @@ public class Window extends WindowAdapter{
         this.keyboard = new Keyboard(this);
         this.console = new ConsoleUI(this);
         this.gateChooser = new GateChooserUI(this);
-        this.gsg = new SolderingGun(this);
         this.fileSelector = new CircuitBoardSelector(this);
         this.display = new JLabel();
         this.renderContext = new CircuitBoardRenderContext(this);
@@ -54,7 +49,7 @@ public class Window extends WindowAdapter{
         frame.setSize(WIDTH,HEIGHT);
         frame.setResizable(true);
         frame.setLocationRelativeTo(null);
-        // This Allows for prompting save before exiting application
+        // This allows for prompting save before exiting application
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         
         addComponents();
@@ -64,7 +59,6 @@ public class Window extends WindowAdapter{
     
     private void addComponents() {
     	frame.setLayout(new BorderLayout());
-        frame.add(new AppToolBar(), BorderLayout.NORTH);
         
         JPanel panel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -74,11 +68,16 @@ public class Window extends WindowAdapter{
         gbc.gridx = 0;
         gbc.gridy = 0;
         panel.add(display, gbc);
-        display.addMouseListener(new Mouse(this));
         jsp = new JScrollPane(panel);
         
+        panel = new JPanel(new BorderLayout());
+        panel.add(new AppToolBar(this), BorderLayout.NORTH);
+        panel.add(jsp, BorderLayout.CENTER);
+        
+        
+        
         consoleSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
-        consoleSplitPane.setTopComponent(jsp);
+        consoleSplitPane.setTopComponent(panel);
         consoleSplitPane.setBottomComponent(console);
         consoleSplitPane.setResizeWeight(.7);
         consoleSplitPane.setDividerLocation(-100);
@@ -88,8 +87,6 @@ public class Window extends WindowAdapter{
         gateChooserSplitPane.setRightComponent(gateChooser);
         gateChooserSplitPane.setResizeWeight(.7);
         gateChooserSplitPane.setDividerLocation(-100);
-        
-        
         
         frame.add(gateChooserSplitPane, BorderLayout.CENTER);
         
@@ -103,7 +100,6 @@ public class Window extends WindowAdapter{
     
     public void setVisible(boolean visible) {
         frame.setVisible(visible);
-        renderContext.paintRerenderedBaseImageOnly();
     }
 
     public boolean isActive() {
@@ -175,11 +171,6 @@ public class Window extends WindowAdapter{
     	frame.dispose();
     	System.exit(0);
     }
-
-
-	public SolderingGun getSolderingGun() {
-		return gsg;
-	}
 
 	public CircuitBoardSelector getFileSelector() {
 		return fileSelector;

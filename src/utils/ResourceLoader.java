@@ -2,15 +2,25 @@ package utils;
 
 import java.awt.Font;
 import java.awt.FontFormatException;
+import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
+import java.awt.RenderingHints;
+import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Hashtable;
+
+import javax.imageio.ImageIO;
 
 public class ResourceLoader {
 	
 	public static Font MPLUS;
 	public static Font VAST_SHADOW;
+	public static BufferedImage SOLDER;
+	public static BufferedImage EDIT;
+	public static BufferedImage SELECT;
 	
 	private static final Hashtable<String, File> TEMP_FILES = new Hashtable<>();
 	public static final String TEMP_FILE_URL = "res" + File.separator + "tempFiles";
@@ -18,6 +28,43 @@ public class ResourceLoader {
 	static {
 		MPLUS = loadFont("mplus-2m-bold.ttf");
 		VAST_SHADOW = loadFont("VastShadow-Regular.ttf").deriveFont(35f);
+		SOLDER = scaleTo(loadImage("solderIcon.png"), 30, 30);
+		EDIT = addPadding(scaleTo(loadImage("editIcon.png"), 20, 20), 5);
+		SELECT = addPadding(scaleTo(loadImage("selectIcon.png"), 22, 22), 4); 
+	}
+	
+	private static BufferedImage addPadding(BufferedImage bi, int padding) {
+		BufferedImage temp  = new BufferedImage(bi.getWidth() + 2*padding, bi.getHeight() + 2*padding, bi.getType());
+		AffineTransform transform = new AffineTransform();
+		transform.translate(padding, padding);
+		Graphics2D g2d = (Graphics2D) temp.getGraphics();
+		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+		g2d.drawImage(bi, transform, null);
+		return temp;
+	}
+	
+	private static BufferedImage scaleTo(BufferedImage bi, int width, int height) {
+		BufferedImage temp  = new BufferedImage(width, height, bi.getType());
+		AffineTransform transform = new AffineTransform();
+		transform.scale((double) width / (double) bi.getWidth(), (double) height / (double)bi.getHeight());
+		Graphics2D g2d = (Graphics2D) temp.getGraphics();
+		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+		g2d.drawImage(bi, transform, null);
+		return temp;
+	}
+	
+	private static BufferedImage loadImage(String fileName) {
+		BufferedImage bi = null;
+		File iconFile = new File("res" + File.separator + "icons" + File.separator + fileName);
+		try{
+			FileInputStream fis = new FileInputStream(iconFile);
+			bi = ImageIO.read(fis);
+		}catch(IOException ie) {
+			ie.printStackTrace();
+		}
+		return bi;
 	}
 	
 	

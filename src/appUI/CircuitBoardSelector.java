@@ -16,6 +16,7 @@ import javax.swing.filechooser.FileFilter;
 import framework.CircuitBoard;
 import framework.Main;
 import preferences.AppPreferences;
+import utils.AppDialogs;
 
 public class CircuitBoardSelector{
 	

@@ -1,8 +1,10 @@
 package framework;
 
-import appUI.GateIcon;
+import java.io.Serializable;
+
 import mathLib.Complex;
 import mathLib.Matrix;
+import utils.GateIcon;
 
 
 /**
@@ -11,18 +13,22 @@ import mathLib.Matrix;
  * @author quantumresearch
  *
  */
-public abstract class AbstractGate {
+public abstract class AbstractGate implements Serializable{
+	private static final long serialVersionUID = -358713650794388405L;
+	
+	private static final double LOG10_2 = Math.log10(2);
 	
 	public static enum GateType{
         I,X,Y,Z,H, CUSTOM, MEASURE, CNOT, SWAP
     }
+	
+	
 
 	private String description;
 	private transient GateIcon icon = null;
     private String name;
     private GateType type;
-    public int length;
-    
+    private int width = 1;
     
 	private Matrix<Complex> matrix;
 	
@@ -37,7 +43,6 @@ public abstract class AbstractGate {
 	public boolean isMultiQubitGate() {
     	return matrix.getColumns() > 2;
     }
-	
 
 	public String getName() {
 		return name;
@@ -75,6 +80,20 @@ public abstract class AbstractGate {
 	public void setType(GateType type) {
 		this.type = type;
 	}
+	
+	public int getNumberOfRegisters() {
+		Matrix<Complex> mat = getMatrix();
+		return (int) Math.round(Math.log10(mat.getRows()) / LOG10_2);
+	}
+
+	public int getWidth() {
+		return width;
+	}
+
+	public void setWidth(int width) {
+		this.width = width;
+	}
+	
 	
 	
 }

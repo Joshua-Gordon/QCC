@@ -1,16 +1,17 @@
-package appUI;
+package utils;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.Polygon;
 import java.awt.RenderingHints;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
 import javax.swing.ImageIcon;
 
-import utils.ResourceLoader;
+import appUI.CircuitBoardRenderContext;
 
 
 
@@ -20,6 +21,13 @@ public class GateIcon extends ImageIcon{
 
 	public static final BasicStroke THICK = new BasicStroke(5, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER);
 	public static final BasicStroke THIN = new BasicStroke(2, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER);
+	
+	public static final Polygon ARROW_HEAD = new Polygon(); 
+	static {
+		ARROW_HEAD.addPoint( 0, 0);
+		ARROW_HEAD.addPoint( -2, -5);
+		ARROW_HEAD.addPoint( 2,-5);
+	}
 	
 	private BufferedImage image;
 	private boolean multiQubit;
@@ -44,6 +52,30 @@ public class GateIcon extends ImageIcon{
 	
 	public GateIcon() {
 		this("", false);
+	}
+	
+	public static GateIcon getMeasureIcon() {
+		Font f = ResourceLoader.VAST_SHADOW.deriveFont(12f);
+		Rectangle2D rect = CircuitBoardRenderContext.getStringBounds(f, "M");
+		BufferedImage bi = new BufferedImage(2 * (PADDING + LINE_LENGTH) + (int) rect.getWidth(),
+				2 * PADDING + (int) rect.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
+		Graphics2D g2d = (Graphics2D) bi.getGraphics();
+    	g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		g2d.setFont(f);
+		g2d.setColor(Color.WHITE);
+		g2d.fillRect(LINE_LENGTH, 0, bi.getWidth() - 2*LINE_LENGTH, bi.getHeight() - 1);
+		g2d.setColor(Color.BLACK);
+		g2d.drawRect(LINE_LENGTH, 0, bi.getWidth() - 2*LINE_LENGTH, bi.getHeight() - 1);
+		
+		g2d.drawLine(0, bi.getHeight() / 2, LINE_LENGTH, bi.getHeight() / 2);
+		g2d.drawLine(bi.getWidth() - LINE_LENGTH, bi.getHeight() / 2, bi.getWidth(), bi.getHeight() / 2);
+		
+		g2d.drawArc(LINE_LENGTH + PADDING/2, PADDING, (int) rect.getWidth() + PADDING, (int) rect.getHeight() + PADDING, 0, 180);
+		CircuitBoardRenderContext.drawArrow(g2d, ARROW_HEAD, LINE_LENGTH + PADDING + (int)(rect.getWidth() / 2), 
+				(int)(1.5f * PADDING) + (int) (rect.getHeight() / 2), bi.getWidth() - LINE_LENGTH - 5, 5);
+		
+		g2d.dispose();
+		return new GateIcon("Measure", false, bi);
 	}
 	
 	public static GateIcon getSwapIcon() {

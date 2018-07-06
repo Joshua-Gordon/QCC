@@ -25,20 +25,20 @@ public class Translator {
         for(int x = 0; x < board.size(); ++x){
             ArrayList<SolderedRegister> instructions = board.get(x); //Current column of instructions
             for(int i = 0; i < instructions.size(); ++i){
-            	SolderedRegister sg = instructions.get(i);
-            	AbstractGate g = sg.getAbstractGate();
+            	ExportedGate eg = new ExportedGate(instructions, i);
+            	AbstractGate g = eg.getAbstractGate();
                 GateType type = g.getType();
                 if(type != GateType.I && type != GateType.CUSTOM) {
                     int idx = i;
-                    if(idx+g.length < offset) { //Don't cut off a long gate at the bottom of the circuit
-                        offset = idx+g.length;
+                    if(idx+eg.getHeight() < offset) { //Don't cut off a long gate at the bottom of the circuit
+                        offset = idx+eg.getHeight();
                     }
                     code += DefaultGate.typeToString(type, DefaultGate.LangType.QUIL);
                     code += " ";
                     code += idx;
                     if (type == GateType.CNOT || type == GateType.SWAP) {
                         code += " ";
-                        code += (idx + g.length); //Second index
+                        code += (idx + eg.getHeight()); //Second index
                     }
                     if (type == GateType.MEASURE) {
                         code += " [";
@@ -47,16 +47,15 @@ public class Translator {
                     }
                     code += "\n";
                 } else if(type == GateType.CUSTOM) { //All bets are off. Special code to handle these
-                	CustomGate mqg = (CustomGate) g;
-                    String name = mqg.getName();
+                    String name = g.getName();
                     int idx = i;
-                    if(idx + g.length < offset) {
-                        offset = idx + mqg.length;
+                    if(idx + eg.getHeight() < offset) {
+                        offset = idx + eg.getHeight();
                     }
                     if(!customGates.contains(name)) { //If this is a new gate
                         customGates.add(name);        //Then add it to the known gates
                         String dec = "DEFGATE " + name + ":"; //And define it in the code
-                        Matrix<Complex> m = mqg.getMatrix();
+                        Matrix<Complex> m = g.getMatrix();
                         for(int my = 0; my < m.getRows(); ++my) {
                             dec += "\n    ";
                             for(int mx = 0; mx < m.getRows(); ++mx) { //This copies down the matrix into the code
@@ -70,8 +69,8 @@ public class Translator {
                     }
                     code += name + " ";
                     
-                    if(sg.isMultiQubit()) { 
-                    	for (int r : sg.getRegisters()) {
+                    if(((CustomGate)g).isMultiQubitGate()) { 
+                    	for (int r : eg.getRegisters()) {
                             code += r + " "; //Apply the gate to all the registers it's on
                     	}
                     }else {
@@ -196,9 +195,9 @@ public class Translator {
         for(int x = 0; x < board.size(); ++x) {
             ArrayList<SolderedRegister> column = board.get(x);
             for(int y = 0; y < board.get(0).size(); ++y) {
-                if(column.get(y).getAbstractGate().getType() != GateType.I) {
+                if(column.get(y).getSolderedGate().getAbstractGate().getType() != GateType.I) {
                     hasGate[y] = true;
-                    hasGate[y+column.get(y).getAbstractGate().length] = true;
+                    hasGate[y+column.get(y).getSolderedGate().getAbstractGate().length] = true;
                 }
             }
         }

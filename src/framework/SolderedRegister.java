@@ -5,11 +5,11 @@ import java.io.Serializable;
 public class SolderedRegister implements Serializable{
 	private static final long serialVersionUID = 126844024737787336L;
 	
-	private int gateRegister;
+	private int gateRegisterNumber;
 	private SolderedGate solderedGate;
 	
-	public SolderedRegister(SolderedGate solderedGate, int gateRegister) {
-		this.gateRegister = gateRegister;
+	public SolderedRegister(SolderedGate solderedGate, int gateRegisterNumber) {
+		this.gateRegisterNumber = gateRegisterNumber;
 		this.solderedGate = solderedGate;
 	}
 	
@@ -17,7 +17,7 @@ public class SolderedRegister implements Serializable{
 		return solderedGate;
 	}
 	
-	public int getGateRegister() {
-		return gateRegister;
-	}	
+	public int getGateRegisterNumber() {
+		return gateRegisterNumber;
+	}
 }

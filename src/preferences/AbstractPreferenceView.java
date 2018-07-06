@@ -14,7 +14,7 @@ import javax.swing.JScrollPane;
 import javax.swing.SpringLayout;
 import javax.swing.border.BevelBorder;
 
-import appUI.AppDialogs;
+import utils.AppDialogs;
 
 public abstract class AbstractPreferenceView implements ActionListener{
 	

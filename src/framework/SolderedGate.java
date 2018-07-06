@@ -2,6 +2,9 @@ package framework;
 
 import java.io.Serializable;
 
+import mathLib.Complex;
+import mathLib.Matrix;
+
 public class SolderedGate implements Serializable{
 	private static final long serialVersionUID = 2595030500395644473L;
 	
@@ -10,7 +13,7 @@ public class SolderedGate implements Serializable{
 	public SolderedGate(AbstractGate abstractGate) {
 		this.abstractGate = abstractGate;
 	}
-	
+
 	public boolean isMultiQubit() {
 		return abstractGate.isMultiQubitGate();
 	}
@@ -18,4 +21,10 @@ public class SolderedGate implements Serializable{
 	public AbstractGate getAbstractGate() {
 		return abstractGate;
 	}
+	
+	public int getExpectedNumberOfRegisters() {
+		return abstractGate.getNumberOfRegisters();
+	}
+	
+	
 }
