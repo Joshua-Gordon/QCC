@@ -40,6 +40,10 @@ public class CircuitBoard implements Serializable{
     //Empty 5x5 board
     
     
+    /**
+     * @return
+     * an empty 4 by 5 {@link CircuitBoard}
+     */
     public static CircuitBoard getDefaultCircuitBoard() {
     	CircuitBoard board = new CircuitBoard();
     	for(int i = 0; i < 5; ++i){
@@ -50,7 +54,7 @@ public class CircuitBoard implements Serializable{
     	return board;
     }
     
-    public CircuitBoard() {
+    private CircuitBoard() {
         board = new ArrayList<>();
     }
 
