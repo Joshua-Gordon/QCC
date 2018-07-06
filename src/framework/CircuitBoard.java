@@ -11,6 +11,18 @@ import appUI.CircuitBoardSelector;
 import preferences.AppPreferences;
 import utils.AppDialogs;
 
+/**
+ * Contains all data pertaining to a application project
+ * such as the list of custom gates, custom oracles, and the list of instructions
+ * for a quantum protocol represented by a grid of gates 
+ * (A double {@link Arraylist} of {@link SolderedRegister}s)
+ * <p>
+ * This is main class to be serialized to save a user's project, however all methods pertaining to saving
+ * an instance of a {@link CircuitBoard} as a project is contained within {@link CircuitBoardSelector}
+ * 
+ * @author quantumresearch
+ *
+ */
 public class CircuitBoard implements Serializable{
 	private static final long serialVersionUID = -6921131331890897905L;
 
@@ -21,23 +33,6 @@ public class CircuitBoard implements Serializable{
     private ArrayList<Integer> boardWidths = new ArrayList<>();
     private DefaultListModel<AbstractGate> customGates = new DefaultListModel<>();
     private DefaultListModel<AbstractGate> customOracles = new DefaultListModel<>();
-
-//    public static EnumMap<DefaultGate.GateType,Supplier<DefaultGate>> gatemap;
-
-    //initialize gatemap
-//	static {
-//    	gatemap = new EnumMap<DefaultGate.GateType, Supplier<DefaultGate>>(DefaultGate.GateType.class);
-//        gatemap.put(DefaultGate.GateType.I,DefaultGate::identity);
-//        gatemap.put(DefaultGate.GateType.H,DefaultGate::hadamard);
-//        gatemap.put(DefaultGate.GateType.X,DefaultGate::x);
-//        gatemap.put(DefaultGate.GateType.Y,DefaultGate::y);
-//        gatemap.put(DefaultGate.GateType.Z,DefaultGate::z);
-//        gatemap.put(DefaultGate.GateType.MEASURE,DefaultGate::measure);
-//        gatemap.put(DefaultGate.GateType.CNOT,DefaultGate::cnot);
-//        gatemap.put(DefaultGate.GateType.SWAP,DefaultGate::swap);
-//    }
-
-    //Empty 5x5 board
     
     
     /**
@@ -59,13 +54,19 @@ public class CircuitBoard implements Serializable{
     }
     
     
-    
+    /**
+     * Adds a row to the end of this {@link CircuitBoard}.
+     */
     public void addRow() {
     	setUnsaved();
         for(ArrayList<SolderedRegister> a : board)
             a.add(new SolderedRegister(new SolderedGate(DefaultGate.getIdentity()), 0));
     }
     
+    /**
+     * Adds a row at the specified location.
+     * @param r
+     */
     public void addRow(int r) {
     	if(r == getRows()) {
     		addRow();
@@ -75,6 +76,9 @@ public class CircuitBoard implements Serializable{
     	}
     }
     
+    /**
+     * Removes the last row of this {@link CircuitBoard}.
+     */
     public void removeRow() {
     	if(board.get(0).size() > 1) {
 	    	setUnsaved();
@@ -85,6 +89,9 @@ public class CircuitBoard implements Serializable{
     	}
     }
     
+    /**
+     * Adds a column to the end of this board.
+     */
     public void addColumn(){
     	setUnsaved();
         board.add(new ArrayList<>());
@@ -93,6 +100,10 @@ public class CircuitBoard implements Serializable{
             board.get(board.size()-1).add(new SolderedRegister(new SolderedGate(DefaultGate.getIdentity()), 0));
     }
     
+    /**
+     * Adds a column in the specified location.
+     * @param c
+     */
     public void addColumn(int c){
     	if(c == getColumns()) {
     		addColumn();
@@ -105,6 +116,10 @@ public class CircuitBoard implements Serializable{
     	}
     }
     
+    /**
+     * Removes the last column of this {@link CircuitBoard}. If the {@link CircuitBoard} is
+     * already one column, it will not reduce rows and a prompt will tell the user.
+     */
     public void removeColumn(){
        	if(board.size() > 1) {
 	    	setUnsaved();
@@ -115,25 +130,6 @@ public class CircuitBoard implements Serializable{
        	}
     }
 
-	//Takes all selected gates and sets them to type g
-//    public void edit(AbstractGate.GateType g) {
-//    	mutate();
-//        for(int x = 0; x < board.size(); ++x) {
-//            for(int y = 0; y < board.get(0).size(); ++y) {
-//            	AbstractGate gate = board.get(x).get(y);
-//                if(gate.isSelected()) {
-//                	AbstractGate newGate = gatemap.get(g).get();
-//                    if(newGate != null) {
-//                    	board.get(x).set(y,newGate);
-//                    }
-//                }
-//            }
-//        }
-//        Main.render();
-//    }
-
-    
-    
     
     /**
      * @return
