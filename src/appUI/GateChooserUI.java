@@ -52,7 +52,7 @@ public class GateChooserUI extends AbstractAppViewUI implements ListSelectionLis
 		tabPane.add(CUSTOM_GATES_NAME, makeListTab());
 		tabPane.add(CUSTOM_ORACLES_NAME, makeListTab());
 		add(tabPane, BorderLayout.CENTER);
-		lists.get(DEFAULT_GATES).setModel(DefaultGate.GATE_MAP);
+		lists.get(DEFAULT_GATES).setModel(DefaultGate.DEFAULT_GATES);
 	}
 	
 	public void updateListModels() {

@@ -5,10 +5,12 @@ import mathLib.Matrix;
 import utils.GateIcon;
 
 import javax.swing.*;
+
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
 
-public class GateMap extends DefaultListModel<AbstractGate> {
+public class GateMap extends DefaultListModel<AbstractGate> implements Serializable{
 	private static final long serialVersionUID = -6321945775286009079L;
 	
 	private static HashMap<String,AbstractGate> map = new HashMap<>();
@@ -83,6 +85,16 @@ public class GateMap extends DefaultListModel<AbstractGate> {
             it.next();
         }
         return it.next();
+    }
+    
+    @Override
+    public AbstractGate get(int index) {
+    	return getElementAt(index);
+    }
+    
+    @Override
+    public AbstractGate elementAt(int index) {
+    	return getElementAt(index);
     }
 
     public static AbstractGate lookup(String name) {

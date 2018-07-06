@@ -1,89 +1,83 @@
 package framework;
 import java.io.Serializable;
 
-import javax.swing.DefaultListModel;
-import javax.swing.JOptionPane;
 
 import mathLib.Complex;
 import mathLib.Matrix;
-import utils.AppDialogs;
 import utils.GateIcon;
+import utils.HashListModel;
 
 public class DefaultGate extends AbstractGate implements Serializable{
 	private static final long serialVersionUID = 6220371128991814182L;
 	
-    public static final DefaultListModel<AbstractGate> DEFAULT_GATES = new DefaultListModel<>();
-    public static final GateMap GATE_MAP = new GateMap();
+    public static final HashListModel<String, AbstractGate> DEFAULT_GATES = new HashListModel<>();
 	
     public static enum LangType{
         QUIL,QASM,QUIPPER
     }
     
-	public static void loadGates(){
-	/*
+    public static void loadGates(){
+
 //		Gates with default icons :
-		
-		Matrix<Complex> identity = new Matrix<>(2, 2, 
-        		Complex.ONE(), Complex.ZERO(),
-        		Complex.ZERO(), Complex.ONE());
-        DefaultGate gate = new DefaultGate("I", identity,GateType.I);
-		DEFAULT_GATES.addElement(gate);
-		
-		Matrix<Complex> mat = new Matrix<>(2, 2, 
-        		Complex.ONE(), Complex.ONE(), 
-        		Complex.ONE(), Complex.ONE().negative())
-        		.mult(Complex.ISQRT2());
-		gate = new DefaultGate("H", mat,GateType.H);
-		DEFAULT_GATES.addElement(gate);
-		
-		mat = new Matrix<>(2, 2, 
-    			Complex.ZERO(), Complex.ONE(), 
-    			Complex.ONE(), Complex.ZERO());
-		gate = new DefaultGate("X", mat,GateType.X);
-		DEFAULT_GATES.addElement(gate);
-		
-	    mat = new Matrix<>(2, 2, 
-	    			Complex.ZERO(), Complex.I().negative(), 
-	    			Complex.I(), Complex.ZERO());
-	    gate = new DefaultGate("Y", mat,GateType.Y);
-		DEFAULT_GATES.addElement(gate);
-		
-    	mat = new Matrix<>(2, 2, 
-    			Complex.ONE(), Complex.ZERO(), 
-    			Complex.ZERO(), Complex.ONE().negative());
-	    gate = new DefaultGate("Z", mat,GateType.Z);
-		DEFAULT_GATES.addElement(gate);
-		
-		for(int i = 0 ; i < DEFAULT_GATES.size(); i++)
-			DEFAULT_GATES.getElementAt(i).loadIcon();
-		
-		
+
+        Matrix<Complex> identity = new Matrix<>(2, 2,
+                Complex.ONE(), Complex.ZERO(),
+                Complex.ZERO(), Complex.ONE());
+        DefaultGate gate = new DefaultGate("I", identity, AbstractGate.GateType.I);
+        DEFAULT_GATES.put("I",gate);
+
+        Matrix<Complex> mat = new Matrix<>(2, 2,
+                Complex.ONE(), Complex.ONE(),
+                Complex.ONE(), Complex.ONE().negative())
+                .mult(Complex.ISQRT2());
+        gate = new DefaultGate("H", mat, AbstractGate.GateType.H);
+        DEFAULT_GATES.put("H",gate);
+
+        mat = new Matrix<>(2, 2,
+                Complex.ZERO(), Complex.ONE(),
+                Complex.ONE(), Complex.ZERO());
+        gate = new DefaultGate("X", mat, AbstractGate.GateType.X);
+        DEFAULT_GATES.put("X",gate);
+
+        mat = new Matrix<>(2, 2,
+                Complex.ZERO(), Complex.I().negative(),
+                Complex.I(), Complex.ZERO());
+        gate = new DefaultGate("Y", mat, AbstractGate.GateType.Y);
+        DEFAULT_GATES.put("Y",gate);
+
+        mat = new Matrix<>(2, 2,
+                Complex.ONE(), Complex.ZERO(),
+                Complex.ZERO(), Complex.ONE().negative());
+        gate = new DefaultGate("Z", mat, AbstractGate.GateType.Z);
+        DEFAULT_GATES.put("Z",gate);
+        
+        DEFAULT_GATES.getValues().forEach(AbstractGate::loadIcon);
+
+
 //		Gates with custom icons:
-		
-		gate = new DefaultGate("M", identity, GateType.MEASURE);
-		gate.setIcon(GateIcon.getMeasureIcon());
-		DEFAULT_GATES.addElement(gate);
-		
-		mat = new Matrix<>(4, 4, 
-    			Complex.ONE(), Complex.ZERO(), Complex.ZERO(), Complex.ZERO(),
-    			Complex.ZERO(), Complex.ZERO(), Complex.ONE(), Complex.ZERO(),
-    			Complex.ZERO(), Complex.ONE(), Complex.ZERO(), Complex.ZERO(),
-    			Complex.ZERO(), Complex.ZERO(), Complex.ZERO(), Complex.ONE());
-	    gate = new DefaultGate("SWAP", mat,GateType.SWAP);
-	    gate.setIcon(GateIcon.getSwapIcon());
-		DEFAULT_GATES.addElement(gate);
-		
-		mat = new Matrix<>(4, 4, 
-    			Complex.ONE(), Complex.ZERO(), Complex.ZERO(), Complex.ZERO(),
-    			Complex.ZERO(), Complex.ONE(), Complex.ZERO(), Complex.ZERO(),
-    			Complex.ZERO(), Complex.ZERO(), Complex.ZERO(), Complex.ONE(),
-    			Complex.ZERO(), Complex.ZERO(), Complex.ONE(), Complex.ZERO());
-	    gate = new DefaultGate("CNOT", mat,GateType.CNOT);
-	    gate.setIcon(GateIcon.getCNotIcon());
-		DEFAULT_GATES.addElement(gate);
-		*/
-	GateMap.loadGates();
-	}
+
+        gate = new DefaultGate("MEASURE", identity, AbstractGate.GateType.MEASURE);
+        gate.setIcon(GateIcon.getMeasureIcon());
+        DEFAULT_GATES.put("MEASURE",gate);
+
+        mat = new Matrix<>(4, 4,
+                Complex.ONE(), Complex.ZERO(), Complex.ZERO(), Complex.ZERO(),
+                Complex.ZERO(), Complex.ZERO(), Complex.ONE(), Complex.ZERO(),
+                Complex.ZERO(), Complex.ONE(), Complex.ZERO(), Complex.ZERO(),
+                Complex.ZERO(), Complex.ZERO(), Complex.ZERO(), Complex.ONE());
+        gate = new DefaultGate("SWAP", mat, AbstractGate.GateType.SWAP);
+        gate.setIcon(GateIcon.getSwapIcon());
+        DEFAULT_GATES.put("SWAP",gate);
+
+        mat = new Matrix<>(4, 4,
+                Complex.ONE(), Complex.ZERO(), Complex.ZERO(), Complex.ZERO(),
+                Complex.ZERO(), Complex.ONE(), Complex.ZERO(), Complex.ZERO(),
+                Complex.ZERO(), Complex.ZERO(), Complex.ZERO(), Complex.ONE(),
+                Complex.ZERO(), Complex.ZERO(), Complex.ONE(), Complex.ZERO());
+        gate = new DefaultGate("CNOT", mat, AbstractGate.GateType.CNOT);
+        gate.setIcon(GateIcon.getCNotIcon());
+        DEFAULT_GATES.put("CNOT",gate);
+    }
 	
     public static String typeToString(GateType gt, LangType lt){
         if(lt == LangType.QUIL) {
@@ -153,37 +147,6 @@ public class DefaultGate extends AbstractGate implements Serializable{
         setType(gt);
     }
     
-    public static AbstractGate getIdentity() {
-    	return GateMap.lookup("I");
-    }
-    
-    public static AbstractGate getHadmard() {
-    	return GateMap.lookup("H");
-    }
-
-    public static AbstractGate getX() {
-    	return GateMap.lookup("X");
-    }
-
-    public static AbstractGate getY() {
-    	return GateMap.lookup("Y");
-    }
-
-    public static AbstractGate getZ() {
-    	return GateMap.lookup("Z");
-    }
-
-    public static AbstractGate getMeasure() {
-    	return GateMap.lookup("MEASURE");
-    }
-    
-    public static AbstractGate getSwap() {
-    	return GateMap.lookup("SWAP");
-    }
-    
-    public static AbstractGate getCNot() {
-    	return GateMap.lookup("CNOT");
-    }
 //    private DefaultGate(GateType gt){
 //        setMatrix(identity().getMatrix());
 //        setType(gt);

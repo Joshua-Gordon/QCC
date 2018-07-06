@@ -22,6 +22,6 @@ public class SolderedRegister implements Serializable{
 	}
 
 	public static SolderedRegister identity() {
-		return new SolderedRegister(new SolderedGate(DefaultGate.getIdentity()),0);
+		return new SolderedRegister(new SolderedGate(DefaultGate.DEFAULT_GATES.get("I")),0);
 	}
 }
