@@ -181,7 +181,7 @@ public class SolderingTool extends Tool{
 		SolderedGate sg = new SolderedGate(gate);
 		SolderedRegister sr = new SolderedRegister(sg, 0);
 		fixWidths(gate, p.x, 1);
-		window.getSelectedBoard().SolderRegister(p.y, p.x, sr);
+		window.getSelectedBoard().setSolderedRegister(p.x, p.y, sr);
 		window.getRenderContext().paintRerenderedBaseImageOnly();
 		window.getSelectedBoard().setUnsaved();
 	}

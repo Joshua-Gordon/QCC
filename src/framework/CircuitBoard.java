@@ -40,6 +40,10 @@ public class CircuitBoard implements Serializable{
     //Empty 5x5 board
     
     
+    /**
+     * @return
+     * an empty 4 by 5 {@link CircuitBoard}
+     */
     public static CircuitBoard getDefaultCircuitBoard() {
     	CircuitBoard board = new CircuitBoard();
     	for(int i = 0; i < 5; ++i){
@@ -50,10 +54,12 @@ public class CircuitBoard implements Serializable{
     	return board;
     }
     
-    public CircuitBoard() {
+    private CircuitBoard() {
         board = new ArrayList<>();
     }
-
+    
+    
+    
     public void addRow() {
     	setUnsaved();
         for(ArrayList<SolderedRegister> a : board)
@@ -129,42 +135,88 @@ public class CircuitBoard implements Serializable{
     
     
     
-    
+    /**
+     * @return
+     * the file location at where this {@link CircuitBoard} is stored on the hard drive.
+     * It will return null if no location has been previously set.
+     */
 	public URI getFileLocation() {
 		return fileLocation;
 	}
 
+	/**
+	 * Sets the file location on the hard drive where this {@link CircuitBoard} was last stored.
+	 * This is so that "Save" Action Command in {@link Keyboard} can be used to save file instead of
+	 * "Save as". 
+	 * <p>
+	 * This method is used primarily in {@link CircuitBoardSelector}.
+	 * @param fileLocation
+	 */
 	public void setFileLocation(URI fileLocation) {
 		this.fileLocation = fileLocation;
 	}
     
+	
+	/**
+	 * Set's the {@link CircuitBoard} status to unsaved. Use this method every time an action has modified
+	 * this instance of the {@link CircuitBoard} after it has last been saved to the hard drive.
+	 * <p>
+	 * 
+	 * Every time the application closes, this ensures a prompt will notified that this instance has not been saved.
+	 */
 	public void setUnsaved() {
 		unsaved = true;
 	}
 	
+	/**
+	 * Sets the {@link CircuitBoard} status to saved. Use this method directly after this instance of the {@link CircuitBoard}
+	 * has been saved to the hard drive. This method is usually used in {@link CircuitBoardSelector}.
+	 */
 	public void setSaved() {
 		unsaved = false;
 	}
     
+	/**
+	 * @return
+	 * whether or not this instance of the {@link CircuitBoard} has been edited since last time it has been saved to the hard drive.
+	 */
 	public boolean hasBeenEdited() {
 		return unsaved;
 	}
     
+	
+	/**
+	 * Saves this instance of the {@link CircuitBoard} to Preferences. This is so that when this application opens again,
+	 * this {@link CircuitBoard} will be loaded immediately. This is used on the the window closed event within {@link Window}.
+	 */
     public void saveFileLocationToPreferences() {
     	if(fileLocation != null)
     		AppPreferences.put("File IO", "Previous File Location", new File(fileLocation).getAbsolutePath());
     	else
     		AppPreferences.put("File IO", "Previous File Location", null);
     }
-
+    
+    
+    /**
+     * @return
+     * All the {@link CustomGates} associated with this {@link CircuitBoard}.
+     */
 	public DefaultListModel<AbstractGate> getCustomGates() {
 		return customGates;
 	}
 
+	/**
+	 * @return
+	 * All the CustomOracles associated with this {@link CircuitBoard}.
+	 */
 	public DefaultListModel<AbstractGate> getCustomOracles() {
 		return customOracles;
 	}
 
+	/**
+	 * @return
+	 * the name of the {@link CircuitBoard} on the hard drive.
+	 */
 	public String getName() {
     	if(fileLocation == null) {
     		return CircuitBoardSelector.UNSAVED_FILE_NAME;
@@ -173,34 +225,68 @@ public class CircuitBoard implements Serializable{
     	return file.getName();
     }
 	
-	public void SolderRegister(int row, int column, SolderedRegister sr) {
-		board.get(column).set(row, sr);
-	}
 	
+	/**
+	 * @return
+	 * the number of rows on this {@link CircuitBoard}.
+	 */
 	public int getRows() {
 		return board.get(0).size();
 	}
 	
+	/**
+	 * @return
+	 * the number of Columns on this {@link CircuitBoard}.
+	 */
 	public int getColumns() {
 		return board.size();
 	}
 	
-	public SolderedRegister getSolderedRegister(int x, int y) {
-		return board.get(x).get(y);
+	/**
+	 * @param column
+	 * @param row
+	 * @return
+	 * the {@link SolderedRegister} at the specified row and column on this {@link CircuitBoard}.
+	 */
+	public SolderedRegister getSolderedRegister(int column, int row) {
+		return board.get(column).get(row);
 	}
 	
-	public void setSolderedRegister(int x, int y, SolderedRegister sr) {
-		board.get(x).set(y, sr);
+	/**
+	 * Sets the {@link SolderedRegister} at the specified row and column on this {@link CircuitBoard}.
+	 * @param row
+	 * @param column
+	 * @param sr
+	 */
+	public void setSolderedRegister(int column, int row, SolderedRegister sr) {
+		board.get(column).set(row, sr);
 	}
 	
-	public SolderedGate getSolderedGate(int x, int y) {
-		return board.get(x).get(y).getSolderedGate();
+	/**
+	 * @param row
+	 * @param column
+	 * @return
+	 * the {@link SolderedGate} associated with the {@link SolderedRegister} at the specified
+	 * row and column of this {@link CircuitBoard}.
+	 */
+	public SolderedGate getSolderedGate(int row, int column) {
+		return board.get(row).get(column).getSolderedGate();
 	}
 	
+	/**
+	 * @param column
+	 * @return
+	 * the amount of grid spaces the specified column takes up on this {@link CircuitBoard}.
+	 */
 	public int getColumnWidth(int column) {
 		return boardWidths.get(column);
 	}
 	
+	/**
+	 * Sets the amount of grid spaces this specified column takes up on this {@link CircuitBoard}.
+	 * @param column
+	 * @param value
+	 */
 	public void setColumnWidth(int column, int value) {
 		boardWidths.set(column, value);
 	}
