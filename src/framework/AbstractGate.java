@@ -12,7 +12,10 @@ import utils.GateIcon;
  * This class creates a model for a gate that contains most generic types of information a certain quantum gate could have.
  * These properties include a name, general description, a {@link GateIcon}, a {@link GateType}, and a {@link Matrix}.
  * <p>
- * Each {@link CircuitBoard} should have no more than one instance of this {@link AbstractGate} with in its list of gates.
+ * Any properties concerning locations on the board (including the qubits registers and height) are found in instances of {@link ExportedGate}.
+ * due to optimization for boundary checking of the gates on the {@link CircuitBoard}.
+ * <p>
+ * Regardless, each {@link CircuitBoard} should have no more than one unique instance of this {@link AbstractGate} with in its list of gates.
  * <p>
  * When attached to a {@link CircuitBoard}, a {@link SolderedGate} is instantiated with a reference to this {@link AbstractGate}.
  * 

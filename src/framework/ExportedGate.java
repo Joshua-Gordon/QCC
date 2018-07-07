@@ -8,7 +8,7 @@ package framework;
  * When instantiated (privately through this class), ExportedGate contains the {@link AbstractGate}
  * associated with {@link SolderedGate} or {@link SolderedRegister}, as well as all the {@link AbstractGate}'s
  * {@link Matrix}'s qubit registers on the board that it applies to. It also contains how many vertical grid spaces
- * the matrix has at the instance it is called.
+ * the {@link SolderedGate} instance takes up.
  * 
  * @author quantumresearch
  *

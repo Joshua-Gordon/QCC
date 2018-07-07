@@ -60,7 +60,7 @@ public class CircuitBoard implements Serializable{
     public void addRow() {
     	setUnsaved();
         for(ArrayList<SolderedRegister> a : board)
-            a.add(new SolderedRegister(new SolderedGate(DefaultGate.DEFAULT_GATES.get("I")), 0));
+            a.add(SolderedRegister.identity());
     }
     
     /**
@@ -72,7 +72,7 @@ public class CircuitBoard implements Serializable{
     		addRow();
     	}else{
     		for(ArrayList<SolderedRegister> a : board)
-    			a.add(r, new SolderedRegister(new SolderedGate(DefaultGate.DEFAULT_GATES.get("I")), 0));
+    			a.add(r, SolderedRegister.identity());
     	}
     }
     
@@ -97,7 +97,7 @@ public class CircuitBoard implements Serializable{
         board.add(new ArrayList<>());
         boardWidths.add(1);
         for(int i = 0; i < board.get(0).size(); ++i)
-            board.get(board.size()-1).add(new SolderedRegister(new SolderedGate(DefaultGate.DEFAULT_GATES.get("I")), 0));
+            board.get(board.size()-1).add(SolderedRegister.identity());
     }
     
     /**
@@ -111,7 +111,7 @@ public class CircuitBoard implements Serializable{
             boardWidths.add(1);
     		ArrayList<SolderedRegister> sr = new ArrayList<>();
         	for(int i = 0; i < board.get(0).size(); ++i)
-        		sr.add(new SolderedRegister(new SolderedGate(DefaultGate.DEFAULT_GATES.get("I")), 0));
+        		sr.add(SolderedRegister.identity());
         	board.add(c, sr);
     	}
     }

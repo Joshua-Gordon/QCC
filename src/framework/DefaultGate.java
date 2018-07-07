@@ -1,21 +1,41 @@
 package framework;
 import java.io.Serializable;
 
-
+import appUI.GateChooserUI;
 import mathLib.Complex;
 import mathLib.Matrix;
 import utils.GateIcon;
 import utils.HashListModel;
 
+
+/**
+ * This class is an extension of {@link AbstractGate} in which all Default Gates should be constructed and declared here.
+ * This class comprises of a static list of {@link DefaultGate}s and static methods to access them.
+ * 
+ * @author quantumresearch
+ *
+ */
 public class DefaultGate extends AbstractGate implements Serializable{
 	private static final long serialVersionUID = 6220371128991814182L;
 	
     public static final HashListModel<String, AbstractGate> DEFAULT_GATES = new HashListModel<>();
 	
+    /**
+     * The enum of supported language types
+     * @author quantumresearch
+     *
+     */
     public static enum LangType{
         QUIL,QASM,QUIPPER
     }
     
+    /**
+     * This method loads all the {@link DefaultGates} before the application window opens in the main thread.
+     * <b> ALL </b> "default gates" must be added to <code>DEFAULT_GATES</code> before this method
+     * ends.
+     * <p>
+     * Attempting to add a {@link DefaultGate} after this method is called may cause the gate to not show in the {@link GateChooserUI} panel
+     */
     public static void loadGates(){
 
 //		Gates with default icons :
@@ -79,6 +99,7 @@ public class DefaultGate extends AbstractGate implements Serializable{
         DEFAULT_GATES.put("CNOT",gate);
     }
 	
+    
     public static String typeToString(GateType gt, LangType lt){
         if(lt == LangType.QUIL) {
             switch (gt) {
@@ -141,7 +162,8 @@ public class DefaultGate extends AbstractGate implements Serializable{
         return "ERROR";
     }
 
-    protected DefaultGate(String name, Matrix<Complex> mat, GateType gt) { //public for use in gatemap
+    
+    private DefaultGate(String name, Matrix<Complex> mat, GateType gt) { //public for use in gatemap
     	setName(name);
         setMatrix(mat);
         setType(gt);

@@ -1,9 +1,10 @@
 package framework;
 
 import java.awt.geom.Rectangle2D;
-import java.awt.image.renderable.RenderContext;
 import java.io.Serializable;
 import java.util.ArrayList;
+
+import javax.swing.ListModel;
 
 import appUI.CircuitBoardRenderContext;
 import appUI.CustomGateConstructorUI;
@@ -11,7 +12,16 @@ import mathLib.Complex;
 import mathLib.Matrix;
 import utils.ResourceLoader;
 
-
+/**
+ * This class is an extension of the {@link AbstractGate} class.
+ * Custom Gates are sometimes created with multiple matrices in kronecker with each other.
+ * Thus, the <code> getMatrix() </code> super method is override to kronecker the products out then return 
+ * the product of the matrixes.
+ * 
+ * 
+ * @author quantumresearch
+ *
+ */
 public class CustomGate extends AbstractGate implements Serializable {
 	private static final long serialVersionUID = 8692251843065026400L;
 	
@@ -28,6 +38,12 @@ public class CustomGate extends AbstractGate implements Serializable {
         setName(name);
     }   
     
+    
+    /**
+     * Creates a Prompt that allows the user to make a {@link CustomGate}.
+     * If the user successfully creates a {@link CustomGate}, then the {@link CustomGate} will
+     * be added to the currently selected {@link CircuitBoard}'s {@link CustomGate} {@link ListModel}.
+     */
     public static void makeCustom() {
     	CustomGateConstructorUI window = new CustomGateConstructorUI(Main.getWindow().getFrame());
     	window.setVisible(true);
