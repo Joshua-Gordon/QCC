@@ -91,6 +91,7 @@ public class GateChooserUI extends AbstractAppViewUI implements ListSelectionLis
 				JLabel label = new JLabel(value.getIcon());
 				label.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 				panel.add(label, gbc);
+				panel.setToolTipText(value.getName());
 				return panel;
 			}
 		});
