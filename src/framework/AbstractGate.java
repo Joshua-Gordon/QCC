@@ -85,12 +85,20 @@ public abstract class AbstractGate implements Serializable{
 	
 	/**
 	 * Loads a {@link GateIcon} for this {@link AbstractGate}. This is the default procedure for loading
-	 * {@link GateIcon}s as it just generates an image with the name. Any custom {@link GateIcon}s should not
-	 * call this method.
+	 * {@link GateIcon}s as it just generates an image with the name. 
 	 */
 	public void loadIcon() {
     	icon = new GateIcon(getName(), isMultiQubitGate());
     }
+	
+	/**
+	 * Loads a {@link GateIcon} for this {@link AbstractGate}. This is another procedure for loading
+	 * {@link GateIcon}s; it just generates an image with the specified name. 
+	 * @param name
+	 */
+	public void loadIcon(String name) {
+    	icon = new GateIcon(name, isMultiQubitGate());
+	}
 	
 	/**
 	 * @return
