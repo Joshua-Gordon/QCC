@@ -3,11 +3,10 @@ package appUI;
 import javax.swing.JPanel;
 
 @SuppressWarnings("serial")
-public abstract class AbstractAppViewUI extends JPanel{
+public abstract class AbstractAppViewUI extends JPanel implements VisibilityListener{
 	
 	private final String NAME;
-	
-	public abstract void changeVisibility(boolean visible);
+	private VisibilityListener vl = this;
 	
 	public AbstractAppViewUI(String name) {
 		this.NAME = name;
@@ -17,5 +16,16 @@ public abstract class AbstractAppViewUI extends JPanel{
 		return NAME;
 	}
 	
+	@Override
+	public void setVisible(boolean aFlag) {
+		vl.preparingVisibleChange(aFlag);
+		super.setVisible(aFlag);
+	}
 	
+	public void setVisibilityListener(VisibilityListener vl) {
+		this.vl = vl;
+	}
+	
+	@Override
+	public void preparingVisibleChange(boolean visible) {}
 }

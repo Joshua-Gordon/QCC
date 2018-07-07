@@ -28,8 +28,8 @@ public class Window extends WindowAdapter{
     private Keyboard keyboard;
     private ConsoleUI console;
     private GateChooserUI gateChooser;
-    private JSplitPane consoleSplitPane;
-    private JSplitPane gateChooserSplitPane;
+    private AppSplitPane consoleSplitPane;
+    private AppSplitPane gateChooserSplitPane;
     private CircuitBoardSelector fileSelector;
     private CircuitBoard selectedBoard;
     private CircuitBoardRenderContext renderContext;
@@ -75,22 +75,22 @@ public class Window extends WindowAdapter{
         
         
         
-        consoleSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+        consoleSplitPane = new AppSplitPane(console, 
+        		AppPreferences.getInt("View Attributes", "Console Divider Location"), JSplitPane.VERTICAL_SPLIT);
         consoleSplitPane.setTopComponent(panel);
         consoleSplitPane.setBottomComponent(console);
         consoleSplitPane.setResizeWeight(.7);
-        consoleSplitPane.setDividerLocation(AppPreferences.getInt("View Attributes", "Console Divider Location"));
         
-        gateChooserSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+        gateChooserSplitPane = new AppSplitPane(gateChooser, 
+        		AppPreferences.getInt("View Attributes", "Gate Chooser Divider Location"), JSplitPane.HORIZONTAL_SPLIT);
         gateChooserSplitPane.setLeftComponent(consoleSplitPane);
         gateChooserSplitPane.setRightComponent(gateChooser);
         gateChooserSplitPane.setResizeWeight(.7);
-        gateChooserSplitPane.setDividerLocation(AppPreferences.getInt("View Attributes", "Gate Chooser Divider Location"));
         
         frame.add(gateChooserSplitPane, BorderLayout.CENTER);
         
-        console.changeVisibility(AppPreferences.getBoolean("Opened Views", "Console"));
-        gateChooser.changeVisibility(AppPreferences.getBoolean("Opened Views", "Gate Chooser"));
+        console.setVisible(AppPreferences.getBoolean("Opened Views", "Console"));
+        gateChooser.setVisible(AppPreferences.getBoolean("Opened Views", "Gate Chooser"));
         
         frame.setJMenuBar(new AppMenuBar(this));
         frame.addWindowListener(this);
@@ -101,22 +101,8 @@ public class Window extends WindowAdapter{
         frame.setVisible(visible);
     }
 
-    public boolean isActive() {
-        return frame.isVisible();
-    }
-
     public CircuitBoardRenderContext getRenderContext() {
 		return renderContext;
-	}
-
-
-
-	public int getHorizontalOffset(){
-        return jsp.getHorizontalScrollBar().getValue();
-    }
-    
-    public int getVerticalOffset(){
-        return jsp.getVerticalScrollBar().getValue();
     }
     
     public JFrame getFrame() {
@@ -135,18 +121,8 @@ public class Window extends WindowAdapter{
 		return gateChooser;
 	}
 
-
-	public JSplitPane getGateChooserSplitPane() {
-		return gateChooserSplitPane;
-	}
-
-
 	public ConsoleUI getConsole() {
     	return console;
-    }
-
-	public JSplitPane getConsoleSplitPane() {
-    	return consoleSplitPane;
     }
     
     @Override

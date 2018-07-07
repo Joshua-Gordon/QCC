@@ -24,6 +24,7 @@ import javax.swing.event.ListSelectionListener;
 import framework.AbstractGate;
 import framework.CircuitBoard;
 import framework.DefaultGate;
+import preferences.AppPreferences;
 
 @SuppressWarnings("serial")
 public class GateChooserUI extends AbstractAppViewUI implements ListSelectionListener{
@@ -100,13 +101,6 @@ public class GateChooserUI extends AbstractAppViewUI implements ListSelectionLis
 		panel.add(pane);
 		panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		return panel;
-	}
-	
-	@Override
-	public void changeVisibility(boolean visible) {
-		setVisible(visible);
-		JSplitPane splitPane = w.getGateChooserSplitPane();
-		splitPane.setEnabled(visible);
 	}
 
 	@SuppressWarnings("unchecked")

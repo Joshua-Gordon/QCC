@@ -22,6 +22,7 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 
+import preferences.AppPreferences;
 import utils.ResourceLoader;
 
 @SuppressWarnings("serial")
@@ -109,13 +110,6 @@ public class ConsoleUI extends AbstractAppViewUI{
 		}
         console.setCaretPosition(d.getLength());
     }
-
-	@Override
-	public void changeVisibility(boolean visible) {
-		setVisible(visible);
-		JSplitPane splitPane = w.getConsoleSplitPane();
-		splitPane.setEnabled(visible);
-	}
 	
 	
 }
