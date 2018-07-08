@@ -16,22 +16,25 @@ import mathLib.Matrix;
 public class Translator {
 
     static String code = "";
+    static int offset = 0;
 
     public static String exportQUIL() {
         CircuitBoard cb = Main.getWindow().getSelectedBoard();
+        offset = cb.getRows();
         ArrayList<String> customGates = new ArrayList<>();
         ExportedGate.exportGates(cb, new ExportGatesRunnable() {
             @Override
             public void gateExported(ExportedGate eg, int x, int y) {
                 AbstractGate ag = eg.getAbstractGate();
                 GateType gt = ag.getType();
-                if(!gt.equals(GateType.CUSTOM)) {
+                boolean id = ag.getName().equals("I");
+                if(!gt.equals(GateType.CUSTOM) && !id) {
                     String name = DefaultGate.typeToString(gt, DefaultGate.LangType.QUIL);
                     code += name + " " + y;
                     if(gt.equals(GateType.CNOT) || gt.equals(GateType.SWAP)) {
                         code += " " + eg.getHeight();
                     }
-                } else {
+                } else if(!id){
                     String name = ag.getName();
                     if(!customGates.contains(name)) {
                         customGates.add(name);
@@ -51,17 +54,21 @@ public class Translator {
                         code += " " + (eg.getRegisters()[i]);
                     }
                 }
-                code += "\n";
+                code += id ? "" : "\n";
             }
 
             @Override
             public void nextColumnEvent(int column) {
-
+                int i = offset;
+                try {
+                    for (i = 0; cb.getSolderedRegister(column, i).getSolderedGate().getAbstractGate().getName().equals("I"); ++i) ;
+                } catch(IndexOutOfBoundsException e) {}
+                offset = Math.min(offset,i);
             }
         });
         String temp = code;
         code = "";
-        return temp;
+        return fixQUIL(temp,offset);
     }
 
 
