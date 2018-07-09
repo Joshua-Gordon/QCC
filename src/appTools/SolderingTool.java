@@ -33,6 +33,7 @@ public class SolderingTool extends Tool{
 	private int[] registers;
 	private int currentGateRegister;
 	private int lastGateRegisterEdited;
+	private int firstLocalRegister, lastLocalRegister;
 	
 	private static enum Stage{
 		NO_SELECTION, SELECTED_MULTIQUBITGATE
@@ -114,9 +115,13 @@ public class SolderingTool extends Tool{
 		else
 			currentGateRegister = previouslySelected;
 		
+		if(p.y < firstLocalRegister)
+			firstLocalRegister = p.y;
+		if(p.y > lastLocalRegister)
+			lastLocalRegister = p.y;
 		
 		if(currentGateRegister == registers.length) {
-			SolderedGate sg = new SolderedGate(selectedGate);
+			SolderedGate sg = new SolderedGate(selectedGate, firstLocalRegister, lastLocalRegister);
 			
 			int row;
 			for(int i = 0; i < registers.length; i++) {
@@ -178,7 +183,7 @@ public class SolderingTool extends Tool{
 	}
 	
 	private void solderSingleQubit(Point p, AbstractGate gate) {
-		SolderedGate sg = new SolderedGate(gate);
+		SolderedGate sg = new SolderedGate(gate, 0, 0);
 		SolderedRegister sr = new SolderedRegister(sg, 0);
 		fixWidths(gate, p.x, 1);
 		window.getSelectedBoard().setSolderedRegister(p.x, p.y, sr);
@@ -198,6 +203,8 @@ public class SolderingTool extends Tool{
 		lastGateRegisterEdited = 0;
 		selectedColumn = p.x;
 		columnPixelPosition = columnPixelSelection;
+		firstLocalRegister = Integer.MAX_VALUE;
+		lastLocalRegister = Integer.MIN_VALUE;
 		
 		grayedOut = window.getRenderContext().getOverlay();
 		Graphics2D g2d = (Graphics2D)grayedOut.getGraphics();

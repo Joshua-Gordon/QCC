@@ -18,6 +18,13 @@ import framework.Main;
 import preferences.AppPreferences;
 import utils.AppDialogs;
 
+/**
+ * Methods that include exporting and importing files for a {@link CircuitBoard} project should 
+ * all be included in this class
+ * 
+ * @author quantumresearch
+ *
+ */
 public class CircuitBoardSelector{
 	
     public static final String UNSAVED_FILE_NAME = "Untitled";
