@@ -65,6 +65,9 @@ public class Translator {
                 } catch(IndexOutOfBoundsException e) {}
                 offset = Math.min(offset,i);
             }
+
+			@Override
+			public void columnEndEvent(int column) {}
         });
         String temp = code;
         code = "";
@@ -98,7 +101,6 @@ public class Translator {
                     }
                 }
             }
-
             @Override
             public void nextColumnEvent(int column) {
                 int i = offset;
@@ -107,6 +109,8 @@ public class Translator {
                 } catch(IndexOutOfBoundsException e) {}
                 offset = Math.min(offset,i);
             }
+			@Override
+			public void columnEndEvent(int column) {}
         });
         String temp = fixQASM(code,offset).replace("FORMATHERE",""+(cb.getRows()-offset));
         code = "";

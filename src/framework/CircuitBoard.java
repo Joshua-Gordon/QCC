@@ -6,8 +6,8 @@ import java.util.ArrayList;
 
 import javax.swing.DefaultListModel;
 
-import appUI.CircuitBoardRenderContext;
 import appUI.CircuitBoardSelector;
+import appUI.Window;
 import preferences.AppPreferences;
 import utils.AppDialogs;
 
@@ -30,7 +30,6 @@ public class CircuitBoard implements Serializable{
 	private transient boolean unsaved = false;
 	
     private ArrayList<ArrayList<SolderedRegister>> board;
-    private ArrayList<Integer> boardWidths = new ArrayList<>();
     private DefaultListModel<AbstractGate> customGates = new DefaultListModel<>();
     private DefaultListModel<AbstractGate> customOracles = new DefaultListModel<>();
     
@@ -84,8 +83,12 @@ public class CircuitBoard implements Serializable{
     public void removeRow() {
     	if(board.get(0).size() > 1) {
 	    	setUnsaved();
-	        for(ArrayList<SolderedRegister> a : board)
-	            a.remove(a.size() - 1);
+	    	int row = getRows() - 1;
+	    	for(int i = 0; i < getColumns(); i++) {
+	    		removeSolderedGate(row, i);
+	    	}
+	        for(ArrayList<SolderedRegister> a : board) 
+	        	a.remove(row);
     	}else {
     		AppDialogs.couldNotRemoveRow(Main.getWindow().getFrame());
     	}
@@ -97,7 +100,6 @@ public class CircuitBoard implements Serializable{
     public void addColumn(){
     	setUnsaved();
         board.add(new ArrayList<>());
-        boardWidths.add(1);
         for(int i = 0; i < board.get(0).size(); ++i)
             board.get(board.size()-1).add(SolderedRegister.identity());
     }
@@ -110,7 +112,6 @@ public class CircuitBoard implements Serializable{
     	if(c == getColumns()) {
     		addColumn();
     	}else {
-            boardWidths.add(1);
     		ArrayList<SolderedRegister> sr = new ArrayList<>();
         	for(int i = 0; i < board.get(0).size(); ++i)
         		sr.add(SolderedRegister.identity());
@@ -125,13 +126,61 @@ public class CircuitBoard implements Serializable{
     public void removeColumn(){
        	if(board.size() > 1) {
 	    	setUnsaved();
-	    	boardWidths.remove(board.size() - 1);
 	        board.remove(board.size() - 1);
        	}else {
        		AppDialogs.couldNotRemoveColumn(Main.getWindow().getFrame());
        	}
     }
+    
+    public void removeColumn(int c) {
+    	
+    }
 
+    /**
+     * Replaces the {@link SolderedGate} associated with the {@link SolderedRegister} with an identity gate on the {@link CircuitBoard}
+     * at a specified row and column.
+     * <p>
+     * If a {@link SolderedGate} spans multiple rows, all {@link SolderedRegister}'s associated with the {@link SolderedGate} will also
+     * be replaced with an identity gate.
+     * 
+     * @param row
+     * @param column
+     * 
+     * @return
+     * one row south of the last {@link SolderedRegister} location removed from {@link CircuitBoard}
+     */
+    public int removeSolderedGate(int row, int column) {
+    	SolderedRegister sr = getSolderedRegister(column, row);
+    	SolderedGate sg = sr.getSolderedGate();
+    	int first = sg.getFirstLocalRegister();
+    	int last  = sg.getLastLocalRegister();
+    	
+    	SolderedRegister currentRegister;
+    	int y = row - 1;
+    	if(sr.getLocalRegisterNumber() != first) {
+	    	while(y >= 0) {
+	    		currentRegister = getSolderedRegister(column, y);
+	    		if(currentRegister.getSolderedGate().equals(sg)) {
+	    			setSolderedRegister(column, y, SolderedRegister.identity());
+	    			if(currentRegister.getLocalRegisterNumber() == first)
+	    				break;
+	    		}
+	    		y--;
+	    	}
+    	}
+    	y = row;
+    	while(y < getRows()) {
+    		currentRegister = getSolderedRegister(column, y);
+    		if(currentRegister.getSolderedGate().equals(sg)) {
+    			setSolderedRegister(column, y, SolderedRegister.identity());
+    			if(currentRegister.getLocalRegisterNumber() == last)
+    				break;
+    		}
+    		y++;
+    	}
+    	return y;
+    }
+    
     
     /**
      * @return
@@ -269,24 +318,6 @@ public class CircuitBoard implements Serializable{
 	 */
 	public SolderedGate getSolderedGate(int row, int column) {
 		return board.get(row).get(column).getSolderedGate();
-	}
-	
-	/**
-	 * @param column
-	 * @return
-	 * the amount of grid spaces the specified column takes up on this {@link CircuitBoard}.
-	 */
-	public int getColumnWidth(int column) {
-		return boardWidths.get(column);
-	}
-	
-	/**
-	 * Sets the amount of grid spaces this specified column takes up on this {@link CircuitBoard}.
-	 * @param column
-	 * @param value
-	 */
-	public void setColumnWidth(int column, int value) {
-		boardWidths.set(column, value);
 	}
 	
 }

@@ -24,4 +24,9 @@ public interface ExportGatesRunnable {
 	 */
 	public void nextColumnEvent(int column);
 	
+	/**
+	 * This is called when a whole column is scanned
+	 * @param column
+	 */
+	public void columnEndEvent(int column);
 }

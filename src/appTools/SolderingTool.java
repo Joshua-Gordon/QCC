@@ -128,7 +128,6 @@ public class SolderingTool extends Tool{
 				row = registers[i];
 				window.getSelectedBoard().setSolderedRegister(selectedColumn, row, new SolderedRegister(sg, i));
 			}
-			fixWidths(selectedGate, selectedColumn, registers.length);
 			
 			window.getSelectedBoard().setUnsaved();
 			window.getRenderContext().paintRerenderedBaseImageOnly();
@@ -137,7 +136,7 @@ public class SolderingTool extends Tool{
 		}else {
 			Graphics2D g2d = (Graphics2D) grayedOut.getGraphics();
 			g2d.setColor(Color.BLUE);
-			int columnWidth = window.getSelectedBoard().getColumnWidth(selectedColumn) * GATE_PIXEL_SIZE;
+			int columnWidth = window.getRenderContext().getColumnWidth(selectedColumn) * GATE_PIXEL_SIZE;
 			g2d.fillRect(columnPixelPosition, p.y * GATE_PIXEL_SIZE, columnWidth, GATE_PIXEL_SIZE);
 			g2d.setColor(Color.WHITE);
 			g2d.setFont(ResourceLoader.MPLUS.deriveFont(24));
@@ -154,7 +153,7 @@ public class SolderingTool extends Tool{
 		drawImageOnImage(g2d, bi, grayedOut);
 		
 		g2d.setColor(Color.RED);
-		int columnWidth = window.getSelectedBoard().getColumnWidth(selectedColumn) * GATE_PIXEL_SIZE;
+		int columnWidth =	window.getRenderContext().getColumnWidth(selectedColumn) * GATE_PIXEL_SIZE;
 		g2d.drawRect(columnPixelPosition, p.y * GATE_PIXEL_SIZE, columnWidth - 1, GATE_PIXEL_SIZE - 1);
 		g2d.setFont(ResourceLoader.MPLUS.deriveFont(16));
 		CircuitBoardRenderContext.drawCenteredString(g2d, Integer.toString(currentGateRegister),
@@ -171,7 +170,7 @@ public class SolderingTool extends Tool{
 		g2d.setColor(Color.RED);
 		
 		int columnPosition = columnPixelSelection;
-		int columnWidth = window.getSelectedBoard().getColumnWidth(p.x) * GATE_PIXEL_SIZE;
+		int columnWidth = window.getRenderContext().getColumnWidth(p.x) * GATE_PIXEL_SIZE;
 		if(window.getGateChooser().getSelectedGate().isMultiQubitGate())
 			g2d.drawRect(columnPosition, 0, columnWidth - 1, bi.getHeight() - 1);
 		else
@@ -185,7 +184,6 @@ public class SolderingTool extends Tool{
 	private void solderSingleQubit(Point p, AbstractGate gate) {
 		SolderedGate sg = new SolderedGate(gate, 0, 0);
 		SolderedRegister sr = new SolderedRegister(sg, 0);
-		fixWidths(gate, p.x, 1);
 		window.getSelectedBoard().setSolderedRegister(p.x, p.y, sr);
 		window.getRenderContext().paintRerenderedBaseImageOnly();
 		window.getSelectedBoard().setUnsaved();
@@ -211,7 +209,7 @@ public class SolderingTool extends Tool{
 		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		g2d.setColor(new Color(240, 240, 240, 180));
 		
-		int xOffset = columnPixelPosition + window.getSelectedBoard().getColumnWidth(selectedColumn) * GATE_PIXEL_SIZE;
+		int xOffset = columnPixelPosition + window.getRenderContext().getColumnWidth(selectedColumn) * GATE_PIXEL_SIZE;
 		g2d.fillRect(0, 0, columnPixelPosition, grayedOut.getHeight());
 		g2d.fillRect(xOffset, 0, grayedOut.getWidth() - xOffset, grayedOut.getHeight());
 		
@@ -227,11 +225,6 @@ public class SolderingTool extends Tool{
 			if(boardRegister == registers[y])
 				return y;
 		return -1;
-	}
-	
-	private void fixWidths(AbstractGate gate, int column, int numRegisters) {
-		if(gate.getWidth() > window.getSelectedBoard().getColumnWidth(column))
-			window.getSelectedBoard().setColumnWidth(column, gate.getWidth());
 	}
 	
 	

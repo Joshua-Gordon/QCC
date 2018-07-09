@@ -12,6 +12,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
 
@@ -48,8 +49,8 @@ public class CircuitBoardRenderContext {
 	
 	private Window w;
 	private BufferedImage baseImage;
-	
-	
+    private ArrayList<Integer> boardWidths = new ArrayList<>();
+	private WidthScanner widthScanner = new WidthScanner();
 	
 	
 	public static Rectangle2D getStringBounds(Font f, String text) {
@@ -81,11 +82,9 @@ public class CircuitBoardRenderContext {
 	public BufferedImage renderBaseImage(boolean withGrid){
 		CircuitBoard cb = w.getSelectedBoard();
         
-		int totalWidth = 0;
-		for(int i = 0; i < cb.getColumns(); i++)
-			totalWidth += cb.getColumnWidth(i);
+		int gridWidth = widthScanner.scanBoard(cb);
 		
-        BufferedImage image = new BufferedImage(totalWidth * GATE_PIXEL_SIZE, cb.getRows() * GATE_PIXEL_SIZE, BufferedImage.TYPE_INT_RGB);
+        BufferedImage image = new BufferedImage(gridWidth * GATE_PIXEL_SIZE, cb.getRows() * GATE_PIXEL_SIZE, BufferedImage.TYPE_INT_RGB);
         
         Graphics2D g2d = (Graphics2D) image.getGraphics();
         g2d.setColor(Color.WHITE);
@@ -138,13 +137,14 @@ public class CircuitBoardRenderContext {
         		}
         		
         	}
-			
 			@Override
 			public void nextColumnEvent(int column) {
 				if(column > 0)
 					columnPixelPosition += columnWidth * GATE_PIXEL_SIZE;
-				columnWidth = w.getSelectedBoard().getColumnWidth(column);
+				columnWidth = getColumnWidth(column);
 			}
+			@Override
+			public void columnEndEvent(int column) {}
 		});
     	return image;
     }
@@ -272,21 +272,64 @@ public class CircuitBoardRenderContext {
 	public int getColumnPixelPosition(int column) {
 		int sum = 0;
 		for(int i = 0; i < column; i++)
-			sum += w.getSelectedBoard().getColumnWidth(i) * GATE_PIXEL_SIZE;
+			sum += getColumnWidth(i) * GATE_PIXEL_SIZE;
 		return sum;
 	}
 	
 	public int[] getGridColumnPosition(int gridPixelX) {
 		gridPixelX = (int) Math.floor((double)gridPixelX/GATE_PIXEL_SIZE);
 		int column = 0;
-		int columnWidth = w.getSelectedBoard().getColumnWidth(0);
+		int columnWidth = getColumnWidth(0);
 		int columnWithSum = 0;
 		while(columnWithSum + columnWidth <= gridPixelX) {
 			column++;
 			columnWithSum += columnWidth;
-			columnWidth = w.getSelectedBoard().getColumnWidth(column);
+			columnWidth = getColumnWidth(column);
 		}
 		return new int[]{column, columnWithSum * GATE_PIXEL_SIZE};
+	}
+	
+	
+	/**
+	 * @param column
+	 * @return
+	 * the amount of grid spaces the specified column takes up on this {@link CircuitBoard}.
+	 */
+	public int getColumnWidth(int column) {
+		return boardWidths.get(column);
+	}
+	
+
+	private class WidthScanner implements ExportGatesRunnable{
+		
+		private int cummulativeWidth;
+		private int largestWidth;
+		
+		public int scanBoard(CircuitBoard cb) {
+			cummulativeWidth = 0;
+			largestWidth = 0;
+			ExportedGate.exportGates(cb, this);
+			return cummulativeWidth;
+		}
+		
+		@Override
+		public void gateExported(ExportedGate eg, int x, int y) {
+			int width = eg.getAbstractGate().getWidth();
+			if(width > largestWidth)
+				largestWidth = width;
+		}
+
+		@Override
+		public void nextColumnEvent(int column) {
+			largestWidth = Integer.MIN_VALUE;
+		}
+		
+		@Override
+		public void columnEndEvent(int column) {
+			boardWidths.add(column, largestWidth);
+			cummulativeWidth += largestWidth;
+		}
+		
 	}
 }
 
