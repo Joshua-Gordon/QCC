@@ -44,6 +44,7 @@ public class ExportedGate {
 				egr.gateExported(eg, x, y);
 				y += eg.height;
 			}
+			egr.columnEndEvent(x);
 		}
 	}
 	
