@@ -28,7 +28,7 @@ public abstract class AbstractGate implements Serializable{
 	private static final double LOG10_2 = Math.log10(2);
 	
 	public static enum GateType{
-        I,X,Y,Z,H,S, CUSTOM, MEASURE, CNOT, SWAP
+        I,X,Y,Z,H,S,T, CUSTOM, MEASURE, CNOT, SWAP
     }
 	
 	private String description;

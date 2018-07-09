@@ -76,7 +76,13 @@ public class DefaultGate extends AbstractGate implements Serializable{
         		Complex.ZERO(), Complex.I());
         gate = new DefaultGate("S", mat, AbstractGate.GateType.S);
         DEFAULT_GATES.put("S",  gate);
-       
+
+        mat = new Matrix<>(2, 2,
+        		Complex.ONE(), Complex.ZERO(),
+        		Complex.ZERO(), (Complex.ONE().add(Complex.I())).mult(Complex.ISQRT2()));
+        gate = new DefaultGate("T", mat, AbstractGate.GateType.T);
+        DEFAULT_GATES.put("T",  gate);        
+        
         DEFAULT_GATES.getValues().forEach(AbstractGate::loadIcon);
 
 
@@ -119,6 +125,8 @@ public class DefaultGate extends AbstractGate implements Serializable{
                     return "Z";
                 case S:
                 	return "S";
+                case T:
+                	return "T";
                 case H:
                     return "H";
                 case MEASURE:
@@ -140,6 +148,7 @@ public class DefaultGate extends AbstractGate implements Serializable{
                     return "y";
                 case Z:
                     return "z";
+                // STUB: Need to supply cases for S and T gates
                 case CNOT:
                     return "cx";
                 case MEASURE:
@@ -159,6 +168,7 @@ public class DefaultGate extends AbstractGate implements Serializable{
                     return "QGate[\"Y\"]";
                 case Z:
                     return "QGate[\"Z\"]";
+                // STUB: Need to supply S and T gates
                 case CNOT:
                     return "QGate[\"not\"]";
                 case MEASURE:
