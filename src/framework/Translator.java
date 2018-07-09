@@ -264,12 +264,14 @@ public class Translator {
                     while(board.size()-1 < target) {
                         board.add(new ArrayList<>());
                     }
-                    SolderedGate sg = new SolderedGate(g);
+                    SolderedGate sg = new SolderedGate(g, 0, 1);    // from Max to Josh: I added two values to SolderedGate 
+                    												// (look in the documentation to see what the extra parameters 
+                    												// mean in SolderedRegister and SolderedGate)
                     board.get(register).add(new SolderedRegister(sg,0));
                     board.get(target).add(new SolderedRegister(sg,1));
                 }
             }
-            board.get(register).add(new SolderedRegister(new SolderedGate(g),0));
+            board.get(register).add(new SolderedRegister(new SolderedGate(g, 0, 0),0));  // from Max to Josh: added extra parameters here as well
             if(board.get(register).size() > maxLen){
                 maxLen = board.get(register).size();
             }

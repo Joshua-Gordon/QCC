@@ -71,6 +71,13 @@ public class DefaultGate extends AbstractGate implements Serializable{
         gate = new DefaultGate("Z", mat, AbstractGate.GateType.Z);
         DEFAULT_GATES.put("Z",gate);
         
+        
+        
+        
+        
+        
+        
+        
         DEFAULT_GATES.getValues().forEach(AbstractGate::loadIcon);
 
 

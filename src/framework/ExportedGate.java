@@ -62,7 +62,7 @@ public class ExportedGate {
 		while(registersFound < registers.length) {
 			curSr = cb.getSolderedRegister(x, row);
 			if(curSr.getSolderedGate().equals(sg)) {
-				registers[curSr.getGateRegisterNumber()] = row;
+				registers[curSr.getLocalRegisterNumber()] = row;
 				registersFound++;
 			}
 			row++;
