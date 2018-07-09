@@ -61,7 +61,7 @@ public class Translator {
             public void nextColumnEvent(int column) {
                 int i = offset;
                 try {
-                    for (i = 0; cb.getSolderedRegister(column, i).getSolderedGate().getAbstractGate().getName().equals("I"); ++i) ;
+                    for (i = 0; cb.getSolderedRegister(column, i).getSolderedGate().getAbstractGate().getName().equals("I"); ++i);
                 } catch(IndexOutOfBoundsException e) {}
                 offset = Math.min(offset,i);
             }
@@ -71,79 +71,51 @@ public class Translator {
         return fixQUIL(temp,offset);
     }
 
-
-    /**
-     * Takes the main circuitboard and outputs QUIL code
-     * @return QUIL code
-     */
-    /*
-    public static String translateQUIL(){ //Translates to Quil
-        String code = "";
-        ArrayList<ArrayList<DefaultGate>> boardTemp = Main.cb.board;
-        ArrayList<ArrayList<DefaultGate>> board = new ArrayList<>();
+    public static String exportQASM() {
+        CircuitBoard cb = Main.getWindow().getSelectedBoard();
+        offset = cb.getRows();
         ArrayList<String> customGates = new ArrayList<>();
-        for(int i = 0; i < boardTemp.size(); ++i) {
-            board.add(boardTemp.get(i)); //Copy to other circuitboard because safety
-        }
-        int offset = 20; //Hardcoded right now, should be height of circuit board. This is the offset from the top of the circuitboard
-                         //and is computed as the board is parsed
-        for(int x = 0; x < board.size(); ++x){
-            ArrayList<DefaultGate> instructions = board.get(x); //Current column of instructions
-            for(int i = 0; i < instructions.size(); ++i){
-                DefaultGate g = instructions.get(i);
-                GateType type = g.getType();
-                if(type != GateType.I && type != GateType.CUSTOM) {
-                    int idx = i;
-                    if(idx+g.length < offset) { //Don't cut off a long gate at the bottom of the circuit
-                        offset = idx+g.length;
+        code += "OPENQASM 2.0;\ninclude \"qelib1.inc\";\nqreg q[" + "FORMATHERE" + "];\ncreg c[" + "FORMATHERE" + "];\n";
+        ExportedGate.exportGates(cb, new ExportGatesRunnable() {
+            @Override
+            public void gateExported(ExportedGate eg, int x, int y) {
+                String name = eg.getAbstractGate().getName();
+                if(!name.equals("I")) {
+                    switch(name) {
+                        case "MEASURE":
+                            code += "measure q[" + y + "] -> c[" + y + "];\n";
+                            break;
+                        case "CNOT":
+                            code += "cx q[" + y + "],q[" + eg.getRegisters()[1] + "];\n";
+                            break;
+                        case "SWAP":
+                            code += "cx q[" + y + "],q[" + eg.getRegisters()[1] + "];\n";
+                            code += "cx q[" + eg.getRegisters()[1] + "],q[" + y + "];\n";
+                            code += "cx q[" + y + "],q[" + eg.getRegisters()[1] + "];\n";
+                            break;
+                        default:
+                            code += DefaultGate.typeToString(eg.getAbstractGate().getType(),LangType.QASM) + " q[" + y + "];\n";
                     }
-                    code += DefaultGate.typeToString(type, DefaultGate.LangType.QUIL);
-                    code += " ";
-                    code += idx;
-                    if (type == GateType.CNOT || type == GateType.SWAP) {
-                        code += " ";
-                        code += (idx + g.length); //Second index
-                    }
-                    if (type == GateType.MEASURE) {
-                        code += " [";
-                        code += idx;
-                        code += "]";
-                    }
-                    code += "\n";
                 }
-//                } else if(type == GateType.CUSTOM) { //All bets are off. Special code to handle these
-//                    MultiQubitGate mqg = (MultiQubitGate) g;
-//                    String name = mqg.getName();
-//                    int idx = i;
-//                    if(idx + g.length < offset) {
-//                        offset = idx + mqg.length;
-//                    }
-//                    if(!customGates.contains(name)) { //If this is a new gate
-//                        customGates.add(name);        //Then add it to the known gates
-//                        String dec = "DEFGATE " + name + ":"; //And define it in the code
-//                        Matrix<Complex> m = mqg.getMatrix();
-//                        for(int my = 0; my < m.getRows(); ++my) {
-//                            dec += "\n    ";
-//                            for(int mx = 0; mx < m.getRows(); ++mx) { //This copies down the matrix into the code
-//                                dec += m.v(mx,my).toString();
-//                                if(mx+1 < m.getRows())
-//                                    dec += ", ";
-//                            }
-//                        }
-//                        code += dec; //Declaration of gate
-//                        code += "\n";
-//                    }
-//                    code += name + " ";
-//                    for (int r : mqg.registers) {
-//                        code += r + " "; //Apply the gate to all the registers it's on
-//                    }
-//                    code += "\n";
-//                }
             }
+
+            @Override
+            public void nextColumnEvent(int column) {
+                int i = offset;
+                try {
+                    for (i = 0; cb.getSolderedRegister(column, i).getSolderedGate().getAbstractGate().getName().equals("I"); ++i);
+                } catch(IndexOutOfBoundsException e) {}
+                offset = Math.min(offset,i);
+            }
+        });
+        String temp = fixQASM(code,offset).replace("FORMATHERE",""+(cb.getRows()-offset));
+        code = "";
+        for(int i = 0; i < cb.getRows()-offset; ++i) {
+            temp += "measure q[" + i + "] -> c[" + i + "];\n";
         }
-        return fixQUIL(code,offset); //Fix offset
+        return temp;
     }
-*/
+
     /**
      * Takes the main circuit board and translates it to QASM
      * @return

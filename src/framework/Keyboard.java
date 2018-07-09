@@ -62,8 +62,8 @@ public class Keyboard implements ActionListener, Runnable {
             window.getConsole().println(Translator.exportQUIL());
             break;
         case "QASM":
-            //System.out.println(Translator.translateQASM());
-            //window.getConsole().println(Translator.translateQASM());
+            System.out.println(Translator.exportQASM());
+            window.getConsole().println(Translator.exportQASM());
             break;
         case "Quipper":
             //System.out.println(Translator.translateQuipper());
