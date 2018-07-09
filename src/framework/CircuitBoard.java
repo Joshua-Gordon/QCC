@@ -38,6 +38,7 @@ public class CircuitBoard implements Serializable{
     /**
      * @return
      * an empty 4 by 5 {@link CircuitBoard}
+     * [Q: not 5 by 5?]
      */
     public static CircuitBoard getDefaultCircuitBoard() {
     	CircuitBoard board = new CircuitBoard();
@@ -68,6 +69,7 @@ public class CircuitBoard implements Serializable{
      * @param r
      */
     public void addRow(int r) {
+    	// [Q: ">="? ]
     	if(r == getRows()) {
     		addRow();
     	}else{
@@ -154,7 +156,7 @@ public class CircuitBoard implements Serializable{
     
 	
 	/**
-	 * Set's the {@link CircuitBoard} status to unsaved. Use this method every time an action has modified
+	 * Sets the {@link CircuitBoard} status to unsaved. Use this method every time an action has modified
 	 * this instance of the {@link CircuitBoard} after it has last been saved to the hard drive.
 	 * <p>
 	 * 

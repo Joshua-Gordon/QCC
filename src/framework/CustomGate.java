@@ -14,7 +14,7 @@ import utils.ResourceLoader;
 
 /**
  * This class is an extension of the {@link AbstractGate} class.
- * Custom Gates are sometimes created with multiple matrices in kronecker with each other.
+ * Custom Gates are sometimes created as kronecker product of multiple matrices.
  * Thus, the <code> getMatrix() </code> super method is override to kronecker the products out then return 
  * the product of the matrixes.
  * 
