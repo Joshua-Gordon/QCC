@@ -125,10 +125,6 @@ public class SolderingTool extends Tool{
 			
 			
 			window.getSelectedBoard().detachAllGatesWithinRange(registers[firstLocalRegister], registers[lastLocalRegister], selectedColumn);
-//			removeSurroundingGate(registers[firstLocalRegister], selectedColumn);
-//			
-//			for(int i = registers[firstLocalRegister]; i <= registers[lastLocalRegister]; i++)
-//				i = window.getSelectedBoard().detachSolderedGate(i, selectedColumn);
 			
 			int row;
 			for(int i = 0; i < registers.length; i++) {
@@ -191,9 +187,9 @@ public class SolderingTool extends Tool{
 	private void solderSingleQubit(Point p, AbstractGate gate) {
 		SolderedGate sg = new SolderedGate(gate, 0, 0);
 		SolderedRegister sr = new SolderedRegister(sg, 0);
+		
 		window.getSelectedBoard().detachAllGatesWithinRange(p.y, p.y, p.x);
-//		removeSurroundingGate(p.y, p.x);
-//		window.getSelectedBoard().detachSolderedGate(p.y, p.x);
+		
 		window.getSelectedBoard().setSolderedRegister(p.x, p.y, sr);
 		window.getRenderContext().paintRerenderedBaseImageOnly();
 		window.getSelectedBoard().setUnsaved();
@@ -227,21 +223,6 @@ public class SolderingTool extends Tool{
 		prevHoveredGrid = null;
 		drawMultiQubitSelection(p);
 	}
-	
-//	private void removeSurroundingGate(int startingRow, int startingColumn) {
-//		int row = startingRow - 1;
-//		while(row >= 0) {
-//			SolderedRegister sr = window.getSelectedBoard().getSolderedRegister(startingColumn, row);
-//			SolderedGate sg0 = sr.getSolderedGate();
-//			if(sg0.getAbstractGate().getType() != GateType.I) {
-//				if(sg0.getLastLocalRegister() != sr.getLocalRegisterNumber()) {
-//					window.getSelectedBoard().detachSolderedGate(row, startingColumn);
-//				}
-//				break;
-//			}
-//			row--;
-//		}
-//	}
 	
 	private int scanSelected(int boardRegister) {
 		int y = -1;

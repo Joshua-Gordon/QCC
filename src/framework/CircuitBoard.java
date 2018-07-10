@@ -163,6 +163,9 @@ public class CircuitBoard implements Serializable{
      * <p>
      * If a {@link SolderedGate} spans multiple rows, all {@link SolderedRegister}'s associated with the {@link SolderedGate} will also
      * be replaced with an identity gate.
+     * <p>
+     * <b> NOTE: </b> This does not detach any {@link SolderedGate}s that happen to completely enclose the specified row and column.
+     * 
      * 
      * @param row
      * @param column
