@@ -23,9 +23,11 @@ public class Keyboard implements ActionListener, Runnable {
 	
 	@Override
 	public void run() {
+		window.getAppToolBar().stopSelectedTool();
+		
 		switch(actionCommand){
-
-
+		
+		
 //		Gates
         case "Make Custom Gate...":
         	CustomGate.makeCustom();
@@ -126,6 +128,8 @@ public class Keyboard implements ActionListener, Runnable {
 	        }
 	        break;
 		}
+		
+		window.getAppToolBar().restartTool();
 	}
 	
 	

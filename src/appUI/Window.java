@@ -33,6 +33,7 @@ public class Window extends WindowAdapter{
     private CircuitBoardSelector fileSelector;
     private CircuitBoard selectedBoard;
     private CircuitBoardRenderContext renderContext;
+    private AppToolBar appToolBar;
     
     public Window() {
         this.frame = new JFrame();
@@ -42,6 +43,8 @@ public class Window extends WindowAdapter{
         this.fileSelector = new CircuitBoardSelector(this);
         this.display = new JLabel();
         this.renderContext = new CircuitBoardRenderContext(this);
+        this.appToolBar = new AppToolBar(this);
+        
         setSelectedBoard(fileSelector.loadPreviousCircuitBoard());
         
         frame.setSize(AppPreferences.getInt("View Attributes", "Window Width"),
@@ -70,7 +73,7 @@ public class Window extends WindowAdapter{
         jsp = new JScrollPane(panel);
         
         panel = new JPanel(new BorderLayout());
-        panel.add(new AppToolBar(this), BorderLayout.NORTH);
+        panel.add(appToolBar, BorderLayout.NORTH);
         panel.add(jsp, BorderLayout.CENTER);
         
         
@@ -184,6 +187,11 @@ public class Window extends WindowAdapter{
 	public JLabel getDisplay() {
 		return display;
 	}
+
+	public AppToolBar getAppToolBar() {
+		return appToolBar;
+	}
+	
 	
 	
 	
