@@ -30,7 +30,7 @@ public class DefaultGate extends AbstractGate implements Serializable{
     }
     
     /**
-     * This method loads all the {@link DefaultGates} before the application window opens in the main thread.
+     * This method loads all the {@link DefaultGate}s before the application window opens in the main thread.
      * <b> ALL </b> "default gates" must be added to <code>DEFAULT_GATES</code> before this method
      * ends.
      * <p>

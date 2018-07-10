@@ -48,6 +48,7 @@ public class Translator {
                                     code += ", ";
                             }
                         }
+                        code += "\n";
                     }
                     code += name;
                     for(int i = 0; i < eg.getRegisters().length; ++i) {

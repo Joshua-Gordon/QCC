@@ -1,6 +1,7 @@
 package framework;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 import mathLib.Complex;
 import mathLib.Matrix;
@@ -111,6 +112,32 @@ public class SolderedGate implements Serializable{
 	}
 	
 	
-	
-	
+	public ArrayList<SolderedRegister> getRegisters() {
+		ArrayList<SolderedRegister> regs = new ArrayList<>();
+		CircuitBoard cb = Main.getWindow().getSelectedBoard();
+		int column = -1;
+		for(int y = 0; y < cb.getRows(); ++y) {
+			for(int x = 0; x < cb.getColumns(); ++x) {
+				if(equals(cb.getSolderedGate(x,y))) {
+					column = x;
+				}
+			}
+		}
+		if(column == -1) {
+			//Gate not on board
+			return null;
+		}
+		for(int y = 0; y < cb.getColumns(); ++y) {
+			SolderedRegister sr = cb.getSolderedRegister(column,y);
+			if(equals(sr.getSolderedGate())) {
+				regs.add(sr);
+			}
+		}
+		return regs;
+	}
+
+	@Override
+	public String toString() {
+		return abstractGate.getName();
+	}
 }

@@ -172,4 +172,6 @@ public abstract class AbstractGate implements Serializable{
 	public void setWidth(int width) {
 		this.width = width;
 	}
+
+
 }

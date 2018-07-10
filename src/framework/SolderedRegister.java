@@ -108,4 +108,9 @@ public class SolderedRegister implements Serializable{
 	public static SolderedRegister identity() {
 		return new SolderedRegister(new SolderedGate(DefaultGate.DEFAULT_GATES.get("I"), 0, 0),0);
 	}
+
+	@Override
+	public String toString() {
+		return "Register " + localRegisterNumber + " for " + solderedGate.toString();
+	}
 }
