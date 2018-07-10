@@ -6,7 +6,6 @@ import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
 import javax.swing.ImageIcon;
@@ -14,6 +13,7 @@ import javax.swing.ImageIcon;
 import appUI.CircuitBoardRenderContext;
 import appUI.Window;
 import framework.AbstractGate;
+import framework.AbstractGate.GateType;
 import framework.SolderedGate;
 import framework.SolderedRegister;
 import utils.ResourceLoader;
@@ -115,15 +115,20 @@ public class SolderingTool extends Tool{
 		else
 			currentGateRegister = previouslySelected;
 		
-		if(p.y < firstLocalRegister)
-			firstLocalRegister = p.y;
-		if(p.y > lastLocalRegister)
-			lastLocalRegister = p.y;
+		if(p.y < registers[firstLocalRegister])
+			firstLocalRegister = previousGateRegister;
+		if(p.y > registers[lastLocalRegister])
+			lastLocalRegister = previousGateRegister;
 		
 		if(currentGateRegister == registers.length) {
 			SolderedGate sg = new SolderedGate(selectedGate, firstLocalRegister, lastLocalRegister);
 			
+			removeSurroundingGate(registers[firstLocalRegister], selectedColumn);
+			
 			int row;
+			for(int i = registers[firstLocalRegister]; i <= registers[lastLocalRegister]; i++)
+				i = window.getSelectedBoard().removeSolderedGate(i, selectedColumn);
+			
 			for(int i = 0; i < registers.length; i++) {
 				row = registers[i];
 				window.getSelectedBoard().setSolderedRegister(selectedColumn, row, new SolderedRegister(sg, i));
@@ -184,6 +189,8 @@ public class SolderingTool extends Tool{
 	private void solderSingleQubit(Point p, AbstractGate gate) {
 		SolderedGate sg = new SolderedGate(gate, 0, 0);
 		SolderedRegister sr = new SolderedRegister(sg, 0);
+		removeSurroundingGate(p.y, p.x);
+		window.getSelectedBoard().removeSolderedGate(p.y, p.x);
 		window.getSelectedBoard().setSolderedRegister(p.x, p.y, sr);
 		window.getRenderContext().paintRerenderedBaseImageOnly();
 		window.getSelectedBoard().setUnsaved();
@@ -201,8 +208,8 @@ public class SolderingTool extends Tool{
 		lastGateRegisterEdited = 0;
 		selectedColumn = p.x;
 		columnPixelPosition = columnPixelSelection;
-		firstLocalRegister = Integer.MAX_VALUE;
-		lastLocalRegister = Integer.MIN_VALUE;
+		firstLocalRegister = 0;
+		lastLocalRegister = 0;
 		
 		grayedOut = window.getRenderContext().getOverlay();
 		Graphics2D g2d = (Graphics2D)grayedOut.getGraphics();
@@ -218,6 +225,20 @@ public class SolderingTool extends Tool{
 		drawMultiQubitSelection(p);
 	}
 	
+	private void removeSurroundingGate(int startingRow, int startingColumn) {
+		int row = startingRow - 1;
+		while(row >= 0) {
+			SolderedRegister sr = window.getSelectedBoard().getSolderedRegister(startingColumn, row);
+			SolderedGate sg0 = sr.getSolderedGate();
+			if(sg0.getAbstractGate().getType() != GateType.I) {
+				if(sg0.getLastLocalRegister() != sr.getLocalRegisterNumber()) {
+					window.getSelectedBoard().removeSolderedGate(row, startingColumn);
+				}
+				break;
+			}
+			row--;
+		}
+	}
 	
 	private int scanSelected(int boardRegister) {
 		int y = -1;

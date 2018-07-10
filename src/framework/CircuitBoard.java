@@ -36,14 +36,13 @@ public class CircuitBoard implements Serializable{
     
     /**
      * @return
-     * an empty 4 by 5 {@link CircuitBoard}
-     * [Q: not 5 by 5?]
+     * an empty 5 by 5 {@link CircuitBoard}
      */
     public static CircuitBoard getDefaultCircuitBoard() {
     	CircuitBoard board = new CircuitBoard();
     	for(int i = 0; i < 5; ++i){
-    		board.addRow();
     		board.addColumn();
+    		board.addRow();
         }
     	board.setSaved();
     	return board;
@@ -58,50 +57,51 @@ public class CircuitBoard implements Serializable{
      * Adds a row to the end of this {@link CircuitBoard}.
      */
     public void addRow() {
-    	setUnsaved();
-        for(ArrayList<SolderedRegister> a : board)
-            a.add(SolderedRegister.identity());
+    	addRow(getRows());
     }
     
     /**
      * Adds a row at the specified location.
+     * <p>
      * @param r
      */
     public void addRow(int r) {
-    	// [Q: ">="? ]
-    	if(r == getRows()) {
-    		addRow();
-    	}else{
-    		for(ArrayList<SolderedRegister> a : board)
-    			a.add(r, SolderedRegister.identity());
-    	}
+    	setUnsaved();
+    	for(ArrayList<SolderedRegister> a : board)
+    		a.add(r, SolderedRegister.identity());
     }
+    
+    
     
     /**
      * Removes the last row of this {@link CircuitBoard}.
      */
     public void removeRow() {
+    	removeRow(getRows() - 1);
+    }
+    
+    /**
+     * Removes the specified row "r" from this {@link CircuitBoard}
+     * @param r
+     */
+    public void removeRow(int r){
     	if(board.get(0).size() > 1) {
 	    	setUnsaved();
-	    	int row = getRows() - 1;
-	    	for(int i = 0; i < getColumns(); i++) {
-	    		removeSolderedGate(row, i);
-	    	}
+	    	for(int i = 0; i < getColumns(); i++)
+	    		removeSolderedGate(r, i);
 	        for(ArrayList<SolderedRegister> a : board) 
-	        	a.remove(row);
+	        	a.remove(r);
     	}else {
     		AppDialogs.couldNotRemoveRow(Main.getWindow().getFrame());
     	}
     }
     
+    
     /**
      * Adds a column to the end of this board.
      */
     public void addColumn(){
-    	setUnsaved();
-        board.add(new ArrayList<>());
-        for(int i = 0; i < board.get(0).size(); ++i)
-            board.get(board.size()-1).add(SolderedRegister.identity());
+        addColumn(getColumns());
     }
     
     /**
@@ -109,14 +109,11 @@ public class CircuitBoard implements Serializable{
      * @param c
      */
     public void addColumn(int c){
-    	if(c == getColumns()) {
-    		addColumn();
-    	}else {
-    		ArrayList<SolderedRegister> sr = new ArrayList<>();
-        	for(int i = 0; i < board.get(0).size(); ++i)
-        		sr.add(SolderedRegister.identity());
-        	board.add(c, sr);
-    	}
+    	setUnsaved();
+    	ArrayList<SolderedRegister> column = new ArrayList<>();
+    	board.add(c, column);
+    	for(int i = 0; i < board.get(0).size(); ++i)
+            column.add(SolderedRegister.identity());
     }
     
     /**
@@ -124,16 +121,20 @@ public class CircuitBoard implements Serializable{
      * already one column, it will not reduce rows and a prompt will tell the user.
      */
     public void removeColumn(){
-       	if(board.size() > 1) {
-	    	setUnsaved();
-	        board.remove(board.size() - 1);
-       	}else {
-       		AppDialogs.couldNotRemoveColumn(Main.getWindow().getFrame());
-       	}
+    	removeColumn(getColumns() - 1);
     }
     
+    /**
+     * Removes the specified column "c" of this {@link CircuitBoard}
+     * @param c
+     */
     public void removeColumn(int c) {
-    	
+    	if(board.size() > 1) {
+    		setUnsaved();
+    		board.remove(c);
+    	}else {
+       		AppDialogs.couldNotRemoveColumn(Main.getWindow().getFrame());
+    	}
     }
 
     /**
@@ -147,7 +148,7 @@ public class CircuitBoard implements Serializable{
      * @param column
      * 
      * @return
-     * one row south of the last {@link SolderedRegister} location removed from {@link CircuitBoard}
+     * the row of the last {@link SolderedRegister} removed from {@link CircuitBoard}
      */
     public int removeSolderedGate(int row, int column) {
     	SolderedRegister sr = getSolderedRegister(column, row);

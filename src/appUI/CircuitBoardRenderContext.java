@@ -306,6 +306,7 @@ public class CircuitBoardRenderContext {
 		private int largestWidth;
 		
 		public int scanBoard(CircuitBoard cb) {
+			boardWidths.clear();
 			cummulativeWidth = 0;
 			largestWidth = 0;
 			ExportedGate.exportGates(cb, this);
