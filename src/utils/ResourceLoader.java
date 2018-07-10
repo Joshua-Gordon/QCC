@@ -22,6 +22,11 @@ public class ResourceLoader {
 	public static BufferedImage EDIT;
 	public static BufferedImage SELECT;
 	
+	public static BufferedImage ADD_ROW;
+	public static BufferedImage ADD_COLUMN;
+	public static BufferedImage REMOVE_ROW;
+	public static BufferedImage REMOVE_COLUMN;
+	
 	private static final Hashtable<String, File> TEMP_FILES = new Hashtable<>();
 	public static final String TEMP_FILE_URL = "res" + File.separator + "tempFiles";
 	
@@ -30,7 +35,12 @@ public class ResourceLoader {
 		VAST_SHADOW = loadFont("VastShadow-Regular.ttf").deriveFont(35f);
 		SOLDER = scaleTo(loadImage("solderIcon.png"), 30, 30);
 		EDIT = addPadding(scaleTo(loadImage("editIcon.png"), 20, 20), 5);
-		SELECT = addPadding(scaleTo(loadImage("selectIcon.png"), 22, 22), 4); 
+		SELECT = addPadding(scaleTo(loadImage("selectIcon.png"), 22, 22), 4);
+		ADD_ROW = scaleTo(loadImage("addRowIcon.png"), 30, 30);
+		ADD_COLUMN = scaleTo(loadImage("addColumnIcon.png"), 30, 30);
+		REMOVE_ROW = scaleTo(loadImage("removeRowIcon.png"), 30, 30);
+		REMOVE_COLUMN = scaleTo(loadImage("removeColumnIcon.png"), 30, 30);
+		
 	}
 	
 	private static BufferedImage addPadding(BufferedImage bi, int padding) {
