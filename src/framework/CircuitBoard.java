@@ -363,8 +363,7 @@ public class CircuitBoard implements Serializable{
 	public SolderedGate getSolderedGate(int row, int column) {
 		return board.get(row).get(column).getSolderedGate();
 	}
-
-	p
+	
 
 	public void setGates(ArrayList<ArrayList<SolderedRegister>> gates) {
 		this.board = gates;
