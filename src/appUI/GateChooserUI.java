@@ -3,18 +3,20 @@ package appUI;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Event;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
+import javax.swing.InputMap;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
+import javax.swing.KeyStroke;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.BevelBorder;
@@ -24,7 +26,6 @@ import javax.swing.event.ListSelectionListener;
 import framework.AbstractGate;
 import framework.CircuitBoard;
 import framework.DefaultGate;
-import preferences.AppPreferences;
 
 @SuppressWarnings("serial")
 public class GateChooserUI extends AbstractAppViewUI implements ListSelectionListener{
@@ -49,6 +50,14 @@ public class GateChooserUI extends AbstractAppViewUI implements ListSelectionLis
 		setBackground(Color.LIGHT_GRAY);
 		setLayout(new BorderLayout());
 		tabPane = new JTabbedPane();
+		
+		InputMap im = tabPane.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_UP, KeyEvent.CTRL_DOWN_MASK,false), "none");
+		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN,KeyEvent.CTRL_DOWN_MASK,false), "none");
+		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT,KeyEvent.CTRL_DOWN_MASK,false), "none");
+		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT,KeyEvent.CTRL_DOWN_MASK,false), "none");
+		
+		
 		tabPane.add(DEFAULT_GATES_NAME, makeListTab());
 		tabPane.add(CUSTOM_GATES_NAME, makeListTab());
 		tabPane.add(CUSTOM_ORACLES_NAME, makeListTab());
@@ -70,6 +79,13 @@ public class GateChooserUI extends AbstractAppViewUI implements ListSelectionLis
 		list.setLayoutOrientation(JList.HORIZONTAL_WRAP);
 		list.setVisibleRowCount(-1);
 		list.addListSelectionListener(this);
+		
+		InputMap im = list.getInputMap(JComponent.WHEN_FOCUSED);
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_UP, KeyEvent.CTRL_DOWN_MASK,false), "none");
+		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN,KeyEvent.CTRL_DOWN_MASK,false), "none");
+		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT,KeyEvent.CTRL_DOWN_MASK,false), "none");
+		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT,KeyEvent.CTRL_DOWN_MASK,false), "none");
+		
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.gridx = 0;
 		gbc.gridy = 0;

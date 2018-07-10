@@ -88,7 +88,7 @@ public class CircuitBoard implements Serializable{
     	if(board.get(0).size() > 1) {
 	    	setUnsaved();
 	    	for(int i = 0; i < getColumns(); i++)
-	    		removeSolderedGate(r, i);
+	    		detachSolderedGate(r, i);
 	        for(ArrayList<SolderedRegister> a : board) 
 	        	a.remove(r);
     	}else {
@@ -150,7 +150,7 @@ public class CircuitBoard implements Serializable{
      * @return
      * the row of the last {@link SolderedRegister} removed from {@link CircuitBoard}
      */
-    public int removeSolderedGate(int row, int column) {
+    public int detachSolderedGate(int row, int column) {
     	SolderedRegister sr = getSolderedRegister(column, row);
     	SolderedGate sg = sr.getSolderedGate();
     	int first = sg.getFirstLocalRegister();

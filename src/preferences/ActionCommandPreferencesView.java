@@ -60,8 +60,8 @@ public class ActionCommandPreferencesView extends AbstractPreferenceView{
 		addTableItem("X");
 		addTableItem("Y");
 		addTableItem("Z");
-		addTableItem("S");
-		addTableItem("T");
+//		addTableItem("S");
+//		addTableItem("T");
 		addTableItem("Measure");
 		addTableItem("CNot");
 		addTableItem("Swap");

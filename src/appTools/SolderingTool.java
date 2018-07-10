@@ -127,7 +127,7 @@ public class SolderingTool extends Tool{
 			
 			int row;
 			for(int i = registers[firstLocalRegister]; i <= registers[lastLocalRegister]; i++)
-				i = window.getSelectedBoard().removeSolderedGate(i, selectedColumn);
+				i = window.getSelectedBoard().detachSolderedGate(i, selectedColumn);
 			
 			for(int i = 0; i < registers.length; i++) {
 				row = registers[i];
@@ -190,7 +190,7 @@ public class SolderingTool extends Tool{
 		SolderedGate sg = new SolderedGate(gate, 0, 0);
 		SolderedRegister sr = new SolderedRegister(sg, 0);
 		removeSurroundingGate(p.y, p.x);
-		window.getSelectedBoard().removeSolderedGate(p.y, p.x);
+		window.getSelectedBoard().detachSolderedGate(p.y, p.x);
 		window.getSelectedBoard().setSolderedRegister(p.x, p.y, sr);
 		window.getRenderContext().paintRerenderedBaseImageOnly();
 		window.getSelectedBoard().setUnsaved();
@@ -232,7 +232,7 @@ public class SolderingTool extends Tool{
 			SolderedGate sg0 = sr.getSolderedGate();
 			if(sg0.getAbstractGate().getType() != GateType.I) {
 				if(sg0.getLastLocalRegister() != sr.getLocalRegisterNumber()) {
-					window.getSelectedBoard().removeSolderedGate(row, startingColumn);
+					window.getSelectedBoard().detachSolderedGate(row, startingColumn);
 				}
 				break;
 			}
