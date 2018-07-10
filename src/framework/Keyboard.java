@@ -2,10 +2,13 @@ package framework;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import appUI.CircuitBoardSelector;
 import appUI.Window;
 import preferences.AppPreferencesWindow;
+
+import javax.swing.*;
 
 public class Keyboard implements ActionListener, Runnable {
 	
@@ -69,6 +72,18 @@ public class Keyboard implements ActionListener, Runnable {
             //System.out.println(Translator.translateQuipper());
             //window.getConsole().println(Translator.translateQuipper());
             break;
+
+//		Load Types
+
+		case "from QUIL":
+			Main.getWindow().getSelectedBoard().loadProgram(DefaultGate.LangType.QUIL);
+			break;
+		case "from QASM":
+			Main.getWindow().getSelectedBoard().loadProgram(DefaultGate.LangType.QASM);
+			break;
+		case "from Quipper":
+			Main.getWindow().getSelectedBoard().loadProgram(DefaultGate.LangType.QUIL);
+			break;
 
 //      File Selections
         case "New Circuit":

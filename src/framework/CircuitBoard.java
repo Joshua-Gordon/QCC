@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.net.URI;
 import java.util.ArrayList;
 
-import javax.swing.DefaultListModel;
+import javax.swing.*;
 
 import appUI.CircuitBoardSelector;
 import appUI.Window;
@@ -15,7 +15,7 @@ import utils.AppDialogs;
  * Contains all data pertaining to a application project
  * such as the list of custom gates, custom oracles, and the list of instructions
  * for a quantum protocol represented by a grid of gates 
- * (A double {@link Arraylist} of {@link SolderedRegister}s)
+ * (A double {@link ArrayList} of {@link SolderedRegister}s)
  * <p>
  * This is main class to be serialized to save a user's project, however all methods pertaining to saving
  * an instance of a {@link CircuitBoard} as a project is contained within {@link CircuitBoardSelector}
@@ -247,7 +247,7 @@ public class CircuitBoard implements Serializable{
     
     /**
      * @return
-     * All the {@link CustomGates} associated with this {@link CircuitBoard}.
+     * All the {@link CustomGate}s associated with this {@link CircuitBoard}.
      */
 	public DefaultListModel<AbstractGate> getCustomGates() {
 		return customGates;
@@ -320,5 +320,16 @@ public class CircuitBoard implements Serializable{
 	public SolderedGate getSolderedGate(int row, int column) {
 		return board.get(row).get(column).getSolderedGate();
 	}
-	
+
+	public void loadProgram(DefaultGate.LangType lt) {
+		JFileChooser jfc = new JFileChooser();
+		jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		jfc.setMultiSelectionEnabled(false);
+		jfc.showOpenDialog(null);
+		String path = jfc.getSelectedFile().getAbsolutePath();
+		ArrayList<ArrayList<SolderedRegister>> gates = Translator.loadProgram(lt,path);
+		this.board = gates;
+		Main.getWindow().getRenderContext().paintRerenderedBaseImageOnly();
+	}
+
 }

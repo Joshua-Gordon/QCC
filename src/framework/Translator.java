@@ -299,7 +299,7 @@ public class Translator {
         return transpose;
     }
 
-    public ArrayList<ArrayList<SolderedRegister>> loadProgram(LangType lt, String filepath) {
+    public static ArrayList<ArrayList<SolderedRegister>> loadProgram(LangType lt, String filepath) {
         ArrayList<ArrayList<SolderedRegister>> gates = null;
         String code = "";
         try {
@@ -449,6 +449,9 @@ public class Translator {
         String[] tempLines = qasm.split("\n");
         ArrayList<String> qasmLines = new ArrayList<>();
         Collections.addAll(qasmLines,tempLines); //Make list of lines into arraylist
+        if(qasmLines.get(0).equals("")){
+            qasmLines.remove(0);
+        }
         qasmLines.remove(0);
         qasmLines.remove(0);
         qasmLines.remove(0);
@@ -466,7 +469,7 @@ public class Translator {
                     quil += "MEASURE " + idx + " [" + idx + "]";
                     break;
                 default:
-                    quil += gateName.toUpperCase() + " " + idx;
+                    quil += gateName.toUpperCase() + " " + idx + "\n";
             }
         }
         return quil;

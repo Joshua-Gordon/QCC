@@ -35,6 +35,12 @@ public class AppMenuBar extends JMenuBar {
 			subMenu.add(mkItem("Quipper"));
 		menu.add(subMenu);
 		menu.addSeparator();
+			subMenu = new JMenu("Load");
+			subMenu.add(mkItem("from QUIL"));
+			subMenu.add(mkItem("from QASM"));
+			subMenu.add(mkItem("from Quipper"));
+		menu.add(subMenu);
+		menu.addSeparator();
 		menu.add(mkItem("Preferences"));
 		add(menu);
 		

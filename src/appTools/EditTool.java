@@ -93,7 +93,7 @@ public class EditTool extends Tool{
 		sg.getAbstractGate().setName("C"+sg.getAbstractGate().getName());
 		ArrayList<SolderedRegister> oldRegs = sg.getRegisters();
 		SolderedRegister control = new SolderedRegister(sg,oldRegs.size());
-		Main.getWindow().getSelectedBoard().removeSolderedGate(register,col);
+		Main.getWindow().getSelectedBoard().detachSolderedGate(register,col);
 		Main.getWindow().getSelectedBoard().setSolderedRegister(col,register,control);
 	}
 
