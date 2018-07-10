@@ -13,8 +13,7 @@ import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 
-import framework.CircuitBoard;
-import framework.Main;
+import framework.*;
 import preferences.AppPreferences;
 import utils.AppDialogs;
 
@@ -480,6 +479,17 @@ public class CircuitBoardSelector{
 		public String getDescription() {
 			return PNG_DES;
 		}
+	}
+
+	public static void loadProgram(DefaultGate.LangType lt) {
+		JFileChooser jfc = new JFileChooser();
+		jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		jfc.setMultiSelectionEnabled(false);
+		jfc.showOpenDialog(null);
+		String path = jfc.getSelectedFile().getAbsolutePath();
+		ArrayList<ArrayList<SolderedRegister>> gates = Translator.loadProgram(lt,path);
+		Main.getWindow().getSelectedBoard().setGates(gates);
+		Main.getWindow().getRenderContext().paintRerenderedBaseImageOnly();
 	}
 	
 }

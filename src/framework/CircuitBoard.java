@@ -364,15 +364,10 @@ public class CircuitBoard implements Serializable{
 		return board.get(row).get(column).getSolderedGate();
 	}
 
-	public void loadProgram(DefaultGate.LangType lt) {
-		JFileChooser jfc = new JFileChooser();
-		jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-		jfc.setMultiSelectionEnabled(false);
-		jfc.showOpenDialog(null);
-		String path = jfc.getSelectedFile().getAbsolutePath();
-		ArrayList<ArrayList<SolderedRegister>> gates = Translator.loadProgram(lt,path);
+	p
+
+	public void setGates(ArrayList<ArrayList<SolderedRegister>> gates) {
 		this.board = gates;
-		Main.getWindow().getRenderContext().paintRerenderedBaseImageOnly();
 	}
 
 }
