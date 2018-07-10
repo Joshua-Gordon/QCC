@@ -3,6 +3,8 @@ package appTools;
 import javax.swing.ImageIcon;
 
 import appUI.Window;
+import framework.ExportGatesRunnable;
+import framework.ExportedGate;
 
 public class SelectionTool extends Tool{
 

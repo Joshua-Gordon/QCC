@@ -215,15 +215,16 @@ public class CircuitBoard implements Serializable{
      * gate, otherwise it return -1.
      */
     public int isWithinAnotherGate(int row, int column) {
-		while(row >= 0) {
-			SolderedRegister sr = getSolderedRegister(column, row);
+    	int y = row;
+		while(y >= 0) {
+			SolderedRegister sr = getSolderedRegister(column, y);
 			SolderedGate sg0 = sr.getSolderedGate();
 			if(sg0.getAbstractGate().getType() != GateType.I) {
-				if(sg0.getLastLocalRegister() != sr.getLocalRegisterNumber())
-					return row;
+				if(sg0.getLastLocalRegister() != sr.getLocalRegisterNumber() || y == row)
+					return y;
 				return -1;
 			}
-			row--;
+			y--;
 		}
 		return -1;
     }
@@ -364,7 +365,7 @@ public class CircuitBoard implements Serializable{
 	 * row and column of this {@link CircuitBoard}.
 	 */
 	public SolderedGate getSolderedGate(int row, int column) {
-		return board.get(row).get(column).getSolderedGate();
+		return board.get(column).get(row).getSolderedGate();
 	}
 	
 

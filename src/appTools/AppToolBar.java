@@ -23,13 +23,15 @@ import utils.ResourceLoader;
 public class AppToolBar extends JToolBar{
 	private ButtonGroup toolGroup = new ButtonGroup();
 	private Window w;
-	private Tool selected = new SelectionTool(w, new ImageIcon(ResourceLoader.SELECT));
+	private Tool selected;
 	
 	public AppToolBar(Window w) {
 		super();
 		this.w = w;
 		
 		setFloatable(false);
+		
+		selected = new SelectionTool(w, new ImageIcon(ResourceLoader.SELECT));
 		
 //		Add Tools Here:
 		addTool(selected);
