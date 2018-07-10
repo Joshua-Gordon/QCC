@@ -47,6 +47,7 @@ public class AppMenuBar extends JMenuBar {
 				subSubMenu.add(mkItem("Y"));
 				subSubMenu.add(mkItem("Z"));
 				subSubMenu.add(mkItem("S"));
+				subSubMenu.add(mkItem("T"));
 			subMenu.add(subSubMenu);
 			subMenu.add(mkItem("Measure"));
 			subMenu.add(mkItem("CNot"));

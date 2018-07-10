@@ -109,6 +109,7 @@ public final class AppPreferences {
 		add("X", 	   		   		KeyEvent.VK_X);
 		add("Y", 	   				KeyEvent.VK_Y);
 		add("Z", 	   				KeyEvent.VK_Z);
+		// STUB: Missing handlers for S and T gates
 		add("Measure", 	   			KeyEvent.VK_M);
 		add("CNot", 	   			KeyEvent.VK_C);
 		add("Swap", 	   			KeyEvent.VK_W);
