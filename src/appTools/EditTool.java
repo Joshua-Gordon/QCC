@@ -3,6 +3,7 @@ package appTools;
 import javax.swing.ImageIcon;
 
 import appUI.CircuitBoardRenderContext;
+import appUI.ConsoleUI;
 import appUI.Window;
 import framework.AbstractGate;
 import framework.Main;
@@ -13,6 +14,7 @@ import mathLib.Matrix;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 public class EditTool extends Tool{
@@ -20,6 +22,9 @@ public class EditTool extends Tool{
 	public EditTool(Window w, ImageIcon icon) {
 		super("Edit Gate Tool", w, icon);
 	}
+
+	SolderedGate selected = null;
+	int column;
 
 	@Override
 	public void onSelected() {
@@ -35,12 +40,27 @@ public class EditTool extends Tool{
 	public void mousePressed(MouseEvent e) {
 		Point p = e.getPoint();
 		setGridLocation(p);
-		SolderedGate selected = window.getSelectedBoard().getSolderedGate(p.x,p.y);
-		if(selected.getAbstractGate().getType().equals(AbstractGate.GateType.I)) {
-			return;
+		if(selected == null) {
+			System.out.println("Selecting gate");
+			selected = window.getSelectedBoard().getSolderedGate(p.x,p.y);
+			column = p.x;
+			if(selected.getAbstractGate().getType().equals(AbstractGate.GateType.I)) {
+				return;
+			}
+			int gateSize = CircuitBoardRenderContext.GATE_PIXEL_SIZE;
+			BufferedImage bi = window.getRenderContext().getOverlay();
+			Graphics2D g2d = (Graphics2D) bi.getGraphics();
+			g2d.setColor(Color.RED);
+			g2d.drawRect(p.x * gateSize, p.y * gateSize, gateSize, gateSize);
+			g2d.dispose();
+			window.getRenderContext().paintBaseImageWithOverlay(bi);
+		}else {
+			System.out.println("Adding control");
+			boolean leftClick = e.getButton() == MouseEvent.BUTTON1;
+			addControl(selected,column,p.y,leftClick);
+			selected = null;
 		}
-		addControl(selected,p.x,0,true);
-		System.out.println("Added");
+
 	}
 
 	/**
