@@ -109,6 +109,19 @@ public class DefaultGate extends AbstractGate implements Serializable{
         gate = new DefaultGate("CNOT", mat, AbstractGate.GateType.CNOT);
         gate.setIcon(GateIcon.getCNotIcon());
         DEFAULT_GATES.put("C-NOT",gate);
+        
+        mat = new Matrix<>(8, 8,
+                Complex.ONE(), Complex.ZERO(), Complex.ZERO(), Complex.ZERO(), Complex.ZERO(), Complex.ZERO(), Complex.ZERO(), Complex.ZERO(),
+                Complex.ZERO(), Complex.ONE(), Complex.ZERO(), Complex.ZERO(), Complex.ZERO(), Complex.ZERO(), Complex.ZERO(), Complex.ZERO(),
+                Complex.ZERO(), Complex.ZERO(), Complex.ONE(), Complex.ZERO(), Complex.ZERO(), Complex.ZERO(), Complex.ZERO(), Complex.ZERO(),
+                Complex.ZERO(), Complex.ZERO(), Complex.ZERO(), Complex.ONE(), Complex.ZERO(), Complex.ZERO(), Complex.ZERO(), Complex.ZERO(),
+                Complex.ZERO(), Complex.ZERO(), Complex.ZERO(), Complex.ZERO(), Complex.ONE(), Complex.ZERO(), Complex.ZERO(), Complex.ZERO(),
+                Complex.ZERO(), Complex.ZERO(), Complex.ZERO(), Complex.ZERO(), Complex.ZERO(), Complex.ONE(), Complex.ZERO(), Complex.ZERO(),
+                Complex.ZERO(), Complex.ZERO(), Complex.ZERO(), Complex.ZERO(), Complex.ZERO(), Complex.ZERO(), Complex.ZERO(), Complex.ONE(),
+                Complex.ZERO(), Complex.ZERO(), Complex.ZERO(), Complex.ZERO(), Complex.ZERO(), Complex.ZERO(), Complex.ONE(), Complex.ZERO());
+        gate = new DefaultGate("TOFFOLI", mat, AbstractGate.GateType.TOFFOLI);
+        gate.setIcon(GateIcon.getToffoliIcon());
+        DEFAULT_GATES.put("TOFFOLI",gate);
     }
 	
     

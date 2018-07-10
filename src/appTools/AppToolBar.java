@@ -42,6 +42,7 @@ public class AppToolBar extends JToolBar{
 	
 	private void addTool(Tool tool) {
 		JToggleButton button = new JToggleButton(tool.getIcon());
+		button.setToolTipText(tool.getName());
 		button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {

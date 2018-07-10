@@ -128,6 +128,33 @@ public class GateIcon extends ImageIcon{
     	return new GateIcon("CNOT", true, bi);
 	}
 	
+	public static GateIcon getToffoliIcon() {
+		final int vertLineLength = 25;
+		final int circleRadius = 6;
+		final int smallCircleRadius = 3;
+		final int lineLength = PADDING + LINE_LENGTH;
+		final int vertPadding = 2;
+		
+		BufferedImage bi = new BufferedImage(2 * (lineLength + circleRadius),
+				2 * vertPadding + vertLineLength + 2 * circleRadius, BufferedImage.TYPE_4BYTE_ABGR);
+		Graphics2D g2d = (Graphics2D) bi.getGraphics();
+    	g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		g2d.setColor(Color.BLACK);
+		
+        g2d.drawLine(0, vertPadding + circleRadius, bi.getWidth(), vertPadding + circleRadius);
+        g2d.drawLine(0, bi.getHeight() / 2, bi.getWidth(), bi.getHeight() / 2);
+        g2d.drawLine(0, bi.getHeight() - vertPadding - circleRadius, bi.getWidth(), bi.getHeight() - vertPadding - circleRadius);
+        
+    	g2d.setStroke(THIN);
+    	g2d.drawOval(lineLength, bi.getHeight() - vertPadding - 2 * circleRadius, 2 * circleRadius, 2 * circleRadius);
+    	g2d.drawLine(lineLength, bi.getHeight() - vertPadding - circleRadius, lineLength + 2 * circleRadius, bi.getHeight() - vertPadding - circleRadius);
+    	g2d.drawLine(lineLength + circleRadius, bi.getHeight() - vertPadding, lineLength + circleRadius, vertPadding + circleRadius);
+    	g2d.fillOval(lineLength + circleRadius - smallCircleRadius, vertPadding + circleRadius - smallCircleRadius, 2 * smallCircleRadius, 2 * smallCircleRadius);
+    	g2d.fillOval(lineLength + circleRadius - smallCircleRadius, bi.getHeight() / 2 - smallCircleRadius, 2 * smallCircleRadius, 2 * smallCircleRadius);
+    	g2d.dispose();
+    	return new GateIcon("CNOT", true, bi);
+	}
+	
 	private BufferedImage getBufferedImage() {
 		Font f = ResourceLoader.VAST_SHADOW.deriveFont(12f);
 		Rectangle2D rect = CircuitBoardRenderContext.getStringBounds(f, name);

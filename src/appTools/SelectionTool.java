@@ -7,7 +7,7 @@ import appUI.Window;
 public class SelectionTool extends Tool{
 
 	public SelectionTool(Window w, ImageIcon icon) {
-		super(w, icon);
+		super("Select Tool", w, icon);
 	}
 
 	@Override

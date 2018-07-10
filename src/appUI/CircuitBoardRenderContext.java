@@ -125,6 +125,9 @@ public class CircuitBoardRenderContext {
                 case CNOT:
                 	drawCNOT(g2d, x, y, eg.getRegisters());
                 	break;
+                case TOFFOLI:
+                	drawToffoli(g2d, x, y, eg.getRegisters());
+                	break;
                 case SWAP:
                 	drawSWAP(g2d, x, y, eg.getRegisters());
                 	break;
@@ -149,6 +152,13 @@ public class CircuitBoardRenderContext {
     	return image;
     }
 	
+	private void drawToffoli(Graphics2D g2d, int x, int y, int[] registers) {
+		g2d.setStroke(HEAVY);
+    	drawCNOTHead(g2d, x, registers[0]);
+    	drawCNOTTail(g2d, x, registers[0], registers[1]);
+    	drawCNOTTail(g2d, x, registers[0], registers[2]);
+	}
+
 	public static void drawArrow(Graphics2D g2d, int xi, int yi, int xf, int yf) {
 		drawArrow(g2d, ARROW_HEAD, xi, yi, xf, yf);
 	}

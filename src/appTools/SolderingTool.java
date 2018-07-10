@@ -40,7 +40,7 @@ public class SolderingTool extends Tool{
 	}
 	
 	public SolderingTool(Window window, ImageIcon icon) {
-		super(window, icon);
+		super("Solder Gate Tool", window, icon);
 	}
 	
 	

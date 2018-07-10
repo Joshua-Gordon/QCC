@@ -11,11 +11,13 @@ import appUI.Window;
 
 public abstract class Tool extends MouseAdapter implements KeyListener{
 	protected Window window;
-	protected ImageIcon icon; 
+	protected ImageIcon icon;
+	private final String name;
 	
-	public Tool(Window window, ImageIcon icon) {
+	public Tool(String name, Window window, ImageIcon icon) {
 		this.window = window;
 		this.icon = icon;
+		this.name = name;
 	}
 	
 	public abstract void onSelected();
@@ -27,5 +29,9 @@ public abstract class Tool extends MouseAdapter implements KeyListener{
 	
 	public ImageIcon getIcon() {
 		return icon;
+	}
+	
+	public String getName() {
+		return name;
 	}
 }

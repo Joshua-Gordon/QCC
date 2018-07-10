@@ -7,7 +7,7 @@ import appUI.Window;
 public class EditTool extends Tool{
 
 	public EditTool(Window w, ImageIcon icon) {
-		super(w, icon);
+		super("Edit Gate Tool", w, icon);
 	}
 
 	@Override
