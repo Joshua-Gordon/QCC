@@ -8,6 +8,7 @@ import javax.swing.*;
 
 import appUI.CircuitBoardSelector;
 import appUI.Window;
+import framework.AbstractGate.GateType;
 import preferences.AppPreferences;
 import utils.AppDialogs;
 
@@ -137,6 +138,25 @@ public class CircuitBoard implements Serializable{
     	}
     }
 
+    
+    
+    /**
+     * Detaches all {@link SolderedGate}s intersecting with the specified rows and column starting at <code> rowStart </code> and ending at <code> rowEnd </code> (inclusive).
+     * If the range happens to be completely enclosed within another {@link SolderedGate}, that {@link SolderedGate} will also be detached.
+     * 
+     * @param rowStart
+     * @param rowEnd
+     */
+    public void detachAllGatesWithinRange(int rowStart, int rowEnd, int column) {
+    	int row = isWithinAnotherGate(rowStart, column);
+		
+    	if(row != -1)
+    		detachSolderedGate(row, column);
+    	
+		for(int i = rowStart + 1; i <= rowEnd; i++)
+			i = detachSolderedGate(i, column);
+    }
+    
     /**
      * Replaces the {@link SolderedGate} associated with the {@link SolderedRegister} with an identity gate on the {@link CircuitBoard}
      * at a specified row and column.
@@ -180,6 +200,29 @@ public class CircuitBoard implements Serializable{
     		y++;
     	}
     	return y;
+    }
+    
+    /**
+     * Checks whether or not the the specified row and column is within the bounds of another {@link SolderedGate} other than identity.
+     * 
+     * @param row
+     * @param column
+     * @return
+     * if contained within another {@link SolderedGate}, it will return a row containing a {@link SolderedRegister} attributed to the surrounding
+     * gate, otherwise it return -1.
+     */
+    public int isWithinAnotherGate(int row, int column) {
+		while(row >= 0) {
+			SolderedRegister sr = getSolderedRegister(column, row);
+			SolderedGate sg0 = sr.getSolderedGate();
+			if(sg0.getAbstractGate().getType() != GateType.I) {
+				if(sg0.getLastLocalRegister() != sr.getLocalRegisterNumber())
+					return row;
+				return -1;
+			}
+			row--;
+		}
+		return -1;
     }
     
     
