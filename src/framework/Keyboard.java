@@ -27,30 +27,6 @@ public class Keyboard implements ActionListener, Runnable {
 
 
 //		Gates
-//        case "Hadamard":
-//            Main.cb.edit(DefaultGate.GateType.H);
-//            break;
-//        case "I":
-//            Main.cb.edit(DefaultGate.GateType.I);
-//            break;
-//        case "X":
-//            Main.cb.edit(DefaultGate.GateType.X);
-//            break;
-//        case "Y":
-//            Main.cb.edit(DefaultGate.GateType.Y);
-//            break;
-//        case "Z":
-//            Main.cb.edit(DefaultGate.GateType.Z);
-//            break;
-//        case "Measure":
-//            Main.cb.edit(DefaultGate.GateType.MEASURE);
-//            break;
-//        case "CNot":
-//            Main.cb.edit(DefaultGate.GateType.CNOT);
-//            break;
-//        case "Swap":
-//            Main.cb.edit(DefaultGate.GateType.SWAP);
-//            break;
         case "Make Custom Gate...":
         	CustomGate.makeCustom();
             break;

@@ -55,16 +55,6 @@ public class ActionCommandPreferencesView extends AbstractPreferenceView{
 		addTableItem("QASM");
 		addTableItem("Quipper");
 		addTableItem("Preferences");
-		addTableItem("Hadamard");
-		addTableItem("I");
-		addTableItem("X");
-		addTableItem("Y");
-		addTableItem("Z");
-//		addTableItem("S");
-//		addTableItem("T");
-		addTableItem("Measure");
-		addTableItem("CNot");
-		addTableItem("Swap");
 		addTableItem("Add Row");
 		addTableItem("Add Column");
 		addTableItem("Remove Last Row");

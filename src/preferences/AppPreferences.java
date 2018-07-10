@@ -104,15 +104,6 @@ public final class AppPreferences {
 		add("QASM", 		   		KeyEvent.VK_Q);
 		add("Quipper",         		KeyEvent.VK_P);
 		add("Preferences", 	   		KeyEvent.VK_F1);
-		add("Hadamard", 	   		KeyEvent.VK_H);
-		add("I", 	   		   		KeyEvent.VK_I);
-		add("X", 	   		   		KeyEvent.VK_X);
-		add("Y", 	   				KeyEvent.VK_Y);
-		add("Z", 	   				KeyEvent.VK_Z);
-		// STUB: Missing handlers for S and T gates
-		add("Measure", 	   			KeyEvent.VK_M);
-		add("CNot", 	   			KeyEvent.VK_C);
-		add("Swap", 	   			KeyEvent.VK_W);
 		add("Make Custom Gate...",	KeyEvent.VK_T);
 		add("Add Row", 	   			KeyEvent.VK_DOWN);
 		add("Add Column", 	   		KeyEvent.VK_RIGHT);

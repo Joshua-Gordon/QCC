@@ -45,27 +45,14 @@ public class AppMenuBar extends JMenuBar {
 		add(menu);
 		
 		menu = new JMenu("Edit");
-			subMenu = new JMenu("Get Gate");
-			subMenu.add(mkItem("Hadamard"));
-				subSubMenu = new JMenu("Pauli Gates");
-				subSubMenu.add(mkItem("I"));
-				subSubMenu.add(mkItem("X"));
-				subSubMenu.add(mkItem("Y"));
-				subSubMenu.add(mkItem("Z"));
-				subSubMenu.add(mkItem("S"));
-				subSubMenu.add(mkItem("T"));
-			subMenu.add(subSubMenu);
-			subMenu.add(mkItem("Measure"));
-			subMenu.add(mkItem("CNot"));
-			subMenu.add(mkItem("Swap"));
-			subMenu.add(mkItem("Make Custom Gate..."));
-		menu.add(subMenu);
-		menu.addSeparator();
 		menu.add(mkItem("Add Row"));
 		menu.add(mkItem("Add Column"));
 		menu.add(mkItem("Remove Last Row"));
 		menu.add(mkItem("Remove Last Column"));
+		menu.addSeparator();
+		menu.add(mkItem("Make Custom Gate..."));
 		add(menu);
+		
 		menu = new JMenu("Run");
 			subMenu = new JMenu("Language");
 			subMenu.add(mkItem("Run QUIL"));
