@@ -106,15 +106,17 @@ public class SolderingTool extends Tool{
 	
 	
 	private void selectMultiQubitRegister(Point p) {
-		int previouslySelected = scanSelected(p.y);
+		int registerWithSameQubit = scanSelected(p.y);
 		int previousGateRegister = currentGateRegister;
 		
 		registers[currentGateRegister] = p.y;
-		if(previouslySelected == -1)
-			currentGateRegister = ++lastGateRegisterEdited;
+		if(currentGateRegister == lastGateRegisterEdited)
+			lastGateRegisterEdited++;
+		if(registerWithSameQubit == -1)
+			currentGateRegister = lastGateRegisterEdited;
 		else
-			currentGateRegister = previouslySelected;
-		
+			currentGateRegister = registerWithSameQubit;
+			
 		if(p.y <= registers[firstLocalRegister])
 			firstLocalRegister = previousGateRegister;
 		if(p.y >= registers[lastLocalRegister])
@@ -227,7 +229,7 @@ public class SolderingTool extends Tool{
 	private int scanSelected(int boardRegister) {
 		int y = -1;
 		while(++y < lastGateRegisterEdited)
-			if(boardRegister == registers[y])
+			if(boardRegister == registers[y] && y != currentGateRegister)
 				return y;
 		return -1;
 	}
