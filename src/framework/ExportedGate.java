@@ -56,15 +56,19 @@ public class ExportedGate {
 		this.abstractGate = sg.getAbstractGate();
 		this.registers = new int[sg.getExpectedNumberOfRegisters()];
 		
-		int registersFound = 0;
+		int lastLocalReg = sg.getLastLocalRegister();
+		int curLocalReg;
+		
 		int row = y;
 		
 		SolderedRegister curSr;
-		while(registersFound < registers.length) {
+		while(row < cb.getRows() || cb.throwGateBoundsException(sg)) {
 			curSr = cb.getSolderedRegister(x, row);
 			if(curSr.getSolderedGate().equals(sg)) {
-				registers[curSr.getLocalRegisterNumber()] = row;
-				registersFound++;
+				curLocalReg = curSr.getLocalRegisterNumber();
+				registers[curLocalReg] = row;
+				if(curLocalReg == lastLocalReg)
+					break;
 			}
 			row++;
 		}

@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.net.URI;
 import java.util.ArrayList;
 
-import javax.swing.*;
+import javax.swing.DefaultListModel;
 
 import appUI.CircuitBoardSelector;
 import appUI.Window;
@@ -191,7 +191,7 @@ public class CircuitBoard implements Serializable{
     	SolderedRegister currentRegister;
     	int y = row - 1;
     	if(sr.getLocalRegisterNumber() != first) {
-	    	while(y >= 0) {
+	    	while(y >= 0 || throwGateBoundsException(sg)) {
 	    		currentRegister = getSolderedRegister(column, y);
 	    		if(currentRegister.getSolderedGate().equals(sg)) {
 	    			setSolderedRegister(column, y, SolderedRegister.identity());
@@ -202,7 +202,7 @@ public class CircuitBoard implements Serializable{
 	    	}
     	}
     	y = row;
-    	while(y < getRows()) {
+    	while(y < getRows() || throwGateBoundsException(sg)) {
     		currentRegister = getSolderedRegister(column, y);
     		if(currentRegister.getSolderedGate().equals(sg)) {
     			setSolderedRegister(column, y, SolderedRegister.identity());
@@ -383,9 +383,63 @@ public class CircuitBoard implements Serializable{
 		return board.get(column).get(row).getSolderedGate();
 	}
 	
+	
+	/**
+	 * Runs a specified {@link RegisterActionRunnable} to each {@link SolderedRegister} associated with the {@link SolderedGate} at the specified
+	 * row and column of this {@link CircuitBoard}. If the selected row and column has an Identity {@link SolderedGate} but it is underneath a multi-Qubit 
+	 * {@link SolderedGate}, then the multi-Qubit {@link SolderedGate} is chosen to have the {@link RegisterActionRunnable} run on in instead of the Identity.
+	 * 
+	 * <p>
+	 * Note that there is no specific order in which the {@link SolderedRegister}s are chosen to run the action.
+	 * @param row
+	 * @param column
+	 * @param rar
+	 */
+	public void runRegisterActionToSolderedGate(int row, int column, RegisterActionRunnable rar) {
+		int rowOfSolderedRegister = isWithinAnotherGate(row, column);
+		row = rowOfSolderedRegister == -1? row : rowOfSolderedRegister;
+		SolderedRegister sr = getSolderedRegister(column, row);
+		SolderedGate sg = sr.getSolderedGate();
+		
+		int first = sg.getFirstLocalRegister();
+    	int last  = sg.getLastLocalRegister();
+    	
+    	SolderedRegister currentRegister;
+    	int y = row - 1;
+    	if(sr.getLocalRegisterNumber() != first) {
+	    	while(y >= 0 || throwGateBoundsException(sg)) {
+	    		currentRegister = getSolderedRegister(column, y);
+	    		if(currentRegister.getSolderedGate().equals(sg)) {
+	    			rar.registerScanned(y, column, currentRegister);
+	    			if(currentRegister.getLocalRegisterNumber() == first)
+	    				break;
+	    		}
+	    		y--;
+	    	}
+    	}
+    	y = row;
+    	while(y < getRows() || throwGateBoundsException(sg)) {
+    		currentRegister = getSolderedRegister(column, y);
+    		if(currentRegister.getSolderedGate().equals(sg)) {
+    			rar.registerScanned(y, column, currentRegister);
+    			if(currentRegister.getLocalRegisterNumber() == last)
+    				break;
+    		}
+    		y++;
+    	}
+	}
 
 	public void setGates(ArrayList<ArrayList<SolderedRegister>> gates) {
 		this.board = gates;
 	}
-
+	
+	/**
+	 * Throws an {@link ArrayIndexOutOfBoundsException}.
+	 * Used when scanning through a {@link SolderedGate} with missing {@link SolderedRegister}s
+	 * @param sg
+	 * @return
+	 */
+	public boolean throwGateBoundsException(SolderedGate sg) {
+		throw new ArrayIndexOutOfBoundsException("Could not find all SolderedRegisters of " + sg.getAbstractGate().getName() + "!");
+	}
 }
