@@ -31,6 +31,8 @@ public class CircuitBoardRenderContext {
 	public static final int MARGIN4 = GATE_PIXEL_SIZE >> 4;
 	public static final int MARGIN5 = GATE_PIXEL_SIZE >> 5;
 	
+	public static final int RAISED_SHADOW = 4;
+	
 	public static final Polygon ARROW_HEAD = new Polygon(); 
 	static {
 		ARROW_HEAD.addPoint( 0, 0);
@@ -107,7 +109,7 @@ public class CircuitBoardRenderContext {
 
 		        for(int i = 0; i < eg.getHeight(); i++){
 					g2d.setColor(Color.BLACK);
-					drawIdentity(g2d, x, y + i * GATE_PIXEL_SIZE, columnWidth, isClassical[row + i]);
+					drawIdentity(g2d, x, y + i * GATE_PIXEL_SIZE, columnWidth * GATE_PIXEL_SIZE , isClassical[row + i]);
 					if(withGrid) {
     					g2d.setColor(Color.LIGHT_GRAY);
     					drawGrid(g2d, columnPixelPosition, y + i * GATE_PIXEL_SIZE, columnWidth);
@@ -134,9 +136,9 @@ public class CircuitBoardRenderContext {
                 	break;
                 case MEASURE:
                 	g2d.setColor(Color.WHITE);
-					drawIdentity(g2d, x + GATE_PIXEL_SIZE / 2, y, columnWidth / 2, false);
+					drawIdentity(g2d, x + GATE_PIXEL_SIZE / 2, y, columnWidth * GATE_PIXEL_SIZE / 2, false);
                 	g2d.setColor(Color.BLACK);
-					drawIdentity(g2d, x + GATE_PIXEL_SIZE / 2, y, columnWidth / 2, true);
+					drawIdentity(g2d, x + GATE_PIXEL_SIZE / 2, y, columnWidth * GATE_PIXEL_SIZE  / 2, true);
                 	drawMeasure(g2d, x, y);
                 	isClassical[row] = true;
                 	break;
@@ -185,10 +187,10 @@ public class CircuitBoardRenderContext {
 	private void drawIdentity(Graphics2D g2d, int x, int y, int width, boolean isClassicalRegister){
 		g2d.setStroke(BASIC);
 		if(isClassicalRegister) {
-			g2d.drawLine(x, y + MARGIN1 - 2, x + width * GATE_PIXEL_SIZE, y + MARGIN1 - 2);
-			g2d.drawLine(x, y + MARGIN1 + 2, x + width * GATE_PIXEL_SIZE, y + MARGIN1 + 2);
+			g2d.drawLine(x, y + MARGIN1 - 2, x + width - 1, y + MARGIN1 - 2);
+			g2d.drawLine(x, y + MARGIN1 + 2, x + width - 1, y + MARGIN1 + 2);
 		}else {
-			g2d.drawLine(x, y + MARGIN1, x + width * GATE_PIXEL_SIZE, y + MARGIN1);
+			g2d.drawLine(x, y + MARGIN1, x + width - 1, y + MARGIN1);
 		}
 	}
 	
@@ -198,7 +200,11 @@ public class CircuitBoardRenderContext {
         int offset = 0;
         int width = GATE_PIXEL_SIZE * eg.getAbstractGate().getWidth();
         int height = GATE_PIXEL_SIZE * eg.getHeight();
-        g2d.setColor(Color.WHITE);
+        
+        g2d.setColor(new Color(20, 20, 20, 150));
+    	g2d.fillRect(x + RAISED_SHADOW, y + RAISED_SHADOW, width, height);
+    	
+    	g2d.setColor(Color.WHITE);
     	g2d.fillRect(x, y, width - 1, height - 1);
         g2d.setColor(Color.BLACK);
     	g2d.drawRect(x, y, width - 1, height - 1);
@@ -216,6 +222,10 @@ public class CircuitBoardRenderContext {
 	
 	private void drawMeasure(Graphics2D g2d, int x, int y){
 		g2d.setStroke(BASIC);
+		
+		g2d.setColor(new Color(20, 20, 20, 150));
+		g2d.fillRect(x + RAISED_SHADOW, y + RAISED_SHADOW, GATE_PIXEL_SIZE, GATE_PIXEL_SIZE);
+		
 		g2d.setColor(Color.WHITE);
 		g2d.fillRect(x, y, GATE_PIXEL_SIZE - 1, GATE_PIXEL_SIZE - 1);
 		g2d.setColor(Color.BLACK);
