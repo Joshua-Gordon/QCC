@@ -20,10 +20,6 @@ public class SolderedGate implements Serializable{
 	
 	private AbstractGate abstractGate;
 	private int firstLocalRegister = 0, lastLocalRegister = 0;
-	/**
-	 * <code>boolean</code> represents whether or not the extra registers are control true or control false
-	 */
-	private ArrayList<Boolean> extraRegisterControlTypes = new ArrayList<>();
 	
 	/**
 	 * 
@@ -60,14 +56,6 @@ public class SolderedGate implements Serializable{
 
 	/**
 	 * @return
-	 * whether or not this gate is multi-qubit gate
-	 */
-	public boolean isMultiQubit() {
-		return abstractGate.isMultiQubitGate();
-	}
-
-	/**
-	 * @return
 	 * the {@link AbstractGate} that is associated with this {@link SolderedGate}
 	 */
 	public AbstractGate getAbstractGate() {
@@ -79,7 +67,7 @@ public class SolderedGate implements Serializable{
 	 * the expected number of {@link SolderedRegister}'s attached to this {@link SolderedGate}
 	 */
 	public int getExpectedNumberOfRegisters() {
-		return abstractGate.getNumberOfRegisters() + extraRegisterControlTypes.size();
+		return abstractGate.getNumberOfRegisters();
 	}
 
 	/**
@@ -112,15 +100,6 @@ public class SolderedGate implements Serializable{
 	 */
 	public void setLastLocalRegister(int lastLocalRegister) {
 		this.lastLocalRegister = lastLocalRegister;
-	}
-	
-	
-	/**
-	 * @return
-	 * an {@link ArrayList} of control types of each of this {@link SolderedGate}s added controls
-	 */
-	public ArrayList<Boolean> getControlTypes(){
-		return extraRegisterControlTypes;
 	}
 	
 	public ArrayList<SolderedRegister> getRegisters() {
