@@ -75,10 +75,11 @@ public class AddColumnTool extends Tool{
 	public void setGridLocation(Point mouseCoords) {
 		int[] params = window.getRenderContext().getGridColumnPosition(mouseCoords.x);
 		int columnWidth = window.getRenderContext().getColumnWidth(params[0]) * GATE_PIXEL_SIZE;
-		double r = (double) mouseCoords.x % GATE_PIXEL_SIZE;
+		double r = mouseCoords.x - params[1];
 		int fract = (int) Math.round( r / (double) columnWidth);
 		mouseCoords.x = params[0];
 		mouseCoords.y = fract;
+
 		columnPixelSelection = (int) (params[1] + fract * columnWidth);
 	}
 
