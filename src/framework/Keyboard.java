@@ -54,13 +54,13 @@ public class Keyboard implements ActionListener, Runnable {
 //		Load Types
 
 		case "from QUIL":
-			CircuitBoardSelector.loadProgram(DefaultGate.LangType.QUIL);
+			window.getFileSelector().loadProgram(DefaultGate.LangType.QUIL);
 			break;
 		case "from QASM":
-			CircuitBoardSelector.loadProgram(DefaultGate.LangType.QASM);
+			window.getFileSelector().loadProgram(DefaultGate.LangType.QASM);
 			break;
 		case "from Quipper":
-			CircuitBoardSelector.loadProgram(DefaultGate.LangType.QUIL);
+			window.getFileSelector().loadProgram(DefaultGate.LangType.QUIL);
 			break;
 
 //      File Selections

@@ -432,6 +432,7 @@ public class CircuitBoardSelector{
 	}
 	
 	
+	
 	/**
 	 * Saves a Specified CircuitBoard File
 	 * @param cb
@@ -445,6 +446,19 @@ public class CircuitBoardSelector{
 		fos.close();
 		cb.setSaved();
 	}
+	
+	
+	public void loadProgram(DefaultGate.LangType lt) {
+		JFileChooser jfc = new JFileChooser();
+		jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		jfc.setMultiSelectionEnabled(false);
+		jfc.showOpenDialog(null);
+		String path = jfc.getSelectedFile().getAbsolutePath();
+		ArrayList<ArrayList<SolderedRegister>> gates = Translator.loadProgram(lt,path);
+		window.getSelectedBoard().setGates(gates);
+		window.getRenderContext().paintRerenderedBaseImageOnly();
+	}
+	
 	
 	
 	/**
@@ -479,17 +493,6 @@ public class CircuitBoardSelector{
 		public String getDescription() {
 			return PNG_DES;
 		}
-	}
-
-	public static void loadProgram(DefaultGate.LangType lt) {
-		JFileChooser jfc = new JFileChooser();
-		jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-		jfc.setMultiSelectionEnabled(false);
-		jfc.showOpenDialog(null);
-		String path = jfc.getSelectedFile().getAbsolutePath();
-		ArrayList<ArrayList<SolderedRegister>> gates = Translator.loadProgram(lt,path);
-		Main.getWindow().getSelectedBoard().setGates(gates);
-		Main.getWindow().getRenderContext().paintRerenderedBaseImageOnly();
 	}
 	
 }

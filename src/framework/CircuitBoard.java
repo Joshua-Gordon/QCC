@@ -111,9 +111,13 @@ public class CircuitBoard implements Serializable{
      */
     public void addColumn(int c){
     	setUnsaved();
+    	int size = 0;
+    	if(board.size() != 0)
+    		size = board.get(0).size();
+    	
     	ArrayList<SolderedRegister> column = new ArrayList<>();
     	board.add(c, column);
-    	for(int i = 0; i < board.get(0).size(); ++i)
+    	for(int i = 0; i < size; ++i)
             column.add(SolderedRegister.identity());
     }
     

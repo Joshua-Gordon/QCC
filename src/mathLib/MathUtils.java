@@ -56,13 +56,8 @@ public class MathUtils {
 		return dot;
 	}
 	
-	public static Matrix<DoubleScalar> correction(int width, int height){
-		return new Matrix<DoubleScalar>(4, 4, DoubleScalar.getArray(
-				width / 2d, 0d, 0d, width / 2d,
-				0d, -height / 2d, 0d, height / 2d,
-				0d, 0d, 1d, 0d,
-				0d, 0d, 0d, 1d));
-	}
+	
+	
 	
 	
 	
