@@ -440,6 +440,12 @@ public class CircuitBoard implements Serializable{
 	 * @return
 	 */
 	public boolean throwGateBoundsException(SolderedGate sg) {
-		throw new ArrayIndexOutOfBoundsException("Could not find all SolderedRegisters of " + sg.getAbstractGate().getName() + "!");
+		try {
+			throw new ArrayIndexOutOfBoundsException("Could not find all SolderedRegisters of " + sg.getAbstractGate().getName() + "!");
+		}catch(ArrayIndexOutOfBoundsException e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
+		return false;
 	}
 }

@@ -72,7 +72,7 @@ public class ExportedGate {
 			}
 			row++;
 		}
-		this.height = row - y;
+		this.height = row - y + 1;
 	}
 	
 	/**
