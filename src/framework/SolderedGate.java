@@ -2,6 +2,7 @@ package framework;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import mathLib.Complex;
 import mathLib.Matrix;
@@ -20,6 +21,12 @@ public class SolderedGate implements Serializable{
 	
 	private AbstractGate abstractGate;
 	private int firstLocalRegister = 0, lastLocalRegister = 0;
+
+	protected enum Control{
+		NONE,TRUE,FALSE
+	}
+
+	private HashMap<Integer,Control> controls;
 	
 	/**
 	 * 
@@ -52,6 +59,7 @@ public class SolderedGate implements Serializable{
 		this.abstractGate = abstractGate;
 		this.firstLocalRegister = firstLocalRegister;
 		this.lastLocalRegister = lastLocalRegister;
+		this.controls = new HashMap<>();
 	}
 
 	/**
@@ -124,6 +132,14 @@ public class SolderedGate implements Serializable{
 			}
 		}
 		return regs;
+	}
+
+	public void addControl(int reg, boolean control) {
+		controls.put(reg,control ? Control.TRUE : Control.FALSE);
+	}
+
+	public Control controlled(int reg) {
+		return controls.getOrDefault(reg,Control.NONE);
 	}
 
 	@Override

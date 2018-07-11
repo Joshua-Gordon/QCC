@@ -1,6 +1,6 @@
 package framework;
 
-
+import framework.SolderedGate.Control;
 /**
  * This class is used to receive gate properties on the {@link CircuitBoard} 
  * that one would not get from {@link CircuitBoard} methods. <p>
@@ -17,6 +17,7 @@ public class ExportedGate {
 	private AbstractGate abstractGate;
 	private int[] registers;
 	private int height;
+	private Control[] controls;
 	
 	
 	/**
@@ -70,6 +71,7 @@ public class ExportedGate {
 				if(curLocalReg == lastLocalReg)
 					break;
 			}
+			controls[row] = sg.controlled(row);
 			row++;
 		}
 		this.height = row - y + 1;
