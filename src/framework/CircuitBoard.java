@@ -162,6 +162,10 @@ public class CircuitBoard implements Serializable{
     }
     
     /**
+     * @deprecated
+     * Should use detachAllGatesWithinRange() method.
+     * <p>
+     * 
      * Replaces the {@link SolderedGate} associated with the {@link SolderedRegister} with an identity gate on the {@link CircuitBoard}
      * at a specified row and column.
      * <p>
@@ -177,6 +181,7 @@ public class CircuitBoard implements Serializable{
      * @return
      * the row of the last {@link SolderedRegister} removed from {@link CircuitBoard}
      */
+    @Deprecated
     public int detachSolderedGate(int row, int column) {
     	SolderedRegister sr = getSolderedRegister(column, row);
     	SolderedGate sg = sr.getSolderedGate();
@@ -218,6 +223,7 @@ public class CircuitBoard implements Serializable{
      * if contained within another {@link SolderedGate}, it will return a row containing a {@link SolderedRegister} attributed to the surrounding
      * gate, otherwise it return -1.
      */
+    @Deprecated
     public int isWithinAnotherGate(int row, int column) {
     	int y = row;
 		while(y >= 0) {
@@ -362,12 +368,17 @@ public class CircuitBoard implements Serializable{
 	}
 	
 	/**
+	 * @deprecated
+	 * Should use the method getSolderedRegister()
+	 * <p>
+	 * 
 	 * @param row
 	 * @param column
 	 * @return
 	 * the {@link SolderedGate} associated with the {@link SolderedRegister} at the specified
 	 * row and column of this {@link CircuitBoard}.
 	 */
+	@Deprecated
 	public SolderedGate getSolderedGate(int row, int column) {
 		return board.get(column).get(row).getSolderedGate();
 	}

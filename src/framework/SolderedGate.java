@@ -23,7 +23,7 @@ public class SolderedGate implements Serializable{
 	/**
 	 * <code>boolean</code> represents whether or not the extra registers are control true or control false
 	 */
-	private ArrayList<Boolean> extraControlRegisters = new ArrayList<>();
+	private ArrayList<Boolean> extraRegisterControlTypes = new ArrayList<>();
 	
 	/**
 	 * 
@@ -114,6 +114,14 @@ public class SolderedGate implements Serializable{
 		this.lastLocalRegister = lastLocalRegister;
 	}
 	
+	
+	/**
+	 * @return
+	 * an {@link ArrayList} of control types of each of this {@link SolderedGate}s added controls
+	 */
+	public ArrayList<Boolean> getControlTypes(){
+		return extraRegisterControlTypes;
+	}
 	
 	public ArrayList<SolderedRegister> getRegisters() {
 		ArrayList<SolderedRegister> regs = new ArrayList<>();
