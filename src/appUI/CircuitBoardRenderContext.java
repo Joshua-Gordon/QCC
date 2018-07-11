@@ -24,6 +24,13 @@ import utils.ResourceLoader;
 
 public class CircuitBoardRenderContext {
 	
+	
+	public static final BasicStroke DASHED = new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, new float[]{5.f}, 0.0f);
+	public static final BasicStroke HEAVY = new BasicStroke(3, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+	public static final BasicStroke MEDIUM = new BasicStroke(2, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+	public static final BasicStroke BASIC = new BasicStroke(1);
+	private static final BufferedImage DUMMY = new BufferedImage(1, 1, BufferedImage.TYPE_3BYTE_BGR);
+	
 	public static final int GATE_PIXEL_SIZE = 64;
 	public static final int MARGIN1 = GATE_PIXEL_SIZE >> 1;
 	public static final int MARGIN2 = GATE_PIXEL_SIZE >> 2;
@@ -32,22 +39,19 @@ public class CircuitBoardRenderContext {
 	public static final int MARGIN5 = GATE_PIXEL_SIZE >> 5;
 	
 	public static final int RAISED_SHADOW = 4;
+	public static final Color SHADOW_COLOR = new Color(20, 20, 20, 120);
+	
+	public static final int REGISTER_NUM_PADDING = 5;
 	
 	public static final Polygon ARROW_HEAD = new Polygon(); 
+	
+	
 	static {
 		ARROW_HEAD.addPoint( 0, 0);
 		ARROW_HEAD.addPoint( -4, -8);
 		ARROW_HEAD.addPoint( 4,-8);
 	}
 	
-	
-	public static final int REGISTER_NUM_PADDING = 5;
-	
-	public static final BasicStroke DASHED = new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, new float[]{5.f}, 0.0f);
-	public static final BasicStroke HEAVY = new BasicStroke(3, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
-	public static final BasicStroke MEDIUM = new BasicStroke(2, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
-	public static final BasicStroke BASIC = new BasicStroke(1);
-	private static final BufferedImage DUMMY = new BufferedImage(1, 1, BufferedImage.TYPE_3BYTE_BGR);
 	
 	private Window w;
 	private BufferedImage baseImage;
@@ -201,7 +205,7 @@ public class CircuitBoardRenderContext {
         int width = GATE_PIXEL_SIZE * eg.getAbstractGate().getWidth();
         int height = GATE_PIXEL_SIZE * eg.getHeight();
         
-        g2d.setColor(new Color(20, 20, 20, 150));
+        g2d.setColor(SHADOW_COLOR);
     	g2d.fillRect(x + RAISED_SHADOW, y + RAISED_SHADOW, width, height);
     	
     	g2d.setColor(Color.WHITE);
@@ -223,7 +227,7 @@ public class CircuitBoardRenderContext {
 	private void drawMeasure(Graphics2D g2d, int x, int y){
 		g2d.setStroke(BASIC);
 		
-		g2d.setColor(new Color(20, 20, 20, 150));
+		g2d.setColor(SHADOW_COLOR);
 		g2d.fillRect(x + RAISED_SHADOW, y + RAISED_SHADOW, GATE_PIXEL_SIZE, GATE_PIXEL_SIZE);
 		
 		g2d.setColor(Color.WHITE);
