@@ -115,9 +115,9 @@ public class SolderingTool extends Tool{
 		else
 			currentGateRegister = previouslySelected;
 		
-		if(p.y < registers[firstLocalRegister])
+		if(p.y <= registers[firstLocalRegister])
 			firstLocalRegister = previousGateRegister;
-		if(p.y > registers[lastLocalRegister])
+		if(p.y >= registers[lastLocalRegister])
 			lastLocalRegister = previousGateRegister;
 		
 		if(currentGateRegister == registers.length) {
