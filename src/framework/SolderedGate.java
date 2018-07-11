@@ -20,7 +20,10 @@ public class SolderedGate implements Serializable{
 	
 	private AbstractGate abstractGate;
 	private int firstLocalRegister = 0, lastLocalRegister = 0;
-	
+	/**
+	 * <code>boolean</code> represents whether or not the extra registers are control true or control false
+	 */
+	private ArrayList<Boolean> extraControlRegisters = new ArrayList<>();
 	
 	/**
 	 * 
@@ -76,7 +79,7 @@ public class SolderedGate implements Serializable{
 	 * the expected number of {@link SolderedRegister}'s attached to this {@link SolderedGate}
 	 */
 	public int getExpectedNumberOfRegisters() {
-		return abstractGate.getNumberOfRegisters();
+		return abstractGate.getNumberOfRegisters() + getExpectedNumberOfRegisters();
 	}
 
 	/**

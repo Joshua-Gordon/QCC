@@ -48,6 +48,7 @@ public class SolderedRegister implements Serializable{
 	 * |1   0|<sub>i</sub>|0  -1|<sub>j</sub>|i   0|<sub>k</sub>  
 	 * </pre>
 	 * 
+	 * 
 	 * In the {@link CircuitBoard} the double {@link ArrayList} of {@link SolderedRegister}s can be thought of as a grid of {@link SolderedRegister}s
 	 * like the following:
 	 * 
@@ -64,12 +65,14 @@ public class SolderedRegister implements Serializable{
 	 * row that contains this {@link SolderedRegister} will effect the the third {@link Matrix} in "GATE".
 	 * <br>
 	 * If we apply this logic to the row 3, and 4 (the fourth and fifth row),
-	 * the {@link SolderedGate} "Gate" now can be represented by the following Matrix when exported on the board:
+	 * the {@link SolderedGate} "Gate" now can be represented by the following Matrix when exported off the board:
 	 * <pre>
 	 * |0   1|<sub> </sub>|1   0|<sub> </sub>|0  -i|<sub> </sub>
 	 * |1   0|<sub>3</sub>|0  -1|<sub>4</sub>|i   0|<sub>1</sub>  
 	 * </pre>
 	 * 
+	 * <i>Note: This logic above also applies if the given matrix is a permutation matrix</i>
+	 * <p>
 	 * @See 
 	 * {@link ExportedGate}
 	 * {@link AbstractGate}
