@@ -79,7 +79,7 @@ public class SolderedGate implements Serializable{
 	 * the expected number of {@link SolderedRegister}'s attached to this {@link SolderedGate}
 	 */
 	public int getExpectedNumberOfRegisters() {
-		return abstractGate.getNumberOfRegisters() + getExpectedNumberOfRegisters();
+		return abstractGate.getNumberOfRegisters() + extraRegisterControlTypes.size();
 	}
 
 	/**
