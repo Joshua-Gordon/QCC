@@ -93,21 +93,22 @@ public class CircuitBoardRenderContext {
         g2d.setFont(ResourceLoader.VAST_SHADOW);
     	g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
     	
+		boolean[] isClassical = new boolean[cb.getRows()];
     	
     	ExportedGate.exportGates(cb, new ExportGatesRunnable() {
     		private int columnPixelPosition = 0;
     		private int columnWidth;
     		
 			@Override
-			public void gateExported(ExportedGate eg, int x, int y) {
+			public void gateExported(ExportedGate eg, int column, int row) {
 				
-        		x = columnPixelPosition;
-        		y *= GATE_PIXEL_SIZE;
+        		int x = columnPixelPosition;
+        		int y = row * GATE_PIXEL_SIZE;
 
 		        for(int i = 0; i < eg.getHeight(); i++){
 					g2d.setColor(Color.BLACK);
-        			drawIdentity(g2d, x, y + i * GATE_PIXEL_SIZE, columnWidth);
-		        	if(withGrid) {
+					drawIdentity(g2d, x, y + i * GATE_PIXEL_SIZE, columnWidth, isClassical[row + i]);
+					if(withGrid) {
     					g2d.setColor(Color.LIGHT_GRAY);
     					drawGrid(g2d, columnPixelPosition, y + i * GATE_PIXEL_SIZE, columnWidth);
     				}
@@ -132,7 +133,12 @@ public class CircuitBoardRenderContext {
                 	drawSWAP(g2d, x, y, eg.getRegisters());
                 	break;
                 case MEASURE:
+                	g2d.setColor(Color.WHITE);
+					drawIdentity(g2d, x + GATE_PIXEL_SIZE / 2, y, columnWidth / 2, false);
+                	g2d.setColor(Color.BLACK);
+					drawIdentity(g2d, x + GATE_PIXEL_SIZE / 2, y, columnWidth / 2, true);
                 	drawMeasure(g2d, x, y);
+                	isClassical[row] = true;
                 	break;
                 default:
                 	drawGate(g2d, x, y, eg);
@@ -176,9 +182,14 @@ public class CircuitBoardRenderContext {
 		g2d.setTransform(saved);
 	}
 	
-	private void drawIdentity(Graphics2D g2d, int x, int y, int width){
+	private void drawIdentity(Graphics2D g2d, int x, int y, int width, boolean isClassicalRegister){
 		g2d.setStroke(BASIC);
-		g2d.drawLine(x, y + MARGIN1, x + width * GATE_PIXEL_SIZE, y + MARGIN1);
+		if(isClassicalRegister) {
+			g2d.drawLine(x, y + MARGIN1 - 2, x + width * GATE_PIXEL_SIZE, y + MARGIN1 - 2);
+			g2d.drawLine(x, y + MARGIN1 + 2, x + width * GATE_PIXEL_SIZE, y + MARGIN1 + 2);
+		}else {
+			g2d.drawLine(x, y + MARGIN1, x + width * GATE_PIXEL_SIZE, y + MARGIN1);
+		}
 	}
 	
 	private void drawGate(Graphics2D g2d, int x, int y, ExportedGate eg) {
