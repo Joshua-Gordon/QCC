@@ -57,6 +57,7 @@ public class ExportedGate {
 		this.abstractGate = sg.getAbstractGate();
 		this.registers = new int[sg.getExpectedNumberOfRegisters()];
 		
+		
 		int lastLocalReg = sg.getLastLocalRegister();
 		int curLocalReg;
 		
