@@ -103,7 +103,7 @@ public class MathUtils {
 		}
 
 		@Override
-		public DoubleScalar pow(DoubleScalar num) {
+		public DoubleScalar exp(DoubleScalar num) {
 			return new DoubleScalar(Math.pow(d, num.d));
 		}
 

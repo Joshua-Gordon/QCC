@@ -29,12 +29,12 @@ public class CustomGate extends AbstractGate implements Serializable {
 	
 	public CustomGate(Matrix<Complex> mat) {
         matrixes.add(mat);
-        setType(GateType.CUSTOM);
+        setType(GateType.OTHER);
     }
     
     public CustomGate(String name, ArrayList<Matrix<Complex>> mats) {
         this.matrixes = mats;
-        setType(GateType.CUSTOM);
+        setType(GateType.OTHER);
         setName(name);
     }   
     

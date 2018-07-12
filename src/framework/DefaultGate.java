@@ -323,7 +323,7 @@ public class DefaultGate extends AbstractGate implements Serializable{
     @Override
     public String toString() {
         String out = "Gate type: " + getType().toString() + "\n";
-        if(getType() == GateType.CUSTOM) {
+        if(getType() == GateType.OTHER) {
             out += "Matrix:\n" + getMatrix();
         }
         return out;

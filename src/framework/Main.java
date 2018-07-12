@@ -1,9 +1,6 @@
 package framework;
 
-import appUI.CustomGateConstructorUI;
 import appUI.Window;
-import mathLib.Complex;
-import mathLib.Matrix;
 
 public class Main {
 	
@@ -11,24 +8,13 @@ public class Main {
 	
     public static void main(String[] args) {
     	
-    	//DefaultGate.loadGates();
+    	DefaultGate.loadGates();
     	
-    	/*Matrix<Complex> mat = new Matrix<>(2, 2,
-                Complex.ONE(), Complex.ONE(),
-                Complex.ONE(), Complex.ONE().negative())
-                .mult(Complex.ISQRT2());
-    	
-    	Matrix<Complex> m = Matrix.map(mat, c -> c.mult(Complex.I()));
-    	System.out.println(m.toString());
-    	*/
 
-		CustomGateConstructorUI g = new CustomGateConstructorUI(null);
-		g.show();
-		Matrix<Complex> mat = g.getCustomMatrix().stream().reduce((a,m) -> a.kronecker(m)).get();
-		System.out.println(mat);
 
-    	//window = new Window();
-    	//window.setVisible(true);
+    	window = new Window();
+    	window.setVisible(true);
+
     }
 
     public static Window getWindow() {

@@ -1,6 +1,8 @@
 package framework;
 
-import framework.SolderedGate.Control;
+import mathLib.Matrix;
+
+//import framework.SolderedGate.Control;
 /**
  * This class is used to receive gate properties on the {@link CircuitBoard} 
  * that one would not get from {@link CircuitBoard} methods. <p>
@@ -17,7 +19,8 @@ public class ExportedGate {
 	private AbstractGate abstractGate;
 	private int[] registers;
 	private int height;
-	private Control[] controls;
+	private boolean[] controls;
+//	private Control[] controls;
 	
 	
 	/**
@@ -72,7 +75,7 @@ public class ExportedGate {
 				if(curLocalReg == lastLocalReg)
 					break;
 			}
-			controls[row] = sg.controlled(row);
+//			controls[row] = sg.controlled(row);
 			row++;
 		}
 		this.height = row - y + 1;
@@ -101,4 +104,17 @@ public class ExportedGate {
 	public int getHeight() {
 		return height;
 	}
+	
+	/**
+	 * @return
+	 * Whether or not the {@link ExportedGate} has controls.
+	 */
+	public boolean isControlled() {
+		return controls.length != 0;
+	}
+	
+	public int getNumberOfControlledGates() {
+		return controls.length;
+	}
+	
 }

@@ -7,7 +7,7 @@ public interface Scalar<T>{
 	T sub(T num);
 	T mult(T num);
 	T div(T num);
-	T pow(T num);
+	T exp(T num);
 	T sqrt();
 	
 	T get1();

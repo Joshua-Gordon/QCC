@@ -28,7 +28,7 @@ public class Translator {
                 AbstractGate ag = eg.getAbstractGate();
                 GateType gt = ag.getType();
                 boolean id = ag.getName().equals("I");
-                if(!gt.equals(GateType.CUSTOM) && !id) {
+                if(!gt.equals(GateType.OTHER) && !id) {
                     String name = DefaultGate.typeToString(gt, DefaultGate.LangType.QUIL);
                     code += name + " " + y;
                     if(gt.equals(GateType.CNOT) || gt.equals(GateType.SWAP)) {
