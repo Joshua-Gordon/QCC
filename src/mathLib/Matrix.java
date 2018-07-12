@@ -1,6 +1,7 @@
 package mathLib;
 
 import java.io.Serializable;
+import java.util.function.Function;
 
 public class Matrix<T extends Scalar<T>> implements Serializable {
 	private static final long serialVersionUID = -5950565947565116041L;
@@ -18,6 +19,7 @@ public class Matrix<T extends Scalar<T>> implements Serializable {
 	 * @param columns
 	 * @param components a non-zero size array
 	 */
+	@SafeVarargs
 	@SuppressWarnings("unchecked")
 	public Matrix(int rows, int columns, T ... components){
 		m = (T) components[0].get0();
@@ -295,7 +297,17 @@ public class Matrix<T extends Scalar<T>> implements Serializable {
 				r(mat.v(r, c), r, c);
 	}
 
-	
+	public static <A extends Scalar<A>,B extends Scalar<B>> Matrix<B> map(Matrix<A> m, Function<A,B> f) {
+		int w = m.getColumns();
+		int h = m.getRows();
+		Matrix<B> newMat = new Matrix<>(f.apply(m.v(0, 0)),w,h);
+		for(int x = 0; x < w; ++x) {
+			for(int y = 0; y < h; ++y) {
+				newMat.r(f.apply(m.v(x, y)), x, y);
+			}
+		}
+		return newMat;
+	}
 	
 }
 
