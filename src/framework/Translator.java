@@ -121,59 +121,6 @@ public class Translator {
         return temp;
     }
 
-    /**
-     * Takes the main circuit board and translates it to QASM
-     * @return
-     */
-    /*
-    public static String translateQASM(){ //Translates to QASM. Same idea as the quil one
-        String code = "OPENQASM 2.0;\ninclude \"qelib1.inc\";\nqreg q[";
-
-        ArrayList<ArrayList<DefaultGate>> boardTemp = Main.cb.board;
-        ArrayList<ArrayList<DefaultGate>> board = new ArrayList<>();
-        for(int i = 0; i < boardTemp.size(); ++i) {
-            board.add(boardTemp.get(i));
-        }
-
-        int numQubits = getQubits(board);
-        code += numQubits + "];\ncreg c["+numQubits+"];\n";
-        int offset = 20;
-        for(int x = 0; x < board.size(); ++x){
-            ArrayList<DefaultGate> instructions = board.get(x);
-            for(int i = 0; i < instructions.size(); ++i){ //i represents the column
-                DefaultGate g = instructions.get(i);
-                GateType type = g.getType();
-                if(type != GateType.I) {
-                    int idx = i;// - offset;
-                    if(idx < offset) {
-                        offset = idx;
-                    }
-                    code += DefaultGate.typeToString(type, DefaultGate.LangType.QASM);
-                    code += " q[";
-                    code += idx;
-                    code += "]";
-                    if (type == GateType.CNOT) {
-                        code += ",q[" + (idx + g.length) + "]";
-                    }
-                    if(type == GateType.SWAP){
-                        code += ",q[" + (idx + g.length) + "];\n";
-                        code += "cx q[" + idx + "],q[" + (idx + g.length) + "];\n";
-                        code += "cx q[" + (idx + g.length) + "],q[" + idx + "]";
-                        //Three CNOTs do a swap
-                    }
-                    if (type == GateType.MEASURE) {
-                        code += " -> c[" + idx + "]";
-                    }
-                    code += ";\n";
-                }
-            }
-        }
-        for(int i = 0; i < numQubits; ++i) {
-            code += "measure q[" + (i+offset) + "] -> c[" + (i+offset) + "];\n"; //Offset is added so that fixing the registers later
-        }                                                                        //doesn't make this negative
-        return fixQASM(code,offset);
-    }
-*/
     private static String fixQUIL(String code, int offset) { //Subtract offset from all registers
         String[] lines = code.split("\n");
         String output = "";
@@ -224,29 +171,6 @@ public class Translator {
         return output;
     }
 
-    /*
-    private static int getQubits(ArrayList<ArrayList<DefaultGate>> board) { //Counts number of qubits used in circuit
-        boolean[] hasGate = new boolean[board.size()];
-        for(int i = 0; i < hasGate.length; ++i) {
-            hasGate[i] = false;
-        }
-        for(int x = 0; x < board.size(); ++x) {
-            ArrayList<DefaultGate> column = board.get(x);
-            for(int y = 0; y < board.get(0).size(); ++y) {
-                if(column.get(y).getType() != GateType.I) {
-                    hasGate[y] = true;
-                    hasGate[y+column.get(y).length] = true;
-                }
-            }
-        }
-        int sum = 0;
-        for(int i = 0; i < hasGate.length; ++i) {
-            if(hasGate[i]) sum++;
-        }
-        //System.out.println("Num qubits: " + sum);
-        return sum;
-    }
-*/
     /**
      *
      * @param quil A string containing quil code

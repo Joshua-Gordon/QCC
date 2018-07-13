@@ -12,7 +12,7 @@ public class Main {
 	
     public static void main(String[] args) {
     	
-    	DefaultGate.loadGates();
+    	//DefaultGate.loadGates();
     	
     	/* TESTING: matrix operators */
     	Matrix<Complex> mat = new Matrix<>(2, 2,
@@ -38,7 +38,6 @@ public class Main {
     	Matrix<Complex> mat = g.getCustomMatrix().stream().reduce((a, m) -> a.kronecker(m)).get();
     	System.out.println(mat);
     	*/
-    	
     	//window = new Window();
     	//window.setVisible(true);
     }

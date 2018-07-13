@@ -108,7 +108,7 @@ public class GateMatrixEditable extends JPanel{
 	}
 	
 	private int getMatSize() {
-		return (int) Math.pow(2, numQubits);
+		return 1 << numQubits ;
 	}
 	
 	public ArrayList<Matrix<Complex>> getMatrixes() throws MatrixFormatException{
@@ -156,8 +156,8 @@ public class GateMatrixEditable extends JPanel{
 			int columns = model.getColumnCount();
 			String value;
 			Matrix<Complex> mat = new Matrix<>(rows, columns, Complex.ONE().mkArray(rows * columns));
-			for(int i = 0; i < model.getRowCount(); i++) {
-				for(int j = 0; j < model.getColumnCount(); j++) {
+			for(int i = 0; i < rows; i++) {
+				for(int j = 0; j < columns; j++) {
 					if(model.getValueAt(i, j) == null)
 						value = "0";
 					else
