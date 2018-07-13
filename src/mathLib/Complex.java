@@ -9,6 +9,16 @@ public class Complex implements Serializable, Scalar<Complex>{
         this.a = a;
         this.b = b;
     }
+    
+    public double getReal()
+    {
+    	return a;
+    }
+    
+    public double getImaginary()
+    {
+    	return b;
+    }
 
     public static Complex ONE(){
         return new Complex(1,0);

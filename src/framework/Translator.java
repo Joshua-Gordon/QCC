@@ -29,7 +29,7 @@ public class Translator {
                 AbstractGate ag = eg.getAbstractGate();
                 Matrix<Complex> m = ag.getMatrix();
                 String name = ag.getName();
-                if(controls.length > 0) {
+                if(isControlled(controls)) {
                     m = SolderedGate.makeControlledMatrix(m,controls);
                     name = controls.hashCode() + name;
                 }
@@ -405,5 +405,14 @@ public class Translator {
             }
         }
         return quil;
+    }
+
+    public static boolean isControlled(SolderedGate.Control[] controls) {
+        for(SolderedGate.Control c : controls) {
+            if(c != null) {
+                return true;
+            }
+        }
+        return false;
     }
 }
