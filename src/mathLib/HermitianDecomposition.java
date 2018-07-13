@@ -14,7 +14,11 @@ public class HermitianDecomposition {
 		
 		if ( rows != cols ) return null;
 		if ( rows == 0 || cols == 0 ) return null;
-		
+
+		/*
+		 * if the input Hermitian matrix is A + iB
+		 * extract the real-symmetric A and the skew-symmetric B
+		 */
 		double[][] avals = new double[rows][cols];
 		for (int i=0; i<rows; i++) {
 			for (int j=0; j<cols; j++) {
@@ -31,6 +35,12 @@ public class HermitianDecomposition {
 		}
 		Jama.Matrix B = new Jama.Matrix(bvals);
 		
+		/*
+		 * build the real-symmetric matrix M
+		 *         [  A   B  ]
+		 *    M =  |         |
+		 *         [ -B   A  ]
+		 */
 		int bigrows = 2*rows;
 		int bigcols = 2*cols;
 		Jama.Matrix M = new Jama.Matrix(bigrows, bigcols);
@@ -39,10 +49,21 @@ public class HermitianDecomposition {
 		M.setMatrix( 0,  rows-1,  cols, bigcols-1, B );
 		M.setMatrix( rows,  bigrows-1,  0, cols-1, B.uminus() );
 		
+		/*
+		 * compute the spectral decomposition of M
+		 */
 		Jama.EigenvalueDecomposition Eig = M.eig();
 		Jama.Matrix D = Eig.getD();
 		Jama.Matrix V = Eig.getV();
+		// CHECK: MV = VD
 		
+		/*
+		 * prepare the output
+		 * TODO: 
+		 *  - the eigenvalues of M come in repeated pairs: take only half of these
+		 *  - transform the eigenvectors as well: cutting the lengths into half
+		 * Currently: return the matrices in the non-JAMA format.
+		 */
 		Matrix<Complex> DD = new Matrix<>(Complex.ZERO(), bigrows, bigcols);
 		for (int i=0; i<bigrows; i++) {
 			for (int j=0; j<bigcols; j++) {
