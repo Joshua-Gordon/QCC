@@ -146,4 +146,26 @@ public class SolderedGate implements Serializable{
 	public String toString() {
 		return abstractGate.getName();
 	}
+
+	public static Matrix<Complex> makeControlledMatrix(Matrix<Complex> in, Control[] controls) {
+		Matrix<Complex> newMat = null, oldMat = in;
+		for(Control c : controls) {
+			newMat = new Matrix<>(Complex.ISQRT2(),oldMat.getColumns()<<1,oldMat.getRows()<<1).identity();
+			if(c.equals(Control.TRUE)) {
+				for(int y = oldMat.getRows(); y < newMat.getRows(); ++y) {
+					for(int x = oldMat.getColumns(); x < newMat.getColumns(); ++x) {
+						newMat.r(oldMat.v(x-oldMat.getColumns(),y-oldMat.getRows()),x,y);
+					}
+				}
+			} else if(c.equals(Control.FALSE)){
+				for(int y = 0; y < oldMat.getRows(); ++y) {
+					for(int x = 0; x < oldMat.getColumns(); ++x) {
+						newMat.r(oldMat.v(x,y),x,y);
+					}
+				}
+			}
+			oldMat = newMat;
+		}
+		return newMat;
+	}
 }

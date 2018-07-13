@@ -101,4 +101,6 @@ public class ExportedGate {
 	public int getHeight() {
 		return height;
 	}
+
+	public Control[] getControls() { return controls; }
 }

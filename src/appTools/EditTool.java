@@ -73,7 +73,8 @@ public class EditTool extends Tool{
 	 * @return A new gate that is equivalent to ag but controlled by the register
 	 */
 	public static void addControl(SolderedGate sg, int col,int register, boolean c) {
-		Matrix<Complex> oldMat = sg.getAbstractGate().getMatrix();
+		sg.addControl(register,c);
+		/*Matrix<Complex> oldMat = sg.getAbstractGate().getMatrix();
 		Matrix<Complex> newMat = new Matrix<Complex>(Complex.ISQRT2(),oldMat.getColumns()<<1,oldMat.getRows()<<1).identity();
 		if(c) {
 			for(int y = oldMat.getRows(); y < newMat.getRows(); ++y) {
@@ -88,13 +89,14 @@ public class EditTool extends Tool{
 				}
 			}
 		}
-		sg.getAbstractGate().setMatrix(newMat);
-		sg.getAbstractGate().setType(AbstractGate.GateType.CUSTOM);
-		sg.getAbstractGate().setName("C"+sg.getAbstractGate().getName());
+		//sg.getAbstractGate().setMatrix(newMat);
+		//sg.getAbstractGate().setType(AbstractGate.GateType.CUSTOM);
+		//sg.getAbstractGate().setName("C"+sg.getAbstractGate().getName());
 		ArrayList<SolderedRegister> oldRegs = sg.getRegisters();
 		SolderedRegister control = new SolderedRegister(sg,oldRegs.size());
 		Main.getWindow().getSelectedBoard().detachSolderedGate(register,col);
 		Main.getWindow().getSelectedBoard().setSolderedRegister(col,register,control);
+		*/
 	}
 
 
@@ -103,4 +105,6 @@ public class EditTool extends Tool{
 		mouseCoords.x = params[0];
 		mouseCoords.y = (int) (mouseCoords.getY() / CircuitBoardRenderContext.GATE_PIXEL_SIZE);
 	}
+
+
 }

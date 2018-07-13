@@ -11,7 +11,7 @@ public class Main {
 	
     public static void main(String[] args) {
     	
-    	//DefaultGate.loadGates();
+    	DefaultGate.loadGates();
     	
     	/*Matrix<Complex> mat = new Matrix<>(2, 2,
                 Complex.ONE(), Complex.ONE(),
@@ -22,13 +22,13 @@ public class Main {
     	System.out.println(m.toString());
     	*/
 
-		CustomGateConstructorUI g = new CustomGateConstructorUI(null);
+		/*CustomGateConstructorUI g = new CustomGateConstructorUI(null);
 		g.show();
 		Matrix<Complex> mat = g.getCustomMatrix().stream().reduce((a,m) -> a.kronecker(m)).get();
 		System.out.println(mat);
-
-    	//window = new Window();
-    	//window.setVisible(true);
+		*/
+    	window = new Window();
+    	window.setVisible(true);
     }
 
     public static Window getWindow() {

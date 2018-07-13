@@ -25,21 +25,29 @@ public class Translator {
         ExportedGate.exportGates(cb, new ExportGatesRunnable() {
             @Override
             public void gateExported(ExportedGate eg, int x, int y) {
+                SolderedGate.Control[] controls = eg.getControls();
                 AbstractGate ag = eg.getAbstractGate();
+                Matrix<Complex> m = ag.getMatrix();
+                String name = ag.getName();
+                if(controls.length > 0) {
+                    m = SolderedGate.makeControlledMatrix(m,controls);
+                    name = controls.hashCode() + name;
+                }
+                for(int i = 0; i < y; ++i) {
+                    System.out.println(controls[i]);
+                }
                 GateType gt = ag.getType();
                 boolean id = ag.getName().equals("I");
                 if(!gt.equals(GateType.CUSTOM) && !id) {
-                    String name = DefaultGate.typeToString(gt, DefaultGate.LangType.QUIL);
+                    name = DefaultGate.typeToString(gt, DefaultGate.LangType.QUIL);
                     code += name + " " + y;
                     if(gt.equals(GateType.CNOT) || gt.equals(GateType.SWAP)) {
                         code += " " + eg.getHeight();
                     }
                 } else if(!id){
-                    String name = ag.getName();
                     if(!customGates.contains(name)) {
                         customGates.add(name);
                         code += "DEFGATE " + name + ":\n";
-                        Matrix<Complex> m = ag.getMatrix();
                         for (int my = 0; my < m.getRows(); ++my) {
                             code += "\n    ";
                             for (int mx = 0; mx < m.getRows(); ++mx) { //This copies down the matrix into the code
