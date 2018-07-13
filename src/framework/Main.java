@@ -12,34 +12,42 @@ public class Main {
 	
     public static void main(String[] args) {
     	
-    	//DefaultGate.loadGates();
+    	/* toggle flags: debug mode or not */
+    	boolean normalMode = true;
+    	boolean debugMode = false;
     	
-    	/* TESTING: matrix operators */
-    	Matrix<Complex> mat = new Matrix<>(2, 2,
+    	if ( debugMode ) {
+    		/* TESTING: matrix operators */
+    		Matrix<Complex> mat = new Matrix<>(2, 2,
                 Complex.ZERO(), Complex.I().negative(),
                 Complex.I(), Complex.ZERO());
 
-    	/* TESTING: matrix map */
-    	Matrix<Complex> m = Matrix.map(mat, c -> c.mult(Complex.ONE()));
-    	System.out.println(m.toString());
+    		/* TESTING: matrix map */
+    		Matrix<Complex> m = Matrix.map(mat, c -> c.mult(Complex.ONE()));
+    		System.out.println(m.toString());
     	
-    	/* TESTING: spectral decomposition */
-    	HermitianDecomposition boo = new HermitianDecomposition();
-    	Matrix<Complex> d = boo.decompose(mat).get(0);
-    	Matrix<Complex> v = boo.decompose(mat).get(1);
+    		/* TESTING: spectral decomposition */
+    		HermitianDecomposition boo = new HermitianDecomposition();
+    		Matrix<Complex> d = boo.decompose(mat).get(0);
+    		Matrix<Complex> v = boo.decompose(mat).get(1);
     	
-    	System.out.println(d.toString());
-    	System.out.println(v.toString());
-
-    	/* TESTING: user input matrix
-    	 * Some unresolved issues: spurious zeros
-    	CustomGateConstructorUI g = new CustomGateConstructorUI(null);
-    	g.show();
-    	Matrix<Complex> mat = g.getCustomMatrix().stream().reduce((a, m) -> a.kronecker(m)).get();
-    	System.out.println(mat);
-    	*/
-    	//window = new Window();
-    	//window.setVisible(true);
+    		System.out.println(d.toString());
+    		System.out.println(v.toString());
+    	
+    		/* TESTING: user input matrix
+    		 * Some unresolved issues: spurious zeros
+    		CustomGateConstructorUI g = new CustomGateConstructorUI(null);
+    		g.show();
+    		Matrix<Complex> mat = g.getCustomMatrix().stream().reduce((a, m) -> a.kronecker(m)).get();
+    		System.out.println(mat);
+    		 */
+    	}
+    	
+    	if ( normalMode ) {
+        	DefaultGate.loadGates();
+    		window = new Window();
+    		window.setVisible(true);
+    	}
     }
 
     public static Window getWindow() {
