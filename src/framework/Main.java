@@ -1,8 +1,10 @@
 package framework;
 
+import appUI.CustomGateConstructorUI;
 import appUI.Window;
 import mathLib.Complex;
 import mathLib.Matrix;
+import mathLib.HermitianDecomposition;
 
 public class Main {
 	
@@ -12,16 +14,33 @@ public class Main {
     	
     	DefaultGate.loadGates();
     	
-    	/*Matrix<Complex> mat = new Matrix<>(2, 2,
-                Complex.ONE(), Complex.ONE(),
-                Complex.ONE(), Complex.ONE().negative())
-                .mult(Complex.ISQRT2());
-    	
-    	Matrix<Complex> m = Matrix.map(mat, c -> c.mult(Complex.I()));
+    	/* TESTING: matrix operators */
+    	Matrix<Complex> mat = new Matrix<>(2, 2,
+                Complex.ZERO(), Complex.I().negative(),
+                Complex.I(), Complex.ZERO());
+
+    	/* TESTING: matrix map */
+    	Matrix<Complex> m = Matrix.map(mat, c -> c.mult(Complex.ONE()));
     	System.out.println(m.toString());
+    	
+    	/* TESTING: spectral decomposition */
+    	HermitianDecomposition boo = new HermitianDecomposition();
+    	Matrix<Complex> d = boo.decompose(mat).get(0);
+    	Matrix<Complex> v = boo.decompose(mat).get(1);
+    	
+    	System.out.println(d.toString());
+    	System.out.println(v.toString());
+
+    	/* TESTING: user input matrix
+    	 * Some unresolved issues: spurious zeros
+    	CustomGateConstructorUI g = new CustomGateConstructorUI(null);
+    	g.show();
+    	Matrix<Complex> mat = g.getCustomMatrix().stream().reduce((a, m) -> a.kronecker(m)).get();
+    	System.out.println(mat);
     	*/
-    	window = new Window();
-    	window.setVisible(true);
+    	
+    	//window = new Window();
+    	//window.setVisible(true);
     }
 
     public static Window getWindow() {
