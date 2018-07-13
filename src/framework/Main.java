@@ -17,13 +17,13 @@ public class Main {
 
     	if ( debugMode ) {
     		/* TESTING: matrix operators */
-    		Matrix<Complex> mat = new Matrix<>(2, 2,
+    		Matrix<Complex> mat = new Matrix<>(Complex.ONE(), 2, 2,
                 Complex.ZERO(), Complex.I().negative(),
                 Complex.I(), Complex.ZERO());
 
 
     		/* TESTING: matrix map */
-    		Matrix<Complex> m = Matrix.map(mat, c -> c.mult(Complex.ONE()));
+    		Matrix<Complex> m = Matrix.map(Complex.ONE(), mat, c -> c.mult(Complex.ONE()));
     		System.out.println(m.toString());
     	
     		/* TESTING: spectral decomposition */
