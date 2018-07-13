@@ -84,8 +84,6 @@ public class ExportedGate {
 	
 	
 	/**
-	 * Called when 
-	 * 
 	 * @return
 	 * The {@link Matrix} represented by the {@link ExportedGate} after factoring in Attributes from the
 	 * {@link SolderedGate}. If the Attributes are default, then the {@link Matrix} within {@link AbstractGate}
