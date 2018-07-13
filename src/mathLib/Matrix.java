@@ -1,15 +1,15 @@
 package mathLib;
-
 import java.io.Serializable;
 import java.util.function.Function;
 
-public class Matrix<T extends Scalar<T>> implements Serializable {
+
+public class Matrix<T> implements Serializable {
 	private static final long serialVersionUID = -5950565947565116041L;
 	
 //	Single Array is faster Overall
 	private final T[] comps;
 	private final int rows, columns;
-	protected final T m;
+	protected final Scalar<T> s;
 	
 	
 	/**
@@ -20,67 +20,65 @@ public class Matrix<T extends Scalar<T>> implements Serializable {
 	 * @param components a non-zero size array
 	 */
 	@SafeVarargs
-	@SuppressWarnings("unchecked")
-	public Matrix(int rows, int columns, T ... components){
-		m = (T) components[0].get0();
+	public Matrix(Scalar<T> operation, int rows, int columns, T ... components){
+		s = operation;
 		this.comps = components;
 		this.rows = rows;
 		this.columns = columns;
 	}
-	
 	/**
 	 * Creates a Matrix of elements
 	 * @param component dummy variable to infer type of this Matrix
 	 * @param rows
 	 * @param columns
 	 */
-	public Matrix(T component, int rows, int columns){
-		m = component;
-		this.comps = m.mkArray(rows * columns);
+	public Matrix(Scalar<T> operation, int rows, int columns){
+		s = operation;
+		this.comps = s.mkZeroArray(rows * columns);
 		this.rows = rows;
 		this.columns = columns;
 	}
 	
 	public Matrix<T> add(Matrix<T> mat){
-		Matrix<T> temp = new Matrix<T>(rows, columns, m.mkArray(rows * columns));
+		Matrix<T> temp = new Matrix<T>(s, rows, columns, s.mkZeroArray(rows * columns));
 		for(int r = 0; r < rows; r++)
 			for(int c = 0; c < columns; c++)
-				temp.r(v(r, c).add(mat.v(r, c)), r, c);
+				temp.r(s.dup(v(r, c)).add(mat.v(r, c)), r, c);
 		return temp;
 	}
 	
 	public Matrix<T> add(T num){
-		Matrix<T> temp = new Matrix<T>(rows, columns, m.mkArray(rows * columns));
+		Matrix<T> temp = new Matrix<T>(s, rows, columns, s.mkZeroArray(rows * columns));
 		for(int r = 0; r < rows; r++)
 			for(int c = 0; c < columns; c++)
-				temp.r(v(r, c).add(num), r, c);
+				temp.r(s.dup(v(r, c)).add(num), r, c);
 		return temp;
 	}
 	
 	public Matrix<T> sub(Matrix<T> mat){
-		Matrix<T> temp = new Matrix<T>(rows, columns, m.mkArray(rows * columns));
+		Matrix<T> temp = new Matrix<T>(s, rows, columns, s.mkZeroArray(rows * columns));
 		for(int r = 0; r < rows; r++)
 			for(int c = 0; c < columns; c++)
-				temp.r(v(r, c).sub(mat.v(r, c)), r, c);
+				temp.r(s.dup(v(r, c)).sub(mat.v(r, c)), r, c);
 		return temp;
 	}
 	
 	public Matrix<T> sub(T num){
-		Matrix<T> temp = new Matrix<T>(rows, columns, m.mkArray(rows * columns));
+		Matrix<T> temp = new Matrix<T>(s, rows, columns, s.mkZeroArray(rows * columns));
 		for(int r = 0; r < rows; r++)
 			for(int c = 0; c < columns; c++)
-				temp.r(v(r, c).sub(num), r, c);
+				temp.r(s.dup(v(r, c)).sub(num), r, c);
 		return temp;
 	}
 	
 	public Matrix<T> mult(Matrix<T> mat){
-		Matrix<T> temp = new Matrix<T>(rows, mat.columns, m.mkArray(rows * mat.columns));
+		Matrix<T> temp = new Matrix<T>(s, rows, mat.columns, s.mkZeroArray(rows * mat.columns));
 		T sum;
 		for(int r = 0; r < rows; r++){
 			for(int c = 0; c < mat.columns; c++){
-				sum = m.get0();
+				sum = s.get0();
 				for(int k = 0; k < columns; k++){
-					sum = sum.add(v(r, k).mult(mat.v(k, c))); 
+					sum = s.dup(sum).add(s.dup(v(r, k)).mult(mat.v(k, c))); 
 				}
 				temp.r(sum, r, c);
 			}
@@ -89,38 +87,33 @@ public class Matrix<T extends Scalar<T>> implements Serializable {
 	}
 	
 	public Matrix<T> mult(T num){
-		Matrix<T> temp = new Matrix<T>(rows, columns, m.mkArray(rows * columns));
+		Matrix<T> temp = new Matrix<T>(s, rows, columns, s.mkZeroArray(rows * columns));
 		for(int r = 0; r < rows; r++)
 			for(int c = 0; c < columns; c++)
-				temp.r(v(r, c).mult(num), r, c);
+				temp.r(s.dup(v(r, c)).mult(num), r, c);
 		return temp;
 	}
 	
 	public Matrix<T> div(T num){
-		Matrix<T> temp = new Matrix<T>(rows, columns, m.mkArray(rows * columns));
+		Matrix<T> temp = new Matrix<T>(s, rows, columns, s.mkZeroArray(rows * columns));
 		for(int r = 0; r < rows; r++)
 			for(int c = 0; c < columns; c++)
-				temp.r(v(r, c).div(num), r, c);
+				temp.r(s.dup(v(r, c)).div(num), r, c);
 		return temp;
 	}
 	
-	public void clear() {
-		for (int i = 0; i < comps.length; i++)
-			comps[i] = m.get0();
-	}
-
-	public Matrix<T> identity() {
-		clear();
-		int loops = rows < columns ? rows : columns;
-		for (int i = 0; i < loops; i++)
-			comps[i * (1 + columns)] = m.get1();
-		return this;
+	public static <T> Matrix<T> identity(Scalar<T> operation, int size){
+		T[] comps = operation.mkZeroArray(size * size);
+		for(int i = 0; i < size; i++)
+			for(int j = 0; j < size; j++) 
+				comps[j * size + i] = i == j? operation.get1() : operation.get0();
+		return new Matrix<>(operation, size, size, comps);
 	}
 	
 //	private determinant()
 	
 	public Matrix<T> transpose(){
-		Matrix<T> temp = new Matrix<T>(columns, rows, m.mkArray(columns * rows));
+		Matrix<T> temp = new Matrix<T>(s, columns, rows, s.mkZeroArray(columns * rows));
 		for(int r = 0; r < rows; r++)
 			for(int c = 0; c < columns; c++)
 				temp.r(v(r, c), c, r);
@@ -150,13 +143,13 @@ public class Matrix<T extends Scalar<T>> implements Serializable {
 	
 	public T determinant(){
 		if(comps.length == 4){
-			return v(0, 0).mult(v(1, 1)).sub(v(0, 1).mult(v(1, 0)));
+			return s.dup(s.dup(v(0, 0)).mult(v(1, 1))).sub(s.dup(v(0, 1)).mult(v(1, 0)));
 		}else{
-			T sum = m.get0();
+			T sum = s.get0();
 			boolean negate = false;
 			for(int c = 0; c < columns; c++){
-				sum = sum.add(minor(0, c).determinant().mult( 
-						(negate? m.getn1():m.get1()).mult(v(0, c))));
+				sum = s.dup(sum).add(s.dup(minor(0, c).determinant()).mult( 
+						s.dup(negate? s.getn1():s.get1()).mult(v(0, c))));
 				negate = !negate;
 			}
 			return sum;
@@ -178,8 +171,8 @@ public class Matrix<T extends Scalar<T>> implements Serializable {
 		T coef;
 		for(int r = 0; r < rows; r++){
 			for(int c = 0; c < columns; c++){
-				coef = (r+c) % 2==0 ? m.get1() : m.getn1();
-				ofCofactors.r(ofCofactors.v(r, c).mult(coef), r, c);
+				coef = (r+c) % 2==0 ? s.get1() : s.getn1();
+				ofCofactors.r(s.dup(ofCofactors.v(r, c)).mult(coef), r, c);
 			}
 		}
 		return ofCofactors;
@@ -189,7 +182,7 @@ public class Matrix<T extends Scalar<T>> implements Serializable {
 		if(comps.length == 4)
 			return transpose();
 		
-		Matrix<T> ofMinors = new Matrix<T>(rows, columns, m.mkArray(rows * columns));
+		Matrix<T> ofMinors = new Matrix<T>(s, rows, columns, s.mkZeroArray(rows * columns));
 		
 		for(int r = 0; r < rows; r++)
 			for(int c  = 0; c < columns; c++)
@@ -200,7 +193,7 @@ public class Matrix<T extends Scalar<T>> implements Serializable {
 	
 	
 	public Matrix<T> minor(int row, int column){
-		Matrix<T> minor = new Matrix<T>(rows - 1, columns - 1, m.mkArray((rows - 1) * (columns - 1)));
+		Matrix<T> minor = new Matrix<T>(s, rows - 1, columns - 1, s.mkZeroArray((rows - 1) * (columns - 1)));
 		
 		int rof = 0, cof; 
 		
@@ -218,12 +211,12 @@ public class Matrix<T extends Scalar<T>> implements Serializable {
 	}
 	
 	public Matrix<T> kronecker(Matrix<T> mat) {
-		Matrix<T> temp = new Matrix<>(rows * mat.rows, columns * mat.columns, m.mkArray(rows * mat.rows * columns * mat.columns));
+		Matrix<T> temp = new Matrix<>(s, rows * mat.rows, columns * mat.columns, s.mkZeroArray(rows * mat.rows * columns * mat.columns));
 		for(int i = 0; i < rows; i++) 
 			for(int j = 0; j < columns; j++) 
 				for(int k = 0; k < mat.rows; k++) 
 					for(int l = 0; l < mat.columns; l++) 
-						temp.r(v(i, j).mult(mat.v(k, l)),i * mat.rows + k, j * mat.columns + l);
+						temp.r(s.dup(v(i, j)).mult(mat.v(k, l)),i * mat.rows + k, j * mat.columns + l);
 		return temp;
 	}
 	
@@ -263,7 +256,7 @@ public class Matrix<T extends Scalar<T>> implements Serializable {
 	}
 	
 	public Matrix<T> copy(){
-		Matrix<T> temp = new Matrix<T>(rows, columns, m.mkArray(rows * columns));
+		Matrix<T> temp = new Matrix<T>(s, rows, columns, s.mkZeroArray(rows * columns));
 		for(int r = 0; r < rows; r++)
 			for(int c = 0; c < columns; c++)
 				temp.r(v(r, c), r, c);
@@ -284,9 +277,9 @@ public class Matrix<T extends Scalar<T>> implements Serializable {
 	
 	public Vector<T> toVector(){
 		if(rows == 1)
-			return new Vector<T>(comps, false);
+			return new Vector<T>(s, comps, false);
 		else if(columns == 1)
-			return new Vector<T>(comps, true);
+			return new Vector<T>(s, comps, true);
 		else
 			return null;
 	}
@@ -297,10 +290,10 @@ public class Matrix<T extends Scalar<T>> implements Serializable {
 				r(mat.v(r, c), r, c);
 	}
 
-	public static <A extends Scalar<A>,B extends Scalar<B>> Matrix<B> map(Matrix<A> m, Function<A,B> f) {
+	public static <A, B> Matrix<B> map(Scalar<B> operation, Matrix<A> m, Function<A,B> f) {
 		int w = m.getColumns();
 		int h = m.getRows();
-		Matrix<B> newMat = new Matrix<>(f.apply(m.v(0, 0)),w,h);
+		Matrix<B> newMat = new Matrix<>(operation, w,h);
 		for(int x = 0; x < w; ++x) {
 			for(int y = 0; y < h; ++y) {
 				newMat.r(f.apply(m.v(x, y)), x, y);

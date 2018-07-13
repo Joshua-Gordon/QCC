@@ -1,18 +1,29 @@
 package mathLib;
 
 
-public interface Scalar<T>{
+
+public abstract class Scalar<T>{
 	
-	T add(T num);
-	T sub(T num);
-	T mult(T num);
-	T div(T num);
-	T exp(T num);
-	T sqrt();
+	protected T value;
 	
-	T get1();
-	T getn1();
-	T get0();
+	public abstract T add(T num);
+	public abstract T sub(T num);
+	public abstract T mult(T num);
+	public abstract T div(T num);
+	public abstract T exp(T num);
+	public abstract T sqrt();
 	
-	T[] mkArray(int size);
+	public abstract T get1();
+	public abstract T getn1();
+	public abstract T get0();
+	
+	public abstract T[] mkZeroArray(int size);
+	
+	/**
+	 * Creates a duplicate of this {@link Scalar}
+	 * @param value
+	 * @return
+	 */
+	public abstract Scalar<T> dup(T value);
+	
 }

@@ -1,11 +1,13 @@
 package mathLib;
+
 import java.io.Serializable;
 
-public class Complex implements Serializable, Scalar<Complex>{
+public class Complex extends Scalar<Complex> implements Serializable{
 	private static final long serialVersionUID = -9099395460757557732L;
 	
 	double a, b;
     public Complex(double a, double b) {
+    	this.value = this;
         this.a = a;
         this.b = b;
     }
@@ -136,7 +138,7 @@ public class Complex implements Serializable, Scalar<Complex>{
 	}
 
 	@Override
-	public Complex[] mkArray(int size) {
+	public Complex[] mkZeroArray(int size) {
 		Complex[] temp = new Complex[size];
 		for(int i = 0; i < size; i++)
 			temp[i] = get0();
@@ -218,5 +220,10 @@ public class Complex implements Serializable, Scalar<Complex>{
 	@Override
 	public Complex sqrt() {
 		return exp(new Complex(.5d, 0));
+	}
+
+	@Override
+	public Scalar<Complex> dup(Complex value) {
+		return new Complex(a, b);
 	}
 }

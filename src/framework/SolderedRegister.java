@@ -1,6 +1,7 @@
 package framework;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 import mathLib.Matrix;
 

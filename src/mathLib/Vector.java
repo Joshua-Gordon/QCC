@@ -1,16 +1,16 @@
 package mathLib;
 
 
-public class Vector<T extends Scalar<T>> extends Matrix<T>{
+public class Vector<T> extends Matrix<T>{
 	private static final long serialVersionUID = 406190986104372479L;
 
 	@SafeVarargs
-	public Vector(T ... components){
-		super(components.length, 1, components);
+	public Vector(Scalar<T> operation, T ... components){
+		super(operation, components.length, 1, components);
 	}
 	
-	public Vector(T[] components, boolean isVertical){		
-		super(isVertical? components.length:1, 
+	public Vector(Scalar<T> operation, T[] components, boolean isVertical){		
+		super(operation, isVertical? components.length:1, 
 				isVertical? 1:components.length, components);
 	}
 	
@@ -27,16 +27,16 @@ public class Vector<T extends Scalar<T>> extends Matrix<T>{
 	}
 	
 	public T mag(int cutoff){
-		T sum = m.get0();
+		T sum = s.get0();
 		for(int i = 0; i < cutoff; i++)
-			sum = sum.add(v(i).mult(v(i)));
-		return sum.sqrt();
+			sum = s.dup(sum).add(s.dup(v(i)).mult(v(i)));
+		return s.dup(sum).sqrt();
 	}
 	
 	public T dot(Vector<T> vec){
-		T sum = m.get0();
+		T sum = s.get0();
 		for(int i = 0; i < length(); i++)
-			sum = sum.add(v(i).mult(vec.v(i)));
+			sum = s.dup(sum).add(s.dup(v(i)).mult(vec.v(i)));
 		return sum;
 	}
 	

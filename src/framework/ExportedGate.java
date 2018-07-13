@@ -1,5 +1,6 @@
 package framework;
 
+import mathLib.Complex;
 import mathLib.Matrix;
 
 //import framework.SolderedGate.Control;
@@ -59,7 +60,7 @@ public class ExportedGate {
 		
 		this.abstractGate = sg.getAbstractGate();
 		this.registers = new int[sg.getExpectedNumberOfRegisters()];
-		this.controls = new Control[cb.getRows()];
+//		this.controls = new Control[cb.getRows()];
 		
 		int lastLocalReg = sg.getLastLocalRegister();
 		int curLocalReg;
@@ -81,9 +82,45 @@ public class ExportedGate {
 		this.height = row - y + 1;
 	}
 	
+	
+	/**
+	 * Called when 
+	 * 
+	 * @return
+	 * The {@link Matrix} represented by the {@link ExportedGate} after factoring in Attributes from the
+	 * {@link SolderedGate}. If the Attributes are default, then the {@link Matrix} within {@link AbstractGate}
+	 * will be returned. 
+	 * 
+	 */
+	public Matrix<Complex> getExportedMatrix(){
+		
+		Matrix<Complex> model = abstractGate.getMatrix();
+		
+		if(isControlled()) {
+			
+			int offset = 0;
+			for(int i = 0; i < controls.length; i++)
+				offset = (offset << 1) | (controls[i]? 1 : 0);
+			offset *= model.getColumns();
+			
+			int totalSize = abstractGate.getNumberOfRegisters() + controls.length;
+			Matrix<Complex> newModel = Matrix.identity(Complex.ZERO(), totalSize);
+			
+			for(int i = 0; i < model.getColumns(); i++)
+				for(int j = 0; j < model.getRows(); j++)
+					newModel.r(model.v(j, i), j + offset, i + offset);
+			
+			return newModel;
+		}else {
+			return model;
+		}
+	}
+	
+	
+	
 	/**
 	 * @return 
-	 * the {@link AbstractGate associated with the {@link SolderedGate}
+	 * the {@link AbstractGate} associated with the {@link SolderedGate}
 	 */
 	public AbstractGate getAbstractGate() {
 		return abstractGate;
@@ -96,7 +133,7 @@ public class ExportedGate {
 	public int[] getRegisters() {
 		return registers;
 	}
-
+	
 	/**
 	 * @return
 	 * the amount of vertical grid spaces the {@link SolderedGate} takes up

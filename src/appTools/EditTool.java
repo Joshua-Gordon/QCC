@@ -2,20 +2,7 @@ package appTools;
 
 import javax.swing.ImageIcon;
 
-import appUI.CircuitBoardRenderContext;
-import appUI.ConsoleUI;
 import appUI.Window;
-import framework.AbstractGate;
-import framework.Main;
-import framework.SolderedGate;
-import framework.SolderedRegister;
-import mathLib.Complex;
-import mathLib.Matrix;
-
-import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 
 public class EditTool extends Tool{
 
