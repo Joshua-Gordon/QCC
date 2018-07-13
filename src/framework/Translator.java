@@ -5,7 +5,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 
 import framework.AbstractGate.GateType;
@@ -38,7 +37,8 @@ public class Translator {
                 }
                 GateType gt = ag.getType();
                 boolean id = ag.getName().equals("I");
-                if(!gt.equals(GateType.CUSTOM) && !id) {
+
+                if(!gt.equals(GateType.OTHER) && !id) {
                     name = DefaultGate.typeToString(gt, DefaultGate.LangType.QUIL);
                     code += name + " " + y;
                     if(gt.equals(GateType.CNOT) || gt.equals(GateType.SWAP)) {

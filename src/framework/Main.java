@@ -1,10 +1,10 @@
 package framework;
 
-import appUI.CustomGateConstructorUI;
 import appUI.Window;
 import mathLib.Complex;
 import mathLib.Matrix;
 import mathLib.HermitianDecomposition;
+
 
 public class Main {
 	
@@ -14,12 +14,13 @@ public class Main {
     	/* toggle flags: debug mode or not */
     	boolean normalMode = true;
     	boolean debugMode = false;
-    	
+
     	if ( debugMode ) {
     		/* TESTING: matrix operators */
     		Matrix<Complex> mat = new Matrix<>(2, 2,
                 Complex.ZERO(), Complex.I().negative(),
                 Complex.I(), Complex.ZERO());
+
 
     		/* TESTING: matrix map */
     		Matrix<Complex> m = Matrix.map(mat, c -> c.mult(Complex.ONE()));
@@ -47,6 +48,7 @@ public class Main {
     		window = new Window();
     		window.setVisible(true);
     	}
+
     }
 
     public static Window getWindow() {

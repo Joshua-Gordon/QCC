@@ -1,11 +1,13 @@
 package mathLib;
+
 import java.io.Serializable;
 
-public class Complex implements Serializable, Scalar<Complex>{
+public class Complex extends Scalar<Complex> implements Serializable{
 	private static final long serialVersionUID = -9099395460757557732L;
 	
 	double a, b;
     public Complex(double a, double b) {
+    	this.value = this;
         this.a = a;
         this.b = b;
     }
@@ -38,6 +40,18 @@ public class Complex implements Serializable, Scalar<Complex>{
     
     public static Complex real(double r) {
     	return new Complex(r, 0);
+    }
+    
+    public static Complex pi() {
+    	return new Complex(Math.PI, 0);
+    }
+    
+    public static Complex e() {
+    	return new Complex(Math.E, 0);
+    }
+    
+    public static Complex rootOfUnity(int n) {
+    	return e().exp(I().mult(2 * Math.PI / Math.pow(2, n)));
     }
     
     public void test(){
@@ -134,7 +148,7 @@ public class Complex implements Serializable, Scalar<Complex>{
 	}
 
 	@Override
-	public Complex[] mkArray(int size) {
+	public Complex[] mkZeroArray(int size) {
 		Complex[] temp = new Complex[size];
 		for(int i = 0; i < size; i++)
 			temp[i] = get0();
@@ -145,15 +159,27 @@ public class Complex implements Serializable, Scalar<Complex>{
 	public Complex add(Complex num) {
 		return new Complex(a + num.a, b + num.b);
 	}
+	
+	public Complex add(double num) {
+		return new Complex(a + num, b);
+	}
 
 	@Override
 	public Complex sub(Complex num) {
 		return new Complex(a - num.a, b - num.b);
 	}
+	
+	public Complex sub(double num) {
+		return new Complex(a - num, b);
+	}
 
 	@Override
 	public Complex mult(Complex num) {
 		return new Complex(a * num.a - b * num.b, a * num.b + b * num.a);
+	}
+	
+	public Complex mult(double num) {
+		return new Complex(a * num, b * num);
 	}
 
 	@Override
@@ -164,20 +190,23 @@ public class Complex implements Serializable, Scalar<Complex>{
 		conjugateMult.b /= magSquared;
 		return conjugateMult;
 	}
-
+	
+	public Complex div(double num) {
+		return new Complex(a / num, b / num);
+	}
 	
 	/**
 	 * This Function can ONLY take in a Real Number as an exponent and a complex base <strong> OR </strong>
 	 * <br> can take a Real Number as a Base and a complex number as a Exponent. 
 	 * <br> will throw an error if the base and the exponent are both Complex!!!
-	 * <p> ie. new Complex(K<sub>1</sub>,K<sub>2</sub>).pow(new Complex(K<sub>3</sub>, 0)); 
+	 * <p> ie. new Complex(K<sub>1</sub>,K<sub>2</sub>).exp(new Complex(K<sub>3</sub>, 0)); 
 	 * <br>...for any value K<sub>1</sub>, K<sub>2</sub>, K<sub>3</sub> 
-	 * <br><strong>OR</strong><br> ie. new Complex(K<sub>1</sub>, 0).pow(new Complex(K<sub>2</sub>, K<sub>3</sub>)); 
+	 * <br><strong>OR</strong><br> ie. new Complex(K<sub>1</sub>, 0).exp(new Complex(K<sub>2</sub>, K<sub>3</sub>)); 
 	 * <br>...for any value K<sub>1</sub>, K<sub>2</sub>, K<sub>3</sub> 
 	 * <p>This is due to the multi-value nature of raising a complex number to a complex power
 	 */
 	@Override
-	public Complex pow(Complex num) {
+	public Complex exp(Complex num) {
 		if(b == 0) {
 			double temp1 = Math.pow(a, num.a);
 			double temp2 = num.b * Math.log(a);
@@ -189,10 +218,23 @@ public class Complex implements Serializable, Scalar<Complex>{
 		}
 		throw new ArithmeticException("Cannot raise a Complex power to another Complex Number");
 	}
-
+	
+	public Complex exp(double num) {
+		return exp(new Complex(num, 0));
+	}
+	
+	public Complex pow(double num) {
+		return new Complex(num, 0).exp(this);
+	}
+	
 	@Override
 	public Complex sqrt() {
-		return pow(new Complex(.5d, 0));
+		return exp(new Complex(.5d, 0));
+	}
+
+	@Override
+	public Scalar<Complex> dup(Complex value) {
+		return new Complex(a, b);
 	}
 
 	public double abs() {

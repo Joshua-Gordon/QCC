@@ -39,45 +39,45 @@ public class DefaultGate extends AbstractGate implements Serializable{
     public static void loadGates(){
 
 //		Gates with default icons :
-
-        Matrix<Complex> identity = new Matrix<>(2, 2,
+    	
+        Matrix<Complex> identity = new Matrix<>(Complex.ZERO(), 2, 2,
                 Complex.ONE(), Complex.ZERO(),
                 Complex.ZERO(), Complex.ONE());
         DefaultGate gate = new DefaultGate("I", identity, AbstractGate.GateType.I);
         DEFAULT_GATES.put("I",gate);
 
-        Matrix<Complex> mat = new Matrix<>(2, 2,
+        Matrix<Complex> mat = new Matrix<>(Complex.ZERO(), 2, 2,
                 Complex.ONE(), Complex.ONE(),
                 Complex.ONE(), Complex.ONE().negative())
                 .mult(Complex.ISQRT2());
         gate = new DefaultGate("H", mat, AbstractGate.GateType.H);
         DEFAULT_GATES.put("H",gate);
 
-        mat = new Matrix<>(2, 2,
+        mat = new Matrix<>(Complex.ZERO(), 2, 2,
                 Complex.ZERO(), Complex.ONE(),
                 Complex.ONE(), Complex.ZERO());
         gate = new DefaultGate("X", mat, AbstractGate.GateType.X);
         DEFAULT_GATES.put("X",gate);
 
-        mat = new Matrix<>(2, 2,
+        mat = new Matrix<>(Complex.ZERO(), 2, 2,
                 Complex.ZERO(), Complex.I().negative(),
                 Complex.I(), Complex.ZERO());
         gate = new DefaultGate("Y", mat, AbstractGate.GateType.Y);
         DEFAULT_GATES.put("Y",gate);
 
-        mat = new Matrix<>(2, 2,
+        mat = new Matrix<>(Complex.ZERO(), 2, 2,
                 Complex.ONE(), Complex.ZERO(),
                 Complex.ZERO(), Complex.ONE().negative());
         gate = new DefaultGate("Z", mat, AbstractGate.GateType.Z);
         DEFAULT_GATES.put("Z",gate);
         
-        mat = new Matrix<>(2, 2,
+        mat = new Matrix<>(Complex.ZERO(), 2, 2,
         		Complex.ONE(), Complex.ZERO(),
         		Complex.ZERO(), Complex.I());
         gate = new DefaultGate("S", mat, AbstractGate.GateType.S);
         DEFAULT_GATES.put("S",  gate);
 
-        mat = new Matrix<>(2, 2,
+        mat = new Matrix<>(Complex.ZERO(), 2, 2,
         		Complex.ONE(), Complex.ZERO(),
         		Complex.ZERO(), (Complex.ONE().add(Complex.I())).mult(Complex.ISQRT2()));
         gate = new DefaultGate("T", mat, AbstractGate.GateType.T);
@@ -92,7 +92,7 @@ public class DefaultGate extends AbstractGate implements Serializable{
         gate.setIcon(GateIcon.getMeasureIcon());
         DEFAULT_GATES.put("MEASURE",gate);
 
-        mat = new Matrix<>(4, 4,
+        mat = new Matrix<>(Complex.ZERO(), 4, 4,
                 Complex.ONE(), Complex.ZERO(), Complex.ZERO(), Complex.ZERO(),
                 Complex.ZERO(), Complex.ZERO(), Complex.ONE(), Complex.ZERO(),
                 Complex.ZERO(), Complex.ONE(), Complex.ZERO(), Complex.ZERO(),
@@ -101,7 +101,7 @@ public class DefaultGate extends AbstractGate implements Serializable{
         gate.setIcon(GateIcon.getSwapIcon());
         DEFAULT_GATES.put("SWAP",gate);
 
-        mat = new Matrix<>(4, 4,
+        mat = new Matrix<>(Complex.ZERO(), 4, 4,
                 Complex.ONE(), Complex.ZERO(), Complex.ZERO(), Complex.ZERO(),
                 Complex.ZERO(), Complex.ONE(), Complex.ZERO(), Complex.ZERO(),
                 Complex.ZERO(), Complex.ZERO(), Complex.ZERO(), Complex.ONE(),
@@ -110,7 +110,7 @@ public class DefaultGate extends AbstractGate implements Serializable{
         gate.setIcon(GateIcon.getCNotIcon());
         DEFAULT_GATES.put("C-NOT",gate);
         
-        mat = new Matrix<>(8, 8,
+        mat = new Matrix<>(Complex.ZERO(), 8, 8,
                 Complex.ONE(), Complex.ZERO(), Complex.ZERO(), Complex.ZERO(), Complex.ZERO(), Complex.ZERO(), Complex.ZERO(), Complex.ZERO(),
                 Complex.ZERO(), Complex.ONE(), Complex.ZERO(), Complex.ZERO(), Complex.ZERO(), Complex.ZERO(), Complex.ZERO(), Complex.ZERO(),
                 Complex.ZERO(), Complex.ZERO(), Complex.ONE(), Complex.ZERO(), Complex.ZERO(), Complex.ZERO(), Complex.ZERO(), Complex.ZERO(),
@@ -323,7 +323,7 @@ public class DefaultGate extends AbstractGate implements Serializable{
     @Override
     public String toString() {
         String out = "Gate type: " + getType().toString() + "\n";
-        if(getType() == GateType.CUSTOM) {
+        if(getType() == GateType.OTHER) {
             out += "Matrix:\n" + getMatrix();
         }
         return out;

@@ -1,7 +1,9 @@
 package mathLib;
 
+
 import Jama.*;
 import java.util.*;
+
 
 public class HermitianDecomposition {
 	public static List<Matrix<Complex>> decompose( Matrix<Complex> mat ) {
