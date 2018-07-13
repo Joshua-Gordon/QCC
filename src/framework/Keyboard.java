@@ -2,13 +2,9 @@ package framework;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
-import java.util.ArrayList;
 
-import appUI.CircuitBoardSelector;
 import appUI.Window;
 import preferences.AppPreferencesWindow;
-
-import javax.swing.*;
 
 public class Keyboard implements ActionListener, Runnable {
 	
@@ -109,7 +105,7 @@ public class Keyboard implements ActionListener, Runnable {
             String quil = Translator.exportQUIL();
             quil.trim();
             try {
-                Executor.runQuil(quil);
+                ExternalExecutor.runQuil(quil);
             } catch (IOException e1) {
                 System.err.println("Could not create file!");
                 e1.printStackTrace();
@@ -121,7 +117,7 @@ public class Keyboard implements ActionListener, Runnable {
 	        String qasm = "TEMPORARY";// Translator.translateQASM();
 	        qasm.trim();
 	        try {
-	            Executor.runQASM(qasm);
+	            ExternalExecutor.runQASM(qasm);
 	        } catch (IOException e1) {
 	            System.err.println("Could not create file!");
 	            e1.printStackTrace();

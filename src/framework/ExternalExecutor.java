@@ -8,7 +8,7 @@ import java.io.InputStreamReader;
 import preferences.AppPreferences;
 import utils.ResourceLoader;
 
-public class Executor {
+public class ExternalExecutor {
 
     static final String quilTemplate =
             "from pyquil.parser import parse_program\n" +

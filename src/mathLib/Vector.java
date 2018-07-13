@@ -1,6 +1,8 @@
 package mathLib;
 
 
+import java.util.ArrayList;
+
 public class Vector<T extends Scalar<T>> extends Matrix<T>{
 	private static final long serialVersionUID = 406190986104372479L;
 
@@ -52,5 +54,13 @@ public class Vector<T extends Scalar<T>> extends Matrix<T>{
 	
 	public void r(T value, int index){
 		getComponents()[index] = value;
+	}
+
+	public ArrayList<T> toArrayList() {
+		ArrayList<T> comps = new ArrayList<>();
+		for(int i = 0; i < getRows(); ++i) {
+			comps.add(v(i));
+		}
+		return comps;
 	}
 }

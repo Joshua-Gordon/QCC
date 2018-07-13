@@ -194,4 +194,8 @@ public class Complex implements Serializable, Scalar<Complex>{
 	public Complex sqrt() {
 		return pow(new Complex(.5d, 0));
 	}
+
+	public double abs() {
+		return Math.sqrt(a*a + b*b);
+	}
 }
