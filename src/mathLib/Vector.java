@@ -2,6 +2,8 @@ package mathLib;
 
 import java.util.ArrayList;
 
+import mathLib.operators.Operators;
+
 public class Vector<T> extends Matrix<T>{
 
 	private static final long serialVersionUID = 406190986104372479L;

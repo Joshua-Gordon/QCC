@@ -1,10 +1,10 @@
-package mathLib;
+package mathLib.operators;
 
-public class DoubleS extends Operators<Double>{
-
-	public DoubleS(double d) {
-		this.value = d;
-	}
+//                  7
+//                  ^  
+public class DoubleO extends Operators<Double>{
+	
+	
 	
 	@Override
 	public Double add(Double num) {
@@ -61,7 +61,7 @@ public class DoubleS extends Operators<Double>{
 
 	@Override
 	public Operators<Double> dup() {
-		return new DoubleS(value);
+		return new DoubleO();
 	}
 
 }

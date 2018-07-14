@@ -1,4 +1,4 @@
-package mathLib;
+package mathLib.operators;
 
 
 

@@ -2,6 +2,11 @@ package mathLib;
 import java.io.Serializable;
 import java.util.function.Function;
 
+import mathLib.operators.DoubleO;
+import mathLib.operators.FloatO;
+import mathLib.operators.IntegerO;
+import mathLib.operators.Operators;
+
 
 public class Matrix<T> implements Serializable {
 	private static final long serialVersionUID = -5950565947565116041L;
@@ -14,9 +19,13 @@ public class Matrix<T> implements Serializable {
 	@SuppressWarnings("unchecked")
 	protected static <T> Operators<T> getOperators(T num) {
 		if(num instanceof Double) {
-			return (Operators<T>) new DoubleS(0);
+			return (Operators<T>) new DoubleO();
 		}else if(num instanceof Complex) {
 			return (Operators<T>) Complex.ZERO();
+		}else if(num instanceof Float) {
+			return (Operators<T>) new FloatO();
+		}else if(num instanceof Integer) {
+			return (Operators<T>) new IntegerO();
 		}else {
 			throw new DefaultMatrixNotSupportedException();
 		}

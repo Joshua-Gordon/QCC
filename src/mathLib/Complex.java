@@ -2,6 +2,8 @@ package mathLib;
 
 import java.io.Serializable;
 
+import mathLib.operators.Operators;
+
 public class Complex extends Operators<Complex> implements Serializable{
 	private static final long serialVersionUID = -9099395460757557732L;
 	
