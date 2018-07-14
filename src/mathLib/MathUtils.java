@@ -34,9 +34,9 @@ public class MathUtils {
 	}
 	
 	public static Matrix<Double> rotate(double yaw, double pitch, double roll){
-		Matrix<Double> yawM = rotate(new Vector<Double>(new DoubleS(0), 0d, 1d, 0d), yaw);
-		Matrix<Double> pitchM = rotate(new Vector<Double>(new DoubleS(0), 1d, 0d, 0d), pitch);
-		Matrix<Double> rollM = rotate(new Vector<Double>(new DoubleS(0), 0d, 0d, 1d), roll);
+		Matrix<Double> yawM = rotate(new Vector<Double>(0d, 1d, 0d), yaw);
+		Matrix<Double> pitchM = rotate(new Vector<Double>(1d, 0d, 0d), pitch);
+		Matrix<Double> rollM = rotate(new Vector<Double>(0d, 0d, 1d), roll);
 		
 		return rollM.mult(pitchM).mult(yawM);
 	}
@@ -48,7 +48,7 @@ public class MathUtils {
 				v1.v(0) * v2.v(1) - v1.v(1) * v2.v(0), 
 				v1.v(3) * v2.v(3)};
 		
-		return new Vector<Double>(new DoubleS(0), components, false);
+		return new Vector<Double>(components);
 	}
 	
 	public static double dot3d(Vector<Double> v1, Vector<Double> v2){

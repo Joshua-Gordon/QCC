@@ -2,7 +2,7 @@ package mathLib;
 
 
 
-public abstract class Scalar<T>{
+public abstract class Operators<T>{
 	
 	protected T value;
 	
@@ -20,10 +20,17 @@ public abstract class Scalar<T>{
 	public abstract T[] mkZeroArray(int size);
 	
 	/**
-	 * Creates a duplicate of this {@link Scalar}
+	 * Creates a duplicate of this {@link Operators}
 	 * @param value
 	 * @return
 	 */
-	public abstract Scalar<T> dup(T value);
+	public abstract Operators<T> dup();
+	
+	
+	public Operators<T> op(T value){
+		this.value = value;
+		return this;
+	}
+	
 	
 }

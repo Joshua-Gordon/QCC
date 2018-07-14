@@ -7,11 +7,12 @@ public class Vector<T> extends Matrix<T>{
 	private static final long serialVersionUID = 406190986104372479L;
 
 	@SafeVarargs
-	public Vector(Scalar<T> operation, T ... components){
-		super(operation, components.length, 1, components);
+	public Vector(T ... components){
+		super(components.length, 1, components);
 	}
 	
-	public Vector(Scalar<T> operation, T[] components, boolean isVertical){		
+	@SafeVarargs
+	public Vector(Operators<T> operation, boolean isVertical, T ... components){		
 		super(operation, isVertical? components.length:1, 
 				isVertical? 1:components.length, components);
 	}
@@ -29,16 +30,22 @@ public class Vector<T> extends Matrix<T>{
 	}
 	
 	public T mag(int cutoff){
-		T sum = s.get0();
+		Operators<T> o1 = this.o.dup();
+		Operators<T> o2 = this.o.dup();
+		
+		T sum = o1.get0();
 		for(int i = 0; i < cutoff; i++)
-			sum = s.dup(sum).add(s.dup(v(i)).mult(v(i)));
-		return s.dup(sum).sqrt();
+			sum = o1.op(sum).add(o2.op(v(i)).mult(v(i)));
+		return o1.op(sum).sqrt();
 	}
 	
 	public T dot(Vector<T> vec){
-		T sum = s.get0();
+		Operators<T> o1 = this.o.dup();
+		Operators<T> o2 = this.o.dup();
+		
+		T sum = o1.get0();
 		for(int i = 0; i < length(); i++)
-			sum = s.dup(sum).add(s.dup(v(i)).mult(vec.v(i)));
+			sum = o1.op(sum).add(o2.op(v(i)).mult(vec.v(i)));
 		return sum;
 	}
 	

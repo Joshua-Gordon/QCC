@@ -1,6 +1,6 @@
 package mathLib;
 
-public class DoubleS extends Scalar<Double>{
+public class DoubleS extends Operators<Double>{
 
 	public DoubleS(double d) {
 		this.value = d;
@@ -60,7 +60,7 @@ public class DoubleS extends Scalar<Double>{
 	}
 
 	@Override
-	public Scalar<Double> dup(Double value) {
+	public Operators<Double> dup() {
 		return new DoubleS(value);
 	}
 

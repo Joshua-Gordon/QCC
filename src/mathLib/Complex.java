@@ -2,7 +2,7 @@ package mathLib;
 
 import java.io.Serializable;
 
-public class Complex extends Scalar<Complex> implements Serializable{
+public class Complex extends Operators<Complex> implements Serializable{
 	private static final long serialVersionUID = -9099395460757557732L;
 	
 	double a, b;
@@ -233,7 +233,7 @@ public class Complex extends Scalar<Complex> implements Serializable{
 	}
 
 	@Override
-	public Scalar<Complex> dup(Complex value) {
+	public Operators<Complex> dup() {
 		return new Complex(a, b);
 	}
 
