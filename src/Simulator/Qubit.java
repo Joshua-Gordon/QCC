@@ -9,7 +9,7 @@ import java.util.Random;
 public class Qubit extends Vector<Complex> {
 
     public Qubit(Complex a, Complex b) {
-        super(Complex.ZERO(), a,b);
+        super(a,b);
     }
 
     public static Qubit ONE() {
