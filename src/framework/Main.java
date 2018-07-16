@@ -22,8 +22,17 @@ public class Main {
                 Complex.ZERO(), Complex.ONE(), Complex.ZERO(),
                 Complex.ONE(), Complex.ZERO(), Complex.ONE(),
                 Complex.ZERO(), Complex.ONE(), Complex.ZERO());
-    		System.out.println(mat.toString());
+    		System.out.println(mat);
 
+    		Matrix<Complex> mat2 = new Matrix<>(Complex.ONE(),3,3,
+    			Complex.ONE(), Complex.ZERO(), Complex.ZERO(),
+    			Complex.ZERO(), Complex.ONE(), Complex.ZERO(),
+    			Complex.ZERO(), Complex.ZERO(), Complex.ONE());
+    		System.out.println(mat2);
+
+
+    		Matrix<Complex> mat3 = mat.mult(mat2);
+    		System.out.println(mat3);
 
     		/* TESTING: matrix map */
     		//Matrix<Complex> m = Matrix.map(Complex.ONE(), mat, c -> c.mult(Complex.ONE()));
@@ -62,7 +71,7 @@ public class Main {
     	return window;
     }
 
-    
+
 
     /*
      * Note, the following code is needed to run the output program

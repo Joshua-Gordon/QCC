@@ -111,8 +111,10 @@ public class Matrix<T> implements Serializable {
 		for(int r = 0; r < rows; r++){
 			for(int c = 0; c < mat.columns; c++){
 				sum = o1.get0();
-				for(int k = 0; k < columns; k++)
-					sum = o1.op(sum).add( o2.op(v(r, k)).mult(mat.v(k, c)) ); 
+				for(int k = 0; k < columns; k++) {
+					T m = o2.op(v(r, k)).mult(mat.v(k, c));
+					sum = o1.op(sum).add(m);
+				}
 				temp.r(sum, r, c);
 			}
 		}

@@ -243,4 +243,11 @@ public class Complex extends Operators<Complex> implements Serializable{
 	public double abs() {
 		return Math.sqrt(a*a + b*b);
 	}
+
+	@Override
+	public Operators<Complex> op(Complex value) {
+		this.a = value.a;
+		this.b = value.b;
+		return this;
+	}
 }
