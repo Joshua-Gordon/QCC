@@ -41,4 +41,12 @@ public class Qubit extends Vector<Complex> {
         return measured;
     }
 
+    public static Qubit getInputState(int registers) {
+        Qubit start = Qubit.ZERO();
+        for(int i = 0; i < registers; ++i) {
+            start = (Qubit) start.kronecker(Qubit.ZERO());
+        }
+        return start;
+    }
+
 }
