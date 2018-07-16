@@ -55,14 +55,15 @@ public class Complex extends Operators<Complex> implements Serializable{
     public static Complex rootOfUnity(int n) {
     	return e().exp(I().mult(2 * Math.PI / Math.pow(2, n)));
     }
-    
+
+    /*
     public void test(){
         Complex one = new Complex(1,0);
         Complex i = new Complex(0,1);
         System.out.println(one.mult(i));
         Complex oof = new Complex(1,1);
         System.out.println(oof.mult(i));
-    }
+    }*/
 
     public Complex conjugate() {
         return new Complex(a,-b);

@@ -4,7 +4,7 @@ import appUI.Window;
 import mathLib.Complex;
 import mathLib.Matrix;
 import mathLib.HermitianDecomposition;
-
+import java.util.*;
 
 public class Main {
 	
@@ -12,24 +12,28 @@ public class Main {
 	
     public static void main(String[] args) {
     	/* toggle flags: debug mode or not */
-    	boolean normalMode = true;
-    	boolean debugMode = false;
+    	boolean normalMode = false;
+    	boolean debugMode = true;
 
     	if ( debugMode ) {
     		/* TESTING: matrix operators */
-    		Matrix<Complex> mat = new Matrix<>(Complex.ONE(), 2, 2,
-                Complex.ZERO(), Complex.I().negative(),
-                Complex.I(), Complex.ZERO());
+    		Matrix<Complex> mat = new Matrix<>(Complex.ONE(), 3, 3,
+                Complex.ZERO(), Complex.ONE(), Complex.ZERO(),
+                Complex.ONE(), Complex.ZERO(), Complex.ONE(),
+                Complex.ZERO(), Complex.ONE(), Complex.ZERO());
+    		System.out.println(mat.toString());
 
 
     		/* TESTING: matrix map */
-    		Matrix<Complex> m = Matrix.map(Complex.ONE(), mat, c -> c.mult(Complex.ONE()));
-    		System.out.println(m.toString());
+    		//Matrix<Complex> m = Matrix.map(Complex.ONE(), mat, c -> c.mult(Complex.ONE()));
+    		//System.out.println(m.toString());
     	
     		/* TESTING: spectral decomposition */
     		HermitianDecomposition boo = new HermitianDecomposition();
-    		Matrix<Complex> d = boo.decompose(mat).get(0);
-    		Matrix<Complex> v = boo.decompose(mat).get(1);
+    		List<Matrix<Complex>> foo = new ArrayList<Matrix<Complex>>();
+    		foo = boo.decompose(mat);
+    		Matrix<Complex> d = foo.get(0);
+    		Matrix<Complex> v = foo.get(1);
     	
     		System.out.println(d.toString());
     		System.out.println(v.toString());
