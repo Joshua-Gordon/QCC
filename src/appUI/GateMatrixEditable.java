@@ -8,7 +8,6 @@ import java.util.ArrayList;
 
 import javax.swing.AbstractCellEditor;
 import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
@@ -155,7 +154,7 @@ public class GateMatrixEditable extends JPanel{
 			int rows = model.getRowCount();
 			int columns = model.getColumnCount();
 			String value;
-			Matrix<Complex> mat = new Matrix<>(rows, columns, Complex.ONE().mkArray(rows * columns));
+			Matrix<Complex> mat = new Matrix<>(Complex.ZERO(), rows, columns, Complex.ONE().mkZeroArray(rows * columns));
 			for(int i = 0; i < rows; i++) {
 				for(int j = 0; j < columns; j++) {
 					if(model.getValueAt(i, j) == null)

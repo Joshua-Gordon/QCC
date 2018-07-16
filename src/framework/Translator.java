@@ -5,7 +5,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 
 import framework.AbstractGate.GateType;
@@ -25,20 +24,21 @@ public class Translator {
         ExportedGate.exportGates(cb, new ExportGatesRunnable() {
             @Override
             public void gateExported(ExportedGate eg, int x, int y) {
-                SolderedGate.Control[] controls = eg.getControls();
+//                SolderedGate.Control[] controls = eg.getControls();
                 AbstractGate ag = eg.getAbstractGate();
                 Matrix<Complex> m = ag.getMatrix();
                 String name = ag.getName();
-                if(isControlled(controls)) {
-                    m = SolderedGate.makeControlledMatrix(m,controls);
-                    name = controls.hashCode() + name;
-                }
-                for(int i = 0; i < y; ++i) {
-                    System.out.println(controls[i]);
-                }
+//                if(isControlled(controls)) {
+//                    m = SolderedGate.makeControlledMatrix(m,controls);
+//                    name = controls.hashCode() + name;
+//                }
+//                for(int i = 0; i < y; ++i) {
+//                    System.out.println(controls[i]);
+//                }
                 GateType gt = ag.getType();
                 boolean id = ag.getName().equals("I");
-                if(!gt.equals(GateType.CUSTOM) && !id) {
+
+                if(!gt.equals(GateType.OTHER) && !id) {
                     name = DefaultGate.typeToString(gt, DefaultGate.LangType.QUIL);
                     code += name + " " + y;
                     if(gt.equals(GateType.CNOT) || gt.equals(GateType.SWAP)) {
@@ -407,12 +407,12 @@ public class Translator {
         return quil;
     }
 
-    public static boolean isControlled(SolderedGate.Control[] controls) {
-        for(SolderedGate.Control c : controls) {
-            if(c != null) {
-                return true;
-            }
-        }
-        return false;
-    }
+//    public static boolean isControlled(SolderedGate.Control[] controls) {
+//        for(SolderedGate.Control c : controls) {
+//            if(c != null) {
+//                return true;
+//            }
+//        }
+//        return false;
+//    }
 }

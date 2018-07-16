@@ -2,10 +2,6 @@ package framework;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
-
-import mathLib.Complex;
-import mathLib.Matrix;
 
 
 /**
@@ -21,12 +17,15 @@ public class SolderedGate implements Serializable{
 	
 	private AbstractGate abstractGate;
 	private int firstLocalRegister = 0, lastLocalRegister = 0;
-
-	protected enum Control{
-		NONE,TRUE,FALSE
-	}
-
-	private HashMap<Integer,Control> controls;
+	private ArrayList<Boolean> controls = new ArrayList<Boolean>();
+	
+	
+	
+//	protected enum Control{
+//		NONE,TRUE,FALSE
+//	}
+//
+//	private HashMap<Integer,Control> controls;
 	
 	/**
 	 * 
@@ -59,7 +58,7 @@ public class SolderedGate implements Serializable{
 		this.abstractGate = abstractGate;
 		this.firstLocalRegister = firstLocalRegister;
 		this.lastLocalRegister = lastLocalRegister;
-		this.controls = new HashMap<>();
+//		this.controls = new HashMap<>();
 	}
 
 	/**
@@ -75,7 +74,7 @@ public class SolderedGate implements Serializable{
 	 * the expected number of {@link SolderedRegister}'s attached to this {@link SolderedGate}
 	 */
 	public int getExpectedNumberOfRegisters() {
-		return abstractGate.getNumberOfRegisters();
+		return abstractGate.getNumberOfRegisters() + controls.size();
 	}
 
 	/**
@@ -110,62 +109,62 @@ public class SolderedGate implements Serializable{
 		this.lastLocalRegister = lastLocalRegister;
 	}
 	
-	public ArrayList<SolderedRegister> getRegisters() {
-		ArrayList<SolderedRegister> regs = new ArrayList<>();
-		CircuitBoard cb = Main.getWindow().getSelectedBoard();
-		int column = -1;
-		for(int y = 0; y < cb.getRows(); ++y) {
-			for(int x = 0; x < cb.getColumns(); ++x) {
-				if(equals(cb.getSolderedGate(x,y))) {
-					column = x;
-				}
-			}
-		}
-		if(column == -1) {
-			//Gate not on board
-			return null;
-		}
-		for(int y = 0; y < cb.getColumns(); ++y) {
-			SolderedRegister sr = cb.getSolderedRegister(column,y);
-			if(equals(sr.getSolderedGate())) {
-				regs.add(sr);
-			}
-		}
-		return regs;
-	}
+//	public ArrayList<SolderedRegister> getRegisters() {
+//		ArrayList<SolderedRegister> regs = new ArrayList<>();
+//		CircuitBoard cb = Main.getWindow().getSelectedBoard();
+//		int column = -1;
+//		for(int y = 0; y < cb.getRows(); ++y) {
+//			for(int x = 0; x < cb.getColumns(); ++x) {
+//				if(equals(cb.getSolderedGate(x,y))) {
+//					column = x;
+//				}
+//			}
+//		}
+//		if(column == -1) {
+//			//Gate not on board
+//			return null;
+//		}
+//		for(int y = 0; y < cb.getColumns(); ++y) {
+//			SolderedRegister sr = cb.getSolderedRegister(column,y);
+//			if(equals(sr.getSolderedGate())) {
+//				regs.add(sr);
+//			}
+//		}
+//		return regs;
+//	}
 
-	public void addControl(int reg, boolean control) {
-		controls.put(reg,control ? Control.TRUE : Control.FALSE);
-	}
-
-	public Control controlled(int reg) {
-		return controls.getOrDefault(reg,Control.NONE);
-	}
+//	public void addControl(int reg, boolean control) {
+//		controls.put(reg,control ? Control.TRUE : Control.FALSE);
+//	}
+//
+//	public Control controlled(int reg) {
+//		return controls.getOrDefault(reg,Control.NONE);
+//	}
 
 	@Override
 	public String toString() {
 		return abstractGate.getName();
 	}
 
-	public static Matrix<Complex> makeControlledMatrix(Matrix<Complex> in, Control[] controls) {
-		Matrix<Complex> newMat = null, oldMat = in;
-		for(Control c : controls) {
-			newMat = new Matrix<>(Complex.ISQRT2(),oldMat.getColumns()<<1,oldMat.getRows()<<1).identity();
-			if(c.equals(Control.TRUE)) {
-				for(int y = oldMat.getRows(); y < newMat.getRows(); ++y) {
-					for(int x = oldMat.getColumns(); x < newMat.getColumns(); ++x) {
-						newMat.r(oldMat.v(x-oldMat.getColumns(),y-oldMat.getRows()),x,y);
-					}
-				}
-			} else if(c.equals(Control.FALSE)){
-				for(int y = 0; y < oldMat.getRows(); ++y) {
-					for(int x = 0; x < oldMat.getColumns(); ++x) {
-						newMat.r(oldMat.v(x,y),x,y);
-					}
-				}
-			}
-			oldMat = newMat;
-		}
-		return newMat;
-	}
+//	public static Matrix<Complex> makeControlledMatrix(Matrix<Complex> in, Control[] controls) {
+//		Matrix<Complex> newMat = null, oldMat = in;
+//		for(Control c : controls) {
+//			newMat = new Matrix<>(Complex.ISQRT2(),oldMat.getColumns()<<1,oldMat.getRows()<<1).identity();
+//			if(c.equals(Control.TRUE)) {
+//				for(int y = oldMat.getRows(); y < newMat.getRows(); ++y) {
+//					for(int x = oldMat.getColumns(); x < newMat.getColumns(); ++x) {
+//						newMat.r(oldMat.v(x-oldMat.getColumns(),y-oldMat.getRows()),x,y);
+//					}
+//				}
+//			} else if(c.equals(Control.FALSE)){
+//				for(int y = 0; y < oldMat.getRows(); ++y) {
+//					for(int x = 0; x < oldMat.getColumns(); ++x) {
+//						newMat.r(oldMat.v(x,y),x,y);
+//					}
+//				}
+//			}
+//			oldMat = newMat;
+//		}
+//		return newMat;
+//	}
 }

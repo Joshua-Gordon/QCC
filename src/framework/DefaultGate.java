@@ -39,7 +39,7 @@ public class DefaultGate extends AbstractGate implements Serializable{
     public static void loadGates(){
 
 //		Gates with default icons :
-
+    	
         Matrix<Complex> identity = new Matrix<>(2, 2,
                 Complex.ONE(), Complex.ZERO(),
                 Complex.ZERO(), Complex.ONE());
@@ -323,7 +323,7 @@ public class DefaultGate extends AbstractGate implements Serializable{
     @Override
     public String toString() {
         String out = "Gate type: " + getType().toString() + "\n";
-        if(getType() == GateType.CUSTOM) {
+        if(getType() == GateType.OTHER) {
             out += "Matrix:\n" + getMatrix();
         }
         return out;

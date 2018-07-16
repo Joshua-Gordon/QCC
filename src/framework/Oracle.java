@@ -1,7 +1,6 @@
 package framework;
 
 import java.awt.BorderLayout;
-import java.util.ArrayList;
 
 import javax.script.Invocable;
 import javax.script.ScriptEngine;
@@ -14,7 +13,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 import javax.swing.WindowConstants;
 
-import framework.AbstractGate.GateType;
 import mathLib.Complex;
 import mathLib.Matrix;
 

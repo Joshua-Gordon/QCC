@@ -1,9 +1,11 @@
 package mathLib;
 
-
 import java.util.ArrayList;
 
-public class Vector<T extends Scalar<T>> extends Matrix<T>{
+import mathLib.operators.Operators;
+
+public class Vector<T> extends Matrix<T>{
+
 	private static final long serialVersionUID = 406190986104372479L;
 
 	@SafeVarargs
@@ -11,8 +13,9 @@ public class Vector<T extends Scalar<T>> extends Matrix<T>{
 		super(components.length, 1, components);
 	}
 	
-	public Vector(T[] components, boolean isVertical){		
-		super(isVertical? components.length:1, 
+	@SafeVarargs
+	public Vector(Operators<T> operation, boolean isVertical, T ... components){		
+		super(operation, isVertical? components.length:1, 
 				isVertical? 1:components.length, components);
 	}
 	
@@ -29,16 +32,22 @@ public class Vector<T extends Scalar<T>> extends Matrix<T>{
 	}
 	
 	public T mag(int cutoff){
-		T sum = m.get0();
+		Operators<T> o1 = this.o.dup();
+		Operators<T> o2 = this.o.dup();
+		
+		T sum = o1.get0();
 		for(int i = 0; i < cutoff; i++)
-			sum = sum.add(v(i).mult(v(i)));
-		return sum.sqrt();
+			sum = o1.op(sum).add(o2.op(v(i)).mult(v(i)));
+		return o1.op(sum).sqrt();
 	}
 	
 	public T dot(Vector<T> vec){
-		T sum = m.get0();
+		Operators<T> o1 = this.o.dup();
+		Operators<T> o2 = this.o.dup();
+		
+		T sum = o1.get0();
 		for(int i = 0; i < length(); i++)
-			sum = sum.add(v(i).mult(vec.v(i)));
+			sum = o1.op(sum).add(o2.op(v(i)).mult(vec.v(i)));
 		return sum;
 	}
 	
