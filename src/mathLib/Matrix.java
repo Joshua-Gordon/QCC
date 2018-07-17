@@ -332,6 +332,20 @@ public class Matrix<T> implements Serializable {
 			for(int c = 0; c < columns; c++)
 				r(mat.v(r, c), r, c);
 	}
+	
+	public Matrix<T> getSlice( int r1, int r2, int c1, int c2 ) {
+		// should throw exception if r1 > r2 or c1 > c2
+		int numRows = r2 - r1 + 1;
+		int numCols = c2 - c1 + 1;
+		int numItems = numRows * numCols;
+		Matrix<T> mat = new Matrix<T>(o, numRows, numCols, o.mkZeroArray( numItems ) );
+		for (int r = 0; r < numRows; r++) {
+			for (int c = 0; c < numCols; c++) {
+				mat.r( this.v(r1+r, c1+c), r, c);
+			}
+		}
+		return mat;
+	}
 
 	public static <A, B> Matrix<B> map(Operators<B> operators, Matrix<A> m, Function<A,B> f) {
 		int w = m.getColumns();

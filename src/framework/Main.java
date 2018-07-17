@@ -1,8 +1,8 @@
 package framework;
 
-
 import appUI.Window;
 import mathLib.Complex;
+import mathLib.Eigenspace;
 import mathLib.Matrix;
 import mathLib.HermitianDecomposition;
 import java.util.*;
@@ -18,39 +18,59 @@ public class Main {
 
     	if ( debugMode ) {
     		/* TESTING: matrix operators */
-    		Matrix<Complex> mat = new Matrix<>(Complex.ONE(), 3, 3,
+    		// P3
+    		Matrix<Complex> mat1 = new Matrix<>(Complex.ONE(), 3, 3,
                 Complex.ZERO(), Complex.ONE(), Complex.ZERO(),
                 Complex.ONE(), Complex.ZERO(), Complex.ONE(),
                 Complex.ZERO(), Complex.ONE(), Complex.ZERO());
-    		System.out.println(mat);
+    		System.out.println(mat1);
 
+    		// K3
     		Matrix<Complex> mat2 = new Matrix<>(Complex.ONE(),3,3,
-    			Complex.ONE(), Complex.ZERO(), Complex.ZERO(),
-    			Complex.ZERO(), Complex.ONE(), Complex.ZERO(),
-    			Complex.ZERO(), Complex.ZERO(), Complex.ONE());
+    			Complex.ZERO(), Complex.ONE(), Complex.ONE(),
+    			Complex.ONE(), Complex.ZERO(), Complex.ONE(),
+    			Complex.ONE(), Complex.ONE(), Complex.ZERO());
     		System.out.println(mat2);
-
-
-    		Matrix<Complex> mat3 = mat.mult(mat2);
-    		System.out.println(mat3);
+    		
+    		Matrix<Complex> mat = mat2;
 
     		/* TESTING: matrix map */
     		//Matrix<Complex> m = Matrix.map(Complex.ONE(), mat, c -> c.mult(Complex.ONE()));
     		//System.out.println(m.toString());
     	
     		/* TESTING: spectral decomposition */
-    		HermitianDecomposition boo = new HermitianDecomposition();
-    		List<Matrix<Complex>> foo = new ArrayList<Matrix<Complex>>();
-    		foo = boo.decompose(mat);
-    		Matrix<Complex> d = foo.get(0);
-    		Matrix<Complex> v = foo.get(1);
+    		HermitianDecomposition obj = new HermitianDecomposition();
+    		List<Matrix<Complex>> matrices = new ArrayList<Matrix<Complex>>();
+    		matrices = obj.decompose(mat);
+    		Matrix<Complex> d = matrices.get(0);
+    		Matrix<Complex> v = matrices.get(1);
     	
-    		System.out.println(d.toString());
-    		System.out.println(v.toString());
+    		System.out.println("d = \n" + d.toString());
+    		System.out.println("v = \n" + v.toString());
+    		
+    		List<Eigenspace> eigspaces = new ArrayList<Eigenspace>();
+    		eigspaces = obj.eigh(mat);
+    		
+    		/* Sanity check: should move this to HermitianDecomposition 
+    		 *   M = \sum_r \lambda_r Eig_r 
+    		 * */
+    		Matrix<Complex> answer = new Matrix<Complex>(Complex.ZERO(), mat.getRows(), mat.getColumns());
+    		for (int i = 0; i < eigspaces.size(); i++) {
+    			Eigenspace eigspace = eigspaces.get(i);
+    			answer = answer.add( eigspace.getEigenprojector().mult( new Complex(eigspace.getEigenvalue(), 0.0)));
+    		}
+    		
+    		System.err.println("Spetral recovery: \n" + answer);
+    		if ( obj.withinTolerance(mat, answer, 0.0001) ) {
+    			System.err.println("Spectra decomposition: ok");
+    		}
+    		else {
+    			System.err.println("Spectra decomposition: failed");
+    		}
+
     	
 
     		/* TESTING: user input matrix
-    		 * Some unresolved issues: spurious zeros
     		CustomGateConstructorUI g = new CustomGateConstructorUI(null);
     		g.show();
     		Matrix<Complex> mat = g.getCustomMatrix().stream().reduce((a, m) -> a.kronecker(m)).get();
