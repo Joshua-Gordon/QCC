@@ -114,7 +114,7 @@ public class Keyboard implements ActionListener, Runnable {
         case "Run QASM":
 	        System.out.println("Running QASM");
 	        window.getConsole().println("Running QASM");
-	        String qasm = "TEMPORARY";// Translator.translateQASM();
+	        String qasm = Translator.exportQASM();
 	        qasm.trim();
 	        try {
 	            ExternalExecutor.runQASM(qasm);

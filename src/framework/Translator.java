@@ -98,12 +98,18 @@ public class Translator {
                             code += "measure q[" + y + "] -> c[" + y + "];\n";
                             break;
                         case "CNOT":
-                            code += "cx q[" + y + "],q[" + eg.getRegisters()[1] + "];\n";
+                            code += "cx q[" + y + "],q[" + (y+eg.getHeight()) + "];\n";
                             break;
                         case "SWAP":
-                            code += "cx q[" + y + "],q[" + eg.getRegisters()[1] + "];\n";
-                            code += "cx q[" + eg.getRegisters()[1] + "],q[" + y + "];\n";
-                            code += "cx q[" + y + "],q[" + eg.getRegisters()[1] + "];\n";
+                            if(eg.getHeight() > 0) {
+                                code += "cx q[" + y + "],q[" + (y + eg.getHeight()) + "];\n";
+                                code += "cx q[" + (y + eg.getHeight()) + "],q[" + y + "];\n";
+                                code += "cx q[" + y + "],q[" + (y + eg.getHeight()) + "];\n";
+                            } else {
+                                code += "cx q[" + (y + eg.getHeight()) + "],q[" + y + "];\n";
+                                code += "cx q[" + y + "],q[" + (y + eg.getHeight()) + "];\n";
+                                code += "cx q[" + (y + eg.getHeight()) + "],q[" + y + "];\n";
+                            }
                             break;
                         default:
                             code += DefaultGate.typeToString(eg.getAbstractGate().getType(),LangType.QASM) + " q[" + y + "];\n";

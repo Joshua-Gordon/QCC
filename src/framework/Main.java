@@ -13,8 +13,8 @@ public class Main {
 	
     public static void main(String[] args) {
     	/* toggle flags: debug mode or not */
-    	boolean normalMode = false;
-    	boolean debugMode = true;
+    	boolean normalMode = true;
+    	boolean debugMode = false;
 
     	if ( debugMode ) {
     		/* TESTING: matrix operators */

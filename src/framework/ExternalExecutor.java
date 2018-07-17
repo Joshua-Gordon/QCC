@@ -66,9 +66,12 @@ public class ExternalExecutor {
         FileWriter fw = new FileWriter(qsrc);
         fw.write(code);
         fw.close();
-        fw = new FileWriter(src);                                                                       //e s c a p e
-        fw.write(qasmTemplate.replace("{}",qsrc.getCanonicalPath().replace("\\","\\\\")));
+        fw = new FileWriter(src);
+        String toWrite = qasmTemplate.replace("{}",qsrc.getCanonicalPath().replace("\\","\\\\"));
+        System.out.println(toWrite);
+        fw.write(toWrite);
         fw.close();
+
         String interpreterLocation = AppPreferences.get("QASM", "Interpreter Location");
         Process p = Runtime.getRuntime().exec(interpreterLocation + " " + src.getAbsolutePath());
         BufferedReader isr = new BufferedReader(new InputStreamReader(p.getInputStream()));
