@@ -104,7 +104,7 @@ public class Translator {
                             code += "measure q[" + y + "] -> c[" + y + "];\n";
                             break;
                         case "CNOT":
-                            code += "cx q[" + y + "],q[" + (y+eg.getHeight()) + "];\n";
+                            code += "cx q[" + y + "],q[" + (y+eg.getHeight()-1) + "];\n";
                             break;
                         case "SWAP":
                             if(eg.getHeight() > 0) {
