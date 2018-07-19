@@ -16,6 +16,8 @@ public class Eigenspace implements Serializable {
 	 * @param v: a matrix whose columns are the relevant eigenvectors
 	 */
 	public Eigenspace( double eigval, Matrix<Complex> v) {
+		boolean debugMode = false;
+		
 		this.dimension = v.getRows();
 		this.eigenvalue = eigval;
 		this.multiplicity = v.getColumns();
@@ -24,10 +26,15 @@ public class Eigenspace implements Serializable {
 		// build the sum of the outer products of the eigenvectors which span the eigenspace
 		Matrix<Complex> eigp = new Matrix<Complex>( Complex.ZERO(), dimension, dimension );
 		for (int i = 0; i < this.multiplicity; ++i) {
-			Matrix<Complex> vec = v.getSlice(0, v.getRows()-1, i, i);
-			eigp = eigp.add( vec.mult(vec.transpose()) );
+			Matrix<Complex> evec = eigenvectors.getSlice(0, v.getRows()-1, i, i);
+			eigp = eigp.add( evec.mult( conjugateTranspose(evec)) );
 		}
 		this.eigenprojector = eigp;
+
+		if ( debugMode ) {
+			System.err.println("Eigenvalue = " + eigval);
+			System.err.println("Eigenprojector = \n" + eigp);
+		}
 	}
 
 	public double getEigenvalue() {
@@ -45,6 +52,26 @@ public class Eigenspace implements Serializable {
 	@Override
 	public String toString() {
 		return "[" + String.valueOf(eigenvalue) + "\n," + eigenprojector.toString() + "]\n";
+	}
+	
+	/**
+	 * conjugateTranspose
+	 *  computes the conjugate (hermitian) transpose of a matrix
+	 * @param mat: a square matrix
+	 * @return: the matrix conjugate(mat.transpose)
+	 */
+	public Matrix<Complex> conjugateTranspose( Matrix<Complex> mat ) {
+		return Matrix.map( Complex.ONE(), mat.transpose(), x -> x.conjugate() );
+	}
+
+	/**
+	 * gramMatrix
+	 *  computes the Gram matrix of the set of columns of a matrix
+	 * @param mat: a square matrix
+	 * @return: the matrix conjugateTranspose(mat) * mat
+	 */
+	public Matrix<Complex> gramMatrix( Matrix<Complex> mat ) {
+		return conjugateTranspose(mat).mult(mat);
 	}
 	
 }

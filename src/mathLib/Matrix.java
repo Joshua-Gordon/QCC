@@ -333,10 +333,24 @@ public class Matrix<T> implements Serializable {
 				r(mat.v(r, c), r, c);
 	}
 	
+	/**
+	 * getSLice
+	 *  returns a submatrix indexed by row ranges and column ranges
+	 * @param r1: start row index
+	 * @param r2: final row index (inclusive)
+	 * @param c1: start column index
+	 * @param c2: final column index (inclusive)
+	 * @return: submatrix indexed by rows r1 to r2 and columns c1 to c2
+	 */
 	public Matrix<T> getSlice( int r1, int r2, int c1, int c2 ) {
-		// should throw exception if r1 > r2 or c1 > c2
+		// throw exception if r1 > r2 or c1 > c2?
+		if ( r1 > r2 || c1 > c2 ) {
+			return null;
+		}
+		
 		int numRows = r2 - r1 + 1;
 		int numCols = c2 - c1 + 1;
+		
 		int numItems = numRows * numCols;
 		Matrix<T> mat = new Matrix<T>(o, numRows, numCols, o.mkZeroArray( numItems ) );
 		for (int r = 0; r < numRows; r++) {
@@ -346,10 +360,40 @@ public class Matrix<T> implements Serializable {
 		}
 		return mat;
 	}
+	
+	
+	/**
+	 * setSlice
+	 *  performs a submatrix replacement
+	 * @param r1: start row index
+	 * @param r2: final row index (inclusive)
+	 * @param c1: start column index
+	 * @param c2: final column index (inclusive)
+	 * @param newmat: a matrix of size (r2-r1+1) by (c2-c1+1) containing the replacement submatrix
+	 * @return matrix with newmat as a submatrix
+	 */
+	public Matrix<T> setSlice( int r1, int r2, int c1, int c2, Matrix<T> newmat ) {
+		// throw exception if r1 > r2 or c1 > c2?
+		if ( r1 > r2 || c1 > c2 ) {
+			return null;
+		}
+		
+		int numRows = r2 - r1 + 1;
+		int numCols = c2 - c1 + 1;
+		int numItems = numRows * numCols;
+		Matrix<T> mat = this.copy(); //new Matrix<T>(o, numRows, numCols, o.mkZeroArray( numItems ) );
+		for (int r = 0; r < numRows; r++) {
+			for (int c = 0; c < numCols; c++) {
+				mat.r( newmat.v(r1+r, c1+c), r, c);
+			}
+		}
+		return mat;
+	}
+	
 
 	public static <A, B> Matrix<B> map(Operators<B> operators, Matrix<A> m, Function<A,B> f) {
-		int w = m.getColumns();
-		int h = m.getRows();
+		int w = m.getRows();
+		int h = m.getColumns();
 		Matrix<B> newMat = new Matrix<>(operators, w,h);
 		for(int x = 0; x < w; ++x) {
 			for(int y = 0; y < h; ++y) {
