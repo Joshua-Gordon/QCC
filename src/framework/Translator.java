@@ -15,11 +15,12 @@ import mathLib.Matrix;
 public class Translator {
 
     static String code = "";
-    static int offset = 0;
+    static int offset = Integer.MAX_VALUE;
+    static int bottomoffset = Integer.MAX_VALUE;
 
     public static String exportQUIL() {
         CircuitBoard cb = Main.getWindow().getSelectedBoard();
-        offset = cb.getRows();
+        bottomoffset = offset = cb.getRows();
         ArrayList<String> customGates = new ArrayList<>();
         ExportedGate.exportGates(cb, new ExportGatesRunnable() {
             @Override
@@ -69,10 +70,15 @@ public class Translator {
             @Override
             public void nextColumnEvent(int column) {
                 int i = offset;
+                int j = bottomoffset;
                 try {
                     for (i = 0; cb.getSolderedRegister(column, i).getSolderedGate().getAbstractGate().getName().equals("I"); ++i);
                 } catch(IndexOutOfBoundsException e) {}
+                try{
+                    for (j = cb.getRows(); cb.getSolderedRegister(column,j).getSolderedGate().getAbstractGate().getName().equals("I"); --j);
+                } catch(IndexOutOfBoundsException e) {}
                 offset = Math.min(offset,i);
+                bottomoffset = Math.min(bottomoffset,j);
             }
 
 			@Override
@@ -85,7 +91,7 @@ public class Translator {
 
     public static String exportQASM() {
         CircuitBoard cb = Main.getWindow().getSelectedBoard();
-        offset = cb.getRows();
+        bottomoffset = offset = cb.getRows();
         ArrayList<String> customGates = new ArrayList<>();
         code += "OPENQASM 2.0;\ninclude \"qelib1.inc\";\nqreg q[" + "FORMATHERE" + "];\ncreg c[" + "FORMATHERE" + "];\n";
         ExportedGate.exportGates(cb, new ExportGatesRunnable() {
@@ -98,7 +104,7 @@ public class Translator {
                             code += "measure q[" + y + "] -> c[" + y + "];\n";
                             break;
                         case "CNOT":
-                            code += "cx q[" + y + "],q[" + (y+eg.getHeight()) + "];\n";
+                            code += "cx q[" + y + "],q[" + (y+eg.getHeight()-1) + "];\n";
                             break;
                         case "SWAP":
                             if(eg.getHeight() > 0) {
@@ -119,17 +125,25 @@ public class Translator {
             @Override
             public void nextColumnEvent(int column) {
                 int i = offset;
+                int j = bottomoffset;
                 try {
                     for (i = 0; cb.getSolderedRegister(column, i).getSolderedGate().getAbstractGate().getName().equals("I"); ++i);
                 } catch(IndexOutOfBoundsException e) {}
+                try{
+                    //System.out.println(cb.getSolderedRegister(column,cb.getRows()));
+                    for (j = 0; cb.getSolderedRegister(column, cb.getRows()-j-1).getSolderedGate().getAbstractGate().getName().equals("I"); ++j);
+                } catch(IndexOutOfBoundsException e) {}
                 offset = Math.min(offset,i);
+                bottomoffset = Math.min(bottomoffset,j);
             }
 			@Override
 			public void columnEndEvent(int column) {}
         });
-        String temp = fixQASM(code,offset).replace("FORMATHERE",""+(cb.getRows()-offset));
+        System.out.println("Bottom: " + bottomoffset);
+        System.out.println("Top: " + offset);
+        String temp = fixQASM(code,offset).replace("FORMATHERE",""+(cb.getRows()-offset - bottomoffset));
         code = "";
-        for(int i = 0; i < cb.getRows()-offset; ++i) {
+        for(int i = 0; i < cb.getRows()-offset-bottomoffset; ++i) {
             temp += "measure q[" + i + "] -> c[" + i + "];\n";
         }
         return temp;
@@ -169,13 +183,13 @@ public class Translator {
         for(String line : Arrays.copyOfRange(lines,4,lines.length)) {
             String[] components = line.split("\\[");
             int idx;
-            if(components.length >= 2) {
+            if(components.length >= 2) { //single qubit gates
                 output += components[0] + "[";
                 idx = Integer.parseInt(components[1].substring(0,components[1].indexOf("]")));
                 output += idx-offset;
                 output += components[1].substring(components[1].indexOf("]"));
             }
-            if(components.length == 3) {
+            if(components.length == 3) { //cnot
                 idx = Integer.parseInt(components[2].substring(0,components[2].indexOf("]")));
                 output += "[" + (idx-offset);
                 output += components[2].substring(components[2].indexOf("]"));
@@ -183,6 +197,25 @@ public class Translator {
             output+="\n";
         }
         return output;
+    }
+
+    public static ArrayList<ArrayList<SolderedRegister>> importQuil(String quil) {
+        ArrayList<String> code = new ArrayList<>();
+        Collections.addAll(code,quil.split("\n"));
+        ArrayList<CustomGate> customGates = new ArrayList<>();
+        for(int i = 0; i < code.size(); ++i) {
+            String line = code.get(i);
+            String[] pieces = line.split(" ");
+            String  header = pieces[0];
+            switch(header){
+                case("DEFGATE"):
+                    String name = line.substring(8,line.length()-1); //Drop the : at the end
+                    String nextLine = code.get(i+1);
+                    int size = nextLine.split(" ").length;
+
+            }
+        }
+        return null;
     }
 
     /**
