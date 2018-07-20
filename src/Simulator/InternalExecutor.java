@@ -38,7 +38,7 @@ public class InternalExecutor {
 
             }
         });
-        Qubit output = (Qubit) gates.stream().reduce(input,(state,gate)->gate.mult(state));
+        Qubit output = (Qubit) gates.stream().reduce(input,(state,gate)->gate.mult(state)); //TODO: Fix this cast
         return Qubit.measure(output);
     }
 }

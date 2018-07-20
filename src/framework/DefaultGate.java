@@ -108,7 +108,7 @@ public class DefaultGate extends AbstractGate implements Serializable{
                 Complex.ZERO(), Complex.ZERO(), Complex.ONE(), Complex.ZERO());
         gate = new DefaultGate("CNOT", mat, AbstractGate.GateType.CNOT);
         gate.setIcon(GateIcon.getCNotIcon());
-        DEFAULT_GATES.put("C-NOT",gate);
+        DEFAULT_GATES.put("CNOT",gate);
         
         mat = new Matrix<>(8, 8,
                 Complex.ONE(), Complex.ZERO(), Complex.ZERO(), Complex.ZERO(), Complex.ZERO(), Complex.ZERO(), Complex.ZERO(), Complex.ZERO(),

@@ -431,6 +431,7 @@ public class CircuitBoard implements Serializable{
 
 	public void setGates(ArrayList<ArrayList<SolderedRegister>> gates) {
 		this.board = gates;
+		Main.getWindow().getRenderContext().paintRerenderedBaseImageOnly();
 	}
 	
 	/**
