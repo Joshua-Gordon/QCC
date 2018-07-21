@@ -67,13 +67,17 @@ public class Main {
     			System.err.println("Spectral decomposition: fail");
     		}
 
+    		/* Testing matrix exponential */
+    		Matrix<Complex> newMat = obj.map( x -> x*x, mat3 );
+    		System.out.println("Matrix = \n" + mat3.toString());
+    		System.out.println("Squaring = \n" + newMat.toString());
 
     		/* TESTING: user input matrix
     		CustomGateConstructorUI g = new CustomGateConstructorUI(null);
     		g.show();
     		Matrix<Complex> mat = g.getCustomMatrix().stream().reduce((a, m) -> a.kronecker(m)).get();
     		System.out.println(mat);
-    		 */
+    		*/
     	}
 
     	

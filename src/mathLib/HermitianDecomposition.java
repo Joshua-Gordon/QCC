@@ -2,9 +2,45 @@ package mathLib;
 
 import Jama.*;
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 
 public class HermitianDecomposition {
+	
+	/**
+	 * map
+	 *  applies a function to a matrix
+	 * @param func: an analytic function
+	 * @param mat: a hermitian matrix
+	 * @return the matrix func(mat)
+	 */
+	public static Matrix<Complex> map( Function<Double, Double> func, Matrix<Complex> mat ) {
+		List<Eigenspace> eigspaces = eigh(mat);
+		List<Eigenspace> adjustedEigspaces = map( func, eigspaces );
+		return eighInverse( adjustedEigspaces );
+	}
+	
+	/**
+	 * map
+	 *  applies a function to the list of eigenspaces
+	 * @param func: an analytic function
+	 * @param eigspaces: a list of pairs (eigenvalue, eigenprojector)
+	 * @return the list of pairs (func(eigenvalue), eigenprojector)
+	 */
+	public static List<Eigenspace> map( Function<Double, Double> func, List<Eigenspace> eigspaces ) {
+		List<Eigenspace> clone = new ArrayList<Eigenspace>();
+		//clone = eigspaces.stream().map(x -> x.copy()).collect(Collectors.toList());
+		Iterator<Eigenspace> looper = eigspaces.iterator();
+		while ( looper.hasNext() )  {
+			Eigenspace eigspace = looper.next();
+			Eigenspace newEigspace = eigspace.copy();
+			newEigspace.setEigenvalue(func.apply(newEigspace.getEigenvalue()));
+			clone.add(newEigspace);
+		}
+		//return clone.stream().map(x -> x.setEigenvalue(func.apply(x.getEigenvalue()))).collect(Collectors.toList());
+		return clone;
+	}
 	
 	/** eigh
 	 *   computes the spectral decomposition of a hermitian matrix (Matlab style)
@@ -90,9 +126,27 @@ public class HermitianDecomposition {
 		
 		return withinTolerance(mat, clone, epsilon);
 	}
+	
+	/**
+	 * eighInverse
+	 *  compute the matrix from the list of eigenspaces
+	 * @param eigspaces: a list of pairs (eigenvalue, eigenprojector)
+	 * @return the matrix represented by the sum of eigenvalue times eigenprojector
+	 */
+	
+	public static Matrix<Complex> eighInverse( List<Eigenspace> eigspaces ) {
+		int dim = eigspaces.get(0).getDimension();
+		Matrix<Complex> mat = new Matrix<Complex>(Complex.ZERO(), dim, dim);
+		for (int i = 0; i < eigspaces.size(); i++) {
+			Eigenspace eigspace = eigspaces.get(i);
+			mat = mat.add( eigspace.getEigenprojector().mult( Complex.real(eigspace.getEigenvalue())));
+		}
+		return mat;
+	}
 
 	
-	/** decompose
+	/** 
+	 * decompose
 	 *   computes the eigenvalue decomposition of a hermitian matrix 
 	 *   uses a JAMA implementation for eigendecomposition of real-symmetric matrices
 	 *   
