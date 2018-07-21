@@ -200,22 +200,70 @@ public class Translator {
     }
 
     public static ArrayList<ArrayList<SolderedRegister>> importQuil(String quil) {
+        ArrayList<ArrayList<SolderedRegister>> rows = new ArrayList<>();
+        int maxDepth = 1;
+        int maxWidth = 0;
+        rows.add(new ArrayList<>());
         ArrayList<String> code = new ArrayList<>();
         Collections.addAll(code,quil.split("\n"));
-        ArrayList<CustomGate> customGates = new ArrayList<>();
-        for(int i = 0; i < code.size(); ++i) {
-            String line = code.get(i);
+        for(int instruction = 0; instruction < code.size(); ++instruction) {
+            String line = code.get(instruction);
+            if (line.equals("")) continue;
             String[] pieces = line.split(" ");
-            String  header = pieces[0];
-            switch(header){
-                case("DEFGATE"):
-                    String name = line.substring(8,line.length()-1); //Drop the : at the end
-                    String nextLine = code.get(i+1);
-                    int size = nextLine.split(" ").length;
+            try {
+                AbstractGate ag = DefaultGate.DEFAULT_GATES.get(pieces[0]);
+                int location = Integer.parseInt(pieces[1]);
+                if (location >= maxDepth) {
+                    for (int i = maxDepth; i <= location + 1; ++i) {
+                        rows.add(new ArrayList<>());
+                    }
+                    maxDepth = location + 1;
+                }
+                int maxReg = 0;
+                int gateDepth = 0;
+                for (int i = 1; i < pieces.length; ++i) {
+                    int reg = Integer.parseInt(pieces[i]);
+                    try {
+                        gateDepth = Math.max(rows.get(reg).size(), gateDepth); //gets exception on cnot 0 2
+                    } catch (IndexOutOfBoundsException ioobe) {
+                        rows.add(new ArrayList<>());
+                    }
+                    maxReg = Math.max(maxReg, reg);
+                }
+                maxDepth = Math.max(maxDepth, maxReg + 1);
+                SolderedGate sg = new SolderedGate(ag, 0, pieces.length - 2);
+                for (int i = 0; i < sg.getExpectedNumberOfRegisters(); ++i) {
+                    SolderedRegister sr = new SolderedRegister(sg, i);
+                    int reg = Integer.parseInt(pieces[i + 1]);
+                    if (reg >= rows.size()) {
+                        rows.add(new ArrayList<>());
+                    }
+                    for (int j = rows.get(reg).size(); j < gateDepth; ++j) {
+                        rows.get(reg).add(SolderedRegister.identity());
+                    }
+                    rows.get(reg).add(sr);
+                }
+                for (int i = 1; i < pieces.length; ++i)
+                    maxWidth = Math.max(maxWidth, rows.get(Integer.parseInt(pieces[i])).size());
+            } catch (NullPointerException npe) {
 
             }
         }
-        return null;
+        ArrayList<ArrayList<SolderedRegister>> transpose = new ArrayList<>();
+        //<editor-fold desc="Transpose array">
+        for(int x = 0; x < maxWidth; ++x) {
+            transpose.add(new ArrayList<>());
+            for(int y = 0; y < maxDepth; ++y) {
+                try{
+                    SolderedRegister sr = rows.get(y).get(x);
+                    transpose.get(x).add(sr);
+                } catch(IndexOutOfBoundsException ioobe) {
+                    transpose.get(x).add(SolderedRegister.identity());
+                }
+            }
+        }
+        //</editor-fold>
+        return transpose;
     }
 
     /**
@@ -227,6 +275,7 @@ public class Translator {
         ArrayList<ArrayList<SolderedRegister>> board = new ArrayList<>();
         int maxLen = 0;
         for(String line : quil.split("\n")) {
+            if(line.equals("")) continue;
             String gate = line.split(" ")[0];
             AbstractGate g = DefaultGate.DEFAULT_GATES.get(gate);
             int register = Integer.parseInt(line.split(" ")[1]);
@@ -283,15 +332,15 @@ public class Translator {
         }
         switch(lt){
             case QUIL:
-                gates = parseQuil(code);
+                gates = importQuil(code);
                 break;
             case QASM:
                 String unqasm = translateQASMToQuil(code);
-                gates = parseQuil(unqasm);
+                gates = importQuil(unqasm);
                 break;
             case QUIPPER:
                 String unquipper = translateQuipperToQuil(code);
-                gates = parseQuil(unquipper);
+                gates = importQuil(unquipper);
                 break;
         }
         return gates;

@@ -13,7 +13,7 @@ public class Main {
 	
     public static void main(String[] args) {
     	/* toggle flags: debug mode or not */
-    	boolean normalMode = false;
+    	boolean normalMode = true;
     	boolean debugMode = true;
 
     	if ( debugMode ) {
@@ -86,6 +86,17 @@ public class Main {
     		window = new Window();
     		window.setVisible(true);
     	}
+    	if ( debugMode ) {
+			ArrayList<ArrayList<SolderedRegister>> gates = Translator.loadProgram(DefaultGate.LangType.QUIL,"C:\\Users\\Josh\\Desktop\\test.quil");
+			for(int x = 0; x < gates.size(); ++x) {
+				ArrayList<SolderedRegister> srs = gates.get(x);
+				for(int y = 0; y < srs.size(); ++y) {
+					SolderedRegister sr = srs.get(y);
+					System.out.println("X: " + x + "\nY: " + y + "\nGate: " + sr);
+				}
+			}
+			window.getSelectedBoard().setGates(gates);
+		}
 
     }
 
