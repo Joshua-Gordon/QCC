@@ -4,7 +4,7 @@ import appUI.Window;
 import mathLib.Complex;
 import mathLib.Eigenspace;
 import mathLib.Matrix;
-import mathLib.HermitianDecomposition;
+import mathLib.MatrixDecomposition;
 import java.util.*;
 
 public class Main {
@@ -53,7 +53,7 @@ public class Main {
     		//System.out.println(m.toString());
     	
     		/* TESTING: spectral decomposition */
-    		HermitianDecomposition obj = new HermitianDecomposition();
+    		MatrixDecomposition obj = new MatrixDecomposition();
     	
     		/* testing EigenvalueDecomposition:
     		List<Matrix<Complex>> matrices = new ArrayList<Matrix<Complex>>();

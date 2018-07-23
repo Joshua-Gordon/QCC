@@ -6,7 +6,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 
-public class HermitianDecomposition {
+public class MatrixDecomposition {
 	
 	public static double testEpsilon = Math.pow(2.0, -40.0);	// tolerance for checking matrix equality
 	
