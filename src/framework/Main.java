@@ -13,10 +13,11 @@ public class Main {
 	
     public static void main(String[] args) {
     	/* toggle flags: debug mode or not */
-    	boolean normalMode = true;
-    	boolean debugMode = true;
+    	boolean normalMode = false;
+    	boolean debugMode = false;
+    	boolean debugMatrixMode = true;
 
-    	if ( debugMode ) {
+    	if ( debugMatrixMode ) {
     		/* TESTING: matrix operators */
     		// P3
     		Matrix<Complex> mat1 = new Matrix<>(Complex.ONE(), 3, 3,
@@ -36,8 +37,15 @@ public class Main {
     			Complex.ONE(), Complex.ZERO(), Complex.ONE(), Complex.ONE(),
     			Complex.ONE(), Complex.ONE(), Complex.ZERO(), Complex.ONE(),
     			Complex.ONE(), Complex.ONE(), Complex.ONE(), Complex.ZERO());
+ 
+    		// P4
+    		Matrix<Complex> mat4 = new Matrix<>(Complex.ONE(),4,4,
+    			Complex.ZERO(), Complex.ONE(), Complex.ZERO(), Complex.ZERO(),
+    			Complex.ONE(), Complex.ZERO(), Complex.ONE(), Complex.ZERO(),
+    			Complex.ZERO(), Complex.ONE(), Complex.ZERO(), Complex.ONE(),
+    			Complex.ZERO(), Complex.ZERO(), Complex.ONE(), Complex.ZERO());
     		
-    		Matrix<Complex> mat = mat3;
+    		Matrix<Complex> mat = mat2;
     		System.out.println("Test matrix = \n" + mat);
 
     		/* TESTING: matrix map */
@@ -57,21 +65,25 @@ public class Main {
     		System.out.println("v = \n" + v.toString());
     		*/
     		
-    		List<Eigenspace> eigspaces = new ArrayList<Eigenspace>();
-    		eigspaces = obj.eigh(mat);
-    		
-    		if ( obj.checkEigh( mat, eigspaces, 0.0001) ) {
-    			System.err.println("Spectral decomposition: ok");
+    		List<Eigenspace> eigspaces = obj.eigh(mat);
+    		if ( obj.checkDecomposition( mat, eigspaces, obj.testEpsilon) ) {
+    			System.err.println("Hermitian spectral decomposition: ok");
     		}
     		else {
-    			System.err.println("Spectral decomposition: fail");
+    			System.err.println("Hermitian spectral decomposition: fail");
     		}
 
     		/* Testing matrix exponential */
-    		Matrix<Complex> newMat = obj.map( x -> x*x, mat3 );
-    		System.out.println("Matrix = \n" + mat3.toString());
-    		System.out.println("Squaring = \n" + newMat.toString());
+    		Matrix<Complex> expMat = obj.map( x -> Complex.real(Math.E).exp(Complex.I().mult(x)), mat );
+    		System.out.println("Matrix = \n" + mat.toString());
+    		System.out.println("Func(Matrix) = \n" + expMat.toString());
 
+    		/* Testing spectral decomposition for unitary matrices */
+    		List<Eigenspace> expEigspaces = obj.eign(expMat);
+    		if ( obj.checkDecomposition(expMat, expEigspaces, obj.testEpsilon) ) {
+    			System.err.println("Unitary spectral decomposition: ok");
+    		}
+    		
     		/* TESTING: user input matrix
     		CustomGateConstructorUI g = new CustomGateConstructorUI(null);
     		g.show();
@@ -86,6 +98,7 @@ public class Main {
     		window = new Window();
     		window.setVisible(true);
     	}
+    	
     	if ( debugMode ) {
 			ArrayList<ArrayList<SolderedRegister>> gates = Translator.loadProgram(DefaultGate.LangType.QUIL,"C:\\Users\\Josh\\Desktop\\test.quil");
 			for(int x = 0; x < gates.size(); ++x) {

@@ -5,7 +5,7 @@ public class Eigenspace implements Serializable {
 	private static final long serialVersionUID = -1331930154279103218L;
 	
 	private int dimension;		// dimension of underlying space
-	private double eigenvalue;	// eigenvalue of a hermitian matrix
+	private Complex eigenvalue;	// eigenvalue of a matrix
 	private int multiplicity;	// dimension of the eigenspace
 	private Matrix<Complex> eigenprojector;	// sum of the outer product of the eigenvectors
 	private Matrix<Complex> eigenvectors;	// matrix whose columns are the eigenvectors
@@ -16,7 +16,7 @@ public class Eigenspace implements Serializable {
 	 * @param eigval: the eigenvalue
 	 * @param v: a matrix whose columns are the relevant eigenvectors
 	 */
-	public Eigenspace( double eigval, Matrix<Complex> v) {
+	public Eigenspace( Complex eigval, Matrix<Complex> v) {
 		boolean debugMode = false;
 		
 		this.dimension = v.getRows();
@@ -46,7 +46,7 @@ public class Eigenspace implements Serializable {
 		return dimension;
 	}
 
-	public double getEigenvalue() {
+	public Complex getEigenvalue() {
 		return eigenvalue;
 	}
 	
@@ -58,7 +58,7 @@ public class Eigenspace implements Serializable {
 		return multiplicity;
 	}
 	
-	public void setEigenvalue( double val ) {
+	public void setEigenvalue( Complex val ) {
 		this.eigenvalue = val;
 	}
 	
@@ -73,7 +73,7 @@ public class Eigenspace implements Serializable {
 	 * @param mat: a square matrix
 	 * @return: the matrix conjugate(mat.transpose)
 	 */
-	public Matrix<Complex> conjugateTranspose( Matrix<Complex> mat ) {
+	public static Matrix<Complex> conjugateTranspose( Matrix<Complex> mat ) {
 		return Matrix.map( Complex.ONE(), mat.transpose(), x -> x.conjugate() );
 	}
 

@@ -8,17 +8,30 @@ import java.util.stream.Collectors;
 
 public class HermitianDecomposition {
 	
+	public static double testEpsilon = Math.pow(2.0, -40.0);	// tolerance for checking matrix equality
+	
 	/**
 	 * map
-	 *  applies a function to a matrix
+	 *  applies a function to a matrix (that admits a spectral decomposition)
 	 * @param func: an analytic function
-	 * @param mat: a hermitian matrix
+	 * @param mat: a matrix (that possesses a spectral decomposition)
 	 * @return the matrix func(mat)
 	 */
-	public static Matrix<Complex> map( Function<Double, Double> func, Matrix<Complex> mat ) {
-		List<Eigenspace> eigspaces = eigh(mat);
-		List<Eigenspace> adjustedEigspaces = map( func, eigspaces );
-		return eighInverse( adjustedEigspaces );
+	public static Matrix<Complex> map( Function<Complex, Complex> func, Matrix<Complex> mat ) {
+		boolean debugMode = true;
+
+		if ( debugMode ) {
+			List<Eigenspace> eigspaces = eigh(mat);
+			List<Eigenspace> adjustedEigspaces = map( func, eigspaces );
+			Matrix<Complex> newMat = eighInverse( adjustedEigspaces );
+		
+			System.err.println("(map) Input matrix = \n" + mat.toString());
+			System.err.println("(map) Input eigspaces = \n" + eigspaces.toString());
+			System.err.println("(map) Output eigspaces = \n" + adjustedEigspaces.toString());
+			System.err.println("(map) Output matrix = \n" + newMat.toString());
+		}
+				
+		return eighInverse( map(func, eigh(mat)) );
 	}
 	
 	/**
@@ -28,28 +41,69 @@ public class HermitianDecomposition {
 	 * @param eigspaces: a list of pairs (eigenvalue, eigenprojector)
 	 * @return the list of pairs (func(eigenvalue), eigenprojector)
 	 */
-	public static List<Eigenspace> map( Function<Double, Double> func, List<Eigenspace> eigspaces ) {
+	public static List<Eigenspace> map( Function<Complex, Complex> func, List<Eigenspace> eigspaces ) {
+		boolean debugMode = true;
 		List<Eigenspace> clone = new ArrayList<Eigenspace>();
-		//clone = eigspaces.stream().map(x -> x.copy()).collect(Collectors.toList());
+		
+		// iterate over eigenspaces, adjusting eigenvalues
 		Iterator<Eigenspace> looper = eigspaces.iterator();
 		while ( looper.hasNext() )  {
+			// get next eigenspace
 			Eigenspace eigspace = looper.next();
 			Eigenspace newEigspace = eigspace.copy();
+			
+			// apply the function to the eigenvalue, leaving eigenprojectors alone
 			newEigspace.setEigenvalue(func.apply(newEigspace.getEigenvalue()));
-			clone.add(newEigspace);
+			
+			clone.add( newEigspace );
+			
+			if ( debugMode ) {
+				System.err.println("(map2) old eigenvalue = " + String.valueOf(eigspace.getEigenvalue()));
+				System.err.println("(map2) new eigenvalue = " + String.valueOf(newEigspace.getEigenvalue()));
+			}
 		}
-		//return clone.stream().map(x -> x.setEigenvalue(func.apply(x.getEigenvalue()))).collect(Collectors.toList());
+		
+		if ( debugMode) {
+			System.err.println("(map2) source matrix = \n" + eighInverse(eigspaces).toString());
+			System.err.println("(map2) target matrix = \n" + eighInverse(clone).toString());
+		}
+		
 		return clone;
 	}
+	
+	
+	/**
+	 * eign
+	 *  computes the spectral decomposition of a normal matrix
+	 * @param mat: a normal matrix
+	 * @return a list where each item is a pair of (eigenvalue, eigenprojector)
+	 */
+	public static List<Eigenspace> eign( Matrix<Complex> mat ) {
+		boolean debugMode = true;
+		
+		// TODO: should check that input is a normal matrix
+		
+		Matrix<Complex> hermitianMat = mat.mult(Eigenspace.conjugateTranspose(mat));
+		List<Eigenspace> eigspaces = map( x -> Complex.I().mult(Math.sqrt(x.getReal())), eigh(hermitianMat));
+		
+		if ( debugMode ) {
+			if ( !checkDecomposition(mat, eigspaces, testEpsilon) ) 
+				throw new RuntimeException("eign: fail");
+		}
+		
+		return eigspaces;
+	}
+	
 	
 	/** eigh
 	 *   computes the spectral decomposition of a hermitian matrix (Matlab style)
 	 *   uses decompose() method to build the orthogonal projections onto distinct eigenspaces
-	 *   
-	 * @param mat
+	 * @param mat: a hermitian matrix
 	 * @return a list where each item is a pair of (eigenvalue, eigenprojector)
 	 */
 	public static List<Eigenspace> eigh( Matrix<Complex> mat ) {
+		// TODO: should check that input is a hermitian matrix
+		
 		boolean debugMode = false;
 		
 		List<Eigenspace> answer = new ArrayList<Eigenspace>();
@@ -85,7 +139,7 @@ public class HermitianDecomposition {
 			Matrix<Complex> submat = evecs.getSlice(0, mat.getRows()-1, i, j);
 			
 			// add eigenspace to the answer list
-			Eigenspace eigspace = new Eigenspace( eigval, submat );
+			Eigenspace eigspace = new Eigenspace( Complex.real(eigval), submat );
 			answer.add( eigspace );
 			
 			if ( debugMode ) {
@@ -96,25 +150,29 @@ public class HermitianDecomposition {
 			
 			j++;
 		}
-		
+
+		// self-checking the result
+		if ( !checkDecomposition(mat, answer, testEpsilon) ) {
+			throw new RuntimeException("Eigh: fail");
+		}
 		return answer;
 	}
 	
 	/**
-	 * checkEigh
+	 * checkDecomposition
 	 *  sanity check for eigh (which builds the eigenspace decomposition of a hermitian matrix)
 	 * @param mat: a hermitian matrix
 	 * @param eigspaces: a list of (eigenvalue, eigenprojector) pairs that represents mat
 	 * @return
 	 */
-	public boolean checkEigh( Matrix<Complex> mat, List<Eigenspace> eigspaces, double epsilon ) {
+	public static boolean checkDecomposition( Matrix<Complex> mat, List<Eigenspace> eigspaces, double epsilon ) {
 		boolean debugMode = false;
 	
 		Matrix<Complex> clone = new Matrix<Complex>(Complex.ZERO(), mat.getRows(), mat.getColumns());
 		Matrix<Complex> unity = new Matrix<Complex>(Complex.ZERO(), mat.getRows(), mat.getColumns());
 		for (int i = 0; i < eigspaces.size(); i++) {
 			Eigenspace eigspace = eigspaces.get(i);
-			clone = clone.add( eigspace.getEigenprojector().mult( Complex.real(eigspace.getEigenvalue())));
+			clone = clone.add( eigspace.getEigenprojector().mult( eigspace.getEigenvalue()));
 			unity = unity.add( eigspace.getEigenprojector() );
 		}
 
@@ -124,7 +182,8 @@ public class HermitianDecomposition {
 			System.err.println("Identity ?=\n" + unity);
 		}
 		
-		return withinTolerance(mat, clone, epsilon);
+		Matrix<Complex> identityMat = Matrix.identity(Complex.ZERO(), mat.getRows());
+		return withinTolerance(mat, clone, epsilon) && withinTolerance(unity, identityMat, epsilon);
 	}
 	
 	/**
@@ -139,7 +198,7 @@ public class HermitianDecomposition {
 		Matrix<Complex> mat = new Matrix<Complex>(Complex.ZERO(), dim, dim);
 		for (int i = 0; i < eigspaces.size(); i++) {
 			Eigenspace eigspace = eigspaces.get(i);
-			mat = mat.add( eigspace.getEigenprojector().mult( Complex.real(eigspace.getEigenvalue())));
+			mat = mat.add( eigspace.getEigenprojector().mult( eigspace.getEigenvalue()));
 		}
 		return mat;
 	}
@@ -163,6 +222,8 @@ public class HermitianDecomposition {
 		
 		if ( rows != cols ) return null;
 		if ( rows == 0 || cols == 0 ) return null;
+		
+		// TODO: should check that mat is really hermitian.
 
 		/*
 		 * if the input Hermitian matrix is A + iB
@@ -395,9 +456,15 @@ public class HermitianDecomposition {
 		return answer;
 	}
 	
-	
 
-	// TO-DO: synchronize this with the JAMA checker
+	/**
+	 * withinTolerance
+	 *  checks that the matrices are equal (up to some tolerance in their 1-norm)
+	 * @param a: input matrix
+	 * @param b: input matrix
+	 * @param epsilon: tolerance
+	 * @return yes if |a-b|_1 < epsilon
+	 */
     public static boolean withinTolerance(Matrix<Complex> a, Matrix<Complex> b, double epsilon) {
     	boolean debugMode = false;
     	
@@ -405,11 +472,10 @@ public class HermitianDecomposition {
     	double diff = 0.0;
     	for(int x = 0; x < c.getColumns(); ++x) {
 			for(int y = 0; y < c.getRows(); ++y) {
-				//Complex cdiff = a.o.op(a.v(y,x)).sub(b.v(y, x));
 				diff += c.v(y,x).abs();
 			}
 		}	
-    	
+ 
     	if ( debugMode ) System.err.println("Difference = \n" + c.toString());
     	
 		return diff < epsilon;
