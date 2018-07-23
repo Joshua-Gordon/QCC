@@ -43,7 +43,7 @@ public class Translator {
                     name = DefaultGate.typeToString(gt, DefaultGate.LangType.QUIL);
                     code += name + " " + y;
                     if(gt.equals(GateType.CNOT) || gt.equals(GateType.SWAP)) {
-                        code += " " + eg.getHeight();
+                        code += " " + (eg.getHeight()-1);
                     }
                 } else if(!id){
                     if(!customGates.contains(name)) {
@@ -200,6 +200,7 @@ public class Translator {
     }
 
     public static ArrayList<ArrayList<SolderedRegister>> importQuil(String quil) {
+        ArrayList<CustomGate> customGates = new ArrayList<>();
         ArrayList<ArrayList<SolderedRegister>> rows = new ArrayList<>();
         int maxDepth = 1;
         int maxWidth = 0;
@@ -209,45 +210,71 @@ public class Translator {
         for(int instruction = 0; instruction < code.size(); ++instruction) {
             String line = code.get(instruction);
             if (line.equals("")) continue;
-            String[] pieces = line.split(" ");
-            try {
-                AbstractGate ag = DefaultGate.DEFAULT_GATES.get(pieces[0]);
-                int location = Integer.parseInt(pieces[1]);
-                if (location >= maxDepth) {
-                    for (int i = maxDepth; i <= location + 1; ++i) {
-                        rows.add(new ArrayList<>());
+            if (line.startsWith("DEFGATE")) {
+                String name = line.substring(8,line.length()-1); //Drop the : at the end
+                String nextLine;
+                while((nextLine = code.get(++instruction)).equals(""));
+                int size = nextLine.split(",").length; //the N in NxN matrix
+                Matrix<Complex> mat = new Matrix<>(Complex.ONE(),size,size);
+                for(int y = 0; y < size; ++y) {
+                    String[] row = nextLine.split(","); //grab the next row of complex numbers in the quil file
+                    for(int x = 0; x < size; ++x) {
+                        Complex idx = Complex.parseComplex(row[x]); //parse the xth complex number
+                        mat.r(idx,y,x); //y x because Matrix::r requires row,column.
                     }
-                    maxDepth = location + 1;
+                    nextLine = code.get(++instruction); //Increment instruction to advance through the file
                 }
-                int maxReg = 0;
-                int gateDepth = 0;
-                for (int i = 1; i < pieces.length; ++i) {
-                    int reg = Integer.parseInt(pieces[i]);
-                    try {
-                        gateDepth = Math.max(rows.get(reg).size(), gateDepth); //gets exception on cnot 0 2
-                    } catch (IndexOutOfBoundsException ioobe) {
-                        rows.add(new ArrayList<>());
-                    }
-                    maxReg = Math.max(maxReg, reg);
-                }
-                maxDepth = Math.max(maxDepth, maxReg + 1);
-                SolderedGate sg = new SolderedGate(ag, 0, pieces.length - 2);
-                for (int i = 0; i < sg.getExpectedNumberOfRegisters(); ++i) {
-                    SolderedRegister sr = new SolderedRegister(sg, i);
-                    int reg = Integer.parseInt(pieces[i + 1]);
-                    if (reg >= rows.size()) {
-                        rows.add(new ArrayList<>());
-                    }
-                    for (int j = rows.get(reg).size(); j < gateDepth; ++j) {
-                        rows.get(reg).add(SolderedRegister.identity());
-                    }
-                    rows.get(reg).add(sr);
-                }
-                for (int i = 1; i < pieces.length; ++i)
-                    maxWidth = Math.max(maxWidth, rows.get(Integer.parseInt(pieces[i])).size());
-            } catch (NullPointerException npe) {
-
+                CustomGate cg = new CustomGate(mat);
+                cg.setName(name);
+                Main.getWindow().getSelectedBoard().addCustomGate(cg);
+                --instruction;
+                continue;
             }
+            String[] pieces = line.split(" ");
+            AbstractGate ag = null;
+            ag = DefaultGate.DEFAULT_GATES.get(pieces[0]);
+            if(ag == null) {
+                for(int j = 0; j < Main.getWindow().getSelectedBoard().getCustomGates().size(); ++j) {
+                    AbstractGate cg = Main.getWindow().getSelectedBoard().getCustomGates().get(j);
+                    if(cg.getName().equals(pieces[0])) {
+                        ag = cg;
+                    }
+                }
+            }
+            int location = Integer.parseInt(pieces[1]);
+            if (location >= maxDepth) {
+                for (int i = maxDepth; i <= location + 1; ++i) {
+                    rows.add(new ArrayList<>());
+                }
+                maxDepth = location + 1;
+            }
+            int maxReg = 0;
+            int gateDepth = 0;
+            for (int i = 1; i < pieces.length; ++i) {
+                int reg = Integer.parseInt(pieces[i]);
+                try {
+                    gateDepth = Math.max(rows.get(reg).size(), gateDepth);
+                } catch (IndexOutOfBoundsException ioobe) {
+                    rows.add(new ArrayList<>());
+                }
+                maxReg = Math.max(maxReg, reg);
+            }
+            maxDepth = Math.max(maxDepth, maxReg + 1);
+            SolderedGate sg = new SolderedGate(ag, 0, pieces.length - 2);
+            for (int i = 0; i < sg.getExpectedNumberOfRegisters(); ++i) {
+                SolderedRegister sr = new SolderedRegister(sg, i);
+                int reg = Integer.parseInt(pieces[i + 1]);
+                if (reg >= rows.size()) {
+                    rows.add(new ArrayList<>());
+                }
+                for (int j = rows.get(reg).size(); j < gateDepth; ++j) {
+                    rows.get(reg).add(SolderedRegister.identity());
+                }
+                rows.get(reg).add(sr);
+            }
+            for (int i = 1; i < pieces.length; ++i)
+                maxWidth = Math.max(maxWidth, rows.get(Integer.parseInt(pieces[i])).size());
+
         }
         ArrayList<ArrayList<SolderedRegister>> transpose = new ArrayList<>();
         //<editor-fold desc="Transpose array">
@@ -263,6 +290,8 @@ public class Translator {
             }
         }
         //</editor-fold>
+        for(CustomGate cg : customGates)
+            Main.getWindow().getSelectedBoard().addCustomGate(cg);
         return transpose;
     }
 
