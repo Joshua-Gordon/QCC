@@ -1,7 +1,8 @@
 package mathLib;
 import java.io.Serializable;
 
-public class Eigenspace implements Serializable {	
+public class Eigenspace implements Serializable {		
+	private static final long serialVersionUID = -1331930154279103218L;
 	
 	private int dimension;		// dimension of underlying space
 	private double eigenvalue;	// eigenvalue of a hermitian matrix
@@ -36,6 +37,14 @@ public class Eigenspace implements Serializable {
 			System.err.println("Eigenprojector = \n" + eigp);
 		}
 	}
+	
+	public Eigenspace copy() {
+		return new Eigenspace( this.eigenvalue, this.eigenvectors );
+	}
+	
+	public int getDimension() {
+		return dimension;
+	}
 
 	public double getEigenvalue() {
 		return eigenvalue;
@@ -47,6 +56,10 @@ public class Eigenspace implements Serializable {
 	
 	public int getMultiplicity() {
 		return multiplicity;
+	}
+	
+	public void setEigenvalue( double val ) {
+		this.eigenvalue = val;
 	}
 	
 	@Override
