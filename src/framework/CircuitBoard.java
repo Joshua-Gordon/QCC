@@ -433,6 +433,10 @@ public class CircuitBoard implements Serializable{
 		this.board = gates;
 		Main.getWindow().getRenderContext().paintRerenderedBaseImageOnly();
 	}
+
+	public void addCustomGate(CustomGate cg) {
+		this.customGates.addElement(cg);
+	}
 	
 	/**
 	 * Throws an {@link ArrayIndexOutOfBoundsException}.

@@ -74,7 +74,8 @@ public class Complex extends Operators<Complex> implements Serializable{
     }
 
     public static Complex parseComplex(String s) {
-        String[] ssplit = s.split("[+-]");
+        String[] ssplit = s.trim().split("[+-]");
+        if(ssplit[0].equals("")) System.arraycopy(ssplit,1,ssplit,0,ssplit.length-1);
         if(s.equals("i")) {
             return Complex.I();
         }

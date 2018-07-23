@@ -88,4 +88,9 @@ public class CustomGate extends AbstractGate implements Serializable {
     	}
     }
 
+    @Override
+	public int getNumberOfRegisters() {
+    	return matrixes.size();
+	}
+
 }
