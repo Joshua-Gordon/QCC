@@ -14,7 +14,7 @@ public class Main {
     public static void main(String[] args) {
     	/* toggle flags: debug mode or not */
     	boolean normalMode = true;
-    	boolean debugMode = true;
+    	boolean debugMode = false;
     	boolean debugMatrixMode = false;
 
     	if ( debugMatrixMode ) {
@@ -34,7 +34,7 @@ public class Main {
     		}
 
     		/* TESTING: matrix exponential */
-    		Matrix<Complex> mixMatrix = HamiltonianSimulation.quantunWalk(mat, mixTime);
+    		Matrix<Complex> mixMatrix = HamiltonianSimulation.quantumWalk(mat, mixTime);
     		System.out.println("Matrix = \n" + mat.toString());
     		System.out.println("Func(Matrix) = \n" + mixMatrix.toString());
     		
