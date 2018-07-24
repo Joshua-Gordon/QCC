@@ -13,9 +13,9 @@ public class Main {
 	
     public static void main(String[] args) {
     	/* toggle flags: debug mode or not */
-    	boolean normalMode = false;
-    	boolean debugMode = false;
-    	boolean debugMatrixMode = true;
+    	boolean normalMode = true;
+    	boolean debugMode = true;
+    	boolean debugMatrixMode = false;
 
     	if ( debugMatrixMode ) {
     		/* TESTING: matrix operators */
@@ -53,7 +53,7 @@ public class Main {
     	}
     	
     	if ( debugMode ) {
-			ArrayList<ArrayList<SolderedRegister>> gates = Translator.loadProgram(DefaultGate.LangType.QUIL,"C:\\Users\\Josh\\Desktop\\test.quil");
+			ArrayList<ArrayList<SolderedRegister>> gates = Translator.loadProgram(DefaultGate.LangType.QUIL,"res\\test.quil");
 			for(int x = 0; x < gates.size(); ++x) {
 				ArrayList<SolderedRegister> srs = gates.get(x);
 				for(int y = 0; y < srs.size(); ++y) {
