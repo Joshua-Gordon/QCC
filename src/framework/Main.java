@@ -1,10 +1,10 @@
 package framework;
 
 import appUI.Window;
-import mathLib.Complex;
-import mathLib.Eigenspace;
-import mathLib.Matrix;
-import mathLib.MatrixDecomposition;
+
+import mathLib.*;
+import testLib.*;
+import testLib.BaseGraph;
 import java.util.*;
 
 public class Main {
@@ -19,52 +19,12 @@ public class Main {
 
     	if ( debugMatrixMode ) {
     		/* TESTING: matrix operators */
-    		// P3
-    		Matrix<Complex> mat1 = new Matrix<>(Complex.ONE(), 3, 3,
-                Complex.ZERO(), Complex.ONE(), Complex.ZERO(),
-                Complex.ONE(), Complex.ZERO(), Complex.ONE(),
-                Complex.ZERO(), Complex.ONE(), Complex.ZERO());
-
-    		// K3
-    		Matrix<Complex> mat2 = new Matrix<>(Complex.ONE(),3,3,
-    			Complex.ZERO(), Complex.ONE(), Complex.ONE(),
-    			Complex.ONE(), Complex.ZERO(), Complex.ONE(),
-    			Complex.ONE(), Complex.ONE(), Complex.ZERO());
- 
-    		// K4
-    		Matrix<Complex> mat3 = new Matrix<>(Complex.ONE(),4,4,
-    			Complex.ZERO(), Complex.ONE(), Complex.ONE(), Complex.ONE(),
-    			Complex.ONE(), Complex.ZERO(), Complex.ONE(), Complex.ONE(),
-    			Complex.ONE(), Complex.ONE(), Complex.ZERO(), Complex.ONE(),
-    			Complex.ONE(), Complex.ONE(), Complex.ONE(), Complex.ZERO());
- 
-    		// P4
-    		Matrix<Complex> mat4 = new Matrix<>(Complex.ONE(),4,4,
-    			Complex.ZERO(), Complex.ONE(), Complex.ZERO(), Complex.ZERO(),
-    			Complex.ONE(), Complex.ZERO(), Complex.ONE(), Complex.ZERO(),
-    			Complex.ZERO(), Complex.ONE(), Complex.ZERO(), Complex.ONE(),
-    			Complex.ZERO(), Complex.ZERO(), Complex.ONE(), Complex.ZERO());
-    		
-    		Matrix<Complex> mat = mat2;
+    		Matrix<Complex> mat = BaseGraph.completeGraph(2);
+    		double mixTime = Math.PI / 4.0;
     		System.out.println("Test matrix = \n" + mat);
-
-    		/* TESTING: matrix map */
-    		//Matrix<Complex> m = Matrix.map(Complex.ONE(), mat, c -> c.mult(Complex.ONE()));
-    		//System.out.println(m.toString());
     	
-    		/* TESTING: spectral decomposition */
+    		/* TESTING: spectral decomposition for hermitian matrices */
     		MatrixDecomposition obj = new MatrixDecomposition();
-    	
-    		/* testing EigenvalueDecomposition:
-    		List<Matrix<Complex>> matrices = new ArrayList<Matrix<Complex>>();
-    		matrices = obj.decompose(mat);
-    		Matrix<Complex> d = matrices.get(0);
-    		Matrix<Complex> v = matrices.get(1);
-    	
-    		System.out.println("d = \n" + d.toString());
-    		System.out.println("v = \n" + v.toString());
-    		*/
-    		
     		List<Eigenspace> eigspaces = obj.eigh(mat);
     		if ( obj.checkDecomposition( mat, eigspaces, obj.testEpsilon) ) {
     			System.err.println("Hermitian spectral decomposition: ok");
@@ -73,16 +33,10 @@ public class Main {
     			System.err.println("Hermitian spectral decomposition: fail");
     		}
 
-    		/* Testing matrix exponential */
-    		Matrix<Complex> expMat = obj.map( x -> Complex.real(Math.E).exp(Complex.I().mult(x)), mat );
+    		/* TESTING: matrix exponential */
+    		Matrix<Complex> mixMatrix = HamiltonianSimulation.quantunWalk(mat, mixTime);
     		System.out.println("Matrix = \n" + mat.toString());
-    		System.out.println("Func(Matrix) = \n" + expMat.toString());
-
-    		/* Testing spectral decomposition for unitary matrices */
-    		List<Eigenspace> expEigspaces = obj.eign(expMat);
-    		if ( obj.checkDecomposition(expMat, expEigspaces, obj.testEpsilon) ) {
-    			System.err.println("Unitary spectral decomposition: ok");
-    		}
+    		System.out.println("Func(Matrix) = \n" + mixMatrix.toString());
     		
     		/* TESTING: user input matrix
     		CustomGateConstructorUI g = new CustomGateConstructorUI(null);
@@ -91,7 +45,6 @@ public class Main {
     		System.out.println(mat);
     		*/
     	}
-
     	
     	if ( normalMode ) {
         	DefaultGate.loadGates();

@@ -19,7 +19,6 @@ public class MatrixDecomposition {
 	 */
 	public static Matrix<Complex> map( Function<Complex, Complex> func, Matrix<Complex> mat ) {
 		boolean debugMode = true;
-
 		if ( debugMode ) {
 			List<Eigenspace> eigspaces = eigh(mat);
 			List<Eigenspace> adjustedEigspaces = map( func, eigspaces );
@@ -43,8 +42,13 @@ public class MatrixDecomposition {
 	 */
 	public static List<Eigenspace> map( Function<Complex, Complex> func, List<Eigenspace> eigspaces ) {
 		boolean debugMode = true;
-		List<Eigenspace> clone = new ArrayList<Eigenspace>();
 		
+		List<Eigenspace> funspaces = 
+			eigspaces.stream().map(x -> new Eigenspace(func.apply(x.getEigenvalue()), x.getEigenvectors())).collect(Collectors.toList());
+
+		/* DEPRECATED CODE */
+		/*
+		List<Eigenspace> clone = new ArrayList<Eigenspace>();
 		// iterate over eigenspaces, adjusting eigenvalues
 		Iterator<Eigenspace> looper = eigspaces.iterator();
 		while ( looper.hasNext() )  {
@@ -62,18 +66,19 @@ public class MatrixDecomposition {
 				System.err.println("(map2) new eigenvalue = " + String.valueOf(newEigspace.getEigenvalue()));
 			}
 		}
+		*/
 		
 		if ( debugMode) {
 			System.err.println("(map2) source matrix = \n" + eighInverse(eigspaces).toString());
-			System.err.println("(map2) target matrix = \n" + eighInverse(clone).toString());
+			System.err.println("(map2) target matrix = \n" + eighInverse(funspaces).toString());
 		}
 		
-		return clone;
+		return funspaces;
 	}
 	
 	
 	/**
-	 * eign
+	 * eign (WORK IN PROGRESS)
 	 *  computes the spectral decomposition of a normal matrix
 	 * @param mat: a normal matrix
 	 * @return a list where each item is a pair of (eigenvalue, eigenprojector)
@@ -83,6 +88,7 @@ public class MatrixDecomposition {
 		
 		// TODO: should check that input is a normal matrix
 		
+		// The following reduction to hermitian matrices is speculative at best
 		Matrix<Complex> hermitianMat = mat.mult(Eigenspace.conjugateTranspose(mat));
 		List<Eigenspace> eigspaces = map( x -> Complex.I().mult(Math.sqrt(x.getReal())), eigh(hermitianMat));
 		
@@ -90,7 +96,6 @@ public class MatrixDecomposition {
 			if ( !checkDecomposition(mat, eigspaces, testEpsilon) ) 
 				throw new RuntimeException("eign: fail");
 		}
-		
 		return eigspaces;
 	}
 	

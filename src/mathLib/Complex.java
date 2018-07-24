@@ -231,6 +231,14 @@ public class Complex extends Operators<Complex> implements Serializable{
 		return new Complex(num, 0).exp(this);
 	}
 	
+	/**
+	 * exponentiated
+	 * @return e^this where e is the Euler constant
+	 */
+	public Complex exponentiated() {
+		return new Complex(Math.cos(b), Math.sin(b)).mult(Math.pow(Math.E,  a));
+	}
+	
 	@Override
 	public Complex sqrt() {
 		return exp(new Complex(.5d, 0));

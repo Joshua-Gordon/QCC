@@ -54,6 +54,10 @@ public class Eigenspace implements Serializable {
 		return eigenprojector;
 	}
 	
+	public Matrix<Complex> getEigenvectors() {
+		return eigenvectors;
+	}
+	
 	public int getMultiplicity() {
 		return multiplicity;
 	}
