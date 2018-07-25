@@ -13,9 +13,9 @@ public class Main {
 	
     public static void main(String[] args) {
     	/* toggle flags: debug mode or not */
-    	boolean normalMode = true;
+    	boolean normalMode = false;
     	boolean debugMode = false;
-    	boolean debugMatrixMode = false;
+    	boolean debugMatrixMode = true;
 
     	if ( debugMatrixMode ) {
     		/* TESTING: matrix operators */
