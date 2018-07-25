@@ -1,6 +1,9 @@
 package mathLib;
 
 import Jama.*;
+import testLib.BaseGraph;
+import testLib.HamiltonianSimulation;
+
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -46,33 +49,6 @@ public class MatrixDecomposition {
 		List<Eigenspace> funspaces = 
 			eigspaces.stream().map(x -> new Eigenspace(func.apply(x.getEigenvalue()), x.getEigenvectors())).collect(Collectors.toList());
 
-		/* DEPRECATED CODE */
-		/*
-		List<Eigenspace> clone = new ArrayList<Eigenspace>();
-		// iterate over eigenspaces, adjusting eigenvalues
-		Iterator<Eigenspace> looper = eigspaces.iterator();
-		while ( looper.hasNext() )  {
-			// get next eigenspace
-			Eigenspace eigspace = looper.next();
-			Eigenspace newEigspace = eigspace.copy();
-			
-			// apply the function to the eigenvalue, leaving eigenprojectors alone
-			newEigspace.setEigenvalue(func.apply(newEigspace.getEigenvalue()));
-			
-			clone.add( newEigspace );
-			
-			if ( debugMode ) {
-				System.err.println("(map2) old eigenvalue = " + String.valueOf(eigspace.getEigenvalue()));
-				System.err.println("(map2) new eigenvalue = " + String.valueOf(newEigspace.getEigenvalue()));
-			}
-		}
-		*/
-		
-		if ( debugMode) {
-			System.err.println("(map2) source matrix = \n" + eighInverse(eigspaces).toString());
-			System.err.println("(map2) target matrix = \n" + eighInverse(funspaces).toString());
-		}
-		
 		return funspaces;
 	}
 	
@@ -485,7 +461,36 @@ public class MatrixDecomposition {
     	
 		return diff < epsilon;
 	}
-    
+
+	/**
+	 * testMeNow
+	 *  should include all the stress testing for matrix decompositions
+	 * @return
+	 */
+	public static boolean testMeNow() {
+
+		/* TEST: adjacency matrix for K2 */
+		Matrix<Complex> mat = BaseGraph.completeGraph(2);
+		double mixTime = Math.PI / 4.0;
+		System.out.println("Test matrix = \n" + mat);
+
+		/* TEST: spectral decomposition for hermitian matrices */
+		MatrixDecomposition obj = new MatrixDecomposition();
+		List<Eigenspace> eigspaces = obj.eigh(mat);
+		if ( obj.checkDecomposition( mat, eigspaces, obj.testEpsilon) ) {
+			System.err.println("Hermitian spectral decomposition: ok");
+		}
+		else {
+			System.err.println("Hermitian spectral decomposition: fail");
+		}
+
+		/* TEST: matrix exponential viz quantum walk */
+		Matrix<Complex> mixMatrix = HamiltonianSimulation.quantumWalk(mat, mixTime);
+		System.out.println("Matrix = \n" + mat.toString());
+		System.out.println("Func(Matrix) = \n" + mixMatrix.toString());
+
+	}
+
     
     /*****************************************************************
      * The code below is ported from JAMA                            *
