@@ -15,38 +15,8 @@ public class Main {
     public static void main(String[] args) {
     	/* toggle flags: debug mode or not */
     	boolean normalMode = true;
-    	boolean debugMode = true;
-    	boolean debugMatrixMode = false;
+    	boolean debugMode = false
 
-    	if ( debugMatrixMode ) {
-    		/* TESTING: matrix operators */
-    		Matrix<Complex> mat = BaseGraph.completeGraph(2);
-    		double mixTime = Math.PI / 4.0;
-    		System.out.println("Test matrix = \n" + mat);
-    	
-    		/* TESTING: spectral decomposition for hermitian matrices */
-    		MatrixDecomposition obj = new MatrixDecomposition();
-    		List<Eigenspace> eigspaces = obj.eigh(mat);
-    		if ( obj.checkDecomposition( mat, eigspaces, obj.testEpsilon) ) {
-    			System.err.println("Hermitian spectral decomposition: ok");
-    		}
-    		else {
-    			System.err.println("Hermitian spectral decomposition: fail");
-    		}
-
-    		/* TESTING: matrix exponential */
-    		Matrix<Complex> mixMatrix = HamiltonianSimulation.quantumWalk(mat, mixTime);
-    		System.out.println("Matrix = \n" + mat.toString());
-    		System.out.println("Func(Matrix) = \n" + mixMatrix.toString());
-    		
-    		/* TESTING: user input matrix
-    		CustomGateConstructorUI g = new CustomGateConstructorUI(null);
-    		g.show();
-    		Matrix<Complex> mat = g.getCustomMatrix().stream().reduce((a, m) -> a.kronecker(m)).get();
-    		System.out.println(mat);
-    		*/
-    	}
-    	
     	if ( normalMode ) {
         	DefaultGate.loadGates();
     		window = new Window();
@@ -54,6 +24,7 @@ public class Main {
     	}
     	
     	if ( debugMode ) {
+    		// can we detect windows vs unix to handle the file path extension?
 			ArrayList<ArrayList<SolderedRegister>> gates = Translator.loadProgram(DefaultGate.LangType.QUIL,"res\\test.quil");
 			for(int x = 0; x < gates.size(); ++x) {
 				ArrayList<SolderedRegister> srs = gates.get(x);

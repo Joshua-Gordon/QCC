@@ -16,6 +16,7 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
@@ -35,6 +36,7 @@ import javax.swing.text.DocumentFilter;
 import appUI.GateMatrixEditable.MatrixFormatException;
 import mathLib.Complex;
 import mathLib.Matrix;
+import testLib.HamiltonianSimulation;
 import utils.AppDialogs;
 import utils.GateIcon;
 
@@ -50,10 +52,11 @@ public class CustomGateConstructorUI extends JDialog implements ChangeListener, 
 	private JScrollPane textArea;
 	private JSpinner spinner = new JSpinner();
 	private JButton[] buttons = new JButton[1];
-	private JRadioButton[] radioButtons = new JRadioButton[2];
+	private JRadioButton[] radioButtons = new JRadioButton[3];
 	private ButtonGroup buttonGroup = new ButtonGroup();
 	private JScrollPane fullMatrix;
 	private JScrollPane kroneckerMatrix;
+	private JScrollPane hamiltonianMatrix;
 	private JPanel blank;
 	private ArrayList<Matrix<Complex>> outputMatrixes = null;
 	private String gateName;
@@ -90,9 +93,13 @@ public class CustomGateConstructorUI extends JDialog implements ChangeListener, 
 		radioButtons[0].addActionListener(this);
 		radioButtons[1] = new JRadioButton("Kronecker Matrix Representation");
 		radioButtons[1].addActionListener(this);
+		radioButtons[2] = new JRadioButton("Hamiltonian Representation");
+		radioButtons[2].addActionListener(this);
 		buttonGroup = new ButtonGroup();
 		buttonGroup.add(radioButtons[0]);
 		buttonGroup.add(radioButtons[1]);
+		buttonGroup.add(radioButtons[2]);
+
 		textArea = new JScrollPane(new JTextArea());
 		textArea.setMinimumSize(new Dimension(100, 70));
 		textArea.setPreferredSize(new Dimension(100, 70));
@@ -101,12 +108,16 @@ public class CustomGateConstructorUI extends JDialog implements ChangeListener, 
 		
 		fullMatrix = new JScrollPane(new GateMatrixEditable(1, false));
 		kroneckerMatrix = new JScrollPane(new GateMatrixEditable(1, true));
+		hamiltonianMatrix = new JScrollPane(new GateMatrixEditable(1, false));
 		fullMatrix.setMinimumSize(new Dimension(100, 70));
 		fullMatrix.setPreferredSize(new Dimension(100, 70));
 		kroneckerMatrix.setMinimumSize(new Dimension(100, 70));
 		kroneckerMatrix.setPreferredSize(new Dimension(100, 70));
+		hamiltonianMatrix.setMinimumSize(new Dimension(100, 70));
+		hamiltonianMatrix.setPreferredSize(new Dimension(100, 70));
 		fullMatrix.setVisible(false);
 		kroneckerMatrix.setVisible(false);
+		hamiltonianMatrix.setVisible(false);
 		blank = new JPanel();
 		blank.setPreferredSize(new Dimension(10, 10));
 		blank.setMinimumSize(new Dimension(10, 10));
@@ -173,6 +184,16 @@ public class CustomGateConstructorUI extends JDialog implements ChangeListener, 
 		gbc.weighty = 1;
 		gbc.fill = GridBagConstraints.BOTH;
 		panel.add(kroneckerMatrix, gbc);
+		gbc.gridy++;
+		gbc.weightx = 0;
+		gbc.weighty = 0;
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		panel.add(radioButtons[2], gbc);
+		gbc.gridy++;
+		gbc.weightx = 1;
+		gbc.weighty = 1;
+		gbc.fill = GridBagConstraints.BOTH;
+		panel.add(hamiltonianMatrix, gbc);
 		gbc.gridx = 0;
 		gbc.gridy++;
 		gbc.weighty = .2;
@@ -215,6 +236,8 @@ public class CustomGateConstructorUI extends JDialog implements ChangeListener, 
 			return (GateMatrixEditable) fullMatrix.getViewport().getView();
 		else if(radioButtons[1].isSelected())
 			return (GateMatrixEditable) kroneckerMatrix.getViewport().getView();
+		else if(radioButtons[2].isSelected())
+			return (GateMatrixEditable) hamiltonianMatrix.getViewport().getView();
 		return null;
 	}
 	
@@ -251,9 +274,17 @@ public class CustomGateConstructorUI extends JDialog implements ChangeListener, 
 			if(radioButtons[0].isSelected()) {
 				fullMatrix.setVisible(true);
 				kroneckerMatrix.setVisible(false);
-			}else{
+				hamiltonianMatrix.setVisible(false);
+			}else if (radioButtons[1].isSelected()) {
 				fullMatrix.setVisible(false);
 				kroneckerMatrix.setVisible(true);
+				hamiltonianMatrix.setVisible(false);
+			}
+			else {
+				// place Hamiltonian input handler here
+				fullMatrix.setVisible(false);
+				kroneckerMatrix.setVisible(false);
+				hamiltonianMatrix.setVisible(true);
 			}
 			revalidate();
 			repaint();
@@ -261,6 +292,12 @@ public class CustomGateConstructorUI extends JDialog implements ChangeListener, 
 	}
 	
 	public ArrayList<Matrix<Complex>> getCustomMatrix(){
+		if(radioButtons[2].isSelected()) {
+			double time = Double.parseDouble(JOptionPane.showInputDialog("Enter time"));
+			Matrix<Complex> mat = outputMatrixes.get(0);
+			Matrix<Complex> sneaky = HamiltonianSimulation.quantumWalk(mat, time);
+			outputMatrixes.set(0, sneaky);
+		}
 		return outputMatrixes;
 	}
 	
