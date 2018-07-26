@@ -12,6 +12,10 @@ public class Qubit extends Vector<Complex> {
         super(a,b);
     }
 
+    public Qubit(Vector<Complex> v) {
+        super(v);
+    }
+
     public static Qubit ONE() {
         return new Qubit(Complex.ZERO(),Complex.ONE());
     }
@@ -44,7 +48,7 @@ public class Qubit extends Vector<Complex> {
     public static Qubit getInputState(int registers) {
         Qubit start = Qubit.ZERO();
         for(int i = 0; i < registers; ++i) {
-            start = (Qubit) start.kronecker(Qubit.ZERO());
+            start = new Qubit(start.kronecker(Qubit.ZERO()).toVector());
         }
         return start;
     }

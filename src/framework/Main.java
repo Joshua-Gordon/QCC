@@ -1,5 +1,6 @@
 package framework;
 
+import Simulator.InternalExecutor;
 import appUI.Window;
 
 import mathLib.*;
@@ -34,7 +35,7 @@ public class Main {
     		}
 
     		/* TESTING: matrix exponential */
-    		Matrix<Complex> mixMatrix = HamiltonianSimulation.quantunWalk(mat, mixTime);
+    		Matrix<Complex> mixMatrix = HamiltonianSimulation.quantumWalk(mat, mixTime);
     		System.out.println("Matrix = \n" + mat.toString());
     		System.out.println("Func(Matrix) = \n" + mixMatrix.toString());
     		
@@ -62,6 +63,8 @@ public class Main {
 				}
 			}
 			window.getSelectedBoard().setGates(gates);
+			int output = InternalExecutor.simulate(window.getSelectedBoard());
+			System.out.println("OUTPUT: " + output);
 		}
 
     }
