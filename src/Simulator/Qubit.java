@@ -47,7 +47,7 @@ public class Qubit extends Vector<Complex> {
 
     public static Qubit getInputState(int registers) {
         Qubit start = Qubit.ZERO();
-        for(int i = 0; i < registers; ++i) {
+        for(int i = 1; i < registers; ++i) {
             start = new Qubit(start.kronecker(Qubit.ZERO()).toVector());
         }
         return start;

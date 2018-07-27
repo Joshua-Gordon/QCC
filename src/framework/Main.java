@@ -39,8 +39,10 @@ public class Main {
 			int output = InternalExecutor.simulate(window.getSelectedBoard());
 			System.out.println("OUTPUT: " + output);
 			*/
-    		ArrayList<ArrayList<SolderedRegister>> gates = Translator.loadProgram(DefaultGate.LangType.QASM,"res//test.qasm");
-    		Main.getWindow().getSelectedBoard().setGates(gates);
+    		ArrayList<ArrayList<SolderedRegister>> gates = Translator.loadProgram(DefaultGate.LangType.QASM,"res//test1.qasm");
+			Main.getWindow().getSelectedBoard().setGates(gates);
+			int result = InternalExecutor.simulate(window.getSelectedBoard());
+			System.out.println(result);
 		}
 
     }

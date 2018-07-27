@@ -44,7 +44,7 @@ public class InternalExecutor {
             public void columnEndEvent(int column) {
 
             }
-        });
+        }); //TODO: gates is size 0 when testing with one hadamard gate
         Matrix<Complex> output = gates.stream().reduce(input,(state,gate)->gate.mult(state));
         return Qubit.measure(output.toVector());
     }
