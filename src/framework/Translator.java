@@ -511,11 +511,11 @@ public class Translator {
             String gateName = line.substring(0,line.indexOf(" "));
             switch(gateName) {
                 case "cx":
-                    String target = line.substring(line.indexOf(">")+4,line.length()-2);
-                    quil += "CNOT " + idx + " " + target;
+                    String target = line.substring(line.lastIndexOf("[")+1,line.length()-2);
+                    quil += "CNOT " + idx + " " + target + "\n";
                     break;
                 case "measure":
-                    quil += "MEASURE " + idx + " [" + idx + "]";
+                    quil += "MEASURE " + idx + " [" + idx + "]\n";
                     break;
                 default:
                     quil += gateName.toUpperCase() + " " + idx + "\n";

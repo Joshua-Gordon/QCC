@@ -1,0 +1,8 @@
+Z 0
+Y 1
+H 2
+CNOT 1 2
+X 1
+MEASURE 0 [0]
+MEASURE 1 [1]
+MEASURE 2 [2]
