@@ -467,7 +467,7 @@ public class MatrixDecomposition {
 	 *  should include all the stress testing for matrix decompositions
 	 * @return
 	 */
-	public static boolean testMeNow() {
+	public static void testMeNow() {
 
 		/* TEST: adjacency matrix for K2 */
 		Matrix<Complex> mat = BaseGraph.completeGraph(2);

@@ -24,7 +24,7 @@ public class Main {
     	
     	if ( debugMode ) {
     		// can we detect windows vs unix to handle the file path extension?
-			ArrayList<ArrayList<SolderedRegister>> gates = Translator.loadProgram(DefaultGate.LangType.QUIL,"res\\test.quil");
+			ArrayList<ArrayList<SolderedRegister>> gates = Translator.loadProgram(DefaultGate.LangType.QUIL,"res/test.quil");
 			for(int x = 0; x < gates.size(); ++x) {
 				ArrayList<SolderedRegister> srs = gates.get(x);
 				for(int y = 0; y < srs.size(); ++y) {
