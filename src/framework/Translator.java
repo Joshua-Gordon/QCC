@@ -3,6 +3,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -43,7 +44,7 @@ public class Translator {
                     name = DefaultGate.typeToString(gt, DefaultGate.LangType.QUIL);
                     code += name + " " + y;
                     if(gt.equals(GateType.CNOT) || gt.equals(GateType.SWAP)) {
-                        code += " " + (eg.getHeight()-1);
+                        code += " " + (eg.getHeight()-1+y);
                     }
                 } else if(!id){
                     if(!customGates.contains(name)) {
@@ -156,7 +157,11 @@ public class Translator {
             //Subtract offset from each number
             String[] components = line.split(" ");
             if(components[0].equals("MEASURE")){
-                output += "MEASURE " + (Integer.parseInt(components[1])-offset) + " [" + (Integer.parseInt(components[2].substring(1,2))-offset) + "]";
+                try {
+                    output += "MEASURE " + (Integer.parseInt(components[1]) - offset) + " [" + (Integer.parseInt(components[2].substring(1, 2)) - offset) + "]";
+                } catch (ArrayIndexOutOfBoundsException e) {
+
+                }
             } else if(components[0].startsWith("DEFGATE")){
                 output += line;
             } else if(isNumber(line.trim())){

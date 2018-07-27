@@ -39,22 +39,8 @@ public class Main {
 			int output = InternalExecutor.simulate(window.getSelectedBoard());
 			System.out.println("OUTPUT: " + output);
 			*/
-    		Translator.loadProgram(DefaultGate.LangType.QASM,"res//test.qasm");
-    		String qasm = "OPENQASM 2.0;\n" +
-					"include \"qelib1.inc\";\n" +
-					"qreg q[3];\n" +
-					"creg c[3];\n" +
-					"z q[0];\n" +
-					"y q[1];\n" +
-					"h q[2];\n" +
-					"cx q[1],q[2];\n" +
-					"x q[1];\n" +
-					"measure q[0] -> c[0];\n" +
-					"measure q[1] -> c[1];\n" +
-					"measure q[2] -> c[2];\n";
-    		System.out.println(qasm);
-    		String  unqasm = Translator.translateQASMToQuil(qasm);
-    		System.out.println(unqasm);
+    		ArrayList<ArrayList<SolderedRegister>> gates = Translator.loadProgram(DefaultGate.LangType.QASM,"res//test.qasm");
+    		Main.getWindow().getSelectedBoard().setGates(gates);
 		}
 
     }
