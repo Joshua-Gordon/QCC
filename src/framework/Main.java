@@ -15,7 +15,7 @@ public class Main {
     public static void main(String[] args) {
     	/* toggle flags: debug mode or not */
     	boolean normalMode = true;
-    	boolean debugMode = false
+    	boolean debugMode = false;
 
     	if ( normalMode ) {
         	DefaultGate.loadGates();
