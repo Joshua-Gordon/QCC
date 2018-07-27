@@ -15,7 +15,7 @@ public class Main {
     public static void main(String[] args) {
     	/* toggle flags: debug mode or not */
     	boolean normalMode = true;
-    	boolean debugMode = false;
+    	boolean debugMode = true;
 
     	if ( normalMode ) {
         	DefaultGate.loadGates();
@@ -39,6 +39,7 @@ public class Main {
 			int output = InternalExecutor.simulate(window.getSelectedBoard());
 			System.out.println("OUTPUT: " + output);
 			*/
+    		Translator.loadProgram(DefaultGate.LangType.QASM,"res//test.qasm");
     		String qasm = "OPENQASM 2.0;\n" +
 					"include \"qelib1.inc\";\n" +
 					"qreg q[3];\n" +
@@ -51,6 +52,7 @@ public class Main {
 					"measure q[0] -> c[0];\n" +
 					"measure q[1] -> c[1];\n" +
 					"measure q[2] -> c[2];\n";
+    		System.out.println(qasm);
     		String  unqasm = Translator.translateQASMToQuil(qasm);
     		System.out.println(unqasm);
 		}

@@ -230,6 +230,11 @@ public class Translator {
                 --instruction;
                 continue;
             }
+            if(line.startsWith("MEASURE")) {
+                int idx = Integer.parseInt(line.substring(8,line.lastIndexOf(" ")));
+                rows.get(idx).add(new SolderedRegister(new SolderedGate(DefaultGate.DEFAULT_GATES.get("MEASURE"),0,0),0));
+                continue;
+            }
             String[] pieces = line.split(" ");
             AbstractGate ag = null;
             ag = DefaultGate.DEFAULT_GATES.get(pieces[0]);
@@ -498,7 +503,7 @@ public class Translator {
         String[] tempLines = qasm.split("\n");
         ArrayList<String> qasmLines = new ArrayList<>();
         Collections.addAll(qasmLines,tempLines); //Make list of lines into arraylist
-        if(qasmLines.get(0).equals("")){
+        while (qasmLines.get(0).equals("") || qasmLines.get(0).equals("\n")){
             qasmLines.remove(0);
         }
         qasmLines.remove(0);
