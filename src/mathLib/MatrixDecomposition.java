@@ -488,7 +488,7 @@ public class MatrixDecomposition {
 		Matrix<Complex> mixMatrix = HamiltonianSimulation.quantumWalk(mat, mixTime);
 		System.out.println("Matrix = \n" + mat.toString());
 		System.out.println("Func(Matrix) = \n" + mixMatrix.toString());
-        return false;
+		
 	}
 
     

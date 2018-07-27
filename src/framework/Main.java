@@ -7,6 +7,7 @@ import mathLib.*;
 import testLib.*;
 import testLib.BaseGraph;
 import java.util.*;
+import java.io.*;
 
 public class Main {
 	
@@ -14,8 +15,9 @@ public class Main {
 	
     public static void main(String[] args) {
     	/* toggle flags: debug mode or not */
-    	boolean normalMode = true;
+    	boolean normalMode = false;
     	boolean debugMode = true;
+    	boolean debugSimulatorMode = false;
 
     	if ( normalMode ) {
         	DefaultGate.loadGates();
@@ -23,11 +25,25 @@ public class Main {
     		window.setVisible(true);
     	}
     	
-    	if ( debugMode ) {
-    		/*
+    	if ( debugMode ) {   		
     		// can we detect windows vs unix to handle the file path extension?
 			// yeah, use System.getProperty("os.name"), it'll either return "Windows" or "Unix". What do you mean by file path extensions?
-			ArrayList<ArrayList<SolderedRegister>> gates = Translator.loadProgram(DefaultGate.LangType.QUIL,"res\\test.quil");
+			ArrayList<ArrayList<SolderedRegister>> gates = new ArrayList<ArrayList<SolderedRegister>>();
+			String os = new String( System.getProperty("os.name"));
+			System.err.println("OS = " + os);
+    		if ( os.equalsIgnoreCase("Windows") ) {
+				gates = Translator.loadProgram(DefaultGate.LangType.QUIL,"res\\test.quil");
+			}
+			else if ( os.equalsIgnoreCase("Linux") ) {
+				File testFile = new File("res/test.quil");
+				if ( !testFile.exists() ) {
+					throw new RuntimeException("File does not exist.");
+				}
+				gates = Translator.loadProgram(DefaultGate.LangType.QUIL,"res/test.quil");
+			}
+			else {
+				throw new RuntimeException("OS " + os + " not supported");
+			}
 			for(int x = 0; x < gates.size(); ++x) {
 				ArrayList<SolderedRegister> srs = gates.get(x);
 				for(int y = 0; y < srs.size(); ++y) {
@@ -38,13 +54,14 @@ public class Main {
 			window.getSelectedBoard().setGates(gates);
 			int output = InternalExecutor.simulate(window.getSelectedBoard());
 			System.out.println("OUTPUT: " + output);
-			*/
+    	}
+    	
+    	if ( debugSimulatorMode ) {
     		ArrayList<ArrayList<SolderedRegister>> gates = Translator.loadProgram(DefaultGate.LangType.QASM,"res//test1.qasm");
 			Main.getWindow().getSelectedBoard().setGates(gates);
 			int result = InternalExecutor.simulate(window.getSelectedBoard());
 			System.out.println(result);
 		}
-
     }
 
     public static Window getWindow() {
