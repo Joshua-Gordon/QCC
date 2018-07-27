@@ -3,6 +3,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -43,7 +44,7 @@ public class Translator {
                     name = DefaultGate.typeToString(gt, DefaultGate.LangType.QUIL);
                     code += name + " " + y;
                     if(gt.equals(GateType.CNOT) || gt.equals(GateType.SWAP)) {
-                        code += " " + (eg.getHeight()-1);
+                        code += " " + (eg.getHeight()-1+y);
                     }
                 } else if(!id){
                     if(!customGates.contains(name)) {
@@ -156,7 +157,11 @@ public class Translator {
             //Subtract offset from each number
             String[] components = line.split(" ");
             if(components[0].equals("MEASURE")){
-                output += "MEASURE " + (Integer.parseInt(components[1])-offset) + " [" + (Integer.parseInt(components[2].substring(1,2))-offset) + "]";
+                try {
+                    output += "MEASURE " + (Integer.parseInt(components[1]) - offset) + " [" + (Integer.parseInt(components[2].substring(1, 2)) - offset) + "]";
+                } catch (ArrayIndexOutOfBoundsException e) {
+
+                }
             } else if(components[0].startsWith("DEFGATE")){
                 output += line;
             } else if(isNumber(line.trim())){
@@ -228,6 +233,11 @@ public class Translator {
                 cg.setName(name);
                 Main.getWindow().getSelectedBoard().addCustomGate(cg);
                 --instruction;
+                continue;
+            }
+            if(line.startsWith("MEASURE")) {
+                int idx = Integer.parseInt(line.substring(8,line.lastIndexOf(" ")));
+                rows.get(idx).add(new SolderedRegister(new SolderedGate(DefaultGate.DEFAULT_GATES.get("MEASURE"),0,0),0));
                 continue;
             }
             String[] pieces = line.split(" ");
@@ -498,7 +508,7 @@ public class Translator {
         String[] tempLines = qasm.split("\n");
         ArrayList<String> qasmLines = new ArrayList<>();
         Collections.addAll(qasmLines,tempLines); //Make list of lines into arraylist
-        if(qasmLines.get(0).equals("")){
+        while (qasmLines.get(0).equals("") || qasmLines.get(0).equals("\n")){
             qasmLines.remove(0);
         }
         qasmLines.remove(0);
@@ -511,11 +521,11 @@ public class Translator {
             String gateName = line.substring(0,line.indexOf(" "));
             switch(gateName) {
                 case "cx":
-                    String target = line.substring(line.indexOf(">")+4,line.length()-2);
-                    quil += "CNOT " + idx + " " + target;
+                    String target = line.substring(line.lastIndexOf("[")+1,line.length()-2);
+                    quil += "CNOT " + idx + " " + target + "\n";
                     break;
                 case "measure":
-                    quil += "MEASURE " + idx + " [" + idx + "]";
+                    quil += "MEASURE " + idx + " [" + idx + "]\n";
                     break;
                 default:
                     quil += gateName.toUpperCase() + " " + idx + "\n";

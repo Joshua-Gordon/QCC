@@ -12,7 +12,11 @@ public class Vector<T> extends Matrix<T>{
 	public Vector(T ... components){
 		super(components.length, 1, components);
 	}
-	
+
+	public Vector(Vector<T> v) {
+		super(v.length(),1,v.getComponents());
+	}
+
 	@SafeVarargs
 	public Vector(Operators<T> operation, boolean isVertical, T ... components){		
 		super(operation, isVertical? components.length:1, 

@@ -1,6 +1,8 @@
 package mathLib;
 
 import java.io.Serializable;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import mathLib.operators.Operators;
 
@@ -72,6 +74,18 @@ public class Complex extends Operators<Complex> implements Serializable{
     public Complex negative(){
         return new Complex(-a,-b);
     }
+
+    public static Complex parseComplexRegex(String s) {
+    	Pattern p = Pattern.compile("-?\\d+(.\\d+)?([eE][+-]\\d+)?");
+    	Matcher m = p.matcher(s);
+    	m.find();
+		for(int i = 0; i < m.groupCount(); ++i) {
+			System.out.println(m.group(i));
+		}
+    	double real = Double.parseDouble(m.group(0));
+    	double imag = Double.parseDouble(m.group(1));
+    	return new Complex(real,imag);
+	}
 
     public static Complex parseComplex(String s) {
         String[] ssplit = s.trim().split("[+-]");

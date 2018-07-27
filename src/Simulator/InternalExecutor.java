@@ -13,23 +13,30 @@ public class InternalExecutor {
     static ArrayList<Matrix<Complex>> gates;
     static Matrix<Complex> column;
     static Qubit input;
+    private static int stack;
 
     public static int simulate(CircuitBoard cb) {
         gates = new ArrayList<>();
         input = Qubit.getInputState(cb.getRows());
+        //column = new Matrix<Complex>(Complex.I(),cb.getRows(),cb.getColumns());
+        stack = 0;
         ExportedGate.exportGates(cb, new ExportGatesRunnable() {
             @Override
             public void gateExported(ExportedGate eg, int x, int y) {
+                stack--;
                 if(column == null) {
                     column = eg.getAbstractGate().getMatrix();
                 } else {
-                    column = column.kronecker(eg.getAbstractGate().getMatrix());
+                    if(stack<=0)
+                        column = column.kronecker(eg.getAbstractGate().getMatrix());
                 }
+                stack+=eg.getHeight();
             }
 
             @Override
             public void nextColumnEvent(int column) {
-                gates.add(InternalExecutor.column);
+                if(column>0)
+                    gates.add(InternalExecutor.column);
                 InternalExecutor.column = null;
             }
 
@@ -37,8 +44,8 @@ public class InternalExecutor {
             public void columnEndEvent(int column) {
 
             }
-        });
-        Qubit output = (Qubit) gates.stream().reduce(input,(state,gate)->gate.mult(state)); //TODO: Fix this cast
-        return Qubit.measure(output);
+        }); //TODO: gates is size 0 when testing with one hadamard gate
+        Matrix<Complex> output = gates.stream().reduce(input,(state,gate)->gate.mult(state));
+        return Qubit.measure(output.toVector());
     }
 }

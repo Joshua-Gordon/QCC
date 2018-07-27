@@ -1,5 +1,6 @@
 package framework;
 
+import Simulator.InternalExecutor;
 import appUI.Window;
 
 import mathLib.*;
@@ -14,7 +15,7 @@ public class Main {
     public static void main(String[] args) {
     	/* toggle flags: debug mode or not */
     	boolean normalMode = true;
-    	boolean debugMode = false;
+    	boolean debugMode = true;
 
     	if ( normalMode ) {
         	DefaultGate.loadGates();
@@ -23,8 +24,10 @@ public class Main {
     	}
     	
     	if ( debugMode ) {
+    		/*
     		// can we detect windows vs unix to handle the file path extension?
-			ArrayList<ArrayList<SolderedRegister>> gates = Translator.loadProgram(DefaultGate.LangType.QUIL,"res/test.quil");
+			// yeah, use System.getProperty("os.name"), it'll either return "Windows" or "Unix". What do you mean by file path extensions?
+			ArrayList<ArrayList<SolderedRegister>> gates = Translator.loadProgram(DefaultGate.LangType.QUIL,"res\\test.quil");
 			for(int x = 0; x < gates.size(); ++x) {
 				ArrayList<SolderedRegister> srs = gates.get(x);
 				for(int y = 0; y < srs.size(); ++y) {
@@ -33,6 +36,13 @@ public class Main {
 				}
 			}
 			window.getSelectedBoard().setGates(gates);
+			int output = InternalExecutor.simulate(window.getSelectedBoard());
+			System.out.println("OUTPUT: " + output);
+			*/
+    		ArrayList<ArrayList<SolderedRegister>> gates = Translator.loadProgram(DefaultGate.LangType.QASM,"res//test1.qasm");
+			Main.getWindow().getSelectedBoard().setGates(gates);
+			int result = InternalExecutor.simulate(window.getSelectedBoard());
+			System.out.println(result);
 		}
 
     }
