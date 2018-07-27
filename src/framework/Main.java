@@ -15,7 +15,7 @@ public class Main {
 	
     public static void main(String[] args) {
     	/* toggle flags: debug mode or not */
-    	boolean normalMode = false;
+    	boolean normalMode = true;
     	boolean debugMode = true;
     	boolean debugSimulatorMode = false;
 
@@ -29,9 +29,9 @@ public class Main {
     		// can we detect windows vs unix to handle the file path extension?
 			// yeah, use System.getProperty("os.name"), it'll either return "Windows" or "Unix". What do you mean by file path extensions?
 			ArrayList<ArrayList<SolderedRegister>> gates = new ArrayList<ArrayList<SolderedRegister>>();
-			String os = new String( System.getProperty("os.name"));
+			String os = System.getProperty("os.name");
 			System.err.println("OS = " + os);
-    		if ( os.equalsIgnoreCase("Windows") ) {
+    		if ( os.contains("Windows") ) {
 				gates = Translator.loadProgram(DefaultGate.LangType.QUIL,"res\\test.quil");
 			}
 			else if ( os.equalsIgnoreCase("Linux") ) {
