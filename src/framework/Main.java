@@ -16,8 +16,8 @@ public class Main {
     public static void main(String[] args) {
     	/* toggle flags: debug mode or not */
     	boolean normalMode = true;
-    	boolean debugMode = true;
-    	boolean debugSimulatorMode = false;
+    	boolean debugMode = false;
+    	boolean debugSimulatorMode = true;
 
     	if ( normalMode ) {
         	DefaultGate.loadGates();
@@ -57,10 +57,12 @@ public class Main {
     	}
     	
     	if ( debugSimulatorMode ) {
-    		ArrayList<ArrayList<SolderedRegister>> gates = Translator.loadProgram(DefaultGate.LangType.QASM,"res//test1.qasm");
+    		ArrayList<ArrayList<SolderedRegister>> gates = Translator.loadProgram(DefaultGate.LangType.QASM,"res//test2.qasm");
 			Main.getWindow().getSelectedBoard().setGates(gates);
-			int result = InternalExecutor.simulate(window.getSelectedBoard());
-			System.out.println(result);
+			for(int i = 0; i < 10; ++i) {
+				int result = InternalExecutor.simulate(window.getSelectedBoard());
+				System.out.println(result);
+			}
 		}
     }
 

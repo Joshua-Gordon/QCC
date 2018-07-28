@@ -35,14 +35,15 @@ public class InternalExecutor {
 
             @Override
             public void nextColumnEvent(int column) {
-                if(column>0)
-                    gates.add(InternalExecutor.column);
-                InternalExecutor.column = null;
+
             }
 
             @Override
             public void columnEndEvent(int column) {
-
+                System.err.println("Column: " + column);
+                if(column>=0)
+                    gates.add(InternalExecutor.column);
+                InternalExecutor.column = null;
             }
         }); //TODO: gates is size 0 when testing with one hadamard gate
         Matrix<Complex> output = gates.stream().reduce(input,(state,gate)->gate.mult(state));

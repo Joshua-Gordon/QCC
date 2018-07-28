@@ -42,7 +42,7 @@ public class Qubit extends Vector<Complex> {
         for(int i = probs.size()-1; i >= 0; --i) {
             measured += (new Random()).nextDouble() < probs.get(i) ? 1 << i : 0;
         }
-        return measured;
+        return measured; //possible bug, may need to bitshift down 1, as 0001 should be zero.
     }
 
     public static Qubit getInputState(int registers) {
