@@ -1,9 +1,12 @@
 package framework;
 
 import Simulator.InternalExecutor;
+import Simulator.MixedState;
+import Simulator.Qubit;
 import appUI.Window;
 
 import mathLib.*;
+import mathLib.Vector;
 import testLib.*;
 import testLib.BaseGraph;
 import java.util.*;
@@ -15,9 +18,9 @@ public class Main {
 	
     public static void main(String[] args) {
     	/* toggle flags: debug mode or not */
-    	boolean normalMode = true;
-    	boolean debugMode = false;
-    	boolean debugSimulatorMode = true;
+    	boolean normalMode = false;
+    	boolean debugMode = true;
+    	boolean debugSimulatorMode = false;
 
     	if ( normalMode ) {
         	DefaultGate.loadGates();
@@ -26,34 +29,20 @@ public class Main {
     	}
     	
     	if ( debugMode ) {   		
-    		// can we detect windows vs unix to handle the file path extension?
-			// yeah, use System.getProperty("os.name"), it'll either return "Windows" or "Unix". What do you mean by file path extensions?
-			ArrayList<ArrayList<SolderedRegister>> gates = new ArrayList<ArrayList<SolderedRegister>>();
-			String os = System.getProperty("os.name");
-			System.err.println("OS = " + os);
-    		if ( os.contains("Windows") ) {
-				gates = Translator.loadProgram(DefaultGate.LangType.QUIL,"res\\test.quil");
-			}
-			else if ( os.equalsIgnoreCase("Linux") ) {
-				File testFile = new File("res/test.quil");
-				if ( !testFile.exists() ) {
-					throw new RuntimeException("File does not exist.");
-				}
-				gates = Translator.loadProgram(DefaultGate.LangType.QUIL,"res/test.quil");
-			}
-			else {
-				throw new RuntimeException("OS " + os + " not supported");
-			}
-			for(int x = 0; x < gates.size(); ++x) {
-				ArrayList<SolderedRegister> srs = gates.get(x);
-				for(int y = 0; y < srs.size(); ++y) {
-					SolderedRegister sr = srs.get(y);
-					System.out.println("X: " + x + "\nY: " + y + "\nGate: " + sr);
-				}
-			}
-			window.getSelectedBoard().setGates(gates);
-			int output = InternalExecutor.simulate(window.getSelectedBoard());
-			System.out.println("OUTPUT: " + output);
+    		Qubit purestate0 = new Qubit(new Vector<Complex>(Complex.ONE(),Complex.ZERO()));
+    		Qubit purestate1 = new Qubit(new Vector<Complex>(Complex.ZERO(),Complex.ONE()));
+    		ArrayList<Qubit> states = new ArrayList<>();
+    		states.add(purestate0);
+    		states.add(purestate1);
+    		ArrayList<Double> probs = new ArrayList<>();
+    		probs.add(.7);
+    		probs.add(.3);
+			MixedState ms = new MixedState(states,probs);
+			System.out.println(ms.getDensityMatrix());
+			Qubit out = ms.measure();
+			System.out.println("Measured: \n" + out);
+			int res = Qubit.measure(out);
+			System.out.println("Result: " + res);
     	}
     	
     	if ( debugSimulatorMode ) {
