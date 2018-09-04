@@ -61,4 +61,22 @@ public class Qubit extends Vector<Complex> {
         return start;
     }
 
+    /**
+     * Mutates state of qubit to set index to either one or zero
+     * @param idx Index to mutate
+     * @param value True if one, False if zero
+     */
+    public Qubit setIndex(int idx, boolean value) {
+        return new Qubit(setSlice(idx,idx,0,0,value? ONE() : ZERO()).toVector());
+    }
+
+    /**
+     * Returns the amplitude at a specific index of this qubit
+     * @param idx The index to get
+     * @return the amplitude at that index
+     */
+    public Complex getIndex(int idx) {
+        return this.getSlice(idx,idx,0,0).v(0,0);
+    }
+
 }

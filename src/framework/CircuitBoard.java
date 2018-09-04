@@ -453,4 +453,19 @@ public class CircuitBoard implements Serializable{
 		}
 		return false;
 	}
+
+	public ArrayList<ArrayList<SolderedGate>> getGates() {
+		ArrayList<ArrayList<SolderedGate>> gates = new ArrayList<>();
+		for(int x = 0; x < board.size(); ++x) {
+			ArrayList<SolderedGate> column = new ArrayList<>();
+			for(int y = 0; y < board.get(x).size(); ++y) {
+				SolderedGate gate = board.get(x).get(y).getSolderedGate();
+				if(!column.contains(gate)) {
+					column.add(gate);
+				}
+			}
+			gates.add(column);
+		}
+		return gates;
+	}
 }

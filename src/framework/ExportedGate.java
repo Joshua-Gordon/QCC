@@ -146,6 +146,9 @@ public class ExportedGate {
 	 * Whether or not the {@link ExportedGate} has controls.
 	 */
 	public boolean isControlled() {
+		if(controls == null) {
+			return false;
+		}
 		return controls.length != 0;
 	}
 	

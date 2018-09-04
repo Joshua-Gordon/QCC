@@ -18,7 +18,7 @@ public class Main {
 	
     public static void main(String[] args) {
     	/* toggle flags: debug mode or not */
-    	boolean normalMode = false;
+    	boolean normalMode = true;
     	boolean debugMode = true;
     	boolean debugSimulatorMode = false;
 
@@ -29,20 +29,12 @@ public class Main {
     	}
     	
     	if ( debugMode ) {   		
-    		Qubit purestate0 = new Qubit(new Vector<Complex>(Complex.ONE(),Complex.ZERO()));
-    		Qubit purestate1 = new Qubit(new Vector<Complex>(Complex.ZERO(),Complex.ONE()));
-    		ArrayList<Qubit> states = new ArrayList<>();
-    		states.add(purestate0);
-    		states.add(purestate1);
-    		ArrayList<Double> probs = new ArrayList<>();
-    		probs.add(.7);
-    		probs.add(.3);
-			MixedState ms = new MixedState(states,probs);
-			System.out.println(ms.getDensityMatrix());
-			Qubit out = ms.measure();
-			System.out.println("Measured: \n" + out);
-			int res = Qubit.measure(out);
-			System.out.println("Result: " + res);
+    		ArrayList<ArrayList<SolderedRegister>> gates = Translator.loadProgram(DefaultGate.LangType.QUIL,"res/test.quil");
+    		window.getSelectedBoard().setGates(gates);
+    		CircuitBoard cb = window.getSelectedBoard();
+    		System.out.println(cb.getRows());
+    		MixedState ms = InternalExecutor.createMixedState(cb);
+    		System.out.println(ms.getDensityMatrix());
     	}
     	
     	if ( debugSimulatorMode ) {
