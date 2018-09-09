@@ -22,8 +22,8 @@ import mathLib.Matrix;
 public class SolderedRegister implements Serializable{
 	private static final long serialVersionUID = 126844024737787336L;
 	
-	private int localRegisterNumber;
-	private SolderedGate solderedGate;
+	private final int localRegisterNumber;
+	private final SolderedGate solderedGate;
 	
 	
 	

@@ -2,9 +2,9 @@ package framework;
 
 import java.io.Serializable;
 
+import appUI.GateIcon;
 import mathLib.Complex;
 import mathLib.Matrix;
-import utils.GateIcon;
 
 
 /**

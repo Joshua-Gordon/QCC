@@ -38,7 +38,6 @@ import mathLib.Complex;
 import mathLib.Matrix;
 import testLib.HamiltonianSimulation;
 import utils.AppDialogs;
-import utils.GateIcon;
 
 @SuppressWarnings("serial")
 public class CustomGateConstructorUI extends JDialog implements ChangeListener, ActionListener{

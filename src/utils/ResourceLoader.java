@@ -10,9 +10,14 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.Hashtable;
 
 import javax.imageio.ImageIO;
+
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 
 public class ResourceLoader {
 	
@@ -28,51 +33,42 @@ public class ResourceLoader {
 	public static BufferedImage REMOVE_COLUMN;
 	
 	private static final Hashtable<String, File> TEMP_FILES = new Hashtable<>();
-	public static final String TEMP_FILE_URL = "res" + File.separator + "tempFiles";
 	
 	static {
 		MPLUS = loadFont("mplus-2m-bold.ttf");
 		VAST_SHADOW = loadFont("VastShadow-Regular.ttf").deriveFont(35f);
-		SOLDER = scaleTo(loadImage("solderIcon.png"), 30, 30);
-		EDIT = addPadding(scaleTo(loadImage("editIcon.png"), 20, 20), 5);
-		SELECT = addPadding(scaleTo(loadImage("selectIcon.png"), 22, 22), 4);
-		ADD_ROW = scaleTo(loadImage("addRowIcon.png"), 30, 30);
-		ADD_COLUMN = scaleTo(loadImage("addColumnIcon.png"), 30, 30);
-		REMOVE_ROW = scaleTo(loadImage("removeRowIcon.png"), 30, 30);
-		REMOVE_COLUMN = scaleTo(loadImage("removeColumnIcon.png"), 30, 30);
+		SOLDER = loadImage("solderIcon.png");
+		EDIT = loadImage("editIcon.png");
+		SELECT = loadImage("selectIcon.png");
+		ADD_ROW = loadImage("addRowIcon.png");
+		ADD_COLUMN = loadImage("addColumnIcon.png");
+		REMOVE_ROW = loadImage("removeRowIcon.png");
+		REMOVE_COLUMN = loadImage("removeColumnIcon.png");
 		
 	}
 	
-	private static BufferedImage addPadding(BufferedImage bi, int padding) {
-		BufferedImage temp  = new BufferedImage(bi.getWidth() + 2*padding, bi.getHeight() + 2*padding, bi.getType());
-		AffineTransform transform = new AffineTransform();
-		transform.translate(padding, padding);
-		Graphics2D g2d = (Graphics2D) temp.getGraphics();
-		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-		g2d.drawImage(bi, transform, null);
-		return temp;
+	
+	
+	public static Node loadFXML(String filename) throws IOException {
+		return loadFXMLLoader(filename).load();
 	}
 	
-	private static BufferedImage scaleTo(BufferedImage bi, int width, int height) {
-		BufferedImage temp  = new BufferedImage(width, height, bi.getType());
-		AffineTransform transform = new AffineTransform();
-		transform.scale((double) width / (double) bi.getWidth(), (double) height / (double)bi.getHeight());
-		Graphics2D g2d = (Graphics2D) temp.getGraphics();
-		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-		g2d.drawImage(bi, transform, null);
-		return temp;
+	public static FXMLLoader loadFXMLLoader(String filename) {
+		return new FXMLLoader(ResourceLoader.class.getResource("/fxml/" + filename));
 	}
+	
 	
 	private static BufferedImage loadImage(String fileName) {
 		BufferedImage bi = null;
-		File iconFile = new File("res" + File.separator + "icons" + File.separator + fileName);
 		try{
+			URL url = ResourceLoader.class.getResource("/icons/" + fileName);
+			File iconFile = new File(url.toURI());
 			FileInputStream fis = new FileInputStream(iconFile);
 			bi = ImageIO.read(fis);
 		}catch(IOException ie) {
 			ie.printStackTrace();
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
 		}
 		return bi;
 	}
@@ -81,7 +77,8 @@ public class ResourceLoader {
 	private static Font loadFont(String fileName) {
 		Font font = null;
 		try {
-			File fontFile = new File("res" + File.separator + "fonts" + File.separator + fileName);
+			URL url = ResourceLoader.class.getResource("/fonts/" + fileName);
+			File fontFile = new File(url.toURI());
 			font = Font.createFont(Font.TRUETYPE_FONT, fontFile).deriveFont(12f);
 		    GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		    ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, fontFile));
@@ -89,6 +86,8 @@ public class ResourceLoader {
 		    e.printStackTrace();
 		} catch(FontFormatException e) {
 		    e.printStackTrace();
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
 		}
 		return font;
 	}

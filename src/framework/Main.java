@@ -1,9 +1,21 @@
 package framework;
 
+import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+
 import Simulator.InternalExecutor;
 import Simulator.MixedState;
 import Simulator.Qubit;
+import appPreferencesFX.AppPreferences;
 import appUI.Window;
+import appUIFX.AppFileIO;
+import appUIFX.MainScene;
+import framework2.AppStatus;
+import framework2.Project;
+import javafx.application.Application;
+import javafx.stage.Stage;
 
 import mathLib.*;
 import mathLib.Vector;
@@ -12,20 +24,28 @@ import testLib.BaseGraph;
 import java.util.*;
 import java.io.*;
 
-public class Main {
+
+public class Main extends Application implements AppPreferences {
 	
 	private static Window window;
 	
     public static void main(String[] args) {
     	/* toggle flags: debug mode or not */
     	boolean normalMode = true;
-    	boolean debugMode = true;
-    	boolean debugSimulatorMode = false;
 
+    	boolean javaFX_GUI = true;
+    	
+    	boolean debugMode = false;
+    	boolean debugSimulatorMode = false;
+    	
     	if ( normalMode ) {
-        	DefaultGate.loadGates();
-    		window = new Window();
-    		window.setVisible(true);
+    		if( javaFX_GUI ) {
+    			launch(args);
+    		} else {
+	        	DefaultGate.loadGates();
+	    		window = new Window();
+	    		window.setVisible(true);
+    		}
     	}
     	
     	if ( debugMode ) {   		
@@ -46,13 +66,41 @@ public class Main {
 			}
 		}
     }
-
+    
+    
+    
+    
+    
+    
+    
+    
     public static Window getWindow() {
     	return window;
     }
+	
 
-
-
+    @Override
+	public void start(Stage primaryStage) throws Exception {    	
+    	MainScene mainScene = new MainScene();
+    	AppStatus.setAppStatus(primaryStage, mainScene);
+    	
+    	mainScene.loadNewScene(primaryStage, 1000, 600);
+    	primaryStage.setTitle("QCC");
+    	primaryStage.show();
+    	
+    	loadProject();
+	}
+    
+    
+    
+    private void loadProject() {
+    	Project project = AppFileIO.loadPreviouslyClosedProject();
+    	if(project == null)
+    		project = Project.createNewTemplateProject();
+    	AppStatus.get().setFocusedProject(project);
+    }
+    
+    
     /*
      * Note, the following code is needed to run the output program
      * from pyquil.parser import parse_program

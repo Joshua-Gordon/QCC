@@ -1,4 +1,4 @@
-package utils;
+package appUIFX;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -12,9 +12,9 @@ import java.awt.image.BufferedImage;
 import javax.swing.ImageIcon;
 
 import appUI.CircuitBoardRenderContext;
-
-
-
+import framework2.DefaultGate;
+import framework2.DefaultGate.DefaultGateModel;
+import utils.ResourceLoader;
 
 @SuppressWarnings("serial")
 public class GateIcon extends ImageIcon{
@@ -23,11 +23,43 @@ public class GateIcon extends ImageIcon{
 	public static final BasicStroke THIN = new BasicStroke(2, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER);
 	
 	public static final Polygon ARROW_HEAD = new Polygon(); 
+	
 	static {
 		ARROW_HEAD.addPoint( 0, 0);
 		ARROW_HEAD.addPoint( -2, -5);
 		ARROW_HEAD.addPoint( 2,-5);
 	}
+	
+	
+	
+	
+	
+	public static GateIcon getDefaultGateIcon(DefaultGate dg) {
+		switch(dg) {
+		case Cnot:
+			return getCNotIcon();
+		case Measurement:
+			return getMeasureIcon();
+		case Swap:
+			return getSwapIcon();
+		case Toffoli:
+			return getToffoliIcon();
+		default:
+			DefaultGateModel dgm = (DefaultGateModel) dg.getModel();
+			return new GateIcon(dgm.getSymbol() , dgm.isMultiQubitGate());
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	private BufferedImage image;
 	private boolean multiQubit;
@@ -54,7 +86,20 @@ public class GateIcon extends ImageIcon{
 		this("", false);
 	}
 	
-	public static GateIcon getMeasureIcon() {
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	private static GateIcon getMeasureIcon() {
 		Font f = ResourceLoader.VAST_SHADOW.deriveFont(12f);
 		Rectangle2D rect = CircuitBoardRenderContext.getStringBounds(f, "M");
 		BufferedImage bi = new BufferedImage(2 * (PADDING + LINE_LENGTH) + (int) rect.getWidth(),
@@ -78,7 +123,7 @@ public class GateIcon extends ImageIcon{
 		return new GateIcon("Measure", false, bi);
 	}
 	
-	public static GateIcon getSwapIcon() {
+	private static GateIcon getSwapIcon() {
 		final int vertLineLength = 25;
 		final int xRadius = 10;
 		final int lineLength = PADDING + LINE_LENGTH;
@@ -103,7 +148,7 @@ public class GateIcon extends ImageIcon{
     	return new GateIcon("SWAP", true, bi);
 	}
 	
-	public static GateIcon getCNotIcon() {
+	private static GateIcon getCNotIcon() {
 		final int vertLineLength = 25;
 		final int circleRadius = 10;
 		final int smallCircleRadius = 3;
@@ -128,7 +173,7 @@ public class GateIcon extends ImageIcon{
     	return new GateIcon("CNOT", true, bi);
 	}
 	
-	public static GateIcon getToffoliIcon() {
+	private static GateIcon getToffoliIcon() {
 		final int vertLineLength = 25;
 		final int circleRadius = 6;
 		final int smallCircleRadius = 3;
@@ -179,6 +224,14 @@ public class GateIcon extends ImageIcon{
 		return bi;
 	}
 
+	
+	
+	
+	
+	
+	
+	
+	
 	public boolean isMultiQubit() {
 		return multiQubit;
 	}

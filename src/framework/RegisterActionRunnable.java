@@ -11,7 +11,7 @@ package framework;
 public interface RegisterActionRunnable {
 	
 	/**
-	 * The action that it run when applies to the {@link SolderedRegister}
+	 * The action that is ran when applied to a {@link SolderedRegister}
 	 * @param row
 	 * @param column
 	 * @param sr

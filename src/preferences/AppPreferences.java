@@ -113,9 +113,6 @@ public final class AppPreferences {
 		add("Run QASM", 	   		KeyEvent.VK_N);
 	}
 	
-	
-	
-	
 	public static void putInt(String type, String name, Integer value) {
 		if(!prefExists(type, name)) {
 			try {
@@ -248,7 +245,6 @@ public final class AppPreferences {
 		return prefs.get(name, (String) DEFAULT_VALUES.get(type).get(name));
 	}
 	
-	
 	private static void setType(String prefType) {
 		if(!DEFAULT_VALUES.containsKey(prefType)) 
 			DEFAULT_VALUES.put(prefType, new HashMap<>());
@@ -259,7 +255,6 @@ public final class AppPreferences {
 	private static void add(String prefName, Object defaultValue) {
 		currentPrefType.put(prefName, defaultValue);
 	}
-	
 	
 	
 	public static boolean prefExists(String type, String name) {
