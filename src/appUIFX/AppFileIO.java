@@ -11,8 +11,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import appPreferencesFX.AppPreferences;
-import framework2.AppStatus;
-import framework2.Project;
+import framework2FX.AppStatus;
+import framework2FX.Project;
 import javafx.scene.control.Alert.AlertType;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;

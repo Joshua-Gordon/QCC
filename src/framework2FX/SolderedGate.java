@@ -1,4 +1,4 @@
-package framework2;
+package framework2FX;
 
 import java.io.Serializable;
 import java.util.ArrayList;

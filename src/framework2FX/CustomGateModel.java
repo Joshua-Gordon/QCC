@@ -1,4 +1,4 @@
-package framework2;
+package framework2FX;
 
 import mathLib.Complex;
 import mathLib.Matrix;

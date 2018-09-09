@@ -4,7 +4,7 @@ import java.awt.image.BufferedImage;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import framework2.DefaultGate;
+import framework2FX.DefaultGate;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.Event;
 import javafx.scene.control.ToggleButton;

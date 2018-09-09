@@ -11,8 +11,8 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.ImageIcon;
 
-import framework2.DefaultGate;
-import framework2.DefaultGate.DefaultGateModel;
+import framework2FX.DefaultGate;
+import framework2FX.DefaultGate.DefaultGateModel;
 import utils.ResourceLoader;
 
 

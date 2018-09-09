@@ -4,11 +4,11 @@ import java.net.URI;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import framework2.AbstractGateModel;
-import framework2.AppStatus;
-import framework2.CustomGateModel;
-import framework2.DefaultGate;
-import framework2.Project;
+import framework2FX.AbstractGateModel;
+import framework2FX.AppStatus;
+import framework2FX.CustomGateModel;
+import framework2FX.DefaultGate;
+import framework2FX.Project;
 import javafx.event.Event;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TreeItem;

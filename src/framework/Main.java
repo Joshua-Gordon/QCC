@@ -12,8 +12,8 @@ import appPreferencesFX.AppPreferences;
 import appUI.Window;
 import appUIFX.AppFileIO;
 import appUIFX.MainScene;
-import framework2.AppStatus;
-import framework2.Project;
+import framework2FX.AppStatus;
+import framework2FX.Project;
 import javafx.application.Application;
 import javafx.stage.Stage;
 

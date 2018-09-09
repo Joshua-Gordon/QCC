@@ -1,6 +1,6 @@
 package appUIFX;
 
-import framework2.CircuitBoard;
+import framework2FX.CircuitBoard;
 import javafx.scene.canvas.GraphicsContext;
 
 public class CircuitBoardRenderContext {

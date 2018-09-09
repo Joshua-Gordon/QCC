@@ -1,7 +1,7 @@
 package appUIFX;
 
 import appPreferencesFX.AppPreferences;
-import framework2.AppCommand;
+import framework2FX.AppCommand;
 import javafx.collections.ObservableList;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Menu;

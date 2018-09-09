@@ -3,7 +3,7 @@ package appUIFX;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import framework2.CircuitBoard;
+import framework2FX.CircuitBoard;
 import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.ScrollPane;
