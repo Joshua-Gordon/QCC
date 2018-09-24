@@ -12,6 +12,7 @@ import framework2FX.AppStatus;
 import framework2FX.Project;
 import javafx.application.Application;
 import javafx.stage.Stage;
+import mathLib.expression.Expression;
 
 
 public class Main extends Application implements AppPreferences {
@@ -20,9 +21,9 @@ public class Main extends Application implements AppPreferences {
 	
     public static void main(String[] args) {
     	/* toggle flags: debug mode or not */
-    	boolean normalMode = true;
+    	boolean normalMode = false;
 
-    	boolean javaFX_GUI = true;
+    	boolean javaFX_GUI = false;
     	
     	boolean debugMode = false;
     	boolean debugSimulatorMode = false;
@@ -54,6 +55,9 @@ public class Main extends Application implements AppPreferences {
 				System.out.println(result);
 			}
 		}
+
+		Expression e = new Expression("c-2^a*(3+yrdjtdjfu(4))+^b");
+    	System.out.println(e);
     }
     
     
@@ -69,7 +73,7 @@ public class Main extends Application implements AppPreferences {
 	
 
     @Override
-	public void start(Stage primaryStage) throws Exception {    	
+	public void start(Stage primaryStage) throws Exception {
     	MainScene mainScene = new MainScene();
     	AppStatus.initiateAppStatus(primaryStage, mainScene);
     	

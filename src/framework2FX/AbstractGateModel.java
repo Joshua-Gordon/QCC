@@ -31,7 +31,7 @@ public abstract class AbstractGateModel implements Serializable{
 	private static final double LOG10_2 = Math.log10(2);
 	
 	public static enum GateModelType {
-		DEFAULT_GATE, CUSTOM_GATE, DEFAULT_ORACLE, CUSTOM_ORACLE;
+		DEFAULT_GATE, CUSTOM_GATE, CUSTOM_ORACLE;
 	}
 	
 	
