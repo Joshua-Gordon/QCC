@@ -11,6 +11,21 @@ import utils.EventArrayList;
 import utils.EventHashTable;
 import utils.Notifier;
 
+
+/**
+ * All Quantum Circuits designed within this application are done by modifying an instance of {@link Project} <br>
+ * Only one {@link Project} can be focused to be edited upon within one session of this Application <br>
+ * <p>
+ * All {@link CustomGateModel}s, {@link CustomOracleModel}s, and {@link CircuitBoard}s used within this project <br>
+ * are stored as lists within a instance of this class <br> 
+ * 
+ * <p>
+ * WARNING: Not thread safe when using object methods that modify <br>
+ * internal fields (may cause the GUI to not update as expected) <br>
+ * 
+ * @author Massimiliano Cutugno
+ *
+ */
 public class Project implements Serializable{
 	private static final long serialVersionUID = 8906661352790858317L;
 	
@@ -25,6 +40,10 @@ public class Project implements Serializable{
 	
 	
 	
+	
+	/**
+	 * @return A new untitled default {@link Project} which consists of one untitled top-level default circuit board
+	 */
 	public static Project createNewTemplateProject() {
 		Project project = new Project();
 		project.topLevelCircuit = project.addUntitledSubCircuit(
@@ -32,6 +51,11 @@ public class Project implements Serializable{
 		return project;
 	}
 	
+	
+	/**
+	 * @param fileLocation project location on the user's drive
+	 * @return the file name of the fileLocation without the extension
+	 */
 	public static String getProjectName(URI fileLocation) {
 		if(fileLocation == null) {
 			return "Untitled_Project";
@@ -45,7 +69,10 @@ public class Project implements Serializable{
 	
 	
 	
-	
+	/**
+	 * Creates an empty Project <br>
+	 * Project contains no sub-circuits or top-level-components <br>
+	 */
 	public Project() {
 		notifier = new Notifier();
 		subCircuits = new SubCircuitList();
@@ -65,7 +92,14 @@ public class Project implements Serializable{
 	
 	
 	
-	
+	/**
+	 * <b>REQUIRES:</b> cb is not null <br>
+	 * <b>ENSURES:</b>  cb is added to project as a untitled sub-circuit<br>
+	 * <b>MODIFIES INSTANCE</b>
+	 * @param cb
+	 * @return the generated name of this sub-circuit
+	 * @throws {@link RuntimeException} if sub-circuit count exceeds Integer.MAX_VALUE
+	 */
 	public String addUntitledSubCircuit(CircuitBoard cb){
 		String title = "Untitled";
 		
@@ -95,35 +129,100 @@ public class Project implements Serializable{
 	
 	
 	
+	
+	/**
+	 * @return the name of this project (the given file name without extension)
+	 */
 	public String getProjectName() {
 		return getProjectName(fileLocation);
 	}
 	
+	
+	
+	
+	
+	/**
+	 * @return the list of the sub-circuits for this project
+	 */
 	public SubCircuitList getSubCircuits() {
 		return subCircuits;
 	}
 	
+	
+	
+	
+	
+	/**
+	 * @return the list of the custom-gates for this project
+	 */
 	public CustomList<CustomGateModel> getCustomGates() {
 		return customGates;
 	}
 	
+	
+	
+	
+	
+	
+	/**
+	 * @return the list of the custom-oracles for this project
+	 */
 	public CustomList<AbstractGateModel> getCustomOracles() {
 		return customOracles;
 	}
-	
 
 	
 	
 	
+	/**
+	 * <b>REQUIRES:</b> list is not null <br>
+	 * <b>ENSURES:</b>  GUI is notified of the change <br>
+	 * <b>MODIFIES INSTANCE</b>
+	 * @param list list of custom gate models
+	 */
+	public void setCustomGates(CustomList<CustomGateModel> list) {
+		this.notifier.sendChange(this, "setCustomGate", list);
+		customGates = list;
+	}
+	
+	
+	
+	
+	/**
+	 * <b>REQUIRES:</b> list is not null <br>
+	 * <b>ENSURES:</b>  GUI is notified of the change (if this project is focused)<br>
+	 * <b>MODIFIES INSTANCE</b>
+	 * @param list
+	 */
+	public void setCustomOracles( CustomList<AbstractGateModel> list) {
+		this.notifier.sendChange(this, "setCustomOracles", list);
+		customOracles = list;
+	}
 	
 	
 	
 	
 	
+	
+	
+	/**
+	 * @return the name of the top-level sub-circuit
+	 */
 	public String getTopLevelCircuitName() {
 		return topLevelCircuit;
 	}
 	
+	
+	
+	
+	
+	/**
+	 * <b>REQUIRES:</b> name is not null <br>
+	 * <b>ENSURES:</b> name is set to the top-level sub-circuit && <br>
+	 * GUI is notified of the change (if this project is focused) <br>
+	 * <b>MODIFIES INSTANCE</b>
+	 * @param name
+	 */
 	public void setTopLevelCircuitName(String name) {
 		if(subCircuits.containsKey(name)) {
 			notifier.sendChange(this, "setTopLevelCircuitName", name);
@@ -131,10 +230,25 @@ public class Project implements Serializable{
 		}
 	}
 	
+	
+	
+	/**
+	 * @return this project's location on the drive
+	 */
 	public URI getProjectFileLocation() {
 		return fileLocation;
 	}
 	
+	
+	
+	
+	
+	/**
+	 * <b>REQUIRES:<b> fileLocation is not null
+	 * <b>ENSURES:</b> 
+	 * <b>MODIFIES INSTANCE</b>
+	 * @param fileLocation location of the 
+	 */
 	public void setProjectFileLocation(URI fileLocation) {
 		notifier.sendChange(this, "setProjectFileLocation", fileLocation);
 		this.fileLocation = fileLocation;
@@ -154,12 +268,25 @@ public class Project implements Serializable{
 	
 	
 	
-	// Update on the fly code
 	
-	public void setReciever(Notifier reciever) {
-		this.notifier.setReceiver(reciever);
+	
+	/**
+	 * <b>ENSURES:</b> that all changes to this project are notified to receiver. <br>
+	 * If null, then all changes will not be notified to any receiver <br>
+	 * @param receiver
+	 */
+	public void setReceiver(Notifier receiver) {
+		this.notifier.setReceiver(receiver);
 	}
 	
+	
+	/**
+	 *
+	 * WARNING: Not thread safe when using object methods that modify <br>
+	 * internal fields (may cause the GUI to not update as expected) <br>
+	 * 
+	 * @author Massimiliano Cutugno
+	 */
 	public class SubCircuitList extends EventHashTable<String, CircuitBoard> {
 		private static final long serialVersionUID = -2900966641041727003L;
 		public SubCircuitList() {
@@ -180,6 +307,15 @@ public class Project implements Serializable{
 		}
 	}
 	
+	/**
+	 * 
+	 * 
+	 * WARNING: Not thread safe when using object methods that modify <br>
+	 * internal fields (may cause the GUI to not update as expected) <br>
+	 * @author Massimiliano Cutugno
+	 * 
+	 * @param <T>
+	 */
 	public class CustomList <T> extends EventArrayList<T> {
 		private static final long serialVersionUID = -3016434516784502217L;
 

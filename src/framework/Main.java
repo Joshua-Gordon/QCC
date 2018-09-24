@@ -1,13 +1,9 @@
 package framework;
 
-import java.io.File;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 import Simulator.InternalExecutor;
 import Simulator.MixedState;
-import Simulator.Qubit;
 import appPreferencesFX.AppPreferences;
 import appUI.Window;
 import appUIFX.AppFileIO;
@@ -16,13 +12,6 @@ import framework2FX.AppStatus;
 import framework2FX.Project;
 import javafx.application.Application;
 import javafx.stage.Stage;
-
-import mathLib.*;
-import mathLib.Vector;
-import testLib.*;
-import testLib.BaseGraph;
-import java.util.*;
-import java.io.*;
 
 
 public class Main extends Application implements AppPreferences {
@@ -82,7 +71,7 @@ public class Main extends Application implements AppPreferences {
     @Override
 	public void start(Stage primaryStage) throws Exception {    	
     	MainScene mainScene = new MainScene();
-    	AppStatus.setAppStatus(primaryStage, mainScene);
+    	AppStatus.initiateAppStatus(primaryStage, mainScene);
     	
     	mainScene.loadNewScene(primaryStage, 1000, 600);
     	primaryStage.setTitle("QCC");

@@ -14,6 +14,18 @@ import javafx.stage.Stage;
 import utils.Notifier;
 import utils.Notifier.ReceivedEvent;
 
+
+/**
+ * Singleton class;
+ * 
+ * This instance contains all the states of the current session of this application. <br>
+ * For example, a project is set focused here. <br>
+ * <p>
+ * Access to the console is here as well. <br>
+ * 
+ * @author Massimiliano Cutugno
+ *
+ */
 public final class AppStatus {
 	
 	private static AppStatus status = null;
@@ -28,22 +40,25 @@ public final class AppStatus {
 	
 	
 	/**
-	 * Can only be set once throughout the whole application runtime
+	 * Can only be set once throughout the whole application runtime <br>
+	 * 
+	 * Used to initiate the status of this application.
 	 * 
 	 * @param primaryStage
 	 * @param mainScene
 	 */
-	public static void setAppStatus(Stage primaryStage, MainScene mainScene) {
+	public static void initiateAppStatus(Stage primaryStage, MainScene mainScene) {
 		if(status != null)
 			return;
 		status = new AppStatus(primaryStage, mainScene);
 	}
 	
-	
+	/**
+	 * @return the {@link AppStatus} instance of this program
+	 */
 	public static AppStatus get() {
 		return status;
 	}
-	
 	
 	
 	
@@ -77,13 +92,23 @@ public final class AppStatus {
 	
 	
 	
-	
+	/**
+	 * @return the console controller of this application
+	 */
 	public Console getConsole() {
 		return (Console) TabView.CONSOLE.getView();
 	}
 	
 	
-	
+	/**
+	 * 
+	 * Makes a {@link Project} instance focusable to this application
+	 * 
+	 * <b>REQUIRES:</b> that the project is not null <br>
+	 * <b>ENSURES:</b> the GUI is notified of this change <br>
+	 * <b>MODIFIES INSTANCE</b>
+	 * @param project
+	 */
 	public void setFocusedProject(Project project) {
 		
 		if(project == null)
@@ -99,12 +124,12 @@ public final class AppStatus {
 		
 		// set previously focused project unfocused
 		if(this.project != null)
-			this.project.setReciever(null);
+			this.project.setReceiver(null);
 		
 		
 		notifier.sendChange(this, "setFocusedProject", project);
 		this.project = project;
-		this.project.setReciever(notifier);
+		this.project.setReceiver(notifier);
 	}
 	
 	
@@ -117,12 +142,20 @@ public final class AppStatus {
 	
 	
 	
-	
+	/**
+	 * Sets the current {@link Project} status to saved
+	 * <b>MODIFIES INSTANCE</b>
+	 */
 	public void setProjectSavedFlag() {
 		isProjectModifed = false;
 	}
 	
 	
+	/**
+	 * 
+	 * <b>MODIFIES INSTANCE</b>
+	 * @param changeListener
+	 */
 	public void addAppChangedListener(ReceivedEvent changeListener) {
 		changeListeners.add(changeListener);
 	}

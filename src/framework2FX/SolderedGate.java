@@ -15,7 +15,7 @@ import framework.SolderedRegister;
  * @author quantumresearch
  * 
  */
-public class SolderedGate implements Serializable{
+public class SolderedGate implements Exportable, Serializable{
 	private static final long serialVersionUID = 2595030500395644473L;
 	
 	private AbstractGate abstractGate;

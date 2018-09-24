@@ -88,7 +88,7 @@ public class AppFileIO implements AppPreferences{
 		){
 			
 			project =  (Project) ois.readObject();
-			project.setReciever(null);
+			project.setReceiver(null);
 			project.setProjectFileLocation(file.toURI());
 			
 			

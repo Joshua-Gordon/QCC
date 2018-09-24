@@ -14,18 +14,27 @@ import utils.EventArrayList;
 import utils.Notifier;
 
 /**
- * Contains all data pertaining to a subcircuit in the application project
- * such as the list of custom gates, custom oracles, and the list of instructions
- * for a quantum protocol represented by a grid of gates 
- * (A double {@link ArrayList} of {@link SolderedRegister}s)
+ * This is a 2D grid of gates that represents a quantum protocol within design (often referred to as a sub-circuit or top-level) <br>
  * <p>
- * This is the main class to be serialized to save a user's project, however all methods pertaining to saving
- * an instance of a {@link CircuitBoard} as a project is contained within {@link CircuitBoardSelector}
+ * For a {@link CircuitBoard} to be used within a the application through the GUI, it must be added to <br>
+ * a {@link Project} instance.
+ * <p>
+ * A {@link CircuitBoard} instance has two tiers: sub-circuit or top-level <br>
+ * The top-level board is top-most 'module' of a quantum protocol. <br>
+ * The top-level can be composed of other {@link CircuitBoard} instances; These instances are called sub-circuits.<br>
+ * <p>
+ * There can only be one top-level within a single {@link Project} instance, but there is no <br>
+ * limit to the amount of sub-circuits within a {@link Project} instance.
+ * <p>
+ * 
+ * For a {@link CircuitBoard} to be identified as a 
+ * 
+ * 
  * 
  * @author quantumresearch
  *
  */
-public class CircuitBoard implements Serializable{
+public class CircuitBoard implements Exportable, Serializable{
 	private static final long serialVersionUID = -6921131331890897905L;
 
     private Board board;
