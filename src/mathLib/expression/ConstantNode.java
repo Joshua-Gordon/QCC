@@ -22,14 +22,29 @@ public abstract class ConstantNode<T extends Number> extends Node {
 	}
 	
 	public static class IntegerNode extends ConstantNode<Integer> {
+		public IntegerNode(Integer value) {
+			super(value);
+		}
 		public IntegerNode(String value) {
 			super(Integer.parseInt(value));
+		}
+		@Override
+		public Node duplicate() {
+			return new IntegerNode(getValue());
 		}
 	}
 	
 	public static class DoubleNode extends ConstantNode<Double> {
+		public DoubleNode(Double value) {
+			super(value);
+		}
 		public DoubleNode(String value) {
 			super(Double.parseDouble(value));
+		}
+		
+		@Override
+		public Node duplicate() {
+			return new DoubleNode(getValue());
 		}
 	}
 }

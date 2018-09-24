@@ -7,7 +7,11 @@ public class FunctionNode extends Node {
 	private String name;
 	
 	public FunctionNode (String name) {
-		this.params = new SimpleLinkedList<>();
+		this(name, new SimpleLinkedList<>());
+	}
+	
+	private FunctionNode (String name, SimpleLinkedList<Node> params) {
+		this.params = params;
 		this.name = name;
 	}
 	
@@ -31,5 +35,10 @@ public class FunctionNode extends Node {
 	@Override
 	public String toString() {
 		return name + "()" + params.toString();
+	}
+
+	@Override
+	public Node duplicate() {
+		return new FunctionNode(name, duplicateNodes(params));
 	}
 }

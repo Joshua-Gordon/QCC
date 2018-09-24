@@ -4,8 +4,12 @@ public class NegateNode extends OperatorNode {
 	private Node toNegate;
 	
 	public NegateNode () {
+		this(null);
+	}
+	
+	private NegateNode(Node toNegate) {
 		super(NEG);
-		this.toNegate = null;
+		this.toNegate = toNegate;
 	}
 	
 	@Override
@@ -28,5 +32,10 @@ public class NegateNode extends OperatorNode {
 	@Override
 	public String toString() {
 		return "NEG()" + toNegate.toString();
+	}
+
+	@Override
+	public Node duplicate() {
+		return new NegateNode(toNegate.duplicate());
 	}
 }

@@ -6,8 +6,12 @@ public class ExponentNode extends OperatorNode {
 	private SimpleLinkedList<Node> nodes;
 	
 	public ExponentNode () {
+		this(new SimpleLinkedList<>());
+	}
+	
+	private ExponentNode (SimpleLinkedList<Node> nodes) {
 		super(EXPO);
-		this.nodes = new SimpleLinkedList<>();
+		this.nodes = nodes;
 	}
 
 	public SimpleLinkedList<Node> getNodes(){
@@ -25,5 +29,10 @@ public class ExponentNode extends OperatorNode {
 	@Override
 	public String toString() {
 		return "EXPO()" + nodes.toString();
+	}
+
+	@Override
+	public Node duplicate() {
+		return new ExponentNode(duplicateNodes(nodes));
 	}
 }

@@ -1,15 +1,20 @@
 package mathLib.expression;
 
 import utils.SimpleLinkedList;
+import utils.SimpleLinkedList.LinkedIterator;
 
 public class AddNode extends OperatorNode {
 	private SimpleLinkedList<Node> inversed;
 	private SimpleLinkedList<Node> nodes;
 	
 	public AddNode () {
+		this(new SimpleLinkedList<>(), new SimpleLinkedList<>());
+	}
+	
+	private AddNode (SimpleLinkedList<Node> nodes, SimpleLinkedList<Node> inversed) {
 		super(ADD);
-		this.inversed = new SimpleLinkedList<>();
-		this.nodes = new SimpleLinkedList<>();
+		this.inversed = inversed;
+		this.nodes = nodes;
 	}
 	
 	public SimpleLinkedList<Node> getNodes(){
@@ -34,4 +39,10 @@ public class AddNode extends OperatorNode {
 	public String toString() {
 		return "ADD()" + nodes.toString() + ", SUB()" + inversed.toString();
 	}
+
+	@Override
+	public AddNode duplicate() {
+		return new AddNode(duplicateNodes(nodes), duplicateNodes(inversed));
+	}
+	
 }

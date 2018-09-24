@@ -37,7 +37,7 @@ public class SimpleLinkedList <T> implements Iterable<T>{
 		return next.element;
 	}
 	
-	public SimpleLinkedList<T> getNext(){
+	public SimpleLinkedList<T> splitNext(){
 		return next;
 	}
 	
@@ -50,12 +50,6 @@ public class SimpleLinkedList <T> implements Iterable<T>{
 		if(next != null)
 			next = next.next;
 	}
-	
-	public T getFirst() {
-		return next == null? null : next.element;
-	}
-	
-	
 	
 	public static class LinkedIterator<T> implements Iterator<T> {	
 		private SimpleLinkedList<T> current;
@@ -92,7 +86,7 @@ public class SimpleLinkedList <T> implements Iterable<T>{
 		
 		String s = next.element.toString() + "}";
 		
-		for(T element : this.getNext())
+		for(T element : this.splitNext())
 			s = element.toString() + ", " + s;
 		
 		return "{" + s;

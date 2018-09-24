@@ -6,10 +6,14 @@ public class MultNode extends OperatorNode {
 	private SimpleLinkedList<Node> inversed;
 	private SimpleLinkedList<Node> nodes;
 	
-	public MultNode() {
+	public MultNode () {
+		this(new SimpleLinkedList<>(), new SimpleLinkedList<>());
+	}
+	
+	private MultNode (SimpleLinkedList<Node> nodes, SimpleLinkedList<Node> inversed) {
 		super(MULT);
-		this.inversed = new SimpleLinkedList<>();
-		this.nodes = new SimpleLinkedList<>();
+		this.inversed = inversed;
+		this.nodes = nodes;
 	}
 	
 	public SimpleLinkedList<Node> getNodes(){
@@ -33,5 +37,10 @@ public class MultNode extends OperatorNode {
 	@Override
 	public String toString() {
 		return "MULT()" + nodes.toString() + ", DIV()" + inversed.toString();
+	}
+
+	@Override
+	public Node duplicate() {
+		return new MultNode(duplicateNodes(nodes), duplicateNodes(inversed));
 	}
 }
