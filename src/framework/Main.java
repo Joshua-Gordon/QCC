@@ -25,7 +25,7 @@ public class Main extends Application implements AppPreferences {
 
     	boolean javaFX_GUI = false;
     	
-    	boolean debugMode = false;
+    	boolean debugMode = true;
     	boolean debugSimulatorMode = false;
     	
     	if ( normalMode ) {
@@ -39,12 +39,17 @@ public class Main extends Application implements AppPreferences {
     	}
     	
     	if ( debugMode ) {
-    		ArrayList<ArrayList<SolderedRegister>> gates = Translator.loadProgram(DefaultGate.LangType.QUIL,"res/test.quil");
-    		window.getSelectedBoard().setGates(gates);
-    		CircuitBoard cb = window.getSelectedBoard();
-    		System.out.println(cb.getRows());
-    		MixedState ms = InternalExecutor.createMixedState(cb);
-    		System.out.println(ms.getDensityMatrix());
+    		Expression e = new Expression("a + b i ^ (pi i) / b / c - fn(3)");
+    		e.printTree();
+    		System.out.println(e);
+    		
+    		
+//    		ArrayList<ArrayList<SolderedRegister>> gates = Translator.loadProgram(DefaultGate.LangType.QUIL,"res/test.quil");
+//    		window.getSelectedBoard().setGates(gates);
+//    		CircuitBoard cb = window.getSelectedBoard();
+//    		System.out.println(cb.getRows());
+//    		MixedState ms = InternalExecutor.createMixedState(cb);
+//    		System.out.println(ms.getDensityMatrix());
     	}
     	
     	if ( debugSimulatorMode ) {

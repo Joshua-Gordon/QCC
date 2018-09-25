@@ -615,13 +615,13 @@ public class Expression extends Operators<Expression>{
 					else
 						s2 = toString(temp);
 					if(nodesInv.hasNext()) {
-						temp = nodes.next();
+						temp = nodesInv.next();
 						if(temp.getNodeType() == NodeType.OP && ((OperatorNode) temp).getOpType() == OperatorNode.ADD)
 							s2 = "(" + toString(temp) + ") * " +  s2;
 						else
 							s2 = toString(temp) + " * " +  s2;
 						while(nodesInv.hasNext()){
-							temp = nodes.next();
+							temp = nodesInv.next();
 							if(temp.getNodeType() == NodeType.OP && ((OperatorNode) temp).getOpType() == OperatorNode.ADD)
 								s2 = "(" + toString(temp) + ") * " +  s2;
 							else
