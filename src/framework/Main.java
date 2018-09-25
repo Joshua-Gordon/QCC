@@ -38,7 +38,7 @@ public class Main extends Application implements AppPreferences {
     		}
     	}
     	
-    	if ( debugMode ) {   		
+    	if ( debugMode ) {
     		ArrayList<ArrayList<SolderedRegister>> gates = Translator.loadProgram(DefaultGate.LangType.QUIL,"res/test.quil");
     		window.getSelectedBoard().setGates(gates);
     		CircuitBoard cb = window.getSelectedBoard();
@@ -55,9 +55,6 @@ public class Main extends Application implements AppPreferences {
 				System.out.println(result);
 			}
 		}
-
-		Expression e = new Expression("c-2^a*(3+yrdjtdjfu(4))+^b");
-    	System.out.println(e);
     }
     
     

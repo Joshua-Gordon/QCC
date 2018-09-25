@@ -170,6 +170,7 @@ public class Expression extends Operators<Expression>{
 				break;
 			}
 		}
+		if(status.isRecursive) throw new ExpressionParseException(p);
 		return status.getRoot();
 	}
 	
