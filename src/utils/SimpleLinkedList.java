@@ -33,7 +33,7 @@ public class SimpleLinkedList <T> implements Iterable<T>{
 	}
 	
 	public T get() {
-		if(next == null) throw new IndexOutOfBoundsException("Linkedlist ends here");
+		if(next == null) throw new IndexOutOfBoundsException("Linkedlist is empty");
 		return next.element;
 	}
 	
@@ -42,7 +42,7 @@ public class SimpleLinkedList <T> implements Iterable<T>{
 	}
 	
 	public void set(T value) {
-		if(next == null) throw new IndexOutOfBoundsException("Linkedlist ends here");
+		if(next == null) throw new IndexOutOfBoundsException("Linkedlist is empty");
 		this.next.element = value;
 	}
 	
@@ -67,10 +67,6 @@ public class SimpleLinkedList <T> implements Iterable<T>{
 		public T next() {
 			current = current.next;
 			return current.element;
-		}
-		
-		public SimpleLinkedList<T> getCurrentLinkedList() {
-			return current;
 		}
 	}
 

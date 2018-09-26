@@ -37,7 +37,7 @@ public abstract class OperatorNode extends Node{
 	public abstract void add(Node node);		
 	public abstract void addInversed(Node node);
 	
-	public byte compareTo(byte opType) {
+	public byte comparePrecendenceTo(byte opType) {
 		if(this.opType > opType) return -1;
 		if(this.opType < opType) return  1;
 		return 0;

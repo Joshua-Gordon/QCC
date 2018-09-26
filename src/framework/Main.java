@@ -22,7 +22,7 @@ public class Main extends Application implements AppPreferences {
     public static void main(String[] args) {
     	/* toggle flags: debug mode or not */
     	boolean normalMode = false;
-
+    	
     	boolean javaFX_GUI = false;
     	
     	boolean debugMode = true;
@@ -39,10 +39,8 @@ public class Main extends Application implements AppPreferences {
     	}
     	
     	if ( debugMode ) {
-    		Expression e = new Expression("a + b i ^ (pi i) / b / c - fn(3)");
-    		e.printTree();
+    		Expression e = new Expression("e - - -a b pi ^ -2 (3-4)");
     		System.out.println(e);
-    		
     		
 //    		ArrayList<ArrayList<SolderedRegister>> gates = Translator.loadProgram(DefaultGate.LangType.QUIL,"res/test.quil");
 //    		window.getSelectedBoard().setGates(gates);

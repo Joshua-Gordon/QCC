@@ -13,7 +13,7 @@ public abstract class Node {
 	public abstract Node duplicate();
 	
 	
-	protected SimpleLinkedList<Node> duplicateNodes(SimpleLinkedList<Node> toCopy){
+	protected static SimpleLinkedList<Node> duplicateNodes(SimpleLinkedList<Node> toCopy){
 		SimpleLinkedList<Node> copy = new SimpleLinkedList<>();
 		LinkedIterator<Node> iterator = toCopy.iterator();
 		

@@ -25,4 +25,8 @@ public class VariableNode extends Node {
 	public Node duplicate() {
 		return new VariableNode(name);
 	}
+	
+	public boolean equals(VariableNode node) {
+		return name.equals(node.name);
+	}
 }

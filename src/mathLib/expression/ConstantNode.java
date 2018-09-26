@@ -21,6 +21,10 @@ public abstract class ConstantNode<T extends Number> extends Node {
 		return value.toString();
 	}
 	
+	public boolean equals(ConstantNode<?> node) {
+		return value.equals(node.value);
+	}
+	
 	public static class IntegerNode extends ConstantNode<Integer> {
 		public IntegerNode(Integer value) {
 			super(value);
