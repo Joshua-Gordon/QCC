@@ -12,6 +12,7 @@ import framework2FX.AppStatus;
 import framework2FX.Project;
 import javafx.application.Application;
 import javafx.stage.Stage;
+import mathLib.compile.UnitaryDecomp;
 import mathLib.expression.Expression;
 
 
@@ -39,15 +40,10 @@ public class Main extends Application implements AppPreferences {
     	}
     	
     	if ( debugMode ) {
-    		Expression e = new Expression("e - - -a b pi ^ -2 (3-4)");
-    		System.out.println(e);
-    		
-//    		ArrayList<ArrayList<SolderedRegister>> gates = Translator.loadProgram(DefaultGate.LangType.QUIL,"res/test.quil");
-//    		window.getSelectedBoard().setGates(gates);
-//    		CircuitBoard cb = window.getSelectedBoard();
-//    		System.out.println(cb.getRows());
-//    		MixedState ms = InternalExecutor.createMixedState(cb);
-//    		System.out.println(ms.getDensityMatrix());
+			UnitaryDecomp ud = new UnitaryDecomp();
+			for(int i = 0; i < 10; ++i) {
+				System.out.println(ud.testNVectorNormMatrix(i));
+			}
     	}
     	
     	if ( debugSimulatorMode ) {
