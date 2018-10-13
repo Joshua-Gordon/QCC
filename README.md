@@ -3,6 +3,8 @@ Quantum Cross Compiler, a tool for building and simulating quantum circuits and 
 
 This is an alpha build. Please submit issues to this repository.
 
+Created by Josh Gordon, Max Cutugno, and Christino Tamon.
+Depends on code from NIST's JAMA library.
 Features
 ---
 1. Build quantum circuits
