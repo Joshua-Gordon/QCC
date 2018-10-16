@@ -14,7 +14,7 @@ public class ContextFreeGrammer {
 	}
 	
 	private Hashtable<NonTerminal, ProductionTree> constructNonTerminalMap (ArrayList<Production> productions) {
-		
+		return null;
 	}
 	
 	
