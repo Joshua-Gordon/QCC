@@ -11,8 +11,8 @@ import appUIFX.TabView;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
-import utils.Notifier;
-import utils.Notifier.ReceivedEvent;
+import utils.customCollections.eventTracableCollections.Notifier;
+import utils.customCollections.eventTracableCollections.Notifier.ReceivedEvent;
 
 
 /**

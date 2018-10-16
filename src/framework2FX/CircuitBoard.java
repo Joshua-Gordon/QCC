@@ -10,8 +10,8 @@ import framework.RegisterActionRunnable;
 import framework.SolderedGate;
 import framework.SolderedRegister;
 import utils.AppDialogs;
-import utils.EventArrayList;
-import utils.Notifier;
+import utils.customCollections.eventTracableCollections.EventArrayList;
+import utils.customCollections.eventTracableCollections.Notifier;
 
 /**
  * This is a 2D grid of gates that represents a quantum protocol within design (often referred to as a sub-circuit or top-level) <br>

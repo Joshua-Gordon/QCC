@@ -5,7 +5,7 @@ import appUI.GateChooserUI;
 import appUI.GateIcon;
 import mathLib.Complex;
 import mathLib.Matrix;
-import utils.HashListModel;
+import utils.customCollections.eventTracableCollections.HashListModel;
 
 
 /**

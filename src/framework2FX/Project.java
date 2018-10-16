@@ -7,9 +7,9 @@ import java.net.URI;
 import com.sun.xml.internal.bind.v2.runtime.unmarshaller.Receiver;
 
 import appUIFX.AppFileIO;
-import utils.EventArrayList;
-import utils.EventHashTable;
-import utils.Notifier;
+import utils.customCollections.eventTracableCollections.EventArrayList;
+import utils.customCollections.eventTracableCollections.EventHashTable;
+import utils.customCollections.eventTracableCollections.Notifier;
 
 
 /**

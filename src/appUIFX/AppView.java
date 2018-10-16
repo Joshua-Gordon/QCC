@@ -4,7 +4,7 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.control.Tab;
 import javafx.stage.Stage;
-import utils.Notifier.ReceivedEvent;
+import utils.customCollections.eventTracableCollections.Notifier.ReceivedEvent;
 
 public abstract class AppView extends AppFXMLComponent implements ReceivedEvent {
 	

@@ -16,8 +16,8 @@ import framework2FX.Project;
 import javafx.scene.control.Alert.AlertType;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
+import utils.customCollections.eventTracableCollections.Notifier;
 import javafx.stage.Stage;
-import utils.Notifier;
 
 
 public class AppFileIO implements AppPreferences{

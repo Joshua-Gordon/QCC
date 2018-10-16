@@ -3,7 +3,6 @@ package framework;
 import java.util.ArrayList;
 
 import Simulator.InternalExecutor;
-import Simulator.MixedState;
 import appPreferencesFX.AppPreferences;
 import appUI.Window;
 import appUIFX.AppFileIO;
@@ -13,7 +12,7 @@ import framework2FX.Project;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import mathLib.compile.UnitaryDecomp;
-import mathLib.expression.Expression;
+
 
 
 public class Main extends Application implements AppPreferences {
