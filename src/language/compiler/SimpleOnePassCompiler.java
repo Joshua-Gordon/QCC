@@ -17,6 +17,7 @@ public class SimpleOnePassCompiler {
 	}
 	
 	public ParseTree compile (BufferedReader br) {
+		ParseTree pt = new ParseTree();
 		Stream<Pair<Token, String>> tokenStream = lexicalAnalyzer.getTokenStream(br);
 		
 		

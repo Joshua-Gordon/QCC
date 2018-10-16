@@ -1,17 +1,19 @@
 package language.compiler;
 
-import java.util.LinkedList;
-import java.util.ListIterator;
-
 public class Production {
-	private Terminal leftSide;
-	private LinkedList<ProductionSymbol> rightSideSymbols;
+	private final NonTerminal leftSide;
+	private final ProductionSymbol[] rightSideSymbols;
 	
-	public Production (Terminal leftSide, ProductionSymbol ... rightSideSymbols) {
-		this.rightSideSymbols = new LinkedList<>();
-		ListIterator<ProductionSymbol> iterator = this.rightSideSymbols.listIterator();
-		
-		while(iterator.nextIndex() != rightSideSymbols.length)
-			iterator.add(rightSideSymbols[iterator.nextIndex() - 1]);
+	public Production (NonTerminal leftSide, ProductionSymbol ... rightSideSymbols) {
+		this.leftSide = leftSide;
+		this.rightSideSymbols = rightSideSymbols;
+	}
+	
+	public NonTerminal getLeftSide () {
+		return leftSide;
+	}
+	
+	public ProductionSymbol[] getRightSideSymbols () {
+		return rightSideSymbols;
 	}
 }
