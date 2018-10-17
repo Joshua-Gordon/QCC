@@ -1,54 +1,53 @@
 package language.compiler;
 
 import java.io.BufferedReader;
+import java.io.StringReader;
 import java.util.stream.Stream;
 
+import language.compiler.LexicalAnalyzer.LexicalAnaylizerIOException;
+import language.compiler.LexicalAnalyzer.LexemeNotRecognizedException;
+import language.compiler.SyntaxDirectedTranslator.Parser;
 import utils.customCollections.Pair;
-import utils.customCollections.Stack;
 
 public class SimpleOnePassCompiler {
 	
-	private LexicalAnalyzer lexicalAnalyzer;
-	private SyntaxDirectedTranslator syntaxDirectedTranslator ;
+	private final LexicalAnalyzer lexicalAnalyzer;
+	private final SyntaxDirectedTranslator syntaxDirectedTranslator ;
 	
-	public SimpleOnePassCompiler (LexicalAnalyzer lexicalAnalyzer, SyntaxDirectedTranslator syntaxDirectedTranslator) {
+	public SimpleOnePassCompiler (LexicalAnalyzer lexicalAnalyzer, 
+			SyntaxDirectedTranslator syntaxDirectedTranslator) {
+		
 		this.lexicalAnalyzer = lexicalAnalyzer;
 		this.syntaxDirectedTranslator = syntaxDirectedTranslator;
 	}
 	
-	public ParseTree compile (BufferedReader br) {
-		ParseTree pt = new ParseTree();
-		Stream<Pair<Token, String>> tokenStream = lexicalAnalyzer.getTokenStream(br);
-		
-		
-		
-		return null;
-	}
 
-	public Pair<ParseTree, Stack<Object>> compileWithTranslationScheme (BufferedReader br) {
-		return new Pair<>(null, null);
+	public ParseTree compileWithTranslationScheme(String string) 
+			throws LexemeNotRecognizedException, LexicalAnaylizerIOException {
+		
+		BufferedReader br = new BufferedReader(new StringReader(string));
+		
+		return compileWithTranslationScheme(br);
+	}
+	
+	public ParseTree compileWithTranslationScheme (BufferedReader br) 
+			throws LexemeNotRecognizedException, LexicalAnaylizerIOException {
+		
+		Stream<Pair<Token, String>> tokenStream = lexicalAnalyzer.getTokenStream(br);
+		Parser p = syntaxDirectedTranslator.getParser(tokenStream);
+		ParseTree parseTree = p.run();
+		
+		return parseTree;
 	}
 	
 	
-	
-	
-	
-	// Getters and Setters
-	
+	// Getters
 	
 	public LexicalAnalyzer getLexicalAnalyzer() {
 		return lexicalAnalyzer;
 	}
 
-	public void setLexicalAnalyzer(LexicalAnalyzer lexicalAnalyzer) {
-		this.lexicalAnalyzer = lexicalAnalyzer;
-	}
-
 	public SyntaxDirectedTranslator getSyntaxDirectedTranslator() {
 		return syntaxDirectedTranslator;
-	}
-
-	public void setSyntaxDirectedTranslator(SyntaxDirectedTranslator syntaxDirectedTranslator) {
-		this.syntaxDirectedTranslator = syntaxDirectedTranslator;
 	}
 }

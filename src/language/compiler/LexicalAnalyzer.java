@@ -12,14 +12,12 @@ import utils.customCollections.Queue.QueueIterator;
 
 public class LexicalAnalyzer {
 	private final DFA dfa;
-	private BufferedReader br;
-	private Queue<Character> buffer = new Queue<>();
 	
-	LexicalAnalyzer (DFA dfa, BufferedReader br) {
+	LexicalAnalyzer (DFA dfa) {
 		this.dfa = dfa;
-		this.br = br;
 	}
 	
+	@SafeVarargs
 	public LexicalAnalyzer (Pair<Token, String> ... tokenRegexPair) {
 		
 		// to be implemented
@@ -81,7 +79,7 @@ public class LexicalAnalyzer {
 							}
 						}
 					} catch (IOException e) {
-						e.printStackTrace();
+						throw new LexicalAnaylizerIOException(e.getMessage());
 					}
 				}
 				
@@ -89,7 +87,13 @@ public class LexicalAnalyzer {
 				
 				// if no states were ever accepted 
 				if (!buffer.isMarked())
-					return null;
+					if(buffer.isEmpty())
+						// end of the stream
+						return null;
+					else
+						// the remaining char sequence does not satisfied any
+						// of the patterns of the specified tokens
+						throw new LexemeNotRecognizedException();
 				
 				
 				
@@ -117,4 +121,19 @@ public class LexicalAnalyzer {
 		});
 	}
 	
+	@SuppressWarnings("serial")
+	public static class LexemeNotRecognizedException extends RuntimeException {
+		
+		public LexemeNotRecognizedException () {
+			super ("No token could recognize the remaining char sequence");
+		}
+		
+	}
+	
+	@SuppressWarnings("serial")
+	public static class LexicalAnaylizerIOException extends RuntimeException {
+		public LexicalAnaylizerIOException(String message) {
+			super(message);
+		}
+	}
 }

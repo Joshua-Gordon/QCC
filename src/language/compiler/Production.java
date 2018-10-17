@@ -1,5 +1,7 @@
 package language.compiler;
 
+import language.compiler.ProductionSymbol.NonTerminal;
+
 public class Production {
 	private final NonTerminal leftSide;
 	private final ProductionSymbol[] rightSideSymbols;
