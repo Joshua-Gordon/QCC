@@ -6,6 +6,7 @@ import java.util.ResourceBundle;
 
 import appPreferencesFX.AppPreferences;
 import appUIFX.TabView.ViewListener;
+import framework2FX.CircuitBoard;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.Initializable;

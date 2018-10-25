@@ -1,7 +1,5 @@
 package appUIFX;
 
-import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.scene.control.Tab;
 import javafx.stage.Stage;
 import utils.customCollections.eventTracableCollections.Notifier.ReceivedEvent;

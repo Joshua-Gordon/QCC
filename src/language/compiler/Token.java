@@ -2,14 +2,11 @@ package language.compiler;
 
 import language.compiler.ProductionSymbol.Terminal;
 
+/**
+ * This represents a single token within a context free grammer
+ * @author Massimiliano Cutugno
+ *
+ */
 public class Token extends Terminal{
-	private final String name;
-	
-	public Token (String name) {
-		this.name = name;
-	}
-	
-	public String getName () {
-		return name;
-	}
+	public static final Token NONE = new Token();
 }

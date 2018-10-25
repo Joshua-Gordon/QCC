@@ -8,26 +8,48 @@ import language.compiler.ProductionSymbol.NonTerminal;
 import language.compiler.ProductionSymbol.SematicActionSymbol;
 import language.compiler.ProductionSymbol.Terminal;
 
+
+/**
+ * 
+ * This class allows clients to specify context free grammers for any compiler
+ * 
+ * @author Massimiliano Cutugno
+ *
+ */
 public class ContextFreeGrammer {
 	private final NonTerminal startingNonTerminal;	
 	private final Hashtable<NonTerminal, ProductionTree> nonTerminalMap;
 	
 	
 	
-	
+	/**
+	 * Creates a Context Free Grammer
+	 * @param startingNonTerminal
+	 * @param productions
+	 */
 	public ContextFreeGrammer (NonTerminal startingNonTerminal, Production ... productions) {
 		this.startingNonTerminal = startingNonTerminal;
 		this.nonTerminalMap = constructNonTerminalMap(productions);
 	}
 	
+	/**
+	 * @return the starting NonTerminal
+	 */
 	public NonTerminal getStartingNonTerminal() {
 		return startingNonTerminal;
 	}
 	
+	/**
+	 * This returns the mapped {@link ProductionTree} for the specified {@link NonTerminal}
+	 * 
+	 * @param nonTerminal
+	 * @return
+	 */
 	public ProductionTree getProductionTree(NonTerminal nonTerminal){
 		return nonTerminalMap.get(nonTerminal);
 	}
 	
+	// creates a map that makes the parser very easily traverse through a productions specified by this grammer
 	private Hashtable<NonTerminal, ProductionTree> constructNonTerminalMap (Production[] productions) {		
 		NonTerminal nt;
 		ArrayList<ProductionSymbol[]> arrayList;
@@ -90,7 +112,12 @@ public class ContextFreeGrammer {
 	
 	
 	
-	
+	/**
+	 * This class allows a compiler to traverse effiecntly through specified productions within the grammer when parsing
+	 * 
+	 * @author Massimiliano Cutugno
+	 *
+	 */
 	public static class ProductionTree {
 		private final Hashtable<NonTerminal, ProductionTree> nonTerminals = new Hashtable<>();
 		private final Hashtable<Terminal, ProductionTree> terminals = new Hashtable<>();
@@ -142,6 +169,10 @@ public class ContextFreeGrammer {
 		
 		public Set<SematicActionSymbol> getSematicActions() {
 			return actions.keySet();
+		}
+		
+		public boolean isEmpty() {
+			return nonTerminals.isEmpty() && terminals.isEmpty() && actions.isEmpty();
 		}
 		
 	}
