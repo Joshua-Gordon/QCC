@@ -28,7 +28,7 @@ public class Main extends Application implements AppPreferences {
     	/* toggle flags: debug mode or not */
     	boolean normalMode = true;
     	
-    	boolean javaFX_GUI = true;
+    	boolean javaFX_GUI = false;
     	
     	boolean debugMode = false;
     	boolean debugSimulatorMode = false;
