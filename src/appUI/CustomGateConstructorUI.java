@@ -225,6 +225,7 @@ public class CustomGateConstructorUI extends JDialog implements ChangeListener, 
 	public void stateChanged(ChangeEvent e) {
 		icon.setMultiQubit(!spinner.getValue().toString().equals("1"));
 		((GateMatrixEditable)fullMatrix.getViewport().getView()).changeSize(Integer.parseInt(spinner.getValue().toString()));
+		((GateMatrixEditable)hamiltonianMatrix.getViewport().getView()).changeSize(Integer.parseInt(spinner.getValue().toString()));
 		((GateMatrixEditable)kroneckerMatrix.getViewport().getView()).changeSize(Integer.parseInt(spinner.getValue().toString()));
 		revalidate();
 		repaint();
@@ -291,7 +292,7 @@ public class CustomGateConstructorUI extends JDialog implements ChangeListener, 
 	}
 	
 	public ArrayList<Matrix<Complex>> getCustomMatrix(){
-		if(radioButtons[2].isSelected()) {
+		if(radioButtons[2].isSelected() && outputMatrixes != null) {
 			double time = Double.parseDouble(JOptionPane.showInputDialog("Enter time"));
 			Matrix<Complex> mat = outputMatrixes.get(0);
 			Matrix<Complex> sneaky = HamiltonianSimulation.quantumWalk(mat, time);
