@@ -4,6 +4,12 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 
+/**
+ * Represents a Stack Object
+ * @author Massimiliano Cutugno
+ *
+ * @param <T>
+ */
 public class Stack <T> implements Collection <T>{
 	
 	private ListNode<T> top = null;
@@ -32,21 +38,50 @@ public class Stack <T> implements Collection <T>{
 		return element;
 	}
 	
+	
+	/**
+	 * Stores the last added node at the current state of this collection.
+	 * Any method using this marked position does not require iterating to this
+	 * position, and therfore it very effiecient to mark important places within
+	 * this collection if at any time one would desire to go to this state. Only
+	 * one node can be marked at one time; if {@link #mark()} is called twice, 
+	 * the last marked position is replaced by the last added element to this
+	 * collection. If this marked node is removed, then this collection is
+	 * {@link #unmark()}.
+	 * 
+	 */
 	public void mark() {
 		if(size == 0) throw new EmptyCollectionException();
 		mark = top;
 		markIndex = size - 1;
 	}
 	
+	/**
+	 * Unmarks the last marked node in this collection. If collection is not marked,
+	 * nothing is done.
+	 * 
+	 * @see {@link #mark}
+	 */
 	public void unmark () {
 		mark = null;
 		markIndex = 0;
 	}
 	
+	/**
+	 * Checks if this collection is marked
+	 * @see {@link #mark}
+	 * 
+	 * @return if this collection is marked or not
+	 */
 	public boolean isMarked () {
 		return mark != null;
 	}
 	
+	/**
+	 * @see {@link #mark}
+	 * @return if this collection is not marked, then 0 is returned.
+	 * otherwise the index of the marked node is returned.
+	 */
 	public int getMarkedIndex () {
 		return markIndex;
 	}

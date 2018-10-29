@@ -5,13 +5,20 @@ import java.util.Collection;
 import java.util.EmptyStackException;
 import java.util.Iterator;
 
+
+/**
+ * Represents a Queue object
+ * @author Massimiliano Cutugno
+ *
+ * @param <T>
+ */
 public class Queue<T> implements Collection<T> {
 	private ListNode<T> top = null;
 	private ListNode<T> mark = null;
 	private ListNode<T> bot = null;
 	
 	private int size = 0;
-	private int markIndex = 0;
+	private int markIndex = -1;
 	
 	public void enqueue (T element) {
 		if(top == null) {
@@ -20,19 +27,20 @@ public class Queue<T> implements Collection<T> {
 		} else {
 			bot.next = new ListNode<>(element, null);
 			bot = bot.next;
+			if(isMarked())
+				markIndex ++;
 		}
-		if(isMarked())
-			markIndex ++;
 		size++;
 	}
 	
 	public T dequeue () {
 		if (top == null)
 			throw new EmptyStackException();
-		if(top == bot)
-			bot = null;
 		if(top == mark)
 			unmark();
+		if(top == bot)
+			bot = null;
+		
 		T element = top.element;
 		top = top.next;
 		size--;
@@ -45,6 +53,18 @@ public class Queue<T> implements Collection<T> {
 		return top.element;
 	}
 	
+	
+	/**
+	 * Stores the last added node at the current state of this collection.
+	 * Any method using this marked position does not require iterating to this
+	 * position, and therfore it very effiecient to mark important places within
+	 * this collection if at any time one would desire to go to this state. Only
+	 * one node can be marked at one time; if {@link #mark()} is called twice, 
+	 * the last marked position is replaced by the last added element to this
+	 * collection. If this marked node is removed, then this collection is
+	 * {@link #unmark()}.
+	 * 
+	 */
 	public void mark() {
 		if (size == 0)
 			throw new EmptyStackException();
@@ -52,19 +72,42 @@ public class Queue<T> implements Collection<T> {
 		markIndex = 0;
 	}
 	
+	/**
+	 * Unmarks the last marked node in this collection. If collection is not marked,
+	 * nothing is done.
+	 * 
+	 * @see {@link #mark}
+	 */
 	public void unmark () {
 		mark = null;
-		markIndex = 0;
+		markIndex = -1;
 	}
 	
+	/**
+	 * Checks if this collection is marked
+	 * @see {@link #mark}
+	 * 
+	 * @return if this collection is marked or not
+	 */
 	public boolean isMarked () {
 		return mark != null;
 	}
 	
+	/**
+	 * @see {@link #mark}
+	 * @return if this collection is not marked, then 0 is returned.
+	 * otherwise the index of the marked node is returned.
+	 */
 	public int getMarkedIndex () {
 		return markIndex;
 	}
 	
+	/**
+	 * if this queue is marked, then all the elements that have been added since the marking
+	 * are remove from this queue instantly.
+	 * @return null if this queue is not marked, otherwise, it returns a queue of all the elements that
+	 * have been added since the queue was last marked.
+	 */
 	public Queue<T> splitAtMark () {
 		if(!isMarked())
 			return null;
@@ -75,11 +118,13 @@ public class Queue<T> implements Collection<T> {
 		queue.size = markIndex;
 		
 		bot = mark;
+		bot.next = null;
 		size -= markIndex;
 		unmark();
 		
 		return queue;
 	}
+	
 	
 	public void queueAtMark (boolean markAtStartNotEnd) {
 		if(!isMarked())
@@ -128,7 +173,6 @@ public class Queue<T> implements Collection<T> {
 		size += queue.size;
 		queue.bot.next = top;
 		top = queue.top;
-		bot = queue.bot;
 		queue.clear();
 	}
 	
@@ -320,7 +364,7 @@ public class Queue<T> implements Collection<T> {
 			if(current == null) 
 				throw new IndexOutOfBoundsException();
 			mark = current;
-			markIndex = size;
+			markIndex = index;
 		}
 		
 		@Override

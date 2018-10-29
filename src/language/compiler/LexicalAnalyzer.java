@@ -2,31 +2,60 @@ package language.compiler;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.StringReader;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import language.finiteAutomata.DFA;
+import language.finiteAutomata.NFA;
+import language.finiteAutomata.RegularExpression;
 import utils.customCollections.Pair;
 import utils.customCollections.Queue;
 import utils.customCollections.Queue.QueueIterator;
 
+
+/**
+ * This class allows the creation of a Lexical Analyzer
+ * 
+ * @author Massimiliano Cutugno
+ *
+ */
 public class LexicalAnalyzer {
 	private final DFA dfa;
 	
-	LexicalAnalyzer (DFA dfa) {
-		this.dfa = dfa;
-	}
-	
+	/**
+	 * Creates a {@link LexicalAnalyzer} object
+	 * @param regexTokenPair a list of regexes with their assocaited accepting Tokens
+	 */
 	@SafeVarargs
-	public LexicalAnalyzer (Pair<Token, String> ... tokenRegexPair) {
+	public LexicalAnalyzer (Pair<String, Token> ... regexTokenPair) {
+		if(regexTokenPair.length == 0)
+			throw new IllegalArgumentException("Must specify at least one Token & Regex Pair");
 		
-		// to be implemented
+		NFA nfa = NFA.acceptNone();
 		
-		dfa = null;
+		for(Pair<String, Token> pair : regexTokenPair)
+			nfa.union(RegularExpression.regexToNFA(pair.first(), pair.second()));
+		
+		dfa = nfa.convertToDFA();
 	}
 	
 	
+	/**
+	 * Used to create a token stream that will be used for parsing
+	 * @param inputString the String to be lexically anyalized
+	 * @return the {@link Stream} object that handles the token stream
+	 */
+	public Stream<Pair<Token, String>> getTokenStream (String inputString) {
+		return getTokenStream(new BufferedReader(new StringReader(inputString)));
+	}
 	
+	
+	/**
+	 * Used to create a token stream that will be used for parsing
+	 * @param br the buffered character stream input
+	 * @return the {@link Stream} object that handles the token stream
+	 */
 	public Stream<Pair<Token, String>> getTokenStream (BufferedReader br) {
 		return Stream.generate( new Supplier<Pair<Token, String>>() {
 			
@@ -41,8 +70,6 @@ public class LexicalAnalyzer {
 				char c;
 				
 				boolean contRead = true;
-				
-				
 				
 				// start reading from buffered chars from last invocation of getNextToken() and traverse through DFA
 				QueueIterator iterator = buffer.iterator();
@@ -84,7 +111,6 @@ public class LexicalAnalyzer {
 				}
 				
 				
-				
 				// if no states were ever accepted 
 				if (!buffer.isMarked())
 					if(buffer.isEmpty())
@@ -96,22 +122,17 @@ public class LexicalAnalyzer {
 						throw new LexemeNotRecognizedException();
 				
 				
-				
 				// all the characters that weren't used in the accepting string 
 				// must be used for next invocation of getNextToken()
 				Queue<Character> backToBufferChars = buffer.splitAtMark();	
-				
-				
 				
 				// load all accepting chars into a string
 				char[] acceptingChars = new char[buffer.size()];
 				int i = 0;
 				for(char accept : buffer)
 					acceptingChars[i++] = accept;
+				
 				String s = new String (acceptingChars);
-				
-				
-				
 				
 				// buffer for next invocation of getNextToken()
 				buffer = backToBufferChars;

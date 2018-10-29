@@ -9,19 +9,39 @@ import language.compiler.LexicalAnalyzer.LexemeNotRecognizedException;
 import language.compiler.SyntaxDirectedTranslator.Parser;
 import utils.customCollections.Pair;
 
-public class SimpleOnePassCompiler {
+/**
+ * 
+ * TODO: No Finished or usable
+ * 
+ * This class creates a Simple Compiler
+ * @author Massimiliano Cutugno
+ *
+ */
+public class SimpleCompiler {
 	
 	private final LexicalAnalyzer lexicalAnalyzer;
 	private final SyntaxDirectedTranslator syntaxDirectedTranslator ;
 	
-	public SimpleOnePassCompiler (LexicalAnalyzer lexicalAnalyzer, 
-			SyntaxDirectedTranslator syntaxDirectedTranslator) {
-		
+	
+	/**
+	 * Creates a Compiler Object
+	 * @param lexicalAnalyzer
+	 * @param syntaxDirectedTranslator
+	 */
+	public SimpleCompiler (LexicalAnalyzer lexicalAnalyzer, 
+			SyntaxDirectedTranslator syntaxDirectedTranslator) {		
 		this.lexicalAnalyzer = lexicalAnalyzer;
 		this.syntaxDirectedTranslator = syntaxDirectedTranslator;
 	}
 	
 
+	/**
+	 * Compiles a string using this compiler
+	 * @param string
+	 * @return
+	 * @throws LexemeNotRecognizedException
+	 * @throws LexicalAnaylizerIOException
+	 */
 	public ParseTree compileWithTranslationScheme(String string) 
 			throws LexemeNotRecognizedException, LexicalAnaylizerIOException {
 		
@@ -30,6 +50,13 @@ public class SimpleOnePassCompiler {
 		return compileWithTranslationScheme(br);
 	}
 	
+	/**
+	 * Compiles a character stream usign this compiler
+	 * @param br
+	 * @return
+	 * @throws LexemeNotRecognizedException
+	 * @throws LexicalAnaylizerIOException
+	 */
 	public ParseTree compileWithTranslationScheme (BufferedReader br) 
 			throws LexemeNotRecognizedException, LexicalAnaylizerIOException {
 		

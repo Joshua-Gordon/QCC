@@ -6,8 +6,10 @@ import Simulator.InternalExecutor;
 import appPreferencesFX.AppPreferences;
 import appUI.Window;
 import appUIFX.AppFileIO;
+import appUIFX.CircuitBoardView;
 import appUIFX.MainScene;
 import framework2FX.AppStatus;
+import framework2FX.CircuitBoard;
 import framework2FX.Project;
 import javafx.application.Application;
 import javafx.stage.Stage;
@@ -24,11 +26,11 @@ public class Main extends Application implements AppPreferences {
 	
     public static void main(String[] args) {
     	/* toggle flags: debug mode or not */
-    	boolean normalMode = false;
+    	boolean normalMode = true;
     	
     	boolean javaFX_GUI = false;
     	
-    	boolean debugMode = true;
+    	boolean debugMode = false;
     	boolean debugSimulatorMode = false;
     	
     	if ( normalMode ) {
@@ -87,7 +89,7 @@ public class Main extends Application implements AppPreferences {
     	AppStatus.initiateAppStatus(primaryStage, mainScene);
     	
     	mainScene.loadNewScene(primaryStage, 1000, 600);
-    	primaryStage.setTitle("QCC");
+    	primaryStage.setTitle("QuaCC");
     	primaryStage.show();
     	
     	loadProject();

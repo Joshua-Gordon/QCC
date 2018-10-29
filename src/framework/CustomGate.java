@@ -90,7 +90,11 @@ public class CustomGate extends AbstractGate implements Serializable {
 
     @Override
 	public int getNumberOfRegisters() {
-    	return matrixes.size();
+    	
+    	if(matrixes.size() > 1)
+    		return matrixes.size();
+    	else
+    		return (int) Math.round(Math.log10(matrixes.get(0).getRows()) / AbstractGate.LOG10_2);
 	}
 
 }

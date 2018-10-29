@@ -173,6 +173,10 @@ public final class AppStatus {
 	public Stage getPrimaryStage() {
 		return primaryStage;
 	}
+	
+	public MainScene getMainScene() {
+		return mainscene;
+	}
 
 
 }

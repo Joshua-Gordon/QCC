@@ -3,6 +3,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 
+import Simulator.InternalExecutor;
+import Simulator.MixedState;
+import Simulator.Qubit;
 import appUI.Window;
 import preferences.AppPreferencesWindow;
 
@@ -122,6 +125,15 @@ public class Keyboard implements ActionListener, Runnable {
 	            System.err.println("Could not create file!");
 	            e1.printStackTrace();
 	        }
+	        break;
+        case "Run Simulation":
+        	System.out.println("Running Simulation");
+	        window.getConsole().println("Running Simulation");
+	        MixedState ms = InternalExecutor.createMixedState(window.getSelectedBoard());
+	        Qubit q = ms.measure();
+	        int i = Qubit.measure(q);
+	        System.out.println(i);
+	        window.getConsole().println(i);
 	        break;
 		}
 		
