@@ -41,6 +41,9 @@ public class Translator {
                 boolean id = ag.getName().equals("I");
 
                 if(!gt.equals(GateType.OTHER) && !id) {
+                    if(gt.equals(GateType.MEASURE)) {
+                        System.out.println("Nice");
+                    }
                     name = DefaultGate.typeToString(gt, DefaultGate.LangType.QUIL);
                     code += name + " " + y;
                     if(gt.equals(GateType.CNOT) || gt.equals(GateType.SWAP)) {
@@ -158,7 +161,7 @@ public class Translator {
             String[] components = line.split(" ");
             if(components[0].equals("MEASURE")){
                 try {
-                    output += "MEASURE " + (Integer.parseInt(components[1]) - offset) + " [" + (Integer.parseInt(components[2].substring(1, 2)) - offset) + "]";
+                    output += "MEASURE " + (Integer.parseInt(components[1]) - offset) + " [" + (Integer.parseInt(components[1]) - offset) + "]";
                 } catch (ArrayIndexOutOfBoundsException e) {
 
                 }

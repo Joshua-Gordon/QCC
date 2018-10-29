@@ -1,59 +1,64 @@
 package framework;
 
+import java.util.ArrayList;
+
 import Simulator.InternalExecutor;
+import appPreferencesFX.AppPreferences;
 import appUI.Window;
+import appUIFX.AppFileIO;
+import appUIFX.CircuitBoardView;
+import appUIFX.MainScene;
+import framework2FX.AppStatus;
+import framework2FX.CircuitBoard;
+import framework2FX.Project;
+import javafx.application.Application;
+import javafx.stage.Stage;
+import mathLib.Complex;
+import mathLib.Vector;
+import mathLib.compile.TwoLevelUnitary;
+import mathLib.compile.UnitaryDecomp;
 
-import mathLib.*;
-import testLib.*;
-import testLib.BaseGraph;
-import java.util.*;
-import java.io.*;
 
-public class Main {
+
+public class Main extends Application implements AppPreferences {
 	
 	private static Window window;
 	
     public static void main(String[] args) {
     	/* toggle flags: debug mode or not */
     	boolean normalMode = true;
+    	
+    	boolean javaFX_GUI = false;
+    	
     	boolean debugMode = false;
     	boolean debugSimulatorMode = false;
-
+    	
     	if ( normalMode ) {
-        	DefaultGate.loadGates();
-    		window = new Window();
-    		window.setVisible(true);
+    		if( javaFX_GUI ) {
+    			launch(args);
+    		} else {
+	        	DefaultGate.loadGates();
+	    		window = new Window();
+	    		window.setVisible(true);
+    		}
     	}
     	
-    	if ( debugMode ) {   		
-    		// can we detect windows vs unix to handle the file path extension?
-			// yeah, use System.getProperty("os.name"), it'll either return "Windows" or "Unix". What do you mean by file path extensions?
-			ArrayList<ArrayList<SolderedRegister>> gates = new ArrayList<ArrayList<SolderedRegister>>();
-			String os = System.getProperty("os.name");
-			System.err.println("OS = " + os);
-    		if ( os.contains("Windows") ) {
-				gates = Translator.loadProgram(DefaultGate.LangType.QUIL,"res\\test.quil");
+    	if ( debugMode ) {
+			UnitaryDecomp ud = new UnitaryDecomp();
+			boolean[] res = new boolean[20];
+			for(int i = 0; i < 10; ++i) {
+				res[2*i] = ud.testNVectorNormMatrix(i);
+				res[2*i+1] = ud.testNVectorNormMatrix(i);
 			}
-			else if ( os.equalsIgnoreCase("Linux") ) {
-				File testFile = new File("res/test.quil");
-				if ( !testFile.exists() ) {
-					throw new RuntimeException("File does not exist.");
-				}
-				gates = Translator.loadProgram(DefaultGate.LangType.QUIL,"res/test.quil");
+			for(int i =0; i < 20; ++i) {
+				System.out.println(res[i]);
 			}
-			else {
-				throw new RuntimeException("OS " + os + " not supported");
-			}
-			for(int x = 0; x < gates.size(); ++x) {
-				ArrayList<SolderedRegister> srs = gates.get(x);
-				for(int y = 0; y < srs.size(); ++y) {
-					SolderedRegister sr = srs.get(y);
-					System.out.println("X: " + x + "\nY: " + y + "\nGate: " + sr);
-				}
-			}
-			window.getSelectedBoard().setGates(gates);
-			int output = InternalExecutor.simulate(window.getSelectedBoard());
-			System.out.println("OUTPUT: " + output);
+			//TwoLevelUnitary tlu = new TwoLevelUnitary(2,0, Complex.ONE(),new Complex(3,0),new Complex(5,0),new Complex(7,0));
+			//System.out.println(tlu.getMatrix());
+			//Vector<Complex> test = new Vector<Complex>(Complex.ONE(),Complex.ONE());
+
+			//System.out.println(tlu.multVec(test));
+			//System.out.println(tlu.getMatrix().mult(test));
     	}
     	
     	if ( debugSimulatorMode ) {
@@ -65,13 +70,41 @@ public class Main {
 			}
 		}
     }
-
+    
+    
+    
+    
+    
+    
+    
+    
     public static Window getWindow() {
     	return window;
     }
+	
 
-
-
+    @Override
+	public void start(Stage primaryStage) throws Exception {
+    	MainScene mainScene = new MainScene();
+    	AppStatus.initiateAppStatus(primaryStage, mainScene);
+    	
+    	mainScene.loadNewScene(primaryStage, 1000, 600);
+    	primaryStage.setTitle("QuaCC");
+    	primaryStage.show();
+    	
+    	loadProject();
+	}
+    
+    
+    
+    private void loadProject() {
+    	Project project = AppFileIO.loadPreviouslyClosedProject();
+    	if(project == null)
+    		project = Project.createNewTemplateProject();
+    	AppStatus.get().setFocusedProject(project);
+    }
+    
+    
     /*
      * Note, the following code is needed to run the output program
      * from pyquil.parser import parse_program

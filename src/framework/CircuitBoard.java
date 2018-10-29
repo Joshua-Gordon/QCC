@@ -13,12 +13,12 @@ import preferences.AppPreferences;
 import utils.AppDialogs;
 
 /**
- * Contains all data pertaining to a application project
+ * Contains all data pertaining to a subcircuit in the application project
  * such as the list of custom gates, custom oracles, and the list of instructions
  * for a quantum protocol represented by a grid of gates 
  * (A double {@link ArrayList} of {@link SolderedRegister}s)
  * <p>
- * This is main class to be serialized to save a user's project, however all methods pertaining to saving
+ * This is the main class to be serialized to save a user's project, however all methods pertaining to saving
  * an instance of a {@link CircuitBoard} as a project is contained within {@link CircuitBoardSelector}
  * 
  * @author quantumresearch
@@ -145,7 +145,7 @@ public class CircuitBoard implements Serializable{
     
     
     /**
-     * Detaches all {@link SolderedGate}s intersecting with the specified rows and column starting at <code> rowStart </code> and ending at <code> rowEnd </code> (inclusive).
+     * Detaches all {@link SolderedGate}s intersecting with the specified row range and column starting at <code> rowStart </code> and ending at <code> rowEnd </code> (inclusive).
      * If the range happens to be completely enclosed within another {@link SolderedGate}, that {@link SolderedGate} will also be detached.
      * 
      * @param rowStart
@@ -452,5 +452,20 @@ public class CircuitBoard implements Serializable{
 			System.exit(1);
 		}
 		return false;
+	}
+
+	public ArrayList<ArrayList<SolderedGate>> getGates() {
+		ArrayList<ArrayList<SolderedGate>> gates = new ArrayList<>();
+		for(int x = 0; x < board.size(); ++x) {
+			ArrayList<SolderedGate> column = new ArrayList<>();
+			for(int y = 0; y < board.get(x).size(); ++y) {
+				SolderedGate gate = board.get(x).get(y).getSolderedGate();
+				if(!column.contains(gate)) {
+					column.add(gate);
+				}
+			}
+			gates.add(column);
+		}
+		return gates;
 	}
 }

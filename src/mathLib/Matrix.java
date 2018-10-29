@@ -280,21 +280,20 @@ public class Matrix<T> implements Serializable {
 			largestNum = 0;
 			for(int r = 0; r < rows; r++){
 				temp = String.valueOf(v(r, c));
-				fr[r] = temp.concat(" " + fr[r]);
+				fr[r] = temp.concat("    " + fr[r]);
 				largestNum = fr[r].length() > largestNum? fr[r].length() : largestNum;
 			}
 			// fix spacing
 			for(int r = 0; r < rows; r++){
 				stSpace = largestNum - fr[r].length();
 				temp = "";
-				for(int i = 0; i < stSpace; i++){
+				for(int i = 0; i < stSpace; i++)
 					temp = temp.concat(" ");
-				}
 				fr[r] = temp.concat(fr[r]);
 			}
 		}
 		for(int i = 0; i < rows; i++)
-			fs = fs.concat(" | " + fr[i]);
+			fs = fs.concat(" |    " + fr[i]);
 		return fs;
 	}
 	
