@@ -18,6 +18,15 @@ public class TwoLevelUnitary {
         this.d = d;
     }
 
+    public TwoLevelUnitary(int size, int pos, TwoLevelUnitary tlu) {
+        this.size = size;
+        this.pos = pos;
+        this.a = tlu.a;
+        this.b = tlu.b;
+        this.c = tlu.c;
+        this.d = tlu.d;
+    }
+
     public TwoLevelUnitary scale(Complex s) {
         return new TwoLevelUnitary(size,pos,a.mult(s),b.mult(s),c.mult(s),d.mult(s));
     }

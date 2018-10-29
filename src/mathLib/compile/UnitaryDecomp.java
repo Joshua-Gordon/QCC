@@ -116,12 +116,26 @@ public class UnitaryDecomp {
         return vecNorm;
     }
 
-    public Matrix<Complex> getRandomUnitary() {
+    public TwoLevelUnitary getRandom2Unitary() {
+        double a = Math.random() * Math.PI * 2;
+        double p = Math.random() * Math.PI * 2;
+        double c = Math.random() * Math.PI * 2;
+        double e = Math.random();
+        double phi = Math.asin(Math.sqrt(e));
+        TwoLevelUnitary tlu = new TwoLevelUnitary(2,0,
+                Complex.I().mult(p).exponentiated().mult(Math.cos(phi)),
+                Complex.I().mult(c).exponentiated().mult(Math.sin(phi)),
+                Complex.I().negative().mult(c).exponentiated().negative().mult(Math.sin(phi)),
+                Complex.I().mult(p).exponentiated().mult(Math.cos(phi)));
+        return tlu.scale(Complex.I().mult(a).exponentiated());
+    }
+
+    public Matrix<Complex> getRandomUnitary(int logsize) {
         return null;
     }
 
     public boolean testDecompUnitaryTwoLevel() {
-        Matrix<Complex> test = getRandomUnitary();
+        Matrix<Complex> test = getRandomUnitary(2);
         ArrayList<TwoLevelUnitary> twoLevelDecomp = decompUnitaryTwoLevel(test);
         TwoLevelUnitary res = twoLevelDecomp.get(0);
         for(int i = 1; i < twoLevelDecomp.size(); ++i) {

@@ -45,6 +45,7 @@ public class InternalExecutor {
      * @return the mixed state object representing this circuit board
      */
     public static MixedState createMixedState(CircuitBoard cb) {
+
         input = Qubit.getInputState(cb.getRows());
         pureStates = new ArrayList<>();
         probabilities = new ArrayList<>();
