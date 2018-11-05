@@ -4,9 +4,9 @@ import java.io.File;
 import java.io.Serializable;
 import java.net.URI;
 
-import com.sun.xml.internal.bind.v2.runtime.unmarshaller.Receiver;
-
 import appUIFX.AppFileIO;
+import framework2FX.gateModels.AbstractGateModel;
+import framework2FX.gateModels.OracleModel;
 import utils.customCollections.eventTracableCollections.EventArrayList;
 import utils.customCollections.eventTracableCollections.EventHashTable;
 import utils.customCollections.eventTracableCollections.Notifier;
@@ -16,7 +16,7 @@ import utils.customCollections.eventTracableCollections.Notifier;
  * All Quantum Circuits designed within this application are done by modifying an instance of {@link Project} <br>
  * Only one {@link Project} can be focused to be edited upon within one session of this Application <br>
  * <p>
- * All {@link CustomGateModel}s, {@link CustomOracleModel}s, and {@link CircuitBoard}s used within this project <br>
+ * All {@link CustomGateModel}s, {@link OracleModel}s, and {@link CircuitBoard}s used within this project <br>
  * are stored as lists within a instance of this class <br> 
  * 
  * <p>
@@ -30,11 +30,12 @@ public class Project implements Serializable{
 	private static final long serialVersionUID = 8906661352790858317L;
 	
 	private SubCircuitList subCircuits;
-    private CustomList <CustomGateModel> customGates;
+    private CustomList <AbstractGateModel> customGates;
     private CustomList <AbstractGateModel> customOracles;
 	
 	private transient URI fileLocation = null;
 	
+	// Notifies User-Interface of changes
 	private Notifier notifier;
 	private String topLevelCircuit = null;
 	
@@ -56,7 +57,7 @@ public class Project implements Serializable{
 	 * @param fileLocation project location on the user's drive
 	 * @return the file name of the fileLocation without the extension
 	 */
-	public static String getProjectName(URI fileLocation) {
+	public static String getProjectNameFromURI(URI fileLocation) {
 		if(fileLocation == null) {
 			return "Untitled_Project";
 		} else {
@@ -134,7 +135,7 @@ public class Project implements Serializable{
 	 * @return the name of this project (the given file name without extension)
 	 */
 	public String getProjectName() {
-		return getProjectName(fileLocation);
+		return getProjectNameFromURI(fileLocation);
 	}
 	
 	
@@ -155,7 +156,7 @@ public class Project implements Serializable{
 	/**
 	 * @return the list of the custom-gates for this project
 	 */
-	public CustomList<CustomGateModel> getCustomGates() {
+	public CustomList<AbstractGateModel> getCustomGates() {
 		return customGates;
 	}
 	
@@ -180,7 +181,7 @@ public class Project implements Serializable{
 	 * <b>MODIFIES INSTANCE</b>
 	 * @param list list of custom gate models
 	 */
-	public void setCustomGates(CustomList<CustomGateModel> list) {
+	public void setCustomGates(CustomList<AbstractGateModel> list) {
 		this.notifier.sendChange(this, "setCustomGate", list);
 		customGates = list;
 	}

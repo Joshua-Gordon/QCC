@@ -1,5 +1,6 @@
 package language.compiler;
 
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -12,7 +13,9 @@ import language.compiler.ProductionSymbol.Terminal;
  * @author Massimiliano Cutugno
  *
  */
-public class ParseTree {
+public class ParseTree implements Serializable {
+	private static final long serialVersionUID = -3793948438632456971L;
+	
 	private ParseNode root;
 	
 	
@@ -36,7 +39,9 @@ public class ParseTree {
 	 * @author Massimiliano Cutugno
 	 *
 	 */
-	public static abstract class ParseNode {
+	public static abstract class ParseNode implements Serializable {
+		private static final long serialVersionUID = 8737109951165196405L;
+		
 		private ProductionSymbol symbol;
 		
 		public ParseNode (ProductionSymbol symbol) {
@@ -60,6 +65,9 @@ public class ParseTree {
 	 *
 	 */
 	public static class ParseBranch extends ParseNode {
+		private static final long serialVersionUID = -2410167347419376090L;
+		
+		
 		LinkedList<ParseNode> children = new LinkedList<>();
 		
 		public ParseBranch(NonTerminal nonTerminal) {
@@ -86,6 +94,8 @@ public class ParseTree {
 	 *
 	 */
 	public static class ParseLeaf extends ParseNode {
+		private static final long serialVersionUID = -6406905931402794132L;
+		
 		private String value;
 		
 		public ParseLeaf(Terminal terminal, String value) {
@@ -132,14 +142,13 @@ public class ParseTree {
 		ParseNode next;
 		while (nodes.hasNext()) {
 			next = nodes.next();
-			if(next.isLeaf()) {
+			if(next.isLeaf())
 				format += "\n" + formatOffset + "|_______" + leafToString((ParseLeaf) next);
-			} else {
+			else
 				if(nodes.hasNext())
 					format += "\n" + formatOffset + "|_______" + branchToString((ParseBranch) next, formatOffsetNew);
 				else 
 					format += "\n" + formatOffset + "|_______" + branchToString((ParseBranch) next, formatOffsetLast);
-			}
 		}
 		return format;
 	}

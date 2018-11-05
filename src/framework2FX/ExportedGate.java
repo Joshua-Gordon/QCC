@@ -1,5 +1,6 @@
 package framework2FX;
 
+import framework2FX.gateModels.AbstractGateModel;
 
 public class ExportedGate {	
 	private final AbstractGateModel gateModel;

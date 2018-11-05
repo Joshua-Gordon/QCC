@@ -38,6 +38,8 @@ public class CircuitBoard implements Exportable, Serializable{
 	private static final long serialVersionUID = -6921131331890897905L;
 
     private Board board;
+    
+    // Notifies User-Interface of changes
     private Notifier notifier;
     
     /**

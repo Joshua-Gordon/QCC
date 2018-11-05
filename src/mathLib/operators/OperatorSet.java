@@ -2,35 +2,18 @@ package mathLib.operators;
 
 
 
-public abstract class Operators<T>{
+public interface OperatorSet<T>{
 	
-	protected T value;
+	public T add(T num1, T num2);
+	public T sub(T num1, T num2);
+	public T mult(T num1, T num2);
+	public T div(T num1, T num2);
+	public T exp(T num1, T num2);
+	public T sqrt(T num);
 	
-	public abstract T add(T num);
-	public abstract T sub(T num);
-	public abstract T mult(T num);
-	public abstract T div(T num);
-	public abstract T exp(T num);
-	public abstract T sqrt();
+	public T get1();
+	public T getn1();
+	public T get0();
 	
-	public abstract T get1();
-	public abstract T getn1();
-	public abstract T get0();
-	
-	public abstract T[] mkZeroArray(int size);
-	
-	/**
-	 * Creates a duplicate of this {@link Operators}
-	 * @param value
-	 * @return
-	 */
-	public abstract Operators<T> dup();
-	
-	
-	public Operators<T> op(T value){
-		this.value = value;
-		return this;
-	}
-	
-	
+	public T[] mkZeroArray(int size);
 }

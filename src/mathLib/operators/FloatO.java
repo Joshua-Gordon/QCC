@@ -1,35 +1,9 @@
 package mathLib.operators;
 
-public class FloatO extends Operators<Float>{
-	@Override
-	public Float add(Float num) {
-		return value + num;
-	}
-
-	@Override
-	public Float sub(Float num) {
-		return value - num;
-	}
-
-	@Override
-	public Float mult(Float num) {
-		return value * num;
-	}
-
-	@Override
-	public Float div(Float num) {
-		return value / num;
-	}
-
-	@Override
-	public Float exp(Float num) {
-		return (float) Math.pow(value, num);
-	}
-
-	@Override
-	public Float sqrt() {
-		return (float) Math.sqrt(value);
-	}
+public final class FloatO implements OperatorSet<Float>{
+	public static final OperatorSet<Float> OPERATOR_SET = new FloatO();
+	
+	private FloatO() {}
 
 	@Override
 	public Float get1() {
@@ -55,8 +29,33 @@ public class FloatO extends Operators<Float>{
 	}
 
 	@Override
-	public Operators<Float> dup() {
-		return new FloatO();
+	public Float add(Float num1, Float num2) {
+		return num1 + num2;
+	}
+
+	@Override
+	public Float sub(Float num1, Float num2) {
+		return num1 - num2;
+	}
+
+	@Override
+	public Float mult(Float num1, Float num2) {
+		return num1 * num2;
+	}
+
+	@Override
+	public Float div(Float num1, Float num2) {
+		return num1 / num2;
+	}
+
+	@Override
+	public Float exp(Float num1, Float num2) {
+		return (float) Math.pow(num1 , num2);
+	}
+
+	@Override
+	public Float sqrt(Float num) {
+		return (float) Math.pow(num , .5d);
 	}
 	
 }

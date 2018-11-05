@@ -2,7 +2,7 @@ package mathLib;
 
 import java.util.ArrayList;
 
-import mathLib.operators.Operators;
+import mathLib.operators.OperatorSet;
 
 public class Vector<T> extends Matrix<T>{
 
@@ -18,8 +18,14 @@ public class Vector<T> extends Matrix<T>{
 	}
 
 	@SafeVarargs
-	public Vector(Operators<T> operation, boolean isVertical, T ... components){		
-		super(operation, isVertical? components.length:1, 
+	public Vector(T elementToInferOperator, boolean isVertical, T ... components){		
+		super(elementToInferOperator, isVertical? components.length:1, 
+				isVertical? 1:components.length, components);
+	}
+	
+	@SafeVarargs
+	public Vector(OperatorSet<T> operatorSet, boolean isVertical, T ... components){		
+		super(operatorSet, isVertical? components.length:1, 
 				isVertical? 1:components.length, components);
 	}
 	
@@ -36,22 +42,17 @@ public class Vector<T> extends Matrix<T>{
 	}
 	
 	public T mag(int cutoff){
-		Operators<T> o1 = this.o.dup();
-		Operators<T> o2 = this.o.dup();
 		
-		T sum = o1.get0();
+		T sum = o.get0();
 		for(int i = 0; i < cutoff; i++)
-			sum = o1.op(sum).add(o2.op(v(i)).mult(v(i)));
-		return o1.op(sum).sqrt();
+			sum = o.add(sum ,  o.mult(v(i) , v(i)));
+		return o.sqrt(sum);
 	}
 	
 	public T dot(Vector<T> vec){
-		Operators<T> o1 = this.o.dup();
-		Operators<T> o2 = this.o.dup();
-		
-		T sum = o1.get0();
+		T sum = o.get0();
 		for(int i = 0; i < length(); i++)
-			sum = o1.op(sum).add(o2.op(v(i)).mult(vec.v(i)));
+			sum = o.add(sum ,  o.mult(v(i) , vec.v(i)));
 		return sum;
 	}
 	

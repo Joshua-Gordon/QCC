@@ -1,13 +1,17 @@
 package language.compiler;
 
+import java.io.Serializable;
 
 /**
  * This class represents all the Generic symbols that may be found in a Context Free Grammer
  * @author Massimiliano Cutugno
  *
  */
-public abstract class ProductionSymbol {
-	
+public abstract class ProductionSymbol implements Serializable {
+	private static final long serialVersionUID = 4751346342571602635L;
+
+
+
 	/** 
 	 * @return the type of this symbol
 	 */
@@ -29,6 +33,10 @@ public abstract class ProductionSymbol {
 	 * @author Massimiliano Cutugno
 	 */
 	public static class NonTerminal extends ProductionSymbol {
+		private static final long serialVersionUID = 3514462584371484255L;
+		
+		
+		
 		private final String name;
 		
 		public NonTerminal(String name) {
@@ -54,7 +62,8 @@ public abstract class ProductionSymbol {
 	 *
 	 */
 	public static abstract class Terminal extends ProductionSymbol {
-		
+		private static final long serialVersionUID = 7040030805535305438L;
+
 		@Override
 		public SymbolType getType() {
 			return SymbolType.TERMINAL;
@@ -69,6 +78,8 @@ public abstract class ProductionSymbol {
 	 *
 	 */
 	public static class SematicActionSymbol extends Terminal {
+		private static final long serialVersionUID = 7982465715661619194L;
+		
 		private SematicAction sematicAction;
 		
 		@Override

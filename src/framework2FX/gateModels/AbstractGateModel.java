@@ -1,13 +1,15 @@
-package framework2FX;
+package framework2FX.gateModels;
 
 import java.io.Serializable;
 
 import appUI.GateIcon;
+import framework.AbstractGate.GateType;
 import framework.CircuitBoard;
 import framework.ExportedGate;
 import framework.SolderedGate;
 import mathLib.Complex;
 import mathLib.Matrix;
+import mathLib.expression.MathSet;
 
 /**
  * <b> IMMUTABLE </b>
@@ -28,8 +30,6 @@ import mathLib.Matrix;
 public abstract class AbstractGateModel implements Serializable{
 	private static final long serialVersionUID = -358713650794388405L;
 	
-	private static final double LOG10_2 = Math.log10(2);
-	
 	public static enum GateModelType {
 		DEFAULT_GATE, CUSTOM_GATE, CUSTOM_ORACLE;
 	}
@@ -38,42 +38,30 @@ public abstract class AbstractGateModel implements Serializable{
 	private final String description;
     private final String name;
     private final String symbol;
-	private final Matrix<Complex> matrix;
+    
+    
 	
-	
-	public AbstractGateModel(String description, String name, String symbol, Matrix<Complex> matrix) {
+	public AbstractGateModel (String name, String description, String symbol) {
 		this.description = description;
 		this.name = name;
 		this.symbol = symbol;
-		this.matrix = matrix;
-		
-	}
-	
-	public AbstractGateModel(String description, String name, String symbol, int matSize, Complex ... matElements) {
-		this(description, name, symbol, new Matrix<Complex>(matSize, matSize, matElements));
-	}
-	
-	public AbstractGateModel(String name, String symbol, Matrix<Complex> matrix) {
-		this("", name, symbol, matrix);
-	}
-	
-	public AbstractGateModel(String name, String symbol, int matSize, Complex ... matElements) {
-		this("", name, symbol, matSize, matElements);
 	}
 	
 	
-	
+	/**
+	 * @return the type of gate
+	 */
 	public abstract GateModelType getGateModelType();
 	
 	
 	
 	/**
+	 * @param mathDefinitions if this matrix is represented by an expression, then  should specify
+	 * any variable values or function definitions
 	 * @return
 	 * the {@link Matrix} that represents this {@link AbstractGateModel}
 	 */
-	public Matrix<Complex> getMatrix(){
-		return matrix;
-	}
+	public abstract Matrix<Complex> getMatrix(MathSet mathDefinitions);
 	
 	
 	/**
@@ -81,10 +69,18 @@ public abstract class AbstractGateModel implements Serializable{
 	 * whether or not the {@link Matrix} that this {@link AbstractGateModel} represents is multi-qubit.
 	 * (determined by the size the {@link Matrix})
 	 */
-	public boolean isMultiQubitGate() {
-    	return matrix.getColumns() > 2;
-    }
+	public abstract boolean isMultiQubitGate();
 
+	
+	/**
+	 * @return
+	 * the number of qubits registers needed for this {@link AbstractGateModel}
+	 */
+	public abstract int getNumberOfRegisters();
+	
+	
+	
+	
 	/**
 	 * @return
 	 * the name of this {@link AbstractGateModel}
@@ -104,17 +100,18 @@ public abstract class AbstractGateModel implements Serializable{
 	 */
     public String getDescription() {
 		return description;
+    }
+
+    
+    @SuppressWarnings("serial")
+	public static class InvalidGateModelMatrixException extends RuntimeException {
+		public InvalidGateModelMatrixException (String reason) {
+			super (reason);
+		}
 	}
 
-	
-	/**
-	 * @return
-	 * the calculated number of qubits registers needed for this {@link AbstractGateModel}
-	 */
-	public int getNumberOfRegisters() {
-		Matrix<Complex> mat = getMatrix();
-		return (int) Math.round(Math.log10(mat.getRows()) / LOG10_2);
-	}
 
-
+    
 }
+
+
