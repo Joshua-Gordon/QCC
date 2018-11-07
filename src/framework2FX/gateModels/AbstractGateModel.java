@@ -41,7 +41,7 @@ public abstract class AbstractGateModel implements Serializable{
     
     
 	
-	public AbstractGateModel (String name, String description, String symbol) {
+	public AbstractGateModel (String name, String symbol, String description) {
 		this.description = description;
 		this.name = name;
 		this.symbol = symbol;

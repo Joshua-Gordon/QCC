@@ -20,11 +20,11 @@ public class Main extends Application implements AppPreferences {
 	
     public static void main(String[] args) {
     	/* toggle flags: debug mode or not */
-    	boolean normalMode = false;
+    	boolean normalMode = true;
     	
-    	boolean javaFX_GUI = false;
+    	boolean javaFX_GUI = true;
     	
-    	boolean debugMode = true;
+    	boolean debugMode = false;
     	boolean debugSimulatorMode = false;
     	
     	if ( normalMode ) {
