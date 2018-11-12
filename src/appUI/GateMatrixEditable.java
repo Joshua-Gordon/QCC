@@ -154,7 +154,7 @@ public class GateMatrixEditable extends JPanel{
 			int rows = model.getRowCount();
 			int columns = model.getColumnCount();
 			String value;
-			Matrix<Complex> mat = new Matrix<>(Complex.ZERO(), rows, columns, Complex.ONE().mkZeroArray(rows * columns));
+			Matrix<Complex> mat = new Matrix<>(Complex.ZERO(), rows, columns, Complex.mkZeroArray(rows * columns));
 			for(int i = 0; i < rows; i++) {
 				for(int j = 0; j < columns; j++) {
 					if(model.getValueAt(i, j) == null)

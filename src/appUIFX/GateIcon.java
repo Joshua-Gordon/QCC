@@ -12,8 +12,8 @@ import java.awt.image.BufferedImage;
 import javax.swing.ImageIcon;
 
 import appUI.CircuitBoardRenderContext;
-import framework2FX.DefaultGate;
-import framework2FX.DefaultGate.DefaultGateModel;
+import framework2FX.gateModels.DefaultGateModel;
+import framework2FX.gateModels.DefaultGateModel.DefaultMatrixGateModel;
 import utils.ResourceLoader;
 
 @SuppressWarnings("serial")
@@ -34,7 +34,7 @@ public class GateIcon extends ImageIcon{
 	
 	
 	
-	public static GateIcon getDefaultGateIcon(DefaultGate dg) {
+	public static GateIcon getDefaultGateIcon(DefaultGateModel dg) {
 		switch(dg) {
 		case Cnot:
 			return getCNotIcon();
@@ -45,7 +45,7 @@ public class GateIcon extends ImageIcon{
 		case Toffoli:
 			return getToffoliIcon();
 		default:
-			DefaultGateModel dgm = (DefaultGateModel) dg.getModel();
+			DefaultMatrixGateModel dgm = (DefaultMatrixGateModel) dg.getModel();
 			return new GateIcon(dgm.getSymbol() , dgm.isMultiQubitGate());
 		}
 	}

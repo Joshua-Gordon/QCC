@@ -8,18 +8,13 @@ import Simulator.Qubit;
 import appPreferencesFX.AppPreferences;
 import appUI.Window;
 import appUIFX.AppFileIO;
-import appUIFX.CircuitBoardView;
 import appUIFX.MainScene;
 import framework2FX.AppStatus;
-import framework2FX.CircuitBoard;
 import framework2FX.Project;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import mathLib.Complex;
 import mathLib.Matrix;
-import mathLib.Vector;
-import mathLib.compile.TwoLevelUnitary;
-import mathLib.compile.UnitaryDecomp;
 
 
 

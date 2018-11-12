@@ -1,37 +1,11 @@
 package mathLib.operators;
 
-public class IntegerO extends Operators<Integer>{
+public final class IntegerO implements OperatorSet<Integer>{
 	
-	@Override
-	public Integer add(Integer num) {
-		return value + num;
-	}
+	public static final OperatorSet<Integer> OPERATOR_SET = new IntegerO();
 
-	@Override
-	public Integer sub(Integer num) {
-		return value - num;
-	}
-
-	@Override
-	public Integer mult(Integer num) {
-		return value * num;
-	}
-
-	@Override
-	public Integer div(Integer num) {
-		return value / num;
-	}
-
-	@Override
-	public Integer exp(Integer num) {
-		return (int) Math.pow(value, num);
-	}
-
-	@Override
-	public Integer sqrt() {
-		return (int) Math.sqrt(value);
-	}
-
+	private IntegerO() {}
+	
 	@Override
 	public Integer get1() {
 		return 1;
@@ -56,8 +30,33 @@ public class IntegerO extends Operators<Integer>{
 	}
 
 	@Override
-	public Operators<Integer> dup() {
-		return new IntegerO();
+	public Integer add(Integer num1, Integer num2) {
+		return num1 + num2;
+	}
+
+	@Override
+	public Integer sub(Integer num1, Integer num2) {
+		return num1 - num2;
+	}
+
+	@Override
+	public Integer mult(Integer num1, Integer num2) {
+		return num1 * num2;
+	}
+
+	@Override
+	public Integer div(Integer num1, Integer num2) {
+		return num1 / num2;
+	}
+
+	@Override
+	public Integer exp(Integer num1, Integer num2) {
+		return (int) Math.round(Math.pow(num1 , num2));
+	}
+
+	@Override
+	public Integer sqrt(Integer num) {
+		return (int) Math.round(Math.pow(num , .5));
 	}
 	
 }

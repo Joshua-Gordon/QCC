@@ -4,12 +4,10 @@ import java.net.URI;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import framework2FX.AbstractGateModel;
 import framework2FX.AppStatus;
-import framework2FX.CustomGateModel;
-import framework2FX.DefaultGate;
 import framework2FX.Project;
-import javafx.event.Event;
+import framework2FX.gateModels.AbstractGateModel;
+import framework2FX.gateModels.DefaultGateModel;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
@@ -41,13 +39,13 @@ public class ProjectHierarchy extends AppView implements Initializable {
 			if(!hasTopLevel || !name.equals(topLevelName))
 				subCircuits.getChildren().add(new TreeItem<String>(name));
 		
-		for(CustomGateModel sgm : project.getCustomGates())
+		for(AbstractGateModel sgm : project.getCustomGates())
 			customGates.getChildren().add(new TreeItem<String>(sgm.getName()));
 		
 		for(AbstractGateModel agm : project.getCustomOracles())
 			customOracles.getChildren().add(new TreeItem<String>(agm.getName()));
 		
-		for(DefaultGate dg : DefaultGate.values())
+		for(DefaultGateModel dg : DefaultGateModel.values())
 			defaultGates.getChildren().add(new TreeItem<String>(dg.getModel().getName()));
 		
 		
@@ -72,7 +70,7 @@ public class ProjectHierarchy extends AppView implements Initializable {
 		if(source instanceof AppStatus && methodName.equals("setFocusedProject"))
 			setFocusedProject( (Project) args[0] );
 		if(source instanceof Project && methodName.equals("setProjectFileLocation"))
-			root.setValue(Project.getProjectName((URI) args[0]));
+			root.setValue(Project.getProjectNameFromURI((URI) args[0]));
 	}
 	
 	

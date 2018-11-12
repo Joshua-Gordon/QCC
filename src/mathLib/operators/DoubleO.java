@@ -1,41 +1,12 @@
 package mathLib.operators;
 
-//                  7
-//                  ^  
-public class DoubleO extends Operators<Double>{
+//                        7
+//                        ^  
+public final class DoubleO implements OperatorSet<Double>{
+	public static final DoubleO OPERATOR_SET = new DoubleO();
 	
+	private DoubleO() {}
 	
-	
-	@Override
-	public Double add(Double num) {
-		return value + num;
-	}
-
-	@Override
-	public Double sub(Double num) {
-		return value - num;
-	}
-
-	@Override
-	public Double mult(Double num) {
-		return value * num;
-	}
-
-	@Override
-	public Double div(Double num) {
-		return value / num;
-	}
-
-	@Override
-	public Double exp(Double num) {
-		return Math.pow(value, num);
-	}
-
-	@Override
-	public Double sqrt() {
-		return Math.sqrt(value);
-	}
-
 	@Override
 	public Double get1() {
 		return 1d;
@@ -60,8 +31,33 @@ public class DoubleO extends Operators<Double>{
 	}
 
 	@Override
-	public Operators<Double> dup() {
-		return new DoubleO();
+	public Double add(Double num1, Double num2) {
+		return num1 + num2;
+	}
+
+	@Override
+	public Double sub(Double num1, Double num2) {
+		return num1 - num2;
+	}
+
+	@Override
+	public Double mult(Double num1, Double num2) {
+		return num1 * num2;
+	}
+
+	@Override
+	public Double div(Double num1, Double num2) {
+		return num1 / num2;
+	}
+
+	@Override
+	public Double exp(Double num1, Double num2) {
+		return Math.pow(num1 , num2 );
+	}
+
+	@Override
+	public Double sqrt(Double num) {
+		return Math.pow(num , .5);
 	}
 
 }
