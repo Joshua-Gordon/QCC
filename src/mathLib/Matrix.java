@@ -409,6 +409,14 @@ public class Matrix<T> implements Serializable {
 		}
 	}
 
-	
+	public T trace() {
+		T temp = o.get0();
+		for(int x = 0; x < getColumns(); ++x) {
+			for(int y = 0; y < getRows(); ++y) {
+				temp = o.op(temp).add(comps[y+x*getRows()]);
+			}
+		}
+		return temp;
+	}
 }
 

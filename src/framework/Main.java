@@ -3,6 +3,8 @@ package framework;
 import java.util.ArrayList;
 
 import Simulator.InternalExecutor;
+import Simulator.POVM;
+import Simulator.Qubit;
 import appPreferencesFX.AppPreferences;
 import appUI.Window;
 import appUIFX.AppFileIO;
@@ -14,6 +16,7 @@ import framework2FX.Project;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import mathLib.Complex;
+import mathLib.Matrix;
 import mathLib.Vector;
 import mathLib.compile.TwoLevelUnitary;
 import mathLib.compile.UnitaryDecomp;
@@ -26,11 +29,11 @@ public class Main extends Application implements AppPreferences {
 	
     public static void main(String[] args) {
     	/* toggle flags: debug mode or not */
-    	boolean normalMode = true;
+    	boolean normalMode = false;
     	
     	boolean javaFX_GUI = false;
     	
-    	boolean debugMode = false;
+    	boolean debugMode = true;
     	boolean debugSimulatorMode = false;
     	
     	if ( normalMode ) {
@@ -44,21 +47,17 @@ public class Main extends Application implements AppPreferences {
     	}
     	
     	if ( debugMode ) {
-			UnitaryDecomp ud = new UnitaryDecomp();
-			boolean[] res = new boolean[20];
-			for(int i = 0; i < 10; ++i) {
-				res[2*i] = ud.testNVectorNormMatrix(i);
-				res[2*i+1] = ud.testNVectorNormMatrix(i);
-			}
-			for(int i =0; i < 20; ++i) {
-				System.out.println(res[i]);
-			}
-			//TwoLevelUnitary tlu = new TwoLevelUnitary(2,0, Complex.ONE(),new Complex(3,0),new Complex(5,0),new Complex(7,0));
-			//System.out.println(tlu.getMatrix());
-			//Vector<Complex> test = new Vector<Complex>(Complex.ONE(),Complex.ONE());
+			Matrix<Complex> c = Matrix.identity(Complex.ONE(),4);
+			c.r(Complex.ZERO(),2,2);
+			System.out.println(c.trace());
 
-			//System.out.println(tlu.multVec(test));
-			//System.out.println(tlu.getMatrix().mult(test));
+			Qubit z = Qubit.ZERO();
+			System.out.println(z.outerProduct(z));
+
+			Qubit p = Qubit.PLUS();
+			POVM cb = POVM.computationalBasis();
+			System.out.println(cb.measure(p.outerProduct(p)));
+
     	}
     	
     	if ( debugSimulatorMode ) {

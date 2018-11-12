@@ -76,4 +76,14 @@ public class Vector<T> extends Matrix<T>{
 		}
 		return comps;
 	}
+
+	public Matrix<T> outerProduct(Vector<T> other) {
+		Matrix<T> out = new Matrix<T>(this.o,this.length(),this.length());
+		for(int y = 0; y < this.length(); ++y) {
+			for(int x = 0; x < this.length(); ++x) {
+				out.r(o.op(this.v(y)).mult(other.v(x)),x,y);
+			}
+		}
+		return out;
+	}
 }

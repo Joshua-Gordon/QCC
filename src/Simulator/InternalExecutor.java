@@ -97,7 +97,11 @@ public class InternalExecutor {
                         }
                     }
                 }
+                for(Matrix<Complex> m : pureStates) {
+                    System.out.println(m);
+                }
             }
+
         });
         return new MixedState(pureStates,probabilities);
     }
