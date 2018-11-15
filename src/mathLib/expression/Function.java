@@ -1,24 +1,47 @@
 package mathLib.expression;
 
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Objects;
 
 import mathLib.MathValue;
 import mathLib.expression.Variable.ConcreteVariable;
 
 public abstract class Function {
+	private static HashSet<Integer>  NONE = null;
 	
-	private FunctionID id;
+	private final FunctionID id;
+	private final LatexFormat format;
+	private final HashSet<Integer> variableParamIndexes;
 	
-	public Function(String name, int numParams) {
-		this.id = new FunctionID(name, numParams);
+	public Function(String name, int numParams, HashSet<Integer> variableParamIndexes, LatexFormat format) {
+		this(new FunctionID(name, numParams), variableParamIndexes, format);
 	}
 	
-	public Function(FunctionID functionID) {
+	public Function(FunctionID functionID, HashSet<Integer> variableParamIndexes, LatexFormat format){
 		this.id = functionID;
+		this.format = format;
+		this.variableParamIndexes = variableParamIndexes;
 	}
 	
-	public FunctionID getID() {
+	public String getName () {
+		return id.name;
+	}
+	
+	public int numArgs() {
+		return id.numArgs;
+	}
+	
+	FunctionID getID() {
 		return id;
+	}
+	
+	public LatexFormat getLatexFormat() {
+		return format;
+	}
+	
+	public boolean isVariableParam(int paramIndex) {
+		return variableParamIndexes != null && variableParamIndexes.contains(paramIndex);
 	}
 	
 	public abstract MathValue compute(MathSet setDefinedBody, MathSet setGroup, Expression ... expressions);
@@ -28,14 +51,19 @@ public abstract class Function {
 		private final Expression definition;
 		
 		public ExpressionDefinedFunction(String definition, String name, String ... params) {
-			this(new Expression(definition), name, params);
+			this(definition, name, LatexFormat.NONE, params);
 		}
 		
-		public ExpressionDefinedFunction(Expression definition, String name, String ... params) {
-			super(name, params.length);
-			this.params = params;
-			this.definition = definition;
+		public ExpressionDefinedFunction(String definition, String name, LatexFormat format, String ... params) {
+			this(definition, name, NONE, format, params);
 		}
+		
+		public ExpressionDefinedFunction(String definition, String name, HashSet<Integer> variableParamIndexes, LatexFormat format, String ... params) {
+			super(name, params.length, variableParamIndexes, format);
+			this.params = params;
+			this.definition = new Expression(definition);
+		}
+		
 		
 		@Override
 		public MathValue compute(MathSet setDefinedBody, MathSet localSet, Expression ... expressions) {
@@ -51,7 +79,15 @@ public abstract class Function {
 		private final FunctionDefinition definition;
 		
 		public ConcreteFunction (String name, int numParams, FunctionDefinition definition) {
-			super(name, numParams);
+			this(name, numParams, LatexFormat.NONE, definition);
+		}
+		
+		public ConcreteFunction (String name, int numParams, LatexFormat format, FunctionDefinition definition) {
+			this(name, numParams, NONE, format, definition);
+		}
+		
+		public ConcreteFunction (String name, int numParams, HashSet<Integer> variableParamIndexes, LatexFormat format, FunctionDefinition definition) {
+			super(name, numParams, variableParamIndexes, format);
 			this.definition = definition;
 		}
 		
@@ -70,11 +106,11 @@ public abstract class Function {
 	
 	public static class FunctionID {
 		private final String name;
-		private final int numParams;
+		private final int numArgs;
 		
 		public FunctionID (String name, int numParams) {
 			this.name = name;
-			this.numParams = numParams;
+			this.numArgs = numParams;
 		}
 		
 		@Override
@@ -82,12 +118,60 @@ public abstract class Function {
 			if(obj == null || !(obj instanceof FunctionID))
 				return false;
 			FunctionID fh = (FunctionID) obj;
-			return name.equals(fh.name) && numParams == fh.numParams;
+			return name.equals(fh.name) && numArgs == fh.numArgs;
 		}
 		
 		@Override
 		public int hashCode() {
-			return Objects.hash(name, numParams);
+			return Objects.hash(name, numArgs);
+		}
+	}
+	
+	public static class LatexFormat implements Iterable<Object>{
+		public static final LatexFormat NONE = null;
+		
+		private final Object[] formatArray;
+		
+		public static Integer insertParam(int index) {
+			return index;
+		}
+		
+		public static boolean isParam(Object formatPart) {
+			return formatPart instanceof Integer;
+		}
+		
+		public static int getParamNumber(Object formatPart) {
+			if(!isParam(formatPart))
+				throw new IllegalArgumentException("String must be an param");
+			return (Integer) formatPart;
+		}
+		
+		public LatexFormat (Object ... formatArray) {
+			this.formatArray = formatArray;
+		}
+
+		@Override
+		public Iterator<Object> iterator() {
+			return new LatexFormatIterator();
+		}
+		
+		public int size() {
+			return formatArray.length;
+		}
+		
+		public class LatexFormatIterator implements Iterator<Object> {
+			private int index = -1;
+			
+			@Override
+			public boolean hasNext() {
+				return index + 1 < size();
+			}
+			
+			@Override
+			public Object next() {
+				return formatArray[++index];
+			}
+			
 		}
 	}
 }

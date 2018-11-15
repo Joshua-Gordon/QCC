@@ -2,10 +2,8 @@ package mathLib.expression;
 
 import java.io.BufferedReader;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Iterator;
 
-import framework2FX.MathDefintions;
 import language.compiler.LexicalAnalyzer;
 import language.compiler.ParseTree;
 import language.compiler.ParseTree.ParseBranch;
@@ -17,11 +15,12 @@ import language.compiler.Token;
 import mathLib.Complex;
 import mathLib.MathValue;
 import mathLib.Matrix;
-import mathLib.expression.Variable.ConcreteVariable;
 import utils.customCollections.Pair;
 
 public class Expression implements Serializable {
 	private static final long serialVersionUID = 6406307424607474858L;
+	
+	private ParseTree tree;
 	
 	
 	/**
@@ -46,31 +45,42 @@ public class Expression implements Serializable {
 		} else throw new IllegalArgumentException("Expression must only contain one variable");
 	}
 	
-	public static void main(String args[]) {
-		Expression expr = new Expression("-[1, 0]");
-		System.out.println(expr.treeString() + "\n");
-		System.out.println(expr.compute(MathDefintions.GLOBAL_DEFINITIONS));
-	}
 	
 	
-	private ParseTree tree;
 	
-	private Expression (ParseTree tree) {
-		this.tree = tree;
-	}
+	
+	
+	
 	
 	public Expression (String expression) {
 		ExpressionParser ep = new ExpressionParser(expression);
 		tree = ep.parse();
 	}
 	
+	public Expression (ParseTree tree) {
+		this.tree = tree;
+	}
+	
+	
+	
+	
 	public String treeString () {
 		return tree.toString();
+	}
+	
+	public ParseTree getTree() {
+		return tree;
 	}
 	
 	public MathValue compute(MathSet mathDefinitions) {
 		return evalExpr((ParseBranch)tree.getRoot(), mathDefinitions);
 	}
+	
+	
+	
+	
+	
+	
 	
 	private MathValue evalExpr(ParseBranch pb, MathSet mathDefinitions) {
 		Iterator<ParseNode> terms = pb.getChildren().iterator();
@@ -179,19 +189,19 @@ public class Expression implements Serializable {
 				int numParams = (params.getChildren().size() + 1) / 2;
 				Expression[] paramList = new Expression[numParams];
 				
-				fillParamArray(paramList, 0, params, mathDefinitions);
+				fillParamArray(paramList, params, mathDefinitions);
 				
 				return mathDefinitions.computeFunction(funcVarName, paramList);
 			}
 		}
 	}
 	
-	private void fillParamArray(Expression[] paramList, int offset, ParseBranch params, MathSet mathDefinitions) {
+	private void fillParamArray(Expression[] paramList, ParseBranch params, MathSet mathDefinitions) {
 		Iterator<ParseNode> iterator = params.getChildren().iterator();
 		
-		paramList[offset] = new Expression(new ParseTree(iterator.next()));
+		paramList[0] = new Expression(new ParseTree(iterator.next()));
 		
-		int i = offset;
+		int i = 0;
 		while(iterator.hasNext()) {
 			iterator.next(); // skip ,
 			paramList[++i] = new Expression(new ParseTree(iterator.next()));
@@ -220,235 +230,6 @@ public class Expression implements Serializable {
 	
 	
 	
-	
-	@SuppressWarnings("unchecked")
-	public ExpressionTraits getExpressionTraits (MathSet mathDefinitions, String ... undefinedVariables) {
-		MathSet dummyVariableSet = new MathSet(mathDefinitions);
-		
-		ExpressionTraits et = new ExpressionTraits();
-		
-		for(String var : undefinedVariables) {
-			dummyVariableSet.addVariable(new ConcreteVariable(var, Complex.ZERO()));
-			et.addUndefinedVariable(var);
-		}
-		
-		StringBuilder latexBuilder = new StringBuilder();
-		MathValue v = evalExpr ((ParseBranch)tree.getRoot(), dummyVariableSet, et, latexBuilder);
-		et.setLatexString(latexBuilder.toString());
-		
-		if(v instanceof Matrix<?>) {
-			Matrix<Complex> matrix = (Matrix<Complex>) v;
-			et.setRows(matrix.getRows());
-			et.setColumns(matrix.getColumns());
-			et.setMatrix(true);
-		} else {
-			et.setMatrix(false);
-		}
-		return et;
-	}
-	
-	
-	
-	
-	private MathValue evalExpr(ParseBranch pb, MathSet mathDefinitions, ExpressionTraits traits, StringBuilder sb) {
-		Iterator<ParseNode> terms = pb.getChildren().iterator();
-		
-		MathValue current = evalTerm((ParseBranch) terms.next(), mathDefinitions, traits, sb);
-		ParseNode pn;
-		StringBuilder nextTerm;
-		while(terms.hasNext()) {
-			pn = terms.next();
-			nextTerm = new StringBuilder();
-			if(pn.getProductionSymbol() == ExpressionParser.ADD) {
-				sb.append(" + ");
-				current = MathValue.add(current, evalTerm((ParseBranch) terms.next(), mathDefinitions, traits, nextTerm));
-				sb.append(nextTerm.toString());
-			} else if(pn.getProductionSymbol() == ExpressionParser.SUB_NEG) {
-				sb.append(" - ");
-				current = MathValue.sub(current, evalTerm((ParseBranch) terms.next(), mathDefinitions, traits, nextTerm));
-				sb.append(nextTerm.toString());
-			} else {
-				sb.append(" \\oplus ");
-				current = MathValue.xOR(current, evalTerm((ParseBranch) terms.next(), mathDefinitions, traits, nextTerm));
-				sb.append(nextTerm.toString());
-			}
-		}
-		return current;
-	}
-	
-	private MathValue evalTerm(ParseBranch pb, MathSet mathDefinitions, ExpressionTraits traits, StringBuilder sb) {
-		Iterator<ParseNode> pows = pb.getChildren().iterator();
-		
-
-		StringBuilder nextTerm = new StringBuilder();
-		ArrayList<String> matrixProducts = new ArrayList<>();
-		ArrayList<String> numerators = new ArrayList<>();
-		ArrayList<String> denominators = new ArrayList<>();
-		MathValue current = evalPow((ParseBranch) pows.next(), mathDefinitions, traits, nextTerm);
-		if(current instanceof Matrix<?>)
-			matrixProducts.add(nextTerm.toString());
-		else
-			numerators.add(nextTerm.toString());
-		
-		ParseNode pn;
-		while(pows.hasNext()) {
-			pn = pows.next();
-			nextTerm = new StringBuilder();
-			if(pn.getProductionSymbol() == ExpressionParser.MULT) {
-				current = MathValue.mult(current, evalPow((ParseBranch) pows.next(), mathDefinitions, traits, nextTerm));
-				if(current instanceof Matrix<?>)
-					matrixProducts.add(nextTerm.toString());
-				else
-					numerators.add(nextTerm.toString());
-			} else if(pn.getProductionSymbol() == ExpressionParser.DIV) {
-				current = MathValue.div(current, evalPow((ParseBranch) pows.next(), mathDefinitions, traits, nextTerm));
-				denominators.add(nextTerm.toString());
-			} else {
-				current = MathValue.tensor(current, evalPow((ParseBranch) pows.next(), mathDefinitions, traits, nextTerm));
-				matrixProducts.add(" \\otimes ");
-				matrixProducts.add(nextTerm.toString());
-			}
-		}
-		
-		
-		String latex = "";
-		if(!numerators.isEmpty()) {
-			latex += numerators.get(0);
-			for(int i = 1; i < numerators.size(); i++)
-				latex += " \\cdot " + numerators.get(i);
-			
-			if(!denominators.isEmpty()) {
-				latex = " { " + latex + " \\over " + numerators.get(0);
-				for(int i = 1; i < numerators.size(); i++)
-					sb.append(" \\cdot " + numerators.get(i));
-				latex += " } ";
-			}
-		} else {
-			if(!denominators.isEmpty()) {
-				latex = " { 1 \\over " + numerators.get(0);
-				for(int i = 1; i < numerators.size(); i++)
-					sb.append(" \\cdot " + numerators.get(i));
-				latex += " } ";
-			}
-		}
-		
-		sb.append(latex);
-		
-		for(String s : matrixProducts)
-			sb.append(s);
-		
-		return current;
-	}
-
-
-	private MathValue evalPow(ParseBranch pb, MathSet mathDefinitions, ExpressionTraits traits, StringBuilder sb) {
-		Iterator<ParseNode> pows = pb.getChildren().iterator();
-		
-		ParseNode pn = pows.next();
-		StringBuilder nextPow = new StringBuilder();
-		ArrayList<String> powLatex = new ArrayList<>();
-		
-		MathValue current;
-		if(pn.getProductionSymbol() == ExpressionParser.SUB_NEG) {
-			current =  MathValue.neg(evalPow((ParseBranch) pows.next(), mathDefinitions, traits, nextPow));
-			powLatex.add(" - " + nextPow.toString());
-		} else {
-			current = evalValue((ParseBranch) pn, mathDefinitions, traits, nextPow);
-			powLatex.add(nextPow.toString());
-		}
-			
-		while(pows.hasNext()) {
-			pn = pows.next();
-			nextPow = new StringBuilder();
-			if(pn.getProductionSymbol() == ExpressionParser.EXP) {
-				pn = pows.next();
-				if(pn.getProductionSymbol() == ExpressionParser.SUB_NEG) {
-					current = MathValue.pow(current, MathValue.neg(evalPow((ParseBranch) pows.next(), mathDefinitions, traits, nextPow)));
-					powLatex.add(" - " + nextPow.toString());
-				} else {
-					current = MathValue.pow(current, evalValue((ParseBranch) pn, mathDefinitions, traits, nextPow));
-					powLatex.add(nextPow.toString());
-				}
-			}
-		}
-		
-		String latex = powLatex.get(0);
-		for(int i  = 1; i < powLatex.size(); i++)
-			latex = " { " + latex + " } ^ { " + powLatex.get(i) + " } ";
-		sb.append(latex);
-		
-		
-		return current;
-	}
-	
-	private MathValue evalValue(ParseBranch pb, MathSet mathDefinitions, ExpressionTraits traits, StringBuilder sb) {
-		Iterator<ParseNode> parts = pb.getChildren().iterator();
-		ParseNode pn = parts.next();
-		ProductionSymbol ps = pn.getProductionSymbol();
-		// TODO: HERE
-		if(ps == ExpressionParser.OBRA) {
-			ParseBranch matrixParams = (ParseBranch) parts.next();
-			int rows = (matrixParams.getChildren().size() + 1) / 2;
-			
-			Iterator<ParseNode> row = matrixParams.getChildren().iterator();
-			ParseBranch columnParams = (ParseBranch) row.next();
-			int columns = (columnParams.getChildren().size() + 1) / 2;
-			
-			Complex[] matrixComps = new Complex[columns * rows];
-			
-			try {
-				fillMatrixArray(matrixComps, 0, columnParams, mathDefinitions);
-			
-				int i = 0;
-				while(row.hasNext()) {
-					row.next(); // skip ;
-					i+=columns;
-					columnParams = (ParseBranch) row.next();
-					if((columnParams.getChildren().size() + 1) / 2 != columns)
-						throw new EvaluateExpressionException("Matrix cannot have different length columns");
-					fillMatrixArray(matrixComps, i, columnParams, mathDefinitions);
-				}
-			} catch (ClassCastException e) {
-				throw new EvaluateExpressionException("Can not have a matrix inside another matrix");
-			}
-			
-			
-			
-			return new Matrix<Complex>(rows, columns, matrixComps);
-			
-		} else if (ps == ExpressionParser.OPAR) {
-			return evalExpr((ParseBranch) parts.next(), mathDefinitions);
-		} else if (ps == ExpressionParser.NUM) {
-			return new Complex(Double.parseDouble(((ParseLeaf)pn).getValue()), 0);
-		} else {
-			String funcVarName = ((ParseLeaf) pn).getValue();
-			
-			if(pb.getChildren().size() == 1) {
-				return mathDefinitions.computeVariable(funcVarName);
-			} else {
-				parts.next(); // skip (
-				ParseBranch params = (ParseBranch) parts.next();
-				int numParams = (params.getChildren().size() + 1) / 2;
-				Expression[] paramList = new Expression[numParams];
-				
-				fillParamArray(paramList, 0, params, mathDefinitions);
-				
-				return mathDefinitions.computeFunction(funcVarName, paramList);
-			}
-		}
-	}
-	
-	
-	private void fillMatrixArray(Complex[] paramList, int offset, ParseBranch params, MathSet mathDefinitions, ExpressionTraits traits, StringBuilder sb) throws ClassCastException {
-		Iterator<ParseNode> iterator = params.getChildren().iterator();
-		paramList[offset] = (Complex) evalExpr((ParseBranch) iterator.next(), mathDefinitions);
-		
-		int i = offset;
-		while(iterator.hasNext()) {
-			iterator.next(); // skip ,
-			paramList[++i] = (Complex) evalExpr((ParseBranch) iterator.next(), mathDefinitions);
-		}
-	}
 	
 	
 	
@@ -480,28 +261,28 @@ public class Expression implements Serializable {
 	// params -> expr , params | expr
 	
 	public static class ExpressionParser {
-		private static final Token NAME 	= new Token();  // used for variable and function names
-		private static final Token NUM		= new Token();	// any positive real decimal or integer
-		private static final Token OBRA 	= new Token();	// [
-		private static final Token CBRA 	= new Token();	// ]
-		private static final Token OPAR 	= new Token();	// (
-		private static final Token CPAR 	= new Token();	// )
-		private static final Token COM 		= new Token();	// ,
-		private static final Token SCOM 	= new Token();	// ;
-		private static final Token ADD 		= new Token();	// +
-		private static final Token SUB_NEG 	= new Token();	// -
-		private static final Token MULT 	= new Token();	// *
-		private static final Token EXP 		= new Token();	// ^
-		private static final Token DIV 		= new Token();	// /
-		private static final Token SPACE 	= new Token();	// any white spce character
-		private static final Token TENSOR	= new Token();	// tensor product (x)
-		private static final Token XOR		= new Token();	// addtion modulo 2 or exclusive OR (+)
-		private static final NonTerminal EXPR 			= new NonTerminal("expr");			
-		private static final NonTerminal TERM 			= new NonTerminal("term"); 
-		private static final NonTerminal POW 			= new NonTerminal("pow");
-		private static final NonTerminal VALUE 			= new NonTerminal("value");
-		private static final NonTerminal MATRIX_PARAMS 	= new NonTerminal("matrixParams");
-		private static final NonTerminal PARAM 			= new NonTerminal("param");
+		public static final Token NAME 		= new Token();  // used for variable and function names
+		public static final Token NUM		= new Token();	// any positive real decimal or integer
+		public static final Token OBRA 		= new Token();	// [
+		public static final Token CBRA 		= new Token();	// ]
+		public static final Token OPAR 		= new Token();	// (
+		public static final Token CPAR 		= new Token();	// )
+		public static final Token COM 		= new Token();	// ,
+		public static final Token SCOM 		= new Token();	// ;
+		public static final Token ADD 		= new Token();	// +
+		public static final Token SUB_NEG 	= new Token();	// -
+		public static final Token MULT 		= new Token();	// *
+		public static final Token EXP 		= new Token();	// ^
+		public static final Token DIV 		= new Token();	// /
+		public static final Token SPACE 	= new Token();	// any white spce character
+		public static final Token TENSOR	= new Token();	// tensor product (x)
+		public static final Token XOR		= new Token();	// addtion modulo 2 or exclusive OR (+)
+		public static final NonTerminal EXPR 			= new NonTerminal("expr");			
+		public static final NonTerminal TERM 			= new NonTerminal("term"); 
+		public static final NonTerminal POW 			= new NonTerminal("pow");
+		public static final NonTerminal VALUE 			= new NonTerminal("value");
+		public static final NonTerminal MATRIX_PARAMS 	= new NonTerminal("matrixParams");
+		public static final NonTerminal PARAM 			= new NonTerminal("param");
 		
 		private static final LexicalAnalyzer EXPRESSION_LEXER = new LexicalAnalyzer(
 					new Pair<String, Token>("[a-zA-Z_]\\w*",	NAME),

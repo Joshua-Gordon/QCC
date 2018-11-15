@@ -5,8 +5,7 @@ import java.io.Serializable;
 import java.net.URI;
 
 import appUIFX.AppFileIO;
-import framework2FX.gateModels.AbstractGateModel;
-import framework2FX.gateModels.OracleModel;
+import framework2FX.gateModels.GateModel;
 import utils.customCollections.eventTracableCollections.EventArrayList;
 import utils.customCollections.eventTracableCollections.EventHashTable;
 import utils.customCollections.eventTracableCollections.Notifier;
@@ -30,8 +29,8 @@ public class Project implements Serializable{
 	private static final long serialVersionUID = 8906661352790858317L;
 	
 	private SubCircuitList subCircuits;
-    private CustomList <AbstractGateModel> customGates;
-    private CustomList <AbstractGateModel> customOracles;
+    private CustomList <GateModel> customGates;
+    private CustomList <GateModel> customOracles;
 	
 	private transient URI fileLocation = null;
 	
@@ -156,7 +155,7 @@ public class Project implements Serializable{
 	/**
 	 * @return the list of the custom-gates for this project
 	 */
-	public CustomList<AbstractGateModel> getCustomGates() {
+	public CustomList<GateModel> getCustomGates() {
 		return customGates;
 	}
 	
@@ -168,7 +167,7 @@ public class Project implements Serializable{
 	/**
 	 * @return the list of the custom-oracles for this project
 	 */
-	public CustomList<AbstractGateModel> getCustomOracles() {
+	public CustomList<GateModel> getCustomOracles() {
 		return customOracles;
 	}
 
@@ -181,7 +180,7 @@ public class Project implements Serializable{
 	 * <b>MODIFIES INSTANCE</b>
 	 * @param list list of custom gate models
 	 */
-	public void setCustomGates(CustomList<AbstractGateModel> list) {
+	public void setCustomGates(CustomList<GateModel> list) {
 		this.notifier.sendChange(this, "setCustomGate", list);
 		customGates = list;
 	}
@@ -195,7 +194,7 @@ public class Project implements Serializable{
 	 * <b>MODIFIES INSTANCE</b>
 	 * @param list
 	 */
-	public void setCustomOracles( CustomList<AbstractGateModel> list) {
+	public void setCustomOracles( CustomList<GateModel> list) {
 		this.notifier.sendChange(this, "setCustomOracles", list);
 		customOracles = list;
 	}
@@ -213,6 +212,10 @@ public class Project implements Serializable{
 		return topLevelCircuit;
 	}
 	
+	
+	public CircuitBoard getTopLevelBoard() {
+		return subCircuits.get(topLevelCircuit);
+	}
 	
 	
 	

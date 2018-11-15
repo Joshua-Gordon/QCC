@@ -1,17 +1,43 @@
 package framework2FX;
 
-import framework2FX.gateModels.AbstractGateModel;
+import framework2FX.gateModels.GateModel;
+import mathLib.Complex;
+import mathLib.Matrix;
 
 public class ExportedGate {	
-	private final AbstractGateModel gateModel;
+	private final GateModel gateModel;
+	private final Complex[] parameters;
 	private final int[] gateRegisters;
-	private final int[] gateOpenControls;
-	private final int[] gateClosedControls;
+	private final Control[] controls;
+	private final Matrix<Complex>[] matrixes;
 	
-	public ExportedGate(AbstractGateModel gateModel, int[] gateRegisters, int[] gateOpenControls, int[] gateClosedControls) {
+	
+	public ExportedGate(GateModel gateModel, Complex[] parameters, int[] gateRegisters, Control[] controls, Matrix<Complex>[] matrixes) {
 		this.gateModel = gateModel;
 		this.gateRegisters = gateRegisters;
-		this.gateOpenControls = gateOpenControls;
-		this.gateClosedControls = gateClosedControls;
+		this.controls = controls;
+		this.matrixes = matrixes;
+		this.parameters = parameters;
 	}
+	
+	public GateModel getGateModel() {
+		return gateModel;
+	}
+	
+	public Complex[] getParameters () {
+		return parameters;
+	}
+	
+	public int[] getGateRegister() {
+		return gateRegisters;
+	}
+	
+	public Control[] getControls(){
+		return controls;
+	}
+	
+	public Matrix<Complex>[] getMatrixes() {
+		return matrixes;
+	}
+	
 }

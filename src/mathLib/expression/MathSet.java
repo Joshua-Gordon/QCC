@@ -10,7 +10,7 @@ import mathLib.expression.Function.FunctionID;
 public class MathSet {
 	private final MathSet enclosingSubSet;
 	private Hashtable<FunctionID, Function> functionSet = new Hashtable<>();
-	private Hashtable <String, Variable> variableTable = new Hashtable<>();
+	private Hashtable <String, Variable> variableSet = new Hashtable<>();
 	
 	public MathSet () {
 		this(null);
@@ -20,12 +20,17 @@ public class MathSet {
 		this.enclosingSubSet = enclosingSubSet;
 	}
 	
+	public void addToSet(MathSet set) {
+		functionSet.putAll(set.functionSet);
+		variableSet.putAll(set.variableSet);
+	}
+	
 	public void addVariable(Variable v) {
-		variableTable.put(v.getName(), v);
+		variableSet.put(v.getName(), v);
 	}
 	
 	public void removeVariable(Variable v) {
-		variableTable.remove(v.getName());
+		variableSet.remove(v.getName());
 	}
 	
 	public void addFunctionDefinition (Function function) {
@@ -40,14 +45,14 @@ public class MathSet {
 		return enclosingSubSet;
 	}
 	
-	private Variable getVariable (String name) {
-		Variable variable = variableTable.get(name);
+	public Variable getVariable (String name) {
+		Variable variable = variableSet.get(name);
 		if(variable == null && enclosingSubSet != null)
 			variable = enclosingSubSet.getVariable(name);
 		return variable;
 	}
 	
-	private Function getFunction (String name, int numParams) {
+	public Function getFunction (String name, int numParams) {
 		Function function = functionSet.get(new FunctionID(name, numParams));
 		if(function == null && enclosingSubSet != null)
 			function = enclosingSubSet.getFunction(name, numParams);

@@ -4,24 +4,23 @@ import java.awt.image.BufferedImage;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import framework2FX.gateModels.DefaultGateModel;
+import framework2FX.gateModels.PresetModel;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
-public class DefaultGatesView extends AbstractGateChooser {
+public class PresetGatesView extends AbstractGateChooser {
 	
-	public DefaultGatesView() {
-		super("Default Gates");
+	public PresetGatesView() {
+		super("Preset Gates");
 	}
 
 	public void initializeGates() {
 		ToggleButton tb;
-		
 		Image image;
 		ImageView imageView;
-		for(DefaultGateModel dg : DefaultGateModel.values()) {
+		for(PresetModel dg : PresetModel.values()) {
 			tb = new ToggleButton();
 			image = SwingFXUtils.toFXImage((BufferedImage) GateIcon.getDefaultGateIcon(dg).getImage(), null);
 			imageView = new ImageView(image);

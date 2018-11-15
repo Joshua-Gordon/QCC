@@ -42,6 +42,7 @@ public class Main extends Application implements AppPreferences {
     	}
     	
     	if ( debugMode ) {
+
 			Matrix<Complex> c = Matrix.identity(Complex.ONE(),4);
 			c.r(Complex.ZERO(),2,2);
 			System.out.println(c.trace());
@@ -52,6 +53,7 @@ public class Main extends Application implements AppPreferences {
 			Qubit p = Qubit.PLUS();
 			POVM cb = POVM.computationalBasis();
 			System.out.println(cb.measure(p.outerProduct(p)));
+
 
     	}
     	
@@ -64,12 +66,6 @@ public class Main extends Application implements AppPreferences {
 			}
 		}
     }
-    
-    
-    
-    
-    
-    
     
     
     public static Window getWindow() {
