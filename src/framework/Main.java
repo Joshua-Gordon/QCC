@@ -1,20 +1,18 @@
 package framework;
 
 import java.util.ArrayList;
+import java.util.stream.Stream;
 
 import Simulator.InternalExecutor;
-import Simulator.POVM;
-import Simulator.Qubit;
 import appPreferencesFX.AppPreferences;
 import appUI.Window;
 import appUIFX.AppFileIO;
 import appUIFX.MainScene;
 import framework2FX.AppStatus;
+import framework2FX.GateManager;
 import framework2FX.Project;
 import javafx.application.Application;
 import javafx.stage.Stage;
-import mathLib.Complex;
-import mathLib.Matrix;
 
 
 
@@ -43,18 +41,9 @@ public class Main extends Application implements AppPreferences {
     	
     	if ( debugMode ) {
 
-			Matrix<Complex> c = Matrix.identity(Complex.ONE(),4);
-			c.r(Complex.ZERO(),2,2);
-			System.out.println(c.trace());
-
-			Qubit z = Qubit.ZERO();
-			System.out.println(z.outerProduct(z));
-
-			Qubit p = Qubit.PLUS();
-			POVM cb = POVM.computationalBasis();
-			System.out.println(cb.measure(p.outerProduct(p)));
-
-
+			Stream<framework2FX.ExportedGate> gates = GateManager.exportGates(Project.createNewTemplateProject());
+			gates.forEach(System.out::println);
+			
     	}
     	
     	if ( debugSimulatorMode ) {

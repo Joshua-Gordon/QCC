@@ -1,7 +1,5 @@
 package framework2FX.gateModels;
 
-import com.sun.org.apache.xalan.internal.xsltc.compiler.sym;
-
 import framework2FX.gateModels.GateModel.GateModelType;
 
 public enum PresetModel {

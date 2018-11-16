@@ -32,7 +32,7 @@ public class ImmutableArray <T> implements Iterable<T>, Serializable {
 			
 			@Override
 			public boolean hasNext() {
-				return index + 1 == array.length;
+				return index + 1 != array.length;
 			}
 			
 			@Override
