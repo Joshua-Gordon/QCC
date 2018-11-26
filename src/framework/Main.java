@@ -1,7 +1,6 @@
 package framework;
 
 import java.util.ArrayList;
-import java.util.stream.Stream;
 
 import Simulator.InternalExecutor;
 import appPreferencesFX.AppPreferences;
@@ -9,8 +8,8 @@ import appUI.Window;
 import appUIFX.AppFileIO;
 import appUIFX.MainScene;
 import framework2FX.AppStatus;
-import framework2FX.GateManager;
 import framework2FX.Project;
+import framework2FX.gateModels.PresetModel;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
@@ -41,8 +40,7 @@ public class Main extends Application implements AppPreferences {
     	
     	if ( debugMode ) {
 
-			Stream<framework2FX.ExportedGate> gates = GateManager.exportGates(Project.createNewTemplateProject());
-			gates.forEach(System.out::println);
+			System.out.println(PresetModel.IDENTITY.getModel().getLatex().get(0));
 			
     	}
     	

@@ -18,6 +18,7 @@ public class ExportedGate {
 		this.controls = controls;
 		this.matrixes = matrixes;
 		this.parameters = parameters;
+		
 	}
 	
 	public GateModel getGateModel() {

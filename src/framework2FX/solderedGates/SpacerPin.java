@@ -8,8 +8,9 @@ public class SpacerPin extends SolderedPin {
 		super(gate);
 		this.spacerWithinGateBody = spacerWithinGateBody;
 	}
-	
-	public boolean isSpacerWithinGateBody () {
+
+	@Override
+	public boolean isWithinBody() {
 		return spacerWithinGateBody;
 	}
 

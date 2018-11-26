@@ -1,14 +1,18 @@
 package framework2FX;
 
 import java.io.Serializable;
+import java.util.Hashtable;
+import java.util.LinkedList;
+import java.util.ListIterator;
+import java.util.Set;
 
 import framework2FX.gateModels.PresetModel;
 import framework2FX.solderedGates.Solderable;
 import framework2FX.solderedGates.SolderedGate;
 import framework2FX.solderedGates.SolderedPin;
 import framework2FX.solderedGates.SolderedRegister;
+import framework2FX.solderedGates.SpacerPin;
 import utils.customCollections.ImmutableArray;
-import utils.customCollections.eventTracableCollections.EventArrayList;
 import utils.customCollections.eventTracableCollections.Notifier;
 
 /**
@@ -34,144 +38,205 @@ import utils.customCollections.eventTracableCollections.Notifier;
  */
 public class CircuitBoard extends Solderable implements Serializable{
 	private static final long serialVersionUID = -6921131331890897905L;
-
-    private Board board;
+	
+	private final LinkedList<LinkedList<SolderedPin>> elements;
     
     // Notifies User-Interface of changes
     private Notifier notifier;
+    private Hashtable<String, Integer> variableOcurrances;
+    
     
     /**
      * @return
      * an empty 5 by 5 {@link CircuitBoard}
      */
     public static CircuitBoard getDefaultCircuitBoard() {
-    	CircuitBoard board = new CircuitBoard();
-    	for(int i = 0; i < 5; ++i){
-    		board.addColumn();
-    		board.addRow();
-        }
-    	return board;
+    	return new CircuitBoard(5, 5);
     }
     
-    private CircuitBoard() {
+    public CircuitBoard(int rows, int columns) {
     	notifier = new Notifier();
-    	setBoard(new Board());
-    }
-    
-    /**
-     * Adds a row to the end of this {@link CircuitBoard}.
-     */
-    public void addRow() {
-    	addRow(getRows());
-    }
-    
-    /**
-     * Adds a row at the specified location.
-     * <p>
-     * @param r
-     */
-    public void addRow(int r) {
-    	for(BoardColumn a : board)
-    		a.add(r, mkIdent());
-    }
-    
-    /**
-     * Removes the last row of this {@link CircuitBoard}.
-     */
-    public void removeRow() {
-    	removeRow(getRows() - 1);
-    }
-    
-    /**
-     * Removes the specified row "r" from this {@link CircuitBoard}
-     * @param r
-     */
-    public void removeRow(int r){
-    	if(board.get(0).size() > 1) {
-	    	for(int i = 0; i < getColumns(); i++)
-	    		 // detachSolderedGate(r, i);
-	    		System.out.println("CircuitBoard Line 96"); // TODO: Fix this
-	        for(BoardColumn a : board) 
-	        	a.remove(r);
-    	}else {
-    		throw new InvalidRowException();
-    	}
-    }
-    
-    
-    /**
-     * Adds a column to the end of this board.
-     */
-    public void addColumn(){
-        addColumn(getColumns());
-    }
-    
-    /**
-     * Adds a column in the specified location.
-     * @param c
-     */
-    public void addColumn(int c){
-    	int size = 0;
-    	if(board.size() != 0)
-    		size = board.get(0).size();
+    	variableOcurrances = new Hashtable<>();
     	
-    	BoardColumn column = new BoardColumn();
-    	board.add(c, column);
-    	for(int i = 0; i < size; ++i)
-            column.add(mkIdent());
-    }
-    
-    /**
-     * Removes the last column of this {@link CircuitBoard}. If the {@link CircuitBoard} is
-     * already one column, it will not reduce rows and a prompt will tell the user.
-     */
-    public void removeColumn(){
-    	removeColumn(getColumns() - 1);
-    }
-    
-    /**
-     * Removes the specified column "c" of this {@link CircuitBoard}
-     * @param c
-     */
-    public void removeColumn(int c) {
-    	if(board.size() > 1) {
-    		board.remove(c);
-    	}else {
-    		throw new InvalidColumnException();
-    	}
-    }
-    
-	/**
-	 * @return
-	 * the number of rows on this {@link CircuitBoard}.
-	 */
-	public int getRows() {
-		return board.get(0).size();
-	}
-	
-	/**
-	 * @return
-	 * the number of Columns on this {@link CircuitBoard}.
-	 */
-	public int getColumns() {
-		return board.size();
-	}
-	
-	
-	public void placeGate(Solderable gate, int column, int[] registers) {
+    	
+    	if (rows < 1)
+			throw new InvalidRowException("rows cannot be less than 1");
+		if(columns < 1)
+			throw new InvalidColumnException("columns cannot be less than 1");
 		
+		this.elements = new LinkedList<>();
+		
+		LinkedList<SolderedPin> column;
+		
+		for(int c = 0; c < columns; c++) {
+			column = new LinkedList<>();
+			for(int r = 0; r < rows; r++)
+				column.offerLast(mkIdent());
+			elements.offerLast(column);
+		}
+    }
+    
+    
+    
+    public void addRow(int index, int amt) {
+		if(index  == 0 || index == getRows() - 1) {
+			ListIterator<SolderedPin> iterator;
+			for(LinkedList<SolderedPin> column : elements) {
+				iterator = column.listIterator(index);
+				for(int i = 0; i < amt; i++)
+					iterator.add(mkIdent());
+			}
+		} else {
+			ListIterator<SolderedPin> iterator;
+			
+			SolderedPin spp, spc;
+			SolderedGate sg;
+			boolean isWithinGate;
+			for(LinkedList<SolderedPin> column : elements) {
+				iterator = column.listIterator(index-1);
+				spp = iterator.next();
+				spc = iterator.next();
+				iterator.previous();
+				
+				if(spp.getSolderedGate() == spc.getSolderedGate()) {
+					sg = spp.getSolderedGate();
+					
+					isWithinGate = spp.isWithinBody() && spc.isWithinBody();
+					
+					for(int i = 0; i< amt; i++)
+						iterator.add(new SpacerPin(sg, isWithinGate));
+					
+				} else {
+					for(int i = 0; i< amt; i++)
+						iterator.add(mkIdent());
+				}
+			}
+		}
+	}
+	
+    
+    public void removeRows(int firstIndex, int lastIndex) {
+    	if(firstIndex < 0 || firstIndex >= getColumns())
+			throw new InvalidColumnException("first arg must be a postive and less than the size");
+		if(lastIndex < firstIndex || lastIndex >= getColumns())
+			throw new InvalidColumnException("first arg must be a postive and less than the size");
+		if(lastIndex - firstIndex + 1 == getRows())
+			throw new InvalidColumnException("columns cannot be less than 1");
+		// TODO: Finish this method
+//		ListIterator<SolderedPin> iterator;
+//		SolderedPin fp = null, lp = null, temp = null;
+//		boolean firstHitReg, lastHitReg;
+//		
+//		for(LinkedList<SolderedPin> column : elements) {
+//	    	iterator = column.listIterator(firstIndex);
+//	    	if() {
+//	    		
+//	    	}
+//	    	
+//	    	fp = iterator.next();
+//	    	iterator.remove();
+//	    	hitRegister = fp instanceof SolderedRegister;
+//	    	
+//	    	for(int i = 0; i < lastIndex - firstIndex; i++) {
+//	    		lp = iterator.next();
+//	    		hitRegister |= lp instanceof SolderedRegister;
+//	    		iterator.remove();
+//	    	}
+//	    	
+//	    	
+//	    	if(lp == null) {
+//	    		
+//	    	} else if(lp.getSolderedGate() == fp.getSolderedGate()) {
+//	    		
+//	    	} else {
+//	    		
+//	    	}
+//		}
+		
+		
+	}
+    
+    
+	public void addColumns(int index, int amt) {
+		ListIterator<LinkedList<SolderedPin>> iterator = elements.listIterator(index);
+		LinkedList<SolderedPin> column;
+		for(int i = 0; i < amt; i++) {
+			column = new LinkedList<SolderedPin>();
+			for(int r = 0; r < getRows() - 1; r++)
+				column.add(mkIdent());
+			iterator.add(column);
+		}
+	}
+	
+	public void removeColumns(int firstIndex, int lastIndex) {
+		if(firstIndex < 0 || firstIndex >= getColumns())
+			throw new InvalidColumnException("first arg must be a postive and less than the size");
+		if(lastIndex < firstIndex || lastIndex >= getColumns())
+			throw new InvalidColumnException("first arg must be a postive and less than the size");
+		if(lastIndex - firstIndex + 1 == getColumns())
+			throw new InvalidColumnException("columns cannot be less than 1");
+		
+		
+		ListIterator<LinkedList<SolderedPin>> iterator = elements.listIterator(firstIndex);
+		
+		for(int i = 0; i < lastIndex - firstIndex + 1; i++) {
+			iterator.next();
+			iterator.remove();
+		}
+	}
+	
+	
+	
+	public int getRows() {
+		return elements.getFirst().size();
+	}
+	
+	
+	
+	public int getColumns() {
+		return elements.size();
+	}
+
+	
+	
+	@SuppressWarnings("serial")
+	public static class InvalidRowException extends RuntimeException {
+		public InvalidRowException (String message) {
+			super(message);
+		}
+	}
+	
+	@SuppressWarnings("serial")
+	public static class InvalidColumnException extends RuntimeException {
+		public InvalidColumnException (String message) {
+			super(message);
+		}
+	}
+	
+	private static SolderedRegister mkIdent() {
+		return new SolderedRegister(new SolderedGate(PresetModel.IDENTITY.getModel()), 0);
+	}
+    
+    
+	
+	public void placeGate(Solderable gate, int column, int[] registers, String ... parameters) {
+		ImmutableArray<String> gateArgs = gate.getArguments();
+		if(parameters.length != gateArgs.size()) {
+			throw new RuntimeException("Can not be able to then");
+		}
 	}
 	
 	public void removeGate(int row, int column) {
 		
 	}
 	
+	
 	public SolderedGate getGateAt(int row, int column) {
-		return board.get(column).get(row).getSolderedGate();
+		return elements.get(column).get(row).getSolderedGate();
 	}
 	
 	public SolderedPin getSolderPinAt(int row, int column) {
-		return board.get(column).get(row);
+		return elements.get(column).get(row);
 	}
 	
 	
@@ -182,21 +247,13 @@ public class CircuitBoard extends Solderable implements Serializable{
 
 	@Override
 	public ImmutableArray<String> getArguments() {
-		return null;
+		Set<String> argSet = variableOcurrances.keySet();
+		String[] args = new String[argSet.size()];
+		int i = 0;
+		for(String arg : argSet)
+			args[i++] = arg;
+		return new ImmutableArray<>(args);
 	}
-	
-
-	
-	
-	
-	
-	
-	
-	public void setBoard(Board board) {
-		this.board = board;
-		board.setReceiver(notifier);
-	}
-	
 	
 	public void setReciever(Notifier reciever) {
 		this.notifier.setReceiver(reciever);
@@ -205,51 +262,5 @@ public class CircuitBoard extends Solderable implements Serializable{
 	public Notifier getNotifier() {
 		return notifier;
 	}
-	
-	public static class Board extends EventArrayList<BoardColumn> {
-		private static final long serialVersionUID = -4288685239350835141L;
-
-		public Board() {
-			super(null);
-		}
-		
-		@Override
-		public void add(BoardColumn value) {
-			value.setReceiver(this);
-			super.add(value);
-		}
-		
-		@Override
-		public void add(int index, BoardColumn value) {
-			value.setReceiver(this);
-			super.add(index, value);
-		}
-	}
-	
-	public static class BoardColumn extends EventArrayList<SolderedPin> {
-		private static final long serialVersionUID = 6899202550938350451L;
-		public BoardColumn() {
-			super(null);
-		}
-	}
-	
-	@SuppressWarnings("serial")
-	public static class InvalidRowException extends RuntimeException {
-		public InvalidRowException () {
-			super("Can not have less than 1 row");
-		}
-	}
-	
-	@SuppressWarnings("serial")
-	public static class InvalidColumnException extends RuntimeException {
-		public InvalidColumnException () {
-			super("Can not have less than 1 column");
-		}
-	}
-	
-	private static SolderedRegister mkIdent() {
-		return new SolderedRegister(new SolderedGate(PresetModel.IDENTITY.getModel()), 0);
-	}
-	
 	
 }

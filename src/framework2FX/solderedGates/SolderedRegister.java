@@ -12,4 +12,9 @@ public class SolderedRegister extends SolderedPin {
 	public int getSolderedGatePinNumber() {
 		return solderedGatePinNumber;
 	}
+
+	@Override
+	public boolean isWithinBody() {
+		return true;
+	}
 }
