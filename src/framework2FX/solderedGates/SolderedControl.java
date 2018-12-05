@@ -9,7 +9,6 @@ public class SolderedControl extends SpacerPin {
 		this.controlStatus = controlStatus;
 	}
 	
-	
 	public boolean getControlStatus() {
 		return controlStatus;
 	}

@@ -1,7 +1,9 @@
 package appUIFX;
 
+import framework2FX.solderedGates.Solderable;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.TilePane;
@@ -29,4 +31,17 @@ public abstract class AbstractGateChooser extends AppView implements Initializab
 		button.setText(label);
 	}
 	
+	
+	public static class SolderableToggleButton extends ToggleButton {
+		
+		private final Solderable solderable;
+		
+		public SolderableToggleButton (Solderable solderable) {
+			this.solderable = solderable;
+		}
+		
+		public Solderable getSolderable() {
+			return solderable;
+		}
+	}
 }

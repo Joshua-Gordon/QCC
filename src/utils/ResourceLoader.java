@@ -2,16 +2,16 @@ package utils;
 
 import java.awt.Font;
 import java.awt.FontFormatException;
-import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
-import java.awt.RenderingHints;
-import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Hashtable;
 
 import javax.imageio.ImageIO;
@@ -47,7 +47,12 @@ public class ResourceLoader {
 		
 	}
 	
-	
+	public static String getHTMLString (String filename) throws IOException, URISyntaxException {
+		URL url = ResourceLoader.class.getResource("/html/" + filename);
+		byte[] encoded = Files.readAllBytes(Paths.get(url.toURI()));
+		Charset ascii = Charset.forName("US-ASCII");
+		return new String(encoded, ascii);
+	}
 	
 	public static Node loadFXML(String filename) throws IOException {
 		return loadFXMLLoader(filename).load();

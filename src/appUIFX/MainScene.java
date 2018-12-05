@@ -185,8 +185,10 @@ public class MainScene extends AppFXMLComponent implements Initializable, AppPre
 	private void initializeViews() {		
 		if(Booleans.CONSOLE_OPEN.get())
 			addView(TabView.CONSOLE);
-		if(Booleans.DEFAULT_GATES_OPEN.get())
-			addView(TabView.DEFAULT_GATES_VIEW);
+		if(Booleans.PRESET_GATES_OPEN.get())
+			addView(TabView.PRESET_GATES_VIEW);
+		if(Booleans.CUSTOM_GATES_OPEN.get())
+			addView(TabView.CUSTOM_GATES_VIEW);
 		if(Booleans.PROJECT_HEIRARCHY_OPEN.get())
 			addView(TabView.PROJECT_HIERARCHY);
 		

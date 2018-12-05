@@ -2,7 +2,8 @@ package appUIFX;
 
 public enum TabView {
 	CONSOLE(new Console()),
-	DEFAULT_GATES_VIEW(new PresetGatesView()),
+	PRESET_GATES_VIEW(new PresetGatesView()),
+	CUSTOM_GATES_VIEW(new CustomGatesView()),
 	PROJECT_HIERARCHY(new ProjectHierarchy());
 	
 	;

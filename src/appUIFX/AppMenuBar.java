@@ -48,7 +48,8 @@ public class AppMenuBar implements AppPreferences{
 		menu = new Menu("View");
 			addItemToMenu(menu, mkViewItem("Show Project Hierarchy", mainScene, TabView.PROJECT_HIERARCHY));
 			addItemToMenu(menu, mkViewItem("Show Console", mainScene, TabView.CONSOLE));
-			addItemToMenu(menu, mkViewItem("Show Default Gates", mainScene, TabView.DEFAULT_GATES_VIEW));
+			addItemToMenu(menu, mkViewItem("Show Preset Gates", mainScene, TabView.PRESET_GATES_VIEW));
+			addItemToMenu(menu, mkViewItem("Show Custom Gates", mainScene, TabView.CUSTOM_GATES_VIEW));
 		menus.add(menu);
 		menu = new Menu("Help");
 			//TODO: to be implemented

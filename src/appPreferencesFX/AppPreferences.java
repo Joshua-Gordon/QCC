@@ -133,7 +133,8 @@ public interface AppPreferences {
 		// Opened Views
 		PROJECT_HEIRARCHY_OPEN(true),
 		CONSOLE_OPEN(true),
-		DEFAULT_GATES_OPEN(true),
+		PRESET_GATES_OPEN(true),
+		CUSTOM_GATES_OPEN(true),
 		
 		
 		;
