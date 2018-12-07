@@ -1,5 +1,6 @@
 package framework2FX;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Stack;
 import java.util.function.Supplier;
@@ -25,151 +26,8 @@ import utils.customCollections.ImmutableArray;
 public class GateManager {
 	
 	public static Stream<ExportedGate> exportGates(Project p) {
-		return Stream.generate(new Supplier<ExportedGate>() {
-			Stack<ExportState> exportState = new Stack<>();
-			
-			SolderedPin sp;
-			SolderedGate sg;
-			HashSet<Control> localControls = null;
-			int[] localRegisters = null;
-			int curReg = 0;
-			
-			{
-				exportState.push(new ExportState(p.getTopLevelBoard(), MathDefintions.GLOBAL_DEFINITIONS, null, new HashSet<>()));
-			}
-			
-			@Override
-			public ExportedGate get() {
-				if(exportState.size() == 0)
-					return null;
-				return getNextGate();
-			}
-			
-			@SuppressWarnings("unchecked")
-			private ExportedGate getNextGate() {
-				
-				sg = getGate();
-				localRegisters = new int[sg.getGateModel().getNumberOfRegisters()];
-				localControls = new HashSet<>();
-				curReg = 0;
-				
-				sp = getPin();
-				
-				addToExportGate();
-				
-				while(increment() && sg == (sg = getGate())) {
-					sp = getPin();	
-					addToExportGate();
-				}
-				
-				if(curReg != localRegisters.length)
-					throw new RuntimeException("The gate given does not have all its registers defined");
-				
-				
-				sg = sp.getSolderedGate();
-				
-				// finally export gate to stream
-				
-				MathSet localDefinitions = new MathSet(MathDefintions.GLOBAL_DEFINITIONS);
-				
-				ImmutableArray<String> params = sg.getGateModel().getArguments();
-				GroupDefinition grp = sg.getParameterSet();
-				Complex[] parameters = new Complex[params.size()];
-				Complex c = null;
-				
-				int i = 0;
-				for(MathObject mo : grp.getMathDefinitions()) {
-					if(mo.isMatrix())
-						throw new RuntimeException("Can not pass a matrix as an parameter");
-					
-					if(mo.hasArguments())
-						c = (Complex) ((ArgObject) mo).getDefinition().compute(current().mathDefinitions);
-					else
-						c = (Complex) ((ScalarObject) mo).getScalar();
-					
-					localDefinitions.addVariable(new ConcreteVariable(params.get(i), c));
-					parameters[i] = c;
-					
-					i++;
-				}
-				
-				
-				if(sg.getGateModel() instanceof CircuitBoard){
-					exportState.push(new ExportState((CircuitBoard) sg.getGateModel(), localDefinitions, localRegisters, localControls));
-					return getNextGate();
-				} else {
-					Control[] tempArray = new Control[localControls.size()];
-					localControls.toArray(tempArray);
-					
-					GateModel gm = (GateModel) sg.getGateModel();
-					Matrix<Complex>[] matrixes = new Matrix[gm.getDefinitions().size()];
-					
-					i = 0;
-					for(MathObject mo : gm.getDefinitions()) {
-						if(!mo.isMatrix())
-							throw new RuntimeException("No scalars are allowed to be defined for any gate model");
-						
-						if(mo.hasArguments())
-							matrixes[i] = (Matrix<Complex>) ((ArgObject) mo).getDefinition().compute(localDefinitions);
-						else
-							matrixes[i] = (Matrix<Complex>) ((MatrixObject) mo).getMatrix();
-						
-						i++;
-					}
-					
-					return new ExportedGate(gm, parameters, localRegisters, tempArray, matrixes);
-				}
-			}
-			
-			private void addToExportGate() {
-				if(sp instanceof SolderedControl) {
-					SolderedControl sc = (SolderedControl) sp;
-					
-					if(current().registers == null)
-						localControls.add(new Control(current().row, sc.getControlStatus()));
-					else
-						localControls.add(new Control(current().registers[current().row], sc.getControlStatus()));
-				} else if (!(sp instanceof SpacerPin)) {
-					SolderedRegister sr = (SolderedRegister) sp;
-					if(current().registers == null)
-						localRegisters[sr.getSolderedGatePinNumber()] = current().row;
-					else
-						localRegisters[sr.getSolderedGatePinNumber()] = current().registers[current().row];
-					curReg ++;
-				}
-			}
-			
-			private ExportState current () {
-				return exportState.peek();
-			}
-			
-			public SolderedPin getPin() {
-				return current().cb.getSolderPinAt(current().row, current().column);
-			}
-			
-			public SolderedGate getGate() {
-				return current().cb.getGateAt(current().row, current().column);
-			}
-			
-			private boolean increment() {
-				if(current().row + 1 == current().cb.getRows()) {
-					current().row = 0;
-					if(current().column + 1 == current().cb.getColumns()) {
-						exportState.pop();
-					} else {
-						current().row = 0;
-						current().column++;
-					}
-					return false;
-				} else {
-					current().row++;
-				}
-				return true;
-			}
-		}).takeWhile(x -> x != null);
-		
-		
-		
+		Stream<ExportedGate> stream = Stream.generate(new ExportEveryGateSupplier(p));
+		return stream.takeWhile(x -> x != null);
 	}
 	
 	
@@ -221,5 +79,154 @@ public class GateManager {
 		}
 	}
 	
+	private static class ExportEveryGateSupplier implements Supplier<ExportedGate> {
+
+		Stack<ExportState> exportState = new Stack<>();
+		
+		SolderedPin sp;
+		SolderedGate sg;
+		HashSet<Control> localControls = null;
+		int[] localRegisters = null;
+		int curReg = 0;
+		
+		public ExportEveryGateSupplier (Project p) {
+			exportState.push(new ExportState(p.getTopLevelBoard(), MathDefintions.GLOBAL_DEFINITIONS, null, new HashSet<>()));
+		}
+		
+		@Override
+		public ExportedGate get() {
+			if(exportState.size() == 0)
+				return null;
+			return getNextGate();
+		}
+		
+		@SuppressWarnings("unchecked")
+		private ExportedGate getNextGate() {
+			
+			sg = getGate();
+			localRegisters = new int[sg.getGateModel().getNumberOfRegisters()];
+			localControls = new HashSet<>(current().controls);
+			curReg = 0;
+			
+			sp = getPin();
+			
+			addToExportGate();
+			
+			while(increment() && sg == (sg = getGate())) {
+				sp = getPin();	
+				addToExportGate();
+			}
+			
+			if(curReg != localRegisters.length)
+				throw new RuntimeException("The gate given does not have all its registers defined");
+			
+			
+			sg = sp.getSolderedGate();
+			
+			// finally export gate to stream
+			
+			MathSet localDefinitions = new MathSet(MathDefintions.GLOBAL_DEFINITIONS);
+			
+			ImmutableArray<String> params = sg.getGateModel().getArguments();
+			GroupDefinition grp = sg.getParameterSet();
+			Complex[] parameters = new Complex[params.size()];
+			Complex c = null;
+			
+			int i = 0;
+			for(MathObject mo : grp.getMathDefinitions()) {
+				if(mo.isMatrix())
+					throw new RuntimeException("Can not pass a matrix as an parameter");
+				
+				if(mo.hasArguments())
+					c = (Complex) ((ArgObject) mo).getDefinition().compute(current().mathDefinitions);
+				else
+					c = (Complex) ((ScalarObject) mo).getScalar();
+				
+				localDefinitions.addVariable(new ConcreteVariable(params.get(i), c));
+				parameters[i] = c;
+				
+				i++;
+			}
+			
+			
+			if(sg.getGateModel() instanceof CircuitBoard){
+				exportState.push(new ExportState((CircuitBoard) sg.getGateModel(), localDefinitions, localRegisters, localControls));
+				return getNextGate();
+			} else {
+				Control[] tempArray = new Control[localControls.size()];
+				localControls.toArray(tempArray);
+				
+				GateModel gm = (GateModel) sg.getGateModel();
+				Matrix<Complex>[] matrixes = new Matrix[gm.getDefinitions().size()];
+				
+				i = 0;
+				for(MathObject mo : gm.getDefinitions()) {
+					if(!mo.isMatrix())
+						throw new RuntimeException("No scalars are allowed to be defined for any gate model");
+					
+					if(mo.hasArguments())
+						matrixes[i] = (Matrix<Complex>) ((ArgObject) mo).getDefinition().compute(localDefinitions);
+					else
+						matrixes[i] = (Matrix<Complex>) ((MatrixObject) mo).getMatrix();
+					
+					i++;
+				}
+				
+				HashMap<String, Complex> argParamMap = new HashMap<>();
+				int j = 0;
+				for(String argument : gm.getArguments())
+					argParamMap.put(argument, parameters[i++]);
+				
+				return new ExportedGate(gm, argParamMap, localRegisters, tempArray, matrixes);
+			}
+		}
+		
+		private void addToExportGate() {
+			if(sp instanceof SolderedControl) {
+				SolderedControl sc = (SolderedControl) sp;
+				
+				if(current().registers == null)
+					localControls.add(new Control(current().row, sc.getControlStatus()));
+				else
+					localControls.add(new Control(current().registers[current().row], sc.getControlStatus()));
+			} else if (!(sp instanceof SpacerPin)) {
+				SolderedRegister sr = (SolderedRegister) sp;
+				if(current().registers == null)
+					localRegisters[sr.getSolderedGatePinNumber()] = current().row;
+				else
+					localRegisters[sr.getSolderedGatePinNumber()] = current().registers[current().row];
+				curReg ++;
+			}
+		}
+		
+		private ExportState current () {
+			return exportState.peek();
+		}
+		
+		public SolderedPin getPin() {
+			return current().cb.getSolderPinAt(current().row, current().column);
+		}
+		
+		public SolderedGate getGate() {
+			return current().cb.getGateAt(current().row, current().column);
+		}
+		
+		private boolean increment() {
+			if(current().row + 1 == current().cb.getRows()) {
+				current().row = 0;
+				if(current().column + 1 == current().cb.getColumns()) {
+					exportState.pop();
+				} else {
+					current().row = 0;
+					current().column++;
+				}
+				return false;
+			} else {
+				current().row++;
+			}
+			return true;
+		}
+		
+	}
 	
 }

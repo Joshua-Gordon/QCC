@@ -10,6 +10,4 @@ public abstract class SolderedPin {
 	public SolderedGate getSolderedGate() {
 		return gate;
 	}
-	
-	public abstract boolean isWithinBody();
 }

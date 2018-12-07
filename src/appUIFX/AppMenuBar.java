@@ -50,6 +50,7 @@ public class AppMenuBar implements AppPreferences{
 			addItemToMenu(menu, mkViewItem("Show Console", mainScene, TabView.CONSOLE));
 			addItemToMenu(menu, mkViewItem("Show Preset Gates", mainScene, TabView.PRESET_GATES_VIEW));
 			addItemToMenu(menu, mkViewItem("Show Custom Gates", mainScene, TabView.CUSTOM_GATES_VIEW));
+			addItemToMenu(menu, mkViewItem("Show Circuits", mainScene, TabView.CIRCUITBOARD_VIEW));
 		menus.add(menu);
 		menu = new Menu("Help");
 			//TODO: to be implemented

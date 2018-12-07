@@ -14,18 +14,13 @@ public class GateModel extends Solderable implements Serializable{
 		REGULAR_GATE, ORACLE, POVM, HAMILTONIAN;
 	}
 	
-	private final String description;
-    private final String name;
-    private final String symbol;
 	private final int numberOfRegisters;
 	private final GroupDefinition gateDefinition;
     private final GateModelType gateType;
     
 	
     GateModel (String name, String symbol, String description, int numberOfRegisters, GroupDefinition gateDefinition, GateModelType gateType) {
-		this.description 				= description;
-		this.name 						= name;
-		this.symbol 					= symbol;
+		super(name, symbol, description);
 		this.numberOfRegisters			= numberOfRegisters;
 		this.gateDefinition				= gateDefinition;
 		this.gateType 					= gateType;
@@ -50,21 +45,6 @@ public class GateModel extends Solderable implements Serializable{
 	public boolean isMultiQubitGate () {
 		return getNumberOfRegisters() > 1;
 	}
-
-	
-	
-	public String getName() {
-		return name;
-	}
-	
-    
-	public String getSymbol() {
-		return symbol;
-	}
-	
-    public String getDescription() {
-		return description;
-    }
     
     public ImmutableArray<String> getLatex() {
     	return gateDefinition.getLatexRepresentations();
@@ -83,7 +63,6 @@ public class GateModel extends Solderable implements Serializable{
 	}
 	
 	public ImmutableArray<String> getArguments() {
-		if(hasArguments()) throw new RuntimeException("This model does not have arguments");
 		return gateDefinition.getArguments();
 	}
     

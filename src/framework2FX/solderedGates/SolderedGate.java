@@ -9,7 +9,7 @@ import framework2FX.UserDefinitions.GroupDefinition;
 import framework2FX.UserDefinitions.MatrixDefinition;
 import framework2FX.UserDefinitions.ScalarDefinition;
 import framework2FX.gateModels.GateModel;
-import framework2FX.gateModels.PresetModel;
+import framework2FX.gateModels.PresetGateType;
 import framework2FX.gateModels.GateModelFactory.PresetGateModel;
 import utils.customCollections.ImmutableArray;
 
@@ -44,7 +44,7 @@ public class SolderedGate implements Serializable, CheckDefinitionRunnable {
 			GateModel gm = (GateModel) gateModel;
 			if(gm.isPreset()) {
 				PresetGateModel pgm = (PresetGateModel) gm;
-				return pgm.getPresetGateModel() == PresetModel.IDENTITY;
+				return pgm.getPresetGateType() == PresetGateType.IDENTITY;
 			}
 		}
 		return false;

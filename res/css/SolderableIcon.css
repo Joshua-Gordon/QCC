@@ -1,0 +1,7 @@
+@font-face {
+	src: url("../fonts/VastShadow-Regular.ttf");
+}
+
+#symbol {
+	-fx-font-family: 'Vast Shadow';
+}

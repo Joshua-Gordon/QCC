@@ -1,14 +1,10 @@
 package appUIFX;
 
-import java.awt.image.BufferedImage;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import framework2FX.gateModels.PresetModel;
-import javafx.embed.swing.SwingFXUtils;
-import javafx.scene.control.ToggleButton;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
+import framework2FX.AppStatus;
+import framework2FX.gateModels.PresetGateType;
 
 public class PresetGatesView extends AbstractGateChooser {
 	
@@ -17,17 +13,8 @@ public class PresetGatesView extends AbstractGateChooser {
 	}
 
 	public void initializeGates() {
-		ToggleButton tb;
-		Image image;
-		ImageView imageView;
-		for(PresetModel dg : PresetModel.values()) {
-			tb = new ToggleButton();
-			image = SwingFXUtils.toFXImage((BufferedImage) GateIcon.getDefaultGateIcon(dg).getImage(), null);
-			imageView = new ImageView(image);
-			tb.setGraphic(imageView);
-			list.getChildren().add(tb);
-			tg.getToggles().add(tb);
-		}
+		for(PresetGateType dg : PresetGateType.values())
+			addSolderable(dg.getModel());
 	}
 	
 	

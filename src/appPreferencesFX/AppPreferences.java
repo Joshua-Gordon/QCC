@@ -135,6 +135,7 @@ public interface AppPreferences {
 		CONSOLE_OPEN(true),
 		PRESET_GATES_OPEN(true),
 		CUSTOM_GATES_OPEN(true),
+		CIRCUITBOARDS_OPEN(true),
 		
 		
 		;

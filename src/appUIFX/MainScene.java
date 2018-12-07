@@ -6,7 +6,6 @@ import java.util.ResourceBundle;
 
 import appPreferencesFX.AppPreferences;
 import appUIFX.TabView.ViewListener;
-import framework2FX.CircuitBoard;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.Initializable;
@@ -189,6 +188,8 @@ public class MainScene extends AppFXMLComponent implements Initializable, AppPre
 			addView(TabView.PRESET_GATES_VIEW);
 		if(Booleans.CUSTOM_GATES_OPEN.get())
 			addView(TabView.CUSTOM_GATES_VIEW);
+		if(Booleans.CIRCUITBOARDS_OPEN.get())
+			addView(TabView.CIRCUITBOARD_VIEW);
 		if(Booleans.PROJECT_HEIRARCHY_OPEN.get())
 			addView(TabView.PROJECT_HIERARCHY);
 		

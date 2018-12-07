@@ -13,20 +13,27 @@ import mathLib.Matrix;
 
 public class GateModelFactory {
 	
-	public static GateModel makeRegularGateModel(String name, String symbol, String description, GateModelType type, String ... userDefinitions) {
-		return makeRegularGateModel(name, symbol, description, type, null, userDefinitions);
+	public static GateModel makeGateModel(String name, String symbol, String description, GateModelType type, String ... userDefinitions) {
+		return makeGateModel(name, symbol, description, type, null, userDefinitions);
 	}
 	
-	static GateModel makeRegularGateModel(String name, String symbol, String description, GateModelType type, PresetModel presetModel, String ... userDefinitions) {
+	static GateModel makeGateModel(String name, String symbol, String description, GateModelType type, PresetGateType presetModel, String ... userDefinitions) {
 		
 		switch (type) {
 		case HAMILTONIAN:
-			break;
+			RegularGateChecker rgc = new RegularGateChecker();
+			
+			GroupDefinition definitions = UserDefinitions.evaluateInput(rgc, new String[] {"t"}, userDefinitions);
+			
+			if(presetModel == null)
+				return new GateModel(name, symbol, description, rgc.getNumberRegisters(), definitions, type);
+			else
+				return new PresetGateModel(name, symbol, description, rgc.getNumberRegisters(), definitions, type, presetModel);
 		case ORACLE:
 			break;
 		case POVM:
-			RegularGateChecker rgc = new RegularGateChecker();
-			GroupDefinition definitions = UserDefinitions.evaluateInput(rgc, userDefinitions);
+			rgc = new RegularGateChecker();
+			definitions = UserDefinitions.evaluateInput(rgc, userDefinitions);
 			
 			if(presetModel == null)
 				return new GateModel(name, symbol, description, rgc.getNumberRegisters(), definitions, type);
@@ -90,10 +97,10 @@ public class GateModelFactory {
 
 		private static final long serialVersionUID = 3655123001545022473L;
 		
-		private final PresetModel presetModel;
+		private final PresetGateType presetModel;
 		
 		PresetGateModel(String name, String symbol, String description, int numberOfRegisters,
-				GroupDefinition gateDefinition, GateModelType gateType, PresetModel presetModel) {
+				GroupDefinition gateDefinition, GateModelType gateType, PresetGateType presetModel) {
 			super(name, symbol, description, numberOfRegisters, gateDefinition, gateType);
 			this.presetModel = presetModel;
 		}
@@ -103,7 +110,7 @@ public class GateModelFactory {
 			return true;
 		}
 		
-		public PresetModel getPresetGateModel() {
+		public PresetGateType getPresetGateType() {
 			return presetModel;
 		}
 	}

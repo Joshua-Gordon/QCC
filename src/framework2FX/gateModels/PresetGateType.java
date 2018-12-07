@@ -2,7 +2,7 @@ package framework2FX.gateModels;
 
 import framework2FX.gateModels.GateModel.GateModelType;
 
-public enum PresetModel {
+public enum PresetGateType {
 	
 	IDENTITY ("Identity", "I", GateModelType.REGULAR_GATE ,
 			 "[1, 0; "
@@ -75,11 +75,11 @@ public enum PresetModel {
 	
 	private final GateModel gateModel;
 	
-	private PresetModel(String name, String symbol, String description, GateModelType type, String ... expression) {
-		this.gateModel = GateModelFactory.makeRegularGateModel(name, symbol, description, type, this, expression);
+	private PresetGateType(String name, String symbol, String description, GateModelType type, String ... expression) {
+		this.gateModel = GateModelFactory.makeGateModel(name, symbol, description, type, this, expression);
 	}
 	
-	private PresetModel(String name, String symbol, GateModelType type, String ... expression) {
+	private PresetGateType(String name, String symbol, GateModelType type, String ... expression) {
 		this(name, symbol, "", type, expression);
 	}
 	

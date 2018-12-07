@@ -3,6 +3,7 @@ package mathLib.expression;
 import java.io.BufferedReader;
 import java.io.Serializable;
 import java.util.Iterator;
+import java.util.stream.Stream;
 
 import language.compiler.LexicalAnalyzer;
 import language.compiler.ParseTree;
@@ -310,19 +311,11 @@ public class Expression implements Serializable {
 		private String lexemeAhead;
 		
 		public ExpressionParser(String string) {
-			this.iterator = EXPRESSION_LEXER.getTokenStream(string).filter(ExpressionParser::filterWhiteSpace).iterator();
+			this.iterator = EXPRESSION_LEXER.getTokenStream(string).filter((o) -> o.first() != SPACE).iterator();
 		}
-		
-		private static boolean filterWhiteSpace(Pair<Token, String> o) {
-			if(o == null)
-				return true;
-			if(o.first() == SPACE)
-				return false;
-			return true;
-		}
-		
+				
 		public ExpressionParser(BufferedReader br) {
-			this.iterator = EXPRESSION_LEXER.getTokenStream(br).iterator();
+			this.iterator = EXPRESSION_LEXER.getTokenStream(br).filter((o) -> o.first() != SPACE).iterator();
 		}
 		
 		public ParseTree parse() {
@@ -510,16 +503,15 @@ public class Expression implements Serializable {
 				return true;
 			}
 			
-			Pair<Token, String> next = iterator.next();
-			
-			if(next == null) {
-				lookAhead = null;
-				lexemeAhead = null;
-				return false;
-			} else {
+			if(iterator.hasNext()) {
+				Pair<Token, String> next = iterator.next();
 				lookAhead = next.first();
 				lexemeAhead = next.second();
 				return true;
+			} else {
+				lookAhead = null;
+				lexemeAhead = null;
+				return false;
 			}
 		}
 		

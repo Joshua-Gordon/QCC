@@ -9,17 +9,17 @@ import framework2FX.solderedGates.Solderable;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 
-public class CustomGatesView extends AbstractGateChooser implements ChangeListener<Boolean>{
+public class CircuitBoardChooser extends AbstractGateChooser implements ChangeListener<Boolean> {
 	private boolean initialized = false;
 	
-	public CustomGatesView() {
-		super("Custom Gates");
+	public CircuitBoardChooser() {
+		super("Circuit Boards");
 	}
 	
 	public void initializeGates() {
 		Project p = AppStatus.get().getFocusedProject();
 		if(p != null) {
-			for(Solderable s : p.getCustomGates().valueIterable())
+			for(Solderable s : p.getSubCircuits().valueIterable())
 				addSolderable(s);
 		}
 	}
@@ -38,7 +38,7 @@ public class CustomGatesView extends AbstractGateChooser implements ChangeListen
 		if(source == AppStatus.get() && methodName == "setFocusedProject" && initialized) {
 			removeAllSolderables();
 			Project p = (Project) args[0];
-			for(Solderable s : p.getCustomGates().valueIterable())
+			for(Solderable s : p.getSubCircuits().valueIterable())
 				addSolderable(s);
 		}
 	}

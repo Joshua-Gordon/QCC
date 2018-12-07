@@ -6,8 +6,8 @@ import java.util.ResourceBundle;
 
 import framework2FX.AppStatus;
 import framework2FX.Project;
-import framework2FX.gateModels.GateModel;
-import framework2FX.gateModels.PresetModel;
+import framework2FX.gateModels.PresetGateType;
+import framework2FX.solderedGates.Solderable;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
@@ -35,17 +35,17 @@ public class ProjectHierarchy extends AppView implements Initializable {
 		if(hasTopLevel)
 			topLevel.getChildren().add(new TreeItem<>(topLevelName));
 			
-		for(String name : project.getSubCircuits().getKeyIterable())
+		for(String name : project.getSubCircuits().nameIterable())
 			if(!hasTopLevel || !name.equals(topLevelName))
 				subCircuits.getChildren().add(new TreeItem<String>(name));
 		
-		for(GateModel sgm : project.getCustomGates())
+		for(Solderable sgm : project.getCustomGates().valueIterable())
 			customGates.getChildren().add(new TreeItem<String>(sgm.getName()));
 		
-		for(GateModel agm : project.getCustomOracles())
+		for(Solderable agm : project.getCustomOracles().valueIterable())
 			customOracles.getChildren().add(new TreeItem<String>(agm.getName()));
 		
-		for(PresetModel dg : PresetModel.values())
+		for(PresetGateType dg : PresetGateType.values())
 			defaultGates.getChildren().add(new TreeItem<String>(dg.getModel().getName()));
 		
 		

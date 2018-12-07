@@ -4,8 +4,8 @@ public class SolderedControl extends SpacerPin {
 	
 	private boolean controlStatus;
 	
-	public SolderedControl(SolderedGate gate, boolean isWithinGate, boolean controlStatus) {
-		super(gate, isWithinGate);
+	public SolderedControl(SolderedGate gate, boolean controlStatus) {
+		super(gate);
 		this.controlStatus = controlStatus;
 	}
 	

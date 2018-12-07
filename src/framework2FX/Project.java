@@ -5,8 +5,7 @@ import java.io.Serializable;
 import java.net.URI;
 
 import appUIFX.AppFileIO;
-import framework2FX.gateModels.GateModel;
-import utils.customCollections.eventTracableCollections.EventArrayList;
+import framework2FX.solderedGates.Solderable;
 import utils.customCollections.eventTracableCollections.EventHashTable;
 import utils.customCollections.eventTracableCollections.Notifier;
 
@@ -28,9 +27,9 @@ import utils.customCollections.eventTracableCollections.Notifier;
 public class Project implements Serializable{
 	private static final long serialVersionUID = 8906661352790858317L;
 	
-	private SubCircuitList subCircuits;
-    private CustomList <GateModel> customGates;
-    private CustomList <GateModel> customOracles;
+	private ProjectHashTable subCircuits;
+    private ProjectHashTable customGates;
+    private ProjectHashTable customOracles;
 	
 	private transient URI fileLocation = null;
 	
@@ -46,8 +45,7 @@ public class Project implements Serializable{
 	 */
 	public static Project createNewTemplateProject() {
 		Project project = new Project();
-		project.topLevelCircuit = project.addUntitledSubCircuit(
-				CircuitBoard.getDefaultCircuitBoard());
+		project.topLevelCircuit = project.addUntitledSubCircuit();
 		return project;
 	}
 	
@@ -75,9 +73,9 @@ public class Project implements Serializable{
 	 */
 	public Project() {
 		notifier = new Notifier();
-		subCircuits = new SubCircuitList();
-		customGates = new CustomList<>();
-		customOracles = new CustomList<>();
+		subCircuits = new ProjectHashTable();
+		customGates = new ProjectHashTable();
+		customOracles = new ProjectHashTable();
 	}
 	
 	
@@ -93,31 +91,30 @@ public class Project implements Serializable{
 	
 	
 	/**
-	 * <b>REQUIRES:</b> cb is not null <br>
 	 * <b>ENSURES:</b>  cb is added to project as a untitled sub-circuit<br>
 	 * <b>MODIFIES INSTANCE</b>
-	 * @param cb
 	 * @return the generated name of this sub-circuit
 	 * @throws {@link RuntimeException} if sub-circuit count exceeds Integer.MAX_VALUE
 	 */
-	public String addUntitledSubCircuit(CircuitBoard cb){
+	public String addUntitledSubCircuit(){
 		String title = "Untitled";
 		
-		if(!subCircuits.containsKey(title)) {
-			subCircuits.put(title, cb);
+		if(!subCircuits.containsSolderable(title)) {
+			subCircuits.put(new CircuitBoard(title, title, "", 5, 5));
 			return title;
 		}
 		
 		int i = 1;
-		while(subCircuits.containsKey(title + " " + Integer.toString(i))) {
+		while(subCircuits.containsSolderable(title + " " + Integer.toString(i))) {
 			if(i == Integer.MAX_VALUE)
 				throw new RuntimeException("Could not add any more untitled sub-ciruits");
 			i++;
 		}
 		
+		String name = title + " " + Integer.toString(i);
 
-		notifier.sendChange(this, "addUntitledSubCircuit", cb);
-		subCircuits.put(title + " " + Integer.toString(i), cb);
+		notifier.sendChange(this, "addUntitledSubCircuit");
+		subCircuits.put(new CircuitBoard(name, name, "", 5, 5));
 		
 		return title + " " + Integer.toString(i);
 	}
@@ -144,7 +141,7 @@ public class Project implements Serializable{
 	/**
 	 * @return the list of the sub-circuits for this project
 	 */
-	public SubCircuitList getSubCircuits() {
+	public ProjectHashTable getSubCircuits() {
 		return subCircuits;
 	}
 	
@@ -155,7 +152,7 @@ public class Project implements Serializable{
 	/**
 	 * @return the list of the custom-gates for this project
 	 */
-	public CustomList<GateModel> getCustomGates() {
+	public ProjectHashTable getCustomGates() {
 		return customGates;
 	}
 	
@@ -167,7 +164,7 @@ public class Project implements Serializable{
 	/**
 	 * @return the list of the custom-oracles for this project
 	 */
-	public CustomList<GateModel> getCustomOracles() {
+	public ProjectHashTable getCustomOracles() {
 		return customOracles;
 	}
 
@@ -180,7 +177,7 @@ public class Project implements Serializable{
 	 * <b>MODIFIES INSTANCE</b>
 	 * @param list list of custom gate models
 	 */
-	public void setCustomGates(CustomList<GateModel> list) {
+	public void setCustomGates(ProjectHashTable list) {
 		this.notifier.sendChange(this, "setCustomGate", list);
 		customGates = list;
 	}
@@ -194,7 +191,7 @@ public class Project implements Serializable{
 	 * <b>MODIFIES INSTANCE</b>
 	 * @param list
 	 */
-	public void setCustomOracles( CustomList<GateModel> list) {
+	public void setCustomOracles(ProjectHashTable list) {
 		this.notifier.sendChange(this, "setCustomOracles", list);
 		customOracles = list;
 	}
@@ -214,7 +211,7 @@ public class Project implements Serializable{
 	
 	
 	public CircuitBoard getTopLevelBoard() {
-		return subCircuits.get(topLevelCircuit);
+		return (CircuitBoard) subCircuits.get(topLevelCircuit);
 	}
 	
 	
@@ -228,7 +225,7 @@ public class Project implements Serializable{
 	 * @param name
 	 */
 	public void setTopLevelCircuitName(String name) {
-		if(subCircuits.containsKey(name)) {
+		if(subCircuits.containsSolderable(name)) {
 			notifier.sendChange(this, "setTopLevelCircuitName", name);
 			topLevelCircuit = name;
 		}
@@ -291,40 +288,51 @@ public class Project implements Serializable{
 	 * 
 	 * @author Massimiliano Cutugno
 	 */
-	public class SubCircuitList extends EventHashTable<String, CircuitBoard> {
+	public class ProjectHashTable implements Serializable{
 		private static final long serialVersionUID = -2900966641041727003L;
-		public SubCircuitList() {
-			super(notifier);
+		private EventHashTable<String, Solderable> table;
+		
+		public ProjectHashTable() {
+			table = new EventHashTable<>(notifier);
 		}
 		
-		@Override
-		public void put(String key, CircuitBoard value) {
-			super.put(key, value);
-			value.getNotifier().setReceiver(notifier);
+		public void put(Solderable s) {
+			table.put(s.getName(), s);
+			if(s instanceof CircuitBoard) {
+				CircuitBoard cb = (CircuitBoard) s;
+				cb.getNotifier().setReceiver(notifier);
+			}
 		}
 		
-		@Override
+		public Solderable get(String name) {
+			return table.get(name);
+		}
+		
 		public void remove(String key) {
-			if(containsKey(key))
-				get(key).getNotifier().setReceiver(notifier);
-			super.remove(key);
+			if(table.containsKey(key)) {
+				Solderable s = table.get(key);
+				if(s instanceof CircuitBoard) {
+					CircuitBoard cb = (CircuitBoard) s;
+					cb.getNotifier().setReceiver(null);
+				}
+			}
+			table.remove(key);
 		}
-	}
-	
-	/**
-	 * 
-	 * 
-	 * WARNING: Not thread safe when using object methods that modify <br>
-	 * internal fields (may cause the GUI to not update as expected) <br>
-	 * @author Massimiliano Cutugno
-	 * 
-	 * @param <T>
-	 */
-	public class CustomList <T> extends EventArrayList<T> {
-		private static final long serialVersionUID = -3016434516784502217L;
-
-		public CustomList() {
-			super(notifier);
+		
+		public boolean containsSolderable (String name) {
+			return table.containsKey(name);
+		}
+		
+		public int size () {
+			return table.size();
+		}
+		
+		public Iterable<String> nameIterable () {
+			return  table.getKeyIterable();
+		}
+		
+		public Iterable<Solderable> valueIterable () {
+			return  table.getValueIterable();
 		}
 	}
 }

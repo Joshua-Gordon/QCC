@@ -1,7 +1,9 @@
 package appUIFX;
 
 import framework2FX.solderedGates.Solderable;
+import javafx.collections.ObservableList;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
@@ -31,6 +33,49 @@ public abstract class AbstractGateChooser extends AppView implements Initializab
 		button.setText(label);
 	}
 	
+	public boolean containsSolderable (Solderable s) {
+		ObservableList<Node> buttons = list.getChildren();
+		for(Node b : buttons) {
+			SolderableToggleButton stb = (SolderableToggleButton) b;
+			if(stb.solderable == s) return true;
+		}
+		return false;
+	}
+	
+	public void addSolderable(Solderable s) {
+		ObservableList<Node> buttons = list.getChildren();
+		if(!containsSolderable(s)) {
+			SolderableToggleButton stb = new SolderableToggleButton(s);
+			buttons.add(stb);
+			tg.getToggles().add(stb);
+		}
+	}
+	
+	public void removeSolderable(Solderable s) {
+		ObservableList<Node> buttons = list.getChildren();
+		for(Node b : buttons) {
+			SolderableToggleButton stb = (SolderableToggleButton) b;
+			if(stb.solderable == s) {
+				buttons.remove(stb);
+				tg.getToggles().remove(stb);
+				return;
+			}
+		}
+	}
+	
+	public void removeAllSolderables() {
+		ObservableList<Node> buttons = list.getChildren();
+		for(Node node : buttons) {
+			SolderableToggleButton button = (SolderableToggleButton) node;
+			buttons.remove(button);
+			tg.getToggles().remove(button);
+		}
+	}
+	
+	public Solderable getSelected() {
+		SolderableToggleButton stb = (SolderableToggleButton) tg.getSelectedToggle();
+		return stb.solderable;
+	}
 	
 	public static class SolderableToggleButton extends ToggleButton {
 		
@@ -38,6 +83,8 @@ public abstract class AbstractGateChooser extends AppView implements Initializab
 		
 		public SolderableToggleButton (Solderable solderable) {
 			this.solderable = solderable;
+			GateIcon gi = GateIcon.getGateIcon(solderable);
+			setGraphic(gi.getView());
 		}
 		
 		public Solderable getSolderable() {

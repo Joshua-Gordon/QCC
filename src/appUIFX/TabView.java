@@ -4,6 +4,7 @@ public enum TabView {
 	CONSOLE(new Console()),
 	PRESET_GATES_VIEW(new PresetGatesView()),
 	CUSTOM_GATES_VIEW(new CustomGatesView()),
+	CIRCUITBOARD_VIEW(new CircuitBoardChooser()),
 	PROJECT_HIERARCHY(new ProjectHierarchy());
 	
 	;

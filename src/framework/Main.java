@@ -9,9 +9,9 @@ import appUIFX.AppFileIO;
 import appUIFX.MainScene;
 import framework2FX.AppStatus;
 import framework2FX.Project;
-import framework2FX.gateModels.PresetModel;
 import javafx.application.Application;
 import javafx.stage.Stage;
+import utils.customCollections.CollectionUtils;
 
 
 
@@ -39,9 +39,8 @@ public class Main extends Application implements AppPreferences {
     	}
     	
     	if ( debugMode ) {
-
-			System.out.println(PresetModel.IDENTITY.getModel().getLatex().get(0));
-			
+    		
+    		
     	}
     	
     	if ( debugSimulatorMode ) {

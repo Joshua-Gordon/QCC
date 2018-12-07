@@ -26,8 +26,12 @@ public class UserDefinitions {
 
 	
 	
-	
 	public static GroupDefinition evaluateInput(CheckDefinitionRunnable runnable, String ... rawUserInput) {
+		return evaluateInput(runnable, new String[0], rawUserInput); 
+	}
+	
+	
+	public static GroupDefinition evaluateInput(CheckDefinitionRunnable runnable, String[] distinctVariables, String ... rawUserInput) {
 		Definition[] definitions = new Definition[rawUserInput.length];
 		
 		int i = 0;
@@ -43,7 +47,7 @@ public class UserDefinitions {
 		}
 		
 		
-		return new GroupDefinition(definitions);
+		return new GroupDefinition(distinctVariables, definitions);
 	}
 	
 	
@@ -227,7 +231,8 @@ public class UserDefinitions {
 		private final ImmutableArray<String> latexRepresentations;
 		private final ImmutableArray<MathObject> definitions;
 		
-		public GroupDefinition (Definition ... definitions) {
+		// Requires distinctVariables to contain no duplicates
+		public GroupDefinition (String[] distinctVariables, Definition ... definitions) {
 			HashSet<String> argumentSet = new HashSet<>();
 			
 			String[] userDefs = new String[definitions.length];
@@ -253,8 +258,16 @@ public class UserDefinitions {
 				i++;
 			}
 			
-			String[] args = new String[argumentSet.size()];
-			argumentSet.toArray(args);
+			for(String s: distinctVariables)
+				if(argumentSet.contains(s))
+					throw new RuntimeException("Cannot define definition with variable: \"" + s + "\"");
+		
+			String[] args = new String[distinctVariables.length + argumentSet.size()];
+			i = 0;
+			for(String s : distinctVariables)
+				args[i++] = s;
+			for(String s : argumentSet)
+				args[i++] = s;
 			
 			this.arguments = new ImmutableArray<>(args);
 			this.rawUserInput = new ImmutableArray<>(userDefs);
