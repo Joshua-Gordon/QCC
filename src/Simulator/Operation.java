@@ -58,7 +58,7 @@ public class Operation {
         Matrix<Complex> Ei = null;
         double tempProb = -1;
         ArrayList<Matrix<Complex>> shuffled = new ArrayList<>();
-        Collections.copy(shuffled,matrices);
+        Collections.copy(shuffled,matrices); //Known bug; debugging ND first
         Collections.shuffle(shuffled);
         while(prob > 0) {
             Ei = shuffled.get(idx++);

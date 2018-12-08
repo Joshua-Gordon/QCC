@@ -1,8 +1,9 @@
 package framework;
 
 import java.util.ArrayList;
+import java.util.Random;
 
-import Simulator.InternalExecutor;
+import Simulator.*;
 import appPreferencesFX.AppPreferences;
 import appUI.Window;
 import appUIFX.AppFileIO;
@@ -11,6 +12,10 @@ import framework2FX.AppStatus;
 import framework2FX.Project;
 import javafx.application.Application;
 import javafx.stage.Stage;
+import mathLib.Complex;
+import mathLib.Matrix;
+import mathLib.Vector;
+import mathLib.compile.UnitaryDecomp;
 import utils.customCollections.CollectionUtils;
 
 
@@ -21,12 +26,13 @@ public class Main extends Application implements AppPreferences {
 	
     public static void main(String[] args) {
     	/* toggle flags: debug mode or not */
-    	boolean normalMode = true;
+    	boolean normalMode = false;
     	
-    	boolean javaFX_GUI = true;
+    	boolean javaFX_GUI = false;
     	
-    	boolean debugMode = true;
+    	boolean debugMode = false;
     	boolean debugSimulatorMode = false;
+    	boolean debugMixedStateMode = true;
     	
     	if ( normalMode ) {
     		if( javaFX_GUI ) {
@@ -40,7 +46,6 @@ public class Main extends Application implements AppPreferences {
     	
     	if ( debugMode ) {
     		
-    		
     	}
     	
     	if ( debugSimulatorMode ) {
@@ -50,6 +55,20 @@ public class Main extends Application implements AppPreferences {
 				int result = InternalExecutor.simulate(window.getSelectedBoard());
 				System.out.println(result);
 			}
+		}
+
+		if(debugMixedStateMode) {
+			Vector<Complex> v = UnitaryDecomp.getRandomTwoVector(); //Reusing code
+			Matrix<Complex> vm = v.outerProduct(v); //You should replace this matrix and the other one with the kraus operators you actually want
+			Random r = new Random();
+			vm = vm.mult(new Complex(r.nextDouble(),r.nextDouble())); //Random scaling
+			Matrix<Complex> wm = Matrix.identity(Complex.ZERO(),vm.getRows()).sub(vm); //Make it sum to identity
+			Operation o = new Operation(vm,wm); //Create the operation
+			POVM measure = new POVM(o);			//and the POVM wrapping it
+			Vector<Complex> c = Qubit.ZERO();
+			Matrix<Complex> test = c.outerProduct(Qubit.ONE()); //Create density matrix for input, should be |0><1|
+			Matrix<Complex> res = measure.measure(test); //Run POVM
+			System.out.println(res);
 		}
     }
     
