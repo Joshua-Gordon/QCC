@@ -1,9 +1,11 @@
-package framework2FX;
+package framework2FX.exportGates;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Set;
 
+import framework2FX.UserDefinitions;
+import framework2FX.UserDefinitions.MatrixDefinition;
 import framework2FX.gateModels.GateModel;
 import framework2FX.gateModels.GateModel.GateModelType;
 import framework2FX.gateModels.GateModelFactory.PresetGateModel;
@@ -17,6 +19,16 @@ public class ExportedGate {
 	private final int[] gateRegisters;
 	private final Control[] controls;
 	private final Matrix<Complex>[] matrixes;
+	
+	
+	@SuppressWarnings("unchecked")
+	public static ExportedGate mkIdentAt(int register) {
+		GateModel gm = PresetGateType.IDENTITY.getModel();
+		Matrix<Complex> m = ((MatrixDefinition) gm.getDefinitions().get(0)).getMatrix();
+		
+		return new ExportedGate(gm, new HashMap<>(), new int[] {register}, new Control[0], new Matrix[] { m });
+	}
+	
 	
 	public ExportedGate(GateModel gateModel, HashMap<String, Complex> argParamMap, int[] gateRegisters, Control[] controls, Matrix<Complex>[] matrixes) {
 		this.gateModel = gateModel;

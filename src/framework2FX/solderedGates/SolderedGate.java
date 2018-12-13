@@ -31,6 +31,10 @@ public class SolderedGate implements Serializable, CheckDefinitionRunnable {
 		parameterSet = UserDefinitions.evaluateInput(this, parameters);
 	}
 	
+	public static SolderedGate mkIdent() {
+		return new SolderedGate(PresetGateType.IDENTITY.getModel());
+	}
+	
 	public Solderable getGateModel() {
 		return gateModel;
 	}

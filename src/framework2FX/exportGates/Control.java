@@ -1,4 +1,4 @@
-package framework2FX;
+package framework2FX.exportGates;
 
 public class Control {
 	public static final boolean CONTROL_TRUE = true;

@@ -344,7 +344,9 @@ public class CircuitBoard extends Solderable implements Serializable{
 	
 	
 	
-	
+//	private boolean findRecursion(CircuitBoard cb) {
+//		
+//	}
 	
 	
 	
@@ -545,7 +547,7 @@ public class CircuitBoard extends Solderable implements Serializable{
 	
 	
 	private static SolderedRegister mkIdent() {
-		return new SolderedRegister(new SolderedGate(PresetGateType.IDENTITY.getModel()), 0);
+		return new SolderedRegister(SolderedGate.mkIdent(), 0);
 	}
 	
 	private void addVariableOccurances(SolderedGate sg) {
