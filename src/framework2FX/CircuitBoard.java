@@ -2,13 +2,11 @@ package framework2FX;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.ListIterator;
 import java.util.Set;
 
-import framework2FX.gateModels.PresetGateType;
 import framework2FX.solderedGates.Solderable;
 import framework2FX.solderedGates.SolderedControl;
 import framework2FX.solderedGates.SolderedGate;
@@ -17,6 +15,7 @@ import framework2FX.solderedGates.SolderedRegister;
 import framework2FX.solderedGates.SpacerPin;
 import utils.customCollections.CollectionUtils;
 import utils.customCollections.ImmutableArray;
+import utils.customCollections.Manifest;
 import utils.customCollections.eventTracableCollections.Notifier;
 
 /**
@@ -40,32 +39,36 @@ import utils.customCollections.eventTracableCollections.Notifier;
  * @author quantumresearch
  *
  */
-public class CircuitBoard extends Solderable implements Serializable{
+public class CircuitBoard extends Solderable implements Serializable, Iterable<LinkedList<SolderedPin>> {
 	private static final long serialVersionUID = -6921131331890897905L;
 	
 	private final LinkedList<LinkedList<SolderedPin>> elements;
     
     // Notifies User-Interface of changes
     private Notifier notifier;
-    private Hashtable<String, Integer> variableOcurrances;
+    
+    
+    private Manifest<String> arguments = new Manifest<>();
+    private Manifest<CircuitBoard> boardsUsed = new Manifest<>();
+    
     
     
     public CircuitBoard(String name, String symbol, String description, int rows, int columns) {
     	super (name, symbol, description);
-    	
-    	notifier = new Notifier();
-    	variableOcurrances = new Hashtable<>();
-    	
     	
     	if (rows < 1)
 			throw new IllegalArgumentException("rows cannot be less than 1");
 		if(columns < 1)
 			throw new IllegalArgumentException("columns cannot be less than 1");
 		
+		
+		
+		this.notifier = new Notifier();
 		this.elements = new LinkedList<>();
 		
-		LinkedList<SolderedPin> column;
 		
+		
+		LinkedList<SolderedPin> column;
 		for(int c = 0; c < columns; c++) {
 			column = new LinkedList<>();
 			for(int r = 0; r < rows; r++)
@@ -164,7 +167,7 @@ public class CircuitBoard extends Solderable implements Serializable{
 				
 				if(current.getSolderedGate() != lastG) {
 					if(lastG != firstG)
-						removeVariableOccurances(lastG);
+						removeSolderedGateAttributes(lastG);
 					lastG = current.getSolderedGate();
 					hitLastReg = false;
 				}
@@ -236,11 +239,11 @@ public class CircuitBoard extends Solderable implements Serializable{
 			while(rowIterator.hasNext()) {
 				SolderedPin currentP = rowIterator.next();
 				if(currentP.getSolderedGate() != currentG) {
-					removeVariableOccurances(currentG);
+					removeSolderedGateAttributes(currentG);
 					currentG = currentP.getSolderedGate();
 				}
 			}
-			removeVariableOccurances(currentG);
+			removeSolderedGateAttributes(currentG);
 			
 			iterator.remove();
 		}
@@ -318,7 +321,7 @@ public class CircuitBoard extends Solderable implements Serializable{
 			
 			if(current.getSolderedGate() != lastG) {
 				if(lastG != firstG)
-					removeVariableOccurances(lastG);
+					removeSolderedGateAttributes(lastG);
 				lastG = current.getSolderedGate();
 				hitLastReg = false;
 			}
@@ -339,14 +342,10 @@ public class CircuitBoard extends Solderable implements Serializable{
 		}
 		ListIterator<SolderedPin> copy = elements.get(column).listIterator(iterator.nextIndex());
 		removeBoundaryGates(firstG, lastG, hitFirstReg, hitLastReg, iterator, copy);
-		addVariableOccurances(toPlace);
+		addSolderedGateAttributes(toPlace);
 	}
 	
 	
-	
-//	private boolean findRecursion(CircuitBoard cb) {
-//		
-//	}
 	
 	
 	
@@ -376,7 +375,7 @@ public class CircuitBoard extends Solderable implements Serializable{
 				iterator.set(mkIdent());
 			else break;
 		}
-		removeVariableOccurances(sg);
+		removeSolderedGateAttributes(sg);
 	}
 	
 	
@@ -416,7 +415,7 @@ public class CircuitBoard extends Solderable implements Serializable{
 					
 					if(current.getSolderedGate() != currentGate) {
 						if(currentGate != sgc)
-							removeVariableOccurances(currentGate);
+							removeSolderedGateAttributes(currentGate);
 						currentGate = current.getSolderedGate();
 					}
 					
@@ -438,7 +437,7 @@ public class CircuitBoard extends Solderable implements Serializable{
 					
 					if(current.getSolderedGate() != currentGate) {
 						if(currentGate != sgc)
-							removeVariableOccurances(currentGate);
+							removeSolderedGateAttributes(currentGate);
 						currentGate = current.getSolderedGate();
 					}
 					
@@ -454,6 +453,9 @@ public class CircuitBoard extends Solderable implements Serializable{
 			}
 		}
 	}
+	
+	
+	
 	
 	
 	
@@ -517,19 +519,37 @@ public class CircuitBoard extends Solderable implements Serializable{
 		return elements.get(column).get(row).getSolderedGate();
 	}
 	
+	
+	
 	public SolderedPin getSolderPinAt(int row, int column) {
 		return elements.get(column).get(row);
 	}
+	
+	
+	
+	
+	
+	@Override
+	public Iterator<LinkedList<SolderedPin>> iterator() {
+		return elements.iterator();
+	}
+	
+	
+	
 	
 	
 	@Override
 	public int getNumberOfRegisters() {
 		return getRows();
 	}
+	
+	
+	
+	
 
 	@Override
 	public ImmutableArray<String> getArguments() {
-		Set<String> argSet = variableOcurrances.keySet();
+		Set<String> argSet = arguments.getElements();
 		String[] args = new String[argSet.size()];
 		int i = 0;
 		for(String arg : argSet)
@@ -537,45 +557,85 @@ public class CircuitBoard extends Solderable implements Serializable{
 		return new ImmutableArray<>(args);
 	}
 	
+	
+	
+	
+	
 	public void setReciever(Notifier reciever) {
 		this.notifier.setReceiver(reciever);
 	}
+	
+	
+	
+	
 	
 	public Notifier getNotifier() {
 		return notifier;
 	}
 	
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	private static SolderedRegister mkIdent() {
 		return new SolderedRegister(SolderedGate.mkIdent(), 0);
 	}
 	
-	private void addVariableOccurances(SolderedGate sg) {
+	
+	
+	public void addSolderedGateAttributes(SolderedGate sg) {
+		
+		// add to arguments manifest
 		ImmutableArray<String> varsToAdd = sg.getParameterSet().getArguments();
-		for(String s : varsToAdd) {
-			Integer occurrances = variableOcurrances.get(s);
-			if(occurrances == null)
-				variableOcurrances.put(s, 1);
-			else
-				variableOcurrances.put(s, occurrances + 1);
+		for(String s : varsToAdd)
+			arguments.add(s);
+		
+		
+		
+		// add to usedBoards Manifest and check for recursion
+		if(sg.getGateModel() instanceof CircuitBoard) {
+			CircuitBoard cb = (CircuitBoard) sg.getGateModel();
+			if(findRecursion(cb))
+				throw new RuntimeException("The circuit board " + cb.getName() + " makes circuit board " + getName() + " recusively defined");
+			boardsUsed.add(cb); 
 		}
 	}
 	
-	private void removeVariableOccurances(SolderedGate sg) {
-		ImmutableArray<String> varsToAdd = sg.getParameterSet().getArguments();
-		for(String s : varsToAdd) {
-			Integer occurrances = variableOcurrances.get(s);
-			
-			if(occurrances == null)
-				throw new RuntimeException("Variable \"" + s + "\" is not defined within this circuitboard and cannot be removed" );
-			
-			if(occurrances == 1)
-				variableOcurrances.remove(s);
-			else
-				variableOcurrances.put(s, occurrances - 1);
+	
+	
+	private boolean findRecursion(CircuitBoard cb) {
+		for(CircuitBoard usedB : boardsUsed.getElements()) {
+			if(usedB == cb) return true;
+			else if(usedB.findRecursion(cb)) return true;
 		}
+		return false;
 	}
 	
+	
+	
+	
+	private void removeSolderedGateAttributes(SolderedGate sg) {
+		
+		// remove arguments from manifest
+		ImmutableArray<String> varsToAdd = sg.getParameterSet().getArguments();
+		for(String s : varsToAdd)
+			arguments.remove(s);
+		
+		// remove from usedBoards manifest
+		if(sg.getGateModel() instanceof CircuitBoard)
+			boardsUsed.remove((CircuitBoard) sg.getGateModel()); 
+		
+	}
 	
 	private void removeBoundaryGates (SolderedGate firstG, SolderedGate lastG, 
 			boolean hitFirstReg, boolean hitLastReg, 
@@ -591,7 +651,7 @@ public class CircuitBoard extends Solderable implements Serializable{
 				else
 					break;
 			}
-			removeVariableOccurances(firstG);
+			removeSolderedGateAttributes(firstG);
 		} else if (diffGates && firstIt != null) {
 			while(firstIt.previousIndex() >= 0) {
 				SolderedPin sp = firstIt.previous();
@@ -611,7 +671,7 @@ public class CircuitBoard extends Solderable implements Serializable{
 					break;
 			}
 			if(diffGates)
-				removeVariableOccurances(lastG);
+				removeSolderedGateAttributes(lastG);
 		} else if (diffGates) {
 			while(lastIt.previousIndex() < getRows() && lastIt != null) {
 				SolderedPin sp = lastIt.next();

@@ -26,13 +26,13 @@ public class Main extends Application implements AppPreferences {
 	
     public static void main(String[] args) {
     	/* toggle flags: debug mode or not */
-    	boolean normalMode = false;
+    	boolean normalMode = true;
     	
-    	boolean javaFX_GUI = false;
+    	boolean javaFX_GUI = true;
     	
     	boolean debugMode = false;
     	boolean debugSimulatorMode = false;
-    	boolean debugMixedStateMode = true;
+    	boolean debugMixedStateMode = false;
     	
     	if ( normalMode ) {
     		if( javaFX_GUI ) {

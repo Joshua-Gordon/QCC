@@ -2,6 +2,8 @@ package framework2FX.exportGates;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Stack;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -26,7 +28,6 @@ import mathLib.Complex;
 import mathLib.Matrix;
 import mathLib.expression.MathSet;
 import mathLib.expression.Variable.ConcreteVariable;
-import sun.net.www.content.text.plain;
 import utils.customCollections.ImmutableArray;
 
 public class GateManager {
@@ -55,39 +56,10 @@ public class GateManager {
 		return stream.takeWhile(x -> x != null);
 	}
 	
-	
-	
-	
-	public static void scanSolderedGatesOnBoard (CircuitBoard cb, SolderedGateRunnable sgr) {
-		int row = 0;
-		int column = 0;
-		
-		SolderedGate prev = null;
-		SolderedGate sg;
-		
-		while (column != cb.getColumns()) {
-			sgr.columnEndEvent(column);
-			while (row != cb.getRows()) {
-				sg = cb.getGateAt(row, column);
-				
-				if(sg != prev)
-					sgr.action(sg);
-				
-				prev = sg;
-				
-				row++;
-			}
-			sgr.columnEndEvent(column++);
-		}
+	public static Stream<SolderedGate> scanSolderedGatesOnBoard(CircuitBoard cb) {
+		Stream<SolderedGate> stream = Stream.generate(new ScanSolderGatesSupplier(cb));
+		return stream.takeWhile(x -> x != null);
 	}
-	
-	
-	public static interface SolderedGateRunnable {
-		public void action(SolderedGate sg);
-		public default void columnStartEvent(int column) {}
-		public default void columnEndEvent(int column) {}
-	}
-	
 	
 	
 	
@@ -110,6 +82,47 @@ public class GateManager {
 		}
 	}
 	
+	
+	private static class ScanSolderGatesSupplier implements Supplier<SolderedGate> {
+		
+		private Iterator<LinkedList<SolderedPin>> columnIterator;
+		private Iterator<SolderedPin> rowIterator;
+		private SolderedGate current;
+		
+		public ScanSolderGatesSupplier(CircuitBoard cb) {
+			this.columnIterator = cb.iterator();
+			this.rowIterator = columnIterator.next().iterator();
+			this.current = rowIterator.next().getSolderedGate();
+		}
+		
+		@Override
+		public SolderedGate get() {
+			if(current == null)
+				return null;
+			
+			SolderedGate previous = current;
+			
+			while (getNext() && current == previous);
+			
+			return previous;
+		}
+		
+		
+		public boolean getNext() {
+			if(rowIterator.hasNext()) {
+				current = rowIterator.next().getSolderedGate();
+			} else {
+				if(columnIterator.hasNext()) {
+					rowIterator = columnIterator.next().iterator();
+					current = (rowIterator).next().getSolderedGate();
+				} else {
+					return false;
+				}
+			}
+			return true;
+		}
+		
+	}
 	
 	
 	private static class ExportGatesRecusivelySupplier implements Supplier<Exportable> {

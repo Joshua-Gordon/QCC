@@ -3,19 +3,89 @@
 <!-- Math Editor!!! -->
 	<head>
 		<meta charset="UTF-8">
-		<!-- Custom Style  -->
-		<style type="text/css">
-			.scrollableEquation{
-    			overflow-x: auto;
-			}
-		</style>
+
 		<!-- MathJax -->
-		<script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/latest.js?config=TeX-MML-AM_CHTML"></script>
-		<!-- JQuery and Popper -->
-		<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+		<script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML"></script>
+	    
+
+
+	    <style  type="text/css">
+		    body { margin:0px; padding:0px; border:0px;
+		    	overflow-x: hidden;
+		        overflow-y: hidden;
+		    }
+
+		    body {
+		    	background: BACK_COLOR;
+		    	color: TEXT_COLOR;
+		    	font-size: FONT_SIZEem;
+		    }
+
+		    #LAT_SPAN {
+		    	display: inline-block;
+		    }
+
+	    </style>
+	    
+
+
+
+	    <script type="text/javascript">		
+	    	
+	    	var flag = false;
+
+			var getWidth = function () {
+				return document.getElementById('LAT_SPAN').offsetWidth;
+			}
+			
+			var getHeight = function () {
+				return document.getElementById('LAT_SPAN').offsetHeight;
+			}
+
+			function setLatex(latex) {
+				flag = false;
+				document.getElementById('LAT_SPAN').innerHTML = latex;
+				window.MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
+				window.MathJax.Hub.Queue(function () {flag = true;});
+			}
+
+			function setFontSize(size) {
+				document.getElementById('LAT_SPAN').style.fontSize = size;
+				changeSize();
+			}
+
+			function setColor(color) {
+				document.body.style.background = color;
+			}
+
+			function setTextColor(color) {
+				document.body.style.color = color;
+			}
+
+			var changeSize = function() {
+				app.setSize(getWidth(), getHeight());
+			}
+
+	    	var eventHandler =  function() {
+	    		if(flag)
+	    			changeSize();
+	    	}
+	    	window.addEventListener('DOMSubtreeModified', eventHandler, true);
+	    </script>
+	    
+	    
+	    <script type="text/x-mathjax-config">
+			MathJax.Hub.Config({
+    			showMathMenu: false
+   			});
+
+			MathJax.Hub.Queue(function () {
+				flag = true;
+			});
+		</script>
+		
 	</head>
 	<body>
-		<div class="scrollableEquation"> LATEX_HERE </div>
+		<span class="scrollableEquation" id="LAT_SPAN">LATEX_HERE</span>
 	</body>
 </html>

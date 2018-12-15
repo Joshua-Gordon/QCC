@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Set;
 
-import framework2FX.UserDefinitions;
 import framework2FX.UserDefinitions.MatrixDefinition;
 import framework2FX.gateModels.GateModel;
 import framework2FX.gateModels.GateModel.GateModelType;

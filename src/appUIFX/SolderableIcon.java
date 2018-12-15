@@ -39,14 +39,14 @@ public class SolderableIcon extends AppFXMLComponent implements Initializable {
 		ImmutableArray<String> paramLatex = s.getArguments();
 		
 		if(!paramLatex.isEmpty()) {
-			String paramString = "\\$\\$ ( " + paramLatex.get(0);
+			String paramString = "\\( ( " + paramLatex.get(0);
 			
 			for(int i = 1; i < paramLatex.size(); i++)
 				paramString += " , " + paramLatex.get(i);
 			
-			paramString += " ) \\$\\$";
+			paramString += " ) \\)";
 			
-			gate.getChildren().add(LatexView.mkView(paramString));
+			gate.getChildren().add(LatexView.mkView(paramString, 2.1f, "#FFFFFF", "#000000"));
 		}
 		
 		

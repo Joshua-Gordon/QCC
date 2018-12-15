@@ -6,35 +6,64 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import framework2FX.AppStatus;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import javafx.concurrent.Worker;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
+import netscape.javascript.JSObject;
 
-public class LatexView extends AppFXMLComponent implements Initializable, ChangeListener<Node>{
+public class LatexView extends AppFXMLComponent implements Initializable{
 	
 	
-	public static Node mkView(String latex) {
-		return new LatexView(latex).loadAsNode(AppStatus.get().getPrimaryStage());
+	public static Node mkView(String latex, float fontSize, String color, String textColor) {
+		return new LatexView(latex, fontSize, color, textColor).loadAsNode(AppStatus.get().getPrimaryStage());
 	}
 	
-	
-	
-	
+	public AnchorPane root;
 	public WebView webView;
-	public BorderPane root;
+	private WebEngine engine;
 	private String latex;
+	private float fontSize;
+	private String color;
+	private String textColor;
 	
-	private LatexView(String latex) {
+	public LatexView(String latex, float fontSize, String color, String textColor) {
 		super("LatexView.fxml");
 		this.latex = latex;
+		this.fontSize = fontSize;
+		this.color = color;
+		this.textColor = textColor;
 	}
 	
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
+		String html = getHtml(latex, fontSize, color);
+		
+		webView.setContextMenuEnabled(false);
+		
+		engine = webView.getEngine();
+		engine.loadContent(html);
+		engine.getLoadWorker().stateProperty().addListener((obs, oldState, newState) -> {
+            if (newState == Worker.State.SUCCEEDED)
+                addFunctionHandlerToDocument();
+        });
+	}
+	
+	private void addFunctionHandlerToDocument() {
+        JSObject window = (JSObject) engine.executeScript("window");
+        window.setMember("app", this);
+    }
+	
+	public void setSize(int width, int height) {
+		webView.setMinSize(width, height);
+		webView.setPrefSize(width, height);
+		webView.setMaxSize(width, height);
+	}
+	
+	
+	private String getHtml(String latex, float fontSize, String color) {
 		String html = null;
 		try {
 			html = utils.ResourceLoader.getHTMLString("LatexDisplay.html");
@@ -43,37 +72,33 @@ public class LatexView extends AppFXMLComponent implements Initializable, Change
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
 		}
-		webView.getEngine().loadContent(html.replaceAll("LATEX_HERE", latex));
-		webView.parentProperty().addListener(this);
-	}
-
-	@Override
-	public void changed(ObservableValue<? extends Node> observable, Node oldValue, Node newValue) {
-		newValue.onMouseClickedProperty().addListener((a, b, c) -> {
-			String result1 = webView.getEngine().executeScript(
-				    "window.getComputedStyle(document.body, null).getPropertyValue('width')"
-			).toString();
-			String result2 = webView.getEngine().executeScript(
-				    "window.getComputedStyle(document.body, null).getPropertyValue('height')"
-			).toString();
-			System.out.println(result1 + " " + result2);
-		});
-		
-		
-		String result1 = webView.getEngine().executeScript(
-			    "window.getComputedStyle(document.body, null).getPropertyValue('width')"
-		).toString();
-		String result2 = webView.getEngine().executeScript(
-			    "window.getComputedStyle(document.body, null).getPropertyValue('height')"
-		).toString();
-		int length1 = result1.length() - 2;
-		int length2 = result2.length() - 2;
-		int width = Integer.parseInt(result1.substring(0, length1));
-		int height = Integer.parseInt(result2.substring(0, length2));
-		webView.setMinSize(width, height);
-		webView.setPrefSize(width, height);
+		html = setArg(html, "LATEX_HERE", latex);
+		html = setArg(html, "FONT_SIZE", Float.toString(fontSize));
+		html = setArg(html, "BACK_COLOR", color);
+		html = setArg(html, "TEXT_COLOR", textColor);
+		return html;
 	}
 	
+	private String setArg(String html, String arg, String param) {
+		String[] parts = html.split(arg);
+		return parts[0] + param + parts[1];
+	}
 	
+	public void setLatex(String latex) {
+		latex = latex.replace("\\", "\\\\");
+		engine.executeScript("window.setLatex(\"" + latex + "\")");
+	}
+	
+	public void setFontSize(float fontSize) {
+		engine.executeScript("window.setFontSize(\"" + fontSize + "em\")");
+	}
+	
+	public void setColor(String color) {
+		engine.executeScript("window.setColor(\"" + color + "\")");
+	}
+	
+	public void setTextColor(String color) {
+		engine.executeScript("window.setTextColor(\"" + color + "\")");
+	}
 	
 }
