@@ -1,6 +1,8 @@
 package mathLib.operators;
 
 public final class FloatO implements OperatorSet<Float>{
+	private static final long serialVersionUID = -4177056762529194849L;
+	
 	public static final OperatorSet<Float> OPERATOR_SET = new FloatO();
 	
 	private FloatO() {}

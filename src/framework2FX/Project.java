@@ -3,10 +3,17 @@ package framework2FX;
 import java.io.File;
 import java.io.Serializable;
 import java.net.URI;
+import java.util.Hashtable;
+import java.util.Iterator;
 
 import appUIFX.AppFileIO;
-import framework2FX.solderedGates.Solderable;
-import utils.customCollections.eventTracableCollections.EventHashTable;
+import framework2FX.exportGates.RawExportableGateData;
+import framework2FX.gateModels.CircuitBoard;
+import framework2FX.gateModels.DefaultModel;
+import framework2FX.gateModels.GateModel;
+import framework2FX.gateModels.OracleModel;
+import framework2FX.gateModels.PresetGateType;
+import framework2FX.solderedGates.SolderedGate;
 import utils.customCollections.eventTracableCollections.Notifier;
 
 
@@ -27,9 +34,9 @@ import utils.customCollections.eventTracableCollections.Notifier;
 public class Project implements Serializable{
 	private static final long serialVersionUID = 8906661352790858317L;
 	
-	private ProjectHashTable subCircuits;
-    private ProjectHashTable customGates;
-    private ProjectHashTable customOracles;
+	private final ProjectHashtable subCircuits;
+    private final ProjectHashtable customGates;
+    private final ProjectHashtable customOracles;
 	
 	private transient URI fileLocation = null;
 	
@@ -48,6 +55,8 @@ public class Project implements Serializable{
 		project.topLevelCircuit = project.addUntitledSubCircuit();
 		return project;
 	}
+	
+	
 	
 	
 	/**
@@ -73,18 +82,10 @@ public class Project implements Serializable{
 	 */
 	public Project() {
 		notifier = new Notifier();
-		subCircuits = new ProjectHashTable();
-		customGates = new ProjectHashTable();
-		customOracles = new ProjectHashTable();
+		subCircuits = new ProjectHashtable();
+		customGates = new ProjectHashtable();
+		customOracles = new ProjectHashtable();
 	}
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	
 	
@@ -99,30 +100,25 @@ public class Project implements Serializable{
 	public String addUntitledSubCircuit(){
 		String title = "Untitled";
 		
-		if(!subCircuits.containsSolderable(title)) {
+		if(!subCircuits.containsGateModel(title + "." + CircuitBoard.CIRCUIT_BOARD_EXTENSION)) {
 			subCircuits.put(new CircuitBoard(title, title, "", 5, 5));
-			return title;
+			return title + "." + CircuitBoard.CIRCUIT_BOARD_EXTENSION;
 		}
 		
 		int i = 1;
-		while(subCircuits.containsSolderable(title + " " + Integer.toString(i))) {
+		while(subCircuits.containsGateModel(title + "_" + Integer.toString(i) + "." + CircuitBoard.CIRCUIT_BOARD_EXTENSION)) {
 			if(i == Integer.MAX_VALUE)
 				throw new RuntimeException("Could not add any more untitled sub-ciruits");
 			i++;
 		}
 		
-		String name = title + " " + Integer.toString(i);
+		String name = title + "_" + Integer.toString(i);
 
 		notifier.sendChange(this, "addUntitledSubCircuit");
 		subCircuits.put(new CircuitBoard(name, name, "", 5, 5));
 		
-		return title + " " + Integer.toString(i);
+		return title + "_" + Integer.toString(i) + "." + CircuitBoard.CIRCUIT_BOARD_EXTENSION;
 	}
-	
-	
-	
-	
-	
 	
 	
 	
@@ -141,7 +137,7 @@ public class Project implements Serializable{
 	/**
 	 * @return the list of the sub-circuits for this project
 	 */
-	public ProjectHashTable getSubCircuits() {
+	public ProjectHashtable getSubCircuits() {
 		return subCircuits;
 	}
 	
@@ -152,7 +148,7 @@ public class Project implements Serializable{
 	/**
 	 * @return the list of the custom-gates for this project
 	 */
-	public ProjectHashTable getCustomGates() {
+	public ProjectHashtable getCustomGates() {
 		return customGates;
 	}
 	
@@ -164,43 +160,10 @@ public class Project implements Serializable{
 	/**
 	 * @return the list of the custom-oracles for this project
 	 */
-	public ProjectHashTable getCustomOracles() {
+	public ProjectHashtable getCustomOracles() {
 		return customOracles;
 	}
 
-	
-	
-	
-	/**
-	 * <b>REQUIRES:</b> list is not null <br>
-	 * <b>ENSURES:</b>  GUI is notified of the change <br>
-	 * <b>MODIFIES INSTANCE</b>
-	 * @param list list of custom gate models
-	 */
-	public void setCustomGates(ProjectHashTable list) {
-		this.notifier.sendChange(this, "setCustomGate", list);
-		customGates = list;
-	}
-	
-	
-	
-	
-	/**
-	 * <b>REQUIRES:</b> list is not null <br>
-	 * <b>ENSURES:</b>  GUI is notified of the change (if this project is focused)<br>
-	 * <b>MODIFIES INSTANCE</b>
-	 * @param list
-	 */
-	public void setCustomOracles(ProjectHashTable list) {
-		this.notifier.sendChange(this, "setCustomOracles", list);
-		customOracles = list;
-	}
-	
-	
-	
-	
-	
-	
 	
 	/**
 	 * @return the name of the top-level sub-circuit
@@ -224,10 +187,18 @@ public class Project implements Serializable{
 	 * <b>MODIFIES INSTANCE</b>
 	 * @param name
 	 */
-	public void setTopLevelCircuitName(String name) {
-		if(subCircuits.containsSolderable(name)) {
-			notifier.sendChange(this, "setTopLevelCircuitName", name);
-			topLevelCircuit = name;
+	public void setTopLevelCircuitName(String formalName) {
+		if(formalName == null) {
+			notifier.sendChange(this, "setTopLevelCircuitName", formalName);
+			topLevelCircuit = null;
+		} else {
+			String[] parts = formalName.split("\\.");
+			if(parts.length == 2 && parts[1].equals(CircuitBoard.CIRCUIT_BOARD_EXTENSION)) {
+				if(subCircuits.containsGateModel(formalName)) {
+					notifier.sendChange(this, "setTopLevelCircuitName", formalName);
+					topLevelCircuit = formalName;
+				}
+			}
 		}
 	}
 	
@@ -257,20 +228,6 @@ public class Project implements Serializable{
 	
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	/**
 	 * <b>ENSURES:</b> that all changes to this project are notified to receiver. <br>
 	 * If null, then all changes will not be notified to any receiver <br>
@@ -280,59 +237,180 @@ public class Project implements Serializable{
 		this.notifier.setReceiver(receiver);
 	}
 	
-	
-	/**
-	 *
-	 * WARNING: Not thread safe when using object methods that modify <br>
-	 * internal fields (may cause the GUI to not update as expected) <br>
-	 * 
-	 * @author Massimiliano Cutugno
-	 */
-	public class ProjectHashTable implements Serializable{
-		private static final long serialVersionUID = -2900966641041727003L;
-		private EventHashTable<String, Solderable> table;
+	public GateModel getGateModel(String gateModelFormalName) {
+		String[] parts = gateModelFormalName.split("\\.");
 		
-		public ProjectHashTable() {
-			table = new EventHashTable<>(notifier);
+		if(parts.length == 2) {
+			if(parts[1].equals(CircuitBoard.CIRCUIT_BOARD_EXTENSION)) {
+				return subCircuits.get(gateModelFormalName);
+			} else if(parts[1].equals(DefaultModel.GATE_MODEL_EXTENSION)) {
+				PresetGateType pgt = PresetGateType.getPresetTypeByFormalName(gateModelFormalName);
+				if(pgt != null) 
+					return pgt.getModel();
+				else
+					return customGates.get(gateModelFormalName);
+			} else if(parts[1].equals(OracleModel.ORACLE_MODEL_EXTENSION)) {
+				return customOracles.get(gateModelFormalName);
+			}
+		}
+		return null;
+	}
+	
+	public boolean containsGateModel(String gateModelFormalName) {
+		String[] parts = gateModelFormalName.split("\\.");
+		
+		if(parts.length == 2) {
+			if(parts[1].equals(CircuitBoard.CIRCUIT_BOARD_EXTENSION)) {
+				return subCircuits.containsGateModel(gateModelFormalName);
+			} else if(parts[1].equals(DefaultModel.GATE_MODEL_EXTENSION)) {
+				if(PresetGateType.containsPresetTypeByFormalName(gateModelFormalName))
+					return true;
+				else
+					return customGates.containsGateModel(gateModelFormalName);
+			} else if(parts[1].equals(OracleModel.ORACLE_MODEL_EXTENSION)) {
+				return customOracles.containsGateModel(gateModelFormalName);
+			}
+		}
+		return false;
+	}
+	
+	
+	public class ProjectHashtable implements Serializable {
+		private static final long serialVersionUID = -903225963940733391L;
+		private Hashtable <String, GateModel> elements;
+		
+		private ProjectHashtable () {
+			elements = new Hashtable<>();
 		}
 		
-		public void put(Solderable s) {
-			table.put(s.getName(), s);
-			if(s instanceof CircuitBoard) {
-				CircuitBoard cb = (CircuitBoard) s;
+		public void put(GateModel newValue) {
+			
+			if(elements.containsKey(newValue.getFormalName())) {
+				GateModel gm = elements.get(newValue.getFormalName());
+				
+				if(gm == newValue)
+					return;
+				
+				notifier.sendChange(this, "put", newValue);
+				
+				
+				removeCircuitBoardTraits(gm, true);
+				removeAllOccurances(gm.getFormalName());
+				
+			} else {
+				notifier.sendChange(this, "put", newValue);
+			}
+
+			elements.put(newValue.getFormalName(), newValue);
+			
+
+			addCircuitBoardTraits(newValue);
+		}
+		
+		
+		
+		
+		public void replace(String formalNameToReplace, GateModel newValue) {
+			if(newValue == null)
+				return;
+			
+			GateModel toReplace = elements.get(formalNameToReplace);
+			
+			
+			if(toReplace == null) {
+				notifier.sendChange(this, "replace", formalNameToReplace, newValue);
+				elements.put(newValue.getFormalName(), newValue);
+				addCircuitBoardTraits(newValue);
+			} else {
+				if(toReplace == newValue)
+					return;
+				if(formalNameToReplace.equals(newValue.getFormalName())) {
+					notifier.sendChange(this, "replace", formalNameToReplace, newValue);
+
+					removeCircuitBoardTraits(toReplace, false);
+					elements.put(newValue.getFormalName(), newValue);
+				} else {
+					notifier.sendChange(this, "replace", formalNameToReplace, newValue);
+					System.out.println("Here");
+					for(GateModel circ : subCircuits.getGateModelIterable())
+						if(circ != toReplace)
+							((CircuitBoard)circ).changeAllOccurrences(formalNameToReplace, newValue.getFormalName());
+					
+					if(removeCircuitBoardTraits(toReplace, true))
+						setTopLevelCircuitName(newValue.getFormalName());
+					
+					elements.remove(formalNameToReplace);
+					elements.put(newValue.getFormalName(), newValue);
+				}
+			}
+		}
+		
+		public GateModel get (String formalName) {
+			return elements.get(formalName);
+		}
+		
+		public void remove (String formalName) {
+			if(elements.containsKey(formalName)) {
+				
+				notifier.sendChange(this, "remove", formalName);
+				
+				GateModel gm = elements.get(formalName);
+				if(gm instanceof CircuitBoard) {
+					CircuitBoard cb = (CircuitBoard) gm;
+					cb.getNotifier().setReceiver(null);
+				}
+				elements.remove(formalName);
+				removeAllOccurances(formalName);
+			}
+		}
+		
+		public boolean containsGateModel (GateModel gateModel) {
+			return elements.contains(gateModel);
+		}
+		
+		public boolean containsGateModel (String gateModelFormalName) {
+			return elements.containsKey(gateModelFormalName);
+		}
+		
+		public Iterable<String> getGateNameIterable() {
+			return elements.keySet();
+		}
+		
+		public Iterable<GateModel> getGateModelIterable() {
+			return elements.values();
+		}
+		
+		public int size() {
+			return elements.size();
+		}
+		
+		private void removeAllOccurances (String formalName) {
+			for(GateModel si : subCircuits.getGateModelIterable()) {
+				Iterator<RawExportableGateData> gateData = ((CircuitBoard)si).iterator();
+				while (gateData.hasNext())
+					if(gateData.next().getSolderedGate().getGateModelFormalName().equals(formalName))
+						gateData.remove();
+			}
+		}
+		
+		private void addCircuitBoardTraits (GateModel gm) {
+			if(gm instanceof CircuitBoard) {
+				CircuitBoard cb = (CircuitBoard) gm;
 				cb.getNotifier().setReceiver(notifier);
 			}
 		}
 		
-		public Solderable get(String name) {
-			return table.get(name);
-		}
-		
-		public void remove(String key) {
-			if(table.containsKey(key)) {
-				Solderable s = table.get(key);
-				if(s instanceof CircuitBoard) {
-					CircuitBoard cb = (CircuitBoard) s;
-					cb.getNotifier().setReceiver(null);
+		private boolean removeCircuitBoardTraits (GateModel gm, boolean removeTopLeve) {
+			if(gm instanceof CircuitBoard) {
+				CircuitBoard cb = (CircuitBoard) gm;
+				cb.getNotifier().setReceiver(null);
+				if(removeTopLeve && topLevelCircuit != null && cb.getFormalName().equals(topLevelCircuit)) {
+					setTopLevelCircuitName(null);
+					return true;
 				}
 			}
-			table.remove(key);
+			return false;
 		}
 		
-		public boolean containsSolderable (String name) {
-			return table.containsKey(name);
-		}
-		
-		public int size () {
-			return table.size();
-		}
-		
-		public Iterable<String> nameIterable () {
-			return  table.getKeyIterable();
-		}
-		
-		public Iterable<Solderable> valueIterable () {
-			return  table.getValueIterable();
-		}
 	}
 }

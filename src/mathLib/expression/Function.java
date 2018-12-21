@@ -5,6 +5,8 @@ import java.util.Iterator;
 import java.util.Objects;
 
 import mathLib.MathValue;
+import mathLib.expression.Expression.EvaluateExpressionException;
+import mathLib.expression.Expression.ExpressionParser.EquationParseException;
 import mathLib.expression.Variable.ConcreteVariable;
 
 public abstract class Function {
@@ -44,21 +46,21 @@ public abstract class Function {
 		return variableParamIndexes != null && variableParamIndexes.contains(paramIndex);
 	}
 	
-	public abstract MathValue compute(MathSet setDefinedBody, MathSet setGroup, Expression ... expressions);
+	public abstract MathValue compute(MathSet setDefinedBody, MathSet setGroup, Expression ... expressions)  throws EvaluateExpressionException;
 	
 	public static class ExpressionDefinedFunction extends Function {
 		private final String[] params;
 		private final Expression definition;
 		
-		public ExpressionDefinedFunction(String definition, String name, String ... params) {
+		public ExpressionDefinedFunction(String definition, String name, String ... params) throws EquationParseException {
 			this(definition, name, LatexFormat.NONE, params);
 		}
 		
-		public ExpressionDefinedFunction(String definition, String name, LatexFormat format, String ... params) {
+		public ExpressionDefinedFunction(String definition, String name, LatexFormat format, String ... params) throws EquationParseException {
 			this(definition, name, NONE, format, params);
 		}
 		
-		public ExpressionDefinedFunction(String definition, String name, HashSet<Integer> variableParamIndexes, LatexFormat format, String ... params) {
+		public ExpressionDefinedFunction(String definition, String name, HashSet<Integer> variableParamIndexes, LatexFormat format, String ... params) throws EquationParseException {
 			super(name, params.length, variableParamIndexes, format);
 			this.params = params;
 			this.definition = new Expression(definition);
@@ -66,7 +68,7 @@ public abstract class Function {
 		
 		
 		@Override
-		public MathValue compute(MathSet setDefinedBody, MathSet localSet, Expression ... expressions) {
+		public MathValue compute(MathSet setDefinedBody, MathSet localSet, Expression ... expressions) throws EvaluateExpressionException {
 			MathSet paramDefinitons = new MathSet(setDefinedBody);
 			int i = 0;
 			for(String param : params)
@@ -91,14 +93,14 @@ public abstract class Function {
 			this.definition = definition;
 		}
 		
-		public MathValue compute(MathSet setDefinedBody, MathSet localSet, Expression ... expressions) {
+		public MathValue compute(MathSet setDefinedBody, MathSet localSet, Expression ... expressions) throws EvaluateExpressionException {
 			return definition.compute(setDefinedBody, localSet, expressions);
 		}
 	}
 	
 	public static interface FunctionDefinition {
 		
-		public MathValue compute(MathSet setDefinedBody, MathSet localSet, Expression ... expressions);
+		public MathValue compute(MathSet setDefinedBody, MathSet localSet, Expression ... expressions) throws EvaluateExpressionException;
 		
 	}
 	

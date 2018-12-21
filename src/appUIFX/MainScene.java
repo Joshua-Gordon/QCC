@@ -5,7 +5,11 @@ import java.util.Iterator;
 import java.util.ResourceBundle;
 
 import appPreferencesFX.AppPreferences;
-import appUIFX.TabView.ViewListener;
+import appUIFX.appViews.AppView;
+import appUIFX.appViews.AppView.ViewListener;
+import appUIFX.appViews.CircuitBoardView;
+import appUIFX.appViews.ConcreteTabView;
+import framework2FX.AppStatus;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.Initializable;
@@ -16,9 +20,9 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.BorderPane;
-import javafx.stage.Stage;
+import utils.customCollections.eventTracableCollections.Notifier.ReceivedEvent;
 
-public class MainScene extends AppFXMLComponent implements Initializable, AppPreferences{
+public class MainScene extends AppFXMLComponent implements Initializable, AppPreferences, ReceivedEvent {
 
 	public SplitPane verticalSplitPane, horizontalSplitPane;
 	public BorderPane leftBorderPane, bottomBorderPane, rightBorderPane;
@@ -26,8 +30,10 @@ public class MainScene extends AppFXMLComponent implements Initializable, AppPre
 	public ToggleButton selectTool, solderTool, editTool, addColumnTool, removeColumnTool, addRowTool, removeRowTool;
 	public MenuBar menuBar;
 	
-	private double[] cachedDividerPositions;
+	private ToggleGroup tools;
 	
+	private double[] cachedDividerPositions;
+	private boolean initialized = false;
 	
 	public MainScene() {
 		super("MainScene.fxml");
@@ -37,19 +43,22 @@ public class MainScene extends AppFXMLComponent implements Initializable, AppPre
 	
 	
 	public void addCircuitBoardView(CircuitBoardView circuitBoardView) {
-		addView(centerTabPane, circuitBoardView.getTab((Stage) menuBar.getScene().getWindow()));
+		addView(centerTabPane, circuitBoardView.getTab());
 	}
 	
 	
+	public void addView(ConcreteTabView tabView) {
+		addView(tabView.getView());
+	}
 	
-	public void addView(TabView singleView) {
-		AppView view = singleView.getView();
+	
+	public void addView(AppView view) {
 		
-		Stage stage = menuBar.getScene() == null ? null : (Stage) menuBar.getScene().getWindow();
-		Tab tab = view.getTab(stage);
+		Tab tab = view.getTab();
+		
+		ViewListener viewListener = view.getViewListener();
 		
 		tab.setOnClosed((event) -> {
-			ViewListener viewListener = singleView.getViewListener();
 			if(viewListener != null)
 				viewListener.viewChanged(false);
 		});
@@ -72,9 +81,8 @@ public class MainScene extends AppFXMLComponent implements Initializable, AppPre
 		}
 		
 		if(added) {
-			ViewListener listener = singleView.getViewListener();
-			if(listener != null)
-				listener.viewChanged(true);
+			if(viewListener != null)
+				viewListener.viewChanged(true);
 		}
 	}
 	
@@ -89,11 +97,14 @@ public class MainScene extends AppFXMLComponent implements Initializable, AppPre
 		Tab t;
 		while(i.hasNext()) {
 			t = i.next();
-			if(t.getText().equals(tab.getText()))
+			if(t.getText().equals(tab.getText())) {
+				tabPane.getSelectionModel().select(t);
 				return false;
+			}
 		}
 		
 		tabPane.getTabs().add(tab);
+		tabPane.getSelectionModel().select(tab);
 		return true;
 	}
 	
@@ -101,12 +112,14 @@ public class MainScene extends AppFXMLComponent implements Initializable, AppPre
 	
 	
 	
-	public void removeView(TabView singleView) {
-		AppView view = singleView.getView();
-		
+	public void removeView(ConcreteTabView singleView) {
+		removeView(singleView.getView());
+	}
+	
+	public void removeView (AppView view ) {
 		boolean removed;
 		
-		switch(singleView.getView().getLayout()) {
+		switch(view.getLayout()) {
 		case LEFT:
 			removed = removeView(leftTabPane, view);
 			break;
@@ -122,11 +135,11 @@ public class MainScene extends AppFXMLComponent implements Initializable, AppPre
 			break;
 		}
 		
-		if(removed) {
-			ViewListener listener = singleView.getViewListener();
-			if(listener != null)
-				listener.viewChanged(false);
-		}
+//		if(removed) {
+//			ViewListener listener = view.getViewListener();
+//			if(listener != null)
+//				listener.viewChanged(false);
+//		}
 	}
 	
 	
@@ -151,10 +164,18 @@ public class MainScene extends AppFXMLComponent implements Initializable, AppPre
 	}
 	
 	
+	public String getCenterFocusedView() {
+		Tab t = centerTabPane.getSelectionModel().getSelectedItem();
+		if(t == null)
+			return null;
+		return t.getText();
+	}
+	
 	
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		initialized = true;
 		initializeTools();
 		AppMenuBar.initializeMenuBar(this);
 		initializeViews();
@@ -166,7 +187,7 @@ public class MainScene extends AppFXMLComponent implements Initializable, AppPre
 	
 	
 	private void initializeTools() {
-		ToggleGroup tools  = new ToggleGroup();
+		tools  = new ToggleGroup();
 		selectTool.setToggleGroup(tools);
 		solderTool.setToggleGroup(tools);
 		editTool.setToggleGroup(tools);
@@ -176,22 +197,17 @@ public class MainScene extends AppFXMLComponent implements Initializable, AppPre
 		removeRowTool.setToggleGroup(tools);
 	}
 	
+	public ToggleButton getTool() {
+		return (ToggleButton) tools.getSelectedToggle();
+	}
 	
 	
 	
 	
-	
-	private void initializeViews() {		
-		if(Booleans.CONSOLE_OPEN.get())
-			addView(TabView.CONSOLE);
-		if(Booleans.PRESET_GATES_OPEN.get())
-			addView(TabView.PRESET_GATES_VIEW);
-		if(Booleans.CUSTOM_GATES_OPEN.get())
-			addView(TabView.CUSTOM_GATES_VIEW);
-		if(Booleans.CIRCUITBOARDS_OPEN.get())
-			addView(TabView.CIRCUITBOARD_VIEW);
-		if(Booleans.PROJECT_HEIRARCHY_OPEN.get())
-			addView(TabView.PROJECT_HIERARCHY);
+	private void initializeViews() {
+		for(ConcreteTabView ctv :  ConcreteTabView.values())
+			if(ctv.wasOpen().get())
+				addView(ctv);
 		
 		intializeTabPanes();
 	}
@@ -279,5 +295,14 @@ public class MainScene extends AppFXMLComponent implements Initializable, AppPre
 			
 			splitPane.setDividerPosition(dividerIndex, cachedDividerPositions[cachedDividerPositionIndex]);
 		}
+	}
+
+
+	@Override
+	public boolean receive(Object source, String methodName, Object... args) {
+		if(source == AppStatus.get() && methodName.equals("setFocusedProject") && initialized)
+			centerTabPane.getTabs().clear();
+		
+		return false;
 	}
 }

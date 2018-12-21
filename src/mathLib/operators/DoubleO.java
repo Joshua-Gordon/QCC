@@ -3,6 +3,8 @@ package mathLib.operators;
 //                        7
 //                        ^  
 public final class DoubleO implements OperatorSet<Double>{
+	private static final long serialVersionUID = -2688808386681917690L;
+	
 	public static final DoubleO OPERATOR_SET = new DoubleO();
 	
 	private DoubleO() {}

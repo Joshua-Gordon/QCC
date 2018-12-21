@@ -1,7 +1,9 @@
-@font-face {
-	src: url("../fonts/VastShadow-Regular.ttf");
-}
-
 #symbol {
 	-fx-font-family: 'Vast Shadow';
+}
+
+#gate {
+	-fx-border-color: #000000;
+	-fx-border-width: 1;
+	-fx-background-color: #FFFFFF;
 }

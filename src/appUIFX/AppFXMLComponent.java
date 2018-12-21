@@ -2,6 +2,7 @@ package appUIFX;
 
 import java.io.IOException;
 
+import framework2FX.AppStatus;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -15,15 +16,17 @@ public abstract class AppFXMLComponent{
 		this.fxmlFilename = fxmlFilename;
 	}
 	
-	public Node loadAsNode(Stage stage) {
+	public Node loadAsNode() {
 		Node node = null;
 		try {
 			FXMLLoader loader = ResourceLoader.loadFXMLLoader(fxmlFilename);
 			loader.setController(this);
 			node = loader.load();
-		}catch(IOException e) {
+		} catch(IOException e) {
 			try {
-				AppAlerts.showJavaExceptionMessage(stage, "Program Crashed", "Could not load graphical interface.", e);
+				AppStatus as = AppStatus.get();
+				if(as != null && as.getPrimaryStage() != null)
+					AppAlerts.showJavaExceptionMessage(as.getPrimaryStage(), "Program Crashed", "Could not load graphical interface.", e);
 			}finally {
 				e.printStackTrace();
 				System.exit(1);

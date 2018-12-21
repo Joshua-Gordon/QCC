@@ -1,13 +1,13 @@
 package framework2FX;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Optional;
 
 import appUIFX.AppAlerts;
-import appUIFX.CircuitBoardView;
-import appUIFX.Console;
 import appUIFX.MainScene;
-import appUIFX.TabView;
+import appUIFX.appViews.ConcreteTabView;
+import appUIFX.appViews.Console;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
@@ -76,14 +76,20 @@ public final class AppStatus {
 		this.notifier = new Notifier(notifierFan);
 		this.notifier.setReceivedEvent((source, method, args) -> {
 			isProjectModifed = true;
+			return false;
 		});
 		this.notifierFan.setReceivedEvent((source, method, args) -> {
-			for(ReceivedEvent re : changeListeners)
-				re.receive(source, method, args);
+			Iterator<ReceivedEvent> iter = changeListeners.iterator();
+			while(iter.hasNext()) 
+				if(iter.next().receive(source, method, args))
+					iter.remove();
+			return false;
 		});
 		
-		for(TabView tv : TabView.values())
+		for(ConcreteTabView tv : ConcreteTabView.values())
 			addAppChangedListener(tv.getView());
+		
+		addAppChangedListener(mainScene);
 	}
 	
 	
@@ -96,7 +102,7 @@ public final class AppStatus {
 	 * @return the console controller of this application
 	 */
 	public Console getConsole() {
-		return (Console) TabView.CONSOLE.getView();
+		return (Console) ConcreteTabView.CONSOLE.getView();
 	}
 	
 	
@@ -118,7 +124,8 @@ public final class AppStatus {
 			Optional<ButtonType> response = AppAlerts.showMessage(primaryStage,
 					"The current project is not saved",
 					"Do you want to continue without saving?", AlertType.CONFIRMATION);
-			if(response.get() != ButtonType.APPLY)
+
+			if(response.get() != ButtonType.OK)
 				return;
 		}
 		
@@ -130,6 +137,9 @@ public final class AppStatus {
 		notifier.sendChange(this, "setFocusedProject", project);
 		this.project = project;
 		this.project.setReceiver(notifier);
+
+		if(project.getTopLevelCircuitName() != null)
+			AppCommand.doAction(AppCommand.OPEN_GATE, project.getTopLevelCircuitName());
 	}
 	
 	

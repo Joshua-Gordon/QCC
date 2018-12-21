@@ -1,12 +1,13 @@
 package framework2FX.exportGates;
 
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Set;
 
 import framework2FX.UserDefinitions.MatrixDefinition;
+import framework2FX.gateModels.DefaultModel;
+import framework2FX.gateModels.DefaultModel.DefaultModelType;
 import framework2FX.gateModels.GateModel;
-import framework2FX.gateModels.GateModel.GateModelType;
 import framework2FX.gateModels.GateModelFactory.PresetGateModel;
 import framework2FX.gateModels.PresetGateType;
 import mathLib.Complex;
@@ -14,7 +15,7 @@ import mathLib.Matrix;
 
 public class ExportedGate {	
 	private final GateModel gateModel;
-	private final HashMap<String, Complex> argParamMap;
+	private final Hashtable<String, Complex> argParamMap;
 	private final int[] gateRegisters;
 	private final Control[] controls;
 	private final Matrix<Complex>[] matrixes;
@@ -22,14 +23,14 @@ public class ExportedGate {
 	
 	@SuppressWarnings("unchecked")
 	public static ExportedGate mkIdentAt(int register) {
-		GateModel gm = PresetGateType.IDENTITY.getModel();
+		DefaultModel gm = PresetGateType.IDENTITY.getModel();
 		Matrix<Complex> m = ((MatrixDefinition) gm.getDefinitions().get(0)).getMatrix();
 		
-		return new ExportedGate(gm, new HashMap<>(), new int[] {register}, new Control[0], new Matrix[] { m });
+		return new ExportedGate(gm, new Hashtable<>(), new int[] {register}, new Control[0], new Matrix[] { m });
 	}
 	
 	
-	public ExportedGate(GateModel gateModel, HashMap<String, Complex> argParamMap, int[] gateRegisters, Control[] controls, Matrix<Complex>[] matrixes) {
+	public ExportedGate(GateModel gateModel, Hashtable<String, Complex> argParamMap, int[] gateRegisters, Control[] controls, Matrix<Complex>[] matrixes) {
 		this.gateModel = gateModel;
 		this.gateRegisters = gateRegisters;
 		this.controls = controls;
@@ -67,8 +68,11 @@ public class ExportedGate {
 		else return null;
 	}
 	
-	public GateModelType getGateType() {
-		return gateModel.getGateModelType();
+	public DefaultModelType getGateType() {
+		if(gateModel instanceof DefaultModel) {
+			return ((DefaultModel)gateModel).getGateModelType();
+		}
+		return null;
 	}
 	
 	

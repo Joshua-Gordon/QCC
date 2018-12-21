@@ -1,6 +1,7 @@
 package framework2FX.solderedGates;
 
 public class SolderedControl extends SpacerPin {
+	private static final long serialVersionUID = 292673113796147747L;
 	
 	private boolean controlStatus;
 	

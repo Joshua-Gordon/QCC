@@ -3,9 +3,10 @@ package mathLib.expression;
 import java.io.BufferedReader;
 import java.io.Serializable;
 import java.util.Iterator;
-import java.util.stream.Stream;
 
 import language.compiler.LexicalAnalyzer;
+import language.compiler.LexicalAnalyzer.LexemeNotRecognizedException;
+import language.compiler.LexicalAnalyzer.LexicalAnaylizerIOException;
 import language.compiler.ParseTree;
 import language.compiler.ParseTree.ParseBranch;
 import language.compiler.ParseTree.ParseLeaf;
@@ -16,6 +17,7 @@ import language.compiler.Token;
 import mathLib.Complex;
 import mathLib.MathValue;
 import mathLib.Matrix;
+import mathLib.expression.Expression.ExpressionParser.EquationParseException;
 import utils.customCollections.Pair;
 
 public class Expression implements Serializable {
@@ -52,11 +54,11 @@ public class Expression implements Serializable {
 	
 	
 	
-	
-	public Expression (String expression) {
+	public Expression (String expression) throws EquationParseException {
 		ExpressionParser ep = new ExpressionParser(expression);
 		tree = ep.parse();
 	}
+	
 	
 	public Expression (ParseTree tree) {
 		this.tree = tree;
@@ -73,8 +75,14 @@ public class Expression implements Serializable {
 		return tree;
 	}
 	
-	public MathValue compute(MathSet mathDefinitions) {
-		return evalExpr((ParseBranch)tree.getRoot(), mathDefinitions);
+	public MathValue compute(MathSet mathDefinitions) throws EvaluateExpressionException {
+		try {
+			return evalExpr((ParseBranch)tree.getRoot(), mathDefinitions);
+		} catch (EvaluateExpressionException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new EvaluateExpressionException(e.getMessage());
+		} 
 	}
 	
 	
@@ -83,7 +91,7 @@ public class Expression implements Serializable {
 	
 	
 	
-	private MathValue evalExpr(ParseBranch pb, MathSet mathDefinitions) {
+	private MathValue evalExpr(ParseBranch pb, MathSet mathDefinitions) throws EvaluateExpressionException {
 		Iterator<ParseNode> terms = pb.getChildren().iterator();
 		
 		MathValue current = evalTerm((ParseBranch)terms.next(), mathDefinitions);
@@ -100,7 +108,7 @@ public class Expression implements Serializable {
 		return current;
 	}
 	
-	private MathValue evalTerm(ParseBranch pb, MathSet mathDefinitions) {
+	private MathValue evalTerm(ParseBranch pb, MathSet mathDefinitions) throws EvaluateExpressionException {
 		Iterator<ParseNode> pows = pb.getChildren().iterator();
 		
 		MathValue current = evalPow((ParseBranch) pows.next(), mathDefinitions);
@@ -118,7 +126,7 @@ public class Expression implements Serializable {
 	}
 
 
-	private MathValue evalPow(ParseBranch pb, MathSet mathDefinitions) {
+	private MathValue evalPow(ParseBranch pb, MathSet mathDefinitions) throws EvaluateExpressionException {
 		Iterator<ParseNode> pows = pb.getChildren().iterator();
 		
 		ParseNode pn = pows.next();
@@ -142,7 +150,7 @@ public class Expression implements Serializable {
 		return current;
 	}
 	
-	private MathValue evalValue(ParseBranch pb, MathSet mathDefinitions) {
+	private MathValue evalValue(ParseBranch pb, MathSet mathDefinitions) throws EvaluateExpressionException {
 		Iterator<ParseNode> parts = pb.getChildren().iterator();
 		ParseNode pn = parts.next();
 		ProductionSymbol ps = pn.getProductionSymbol();
@@ -209,7 +217,7 @@ public class Expression implements Serializable {
 		}
 	}
 	
-	private void fillMatrixArray(Complex[] paramList, int offset, ParseBranch params, MathSet mathDefinitions) throws ClassCastException {
+	private void fillMatrixArray(Complex[] paramList, int offset, ParseBranch params, MathSet mathDefinitions) throws ClassCastException, EvaluateExpressionException {
 		Iterator<ParseNode> iterator = params.getChildren().iterator();
 		paramList[offset] = (Complex) evalExpr((ParseBranch) iterator.next(), mathDefinitions);
 		
@@ -219,11 +227,10 @@ public class Expression implements Serializable {
 			paramList[++i] = (Complex) evalExpr((ParseBranch) iterator.next(), mathDefinitions);
 		}
 	}
-
-
+	
 	@SuppressWarnings("serial")
-	public static class EvaluateExpressionException extends RuntimeException {
-		public EvaluateExpressionException(String message) {
+	public static class EvaluateExpressionException extends Exception {
+		public EvaluateExpressionException (String message) {
 			super(message);
 		}
 	}
@@ -286,7 +293,7 @@ public class Expression implements Serializable {
 		public static final NonTerminal PARAM 			= new NonTerminal("param");
 		
 		private static final LexicalAnalyzer EXPRESSION_LEXER = new LexicalAnalyzer(
-					new Pair<String, Token>("[a-zA-Z_]\\w*",	NAME),
+					new Pair<String, Token>("\\\\?[a-zA-Z_]\\w*",	NAME),
 					new Pair<String, Token>("\\d+(\\.\\d*)?|\\d*\\.\\d+", 	NUM),
 					new Pair<String, Token>("\\[", 				OBRA),
 					new Pair<String, Token>("\\]", 				CBRA),
@@ -318,11 +325,15 @@ public class Expression implements Serializable {
 			this.iterator = EXPRESSION_LEXER.getTokenStream(br).filter((o) -> o.first() != SPACE).iterator();
 		}
 		
-		public ParseTree parse() {
-			ParseTree pt = new ParseTree(expr());
-			if(getNext())
-				error();
-			return pt;
+		public ParseTree parse() throws EquationParseException {
+			try {
+				ParseTree pt = new ParseTree(expr());
+				if(getNext())
+					error();
+				return pt;
+			} catch (LexemeNotRecognizedException | LexicalAnaylizerIOException | NoSuchParseException e) {
+				throw new EquationParseException(e.getMessage());
+			}
 		}
 		
 		private ParseBranch expr() {
@@ -482,11 +493,11 @@ public class Expression implements Serializable {
 		
 		private void match(Token token) {
 			if(!getNext() || lookAhead != token)
-				throw new ExpressionParseException();
+				throw new NoSuchParseException();
 		}
 		
 		private void error() {
-			throw new ExpressionParseException();
+			throw new NoSuchParseException();
 		}
 		
 		private Token mustRead() {
@@ -517,13 +528,18 @@ public class Expression implements Serializable {
 		
 		
 		@SuppressWarnings("serial")
-		public class ExpressionParseException extends RuntimeException {
+		public class NoSuchParseException extends RuntimeException {
 			
-			public ExpressionParseException () {
-				super ("Equation could not be parse due to syntax");
+			private NoSuchParseException () {
+				super("Equation could not be parse due to syntax");
 			}
 		}
 		
+		@SuppressWarnings("serial")
+		public class EquationParseException extends Exception {
+			private EquationParseException(String message) {
+				super(message);
+			}
+		}
 	}
-	
 }

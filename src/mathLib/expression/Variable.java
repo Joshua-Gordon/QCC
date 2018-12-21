@@ -1,6 +1,7 @@
 package mathLib.expression;
 
 import mathLib.MathValue;
+import mathLib.expression.Expression.EvaluateExpressionException;
 
 public abstract class Variable {
 	public static final String NONE = null;
@@ -21,7 +22,7 @@ public abstract class Variable {
 		return latexFormat;
 	}
 	
-	public abstract MathValue getValue(MathSet group);
+	public abstract MathValue getValue(MathSet group) throws EvaluateExpressionException;
 	
 	
 	public static class ExpressionDefinedVariable extends Variable {
@@ -37,7 +38,7 @@ public abstract class Variable {
 		}
 		
 		@Override
-		public MathValue getValue(MathSet group) {
+		public MathValue getValue(MathSet group) throws EvaluateExpressionException {
 			return definition.compute(group);
 		}
 	}

@@ -1,12 +1,9 @@
 package mathLib;
 
-import java.io.Serializable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import mathLib.operators.OperatorSet;
-
-public class Complex extends MathValue implements Serializable{
+public class Complex extends MathValue {
 	private static final long serialVersionUID = -9099395460757557732L;
 	
 	double a, b;

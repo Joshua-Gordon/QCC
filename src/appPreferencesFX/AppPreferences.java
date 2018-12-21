@@ -136,7 +136,7 @@ public interface AppPreferences {
 		PRESET_GATES_OPEN(true),
 		CUSTOM_GATES_OPEN(true),
 		CIRCUITBOARDS_OPEN(true),
-		
+		CUSTOM_ORACLES_OPEN(true),
 		
 		;
 		

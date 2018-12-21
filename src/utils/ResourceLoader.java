@@ -35,8 +35,9 @@ public class ResourceLoader {
 	private static final Hashtable<String, File> TEMP_FILES = new Hashtable<>();
 	
 	static {
-		MPLUS = loadFont("mplus-2m-bold.ttf");
-		VAST_SHADOW = loadFont("VastShadow-Regular.ttf").deriveFont(35f);
+		MPLUS = loadFont("mplus-2m-bold.ttf", 12);
+		VAST_SHADOW = loadFont("VastShadow-Regular.ttf", 12).deriveFont(35);
+		loadFont("KosugiMaru-Regular.ttf", 12);
 		SOLDER = loadImage("solderIcon.png");
 		EDIT = loadImage("editIcon.png");
 		SELECT = loadImage("selectIcon.png");
@@ -79,14 +80,15 @@ public class ResourceLoader {
 	}
 	
 	
-	private static Font loadFont(String fileName) {
+	private static Font loadFont(String fileName, int size) {
 		Font font = null;
 		try {
 			URL url = ResourceLoader.class.getResource("/fonts/" + fileName);
 			File fontFile = new File(url.toURI());
-			font = Font.createFont(Font.TRUETYPE_FONT, fontFile).deriveFont(12f);
+			font = Font.createFont(Font.TRUETYPE_FONT, fontFile).deriveFont(size);
 		    GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		    ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, fontFile));
+		    javafx.scene.text.Font.loadFont(url.toExternalForm(), size);
 		} catch (IOException e) {
 		    e.printStackTrace();
 		} catch(FontFormatException e) {

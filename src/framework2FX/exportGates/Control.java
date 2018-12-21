@@ -11,5 +11,13 @@ public class Control {
 		this.register = register;
 		this.controlStatus = controlStatus;
 	}
+
+	public int getRegister() {
+		return register;
+	}
+
+	public boolean getControlStatus() {
+		return controlStatus;
+	}
 	
 }

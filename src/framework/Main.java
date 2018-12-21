@@ -3,7 +3,10 @@ package framework;
 import java.util.ArrayList;
 import java.util.Random;
 
-import Simulator.*;
+import Simulator.InternalExecutor;
+import Simulator.Operation;
+import Simulator.POVM;
+import Simulator.Qubit;
 import appPreferencesFX.AppPreferences;
 import appUI.Window;
 import appUIFX.AppFileIO;
@@ -16,13 +19,14 @@ import mathLib.Complex;
 import mathLib.Matrix;
 import mathLib.Vector;
 import mathLib.compile.UnitaryDecomp;
-import utils.customCollections.CollectionUtils;
 
 
 
 public class Main extends Application implements AppPreferences {
 	
 	private static Window window;
+	
+	public static final String APP_NAME = "QuaCC";
 	
     public static void main(String[] args) {
     	/* toggle flags: debug mode or not */
@@ -84,7 +88,7 @@ public class Main extends Application implements AppPreferences {
     	AppStatus.initiateAppStatus(primaryStage, mainScene);
     	
     	mainScene.loadNewScene(primaryStage, 1000, 600);
-    	primaryStage.setTitle("QuaCC");
+    	primaryStage.setTitle(APP_NAME);
     	primaryStage.show();
     	
     	loadProject();

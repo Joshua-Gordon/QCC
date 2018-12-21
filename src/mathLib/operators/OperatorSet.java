@@ -1,8 +1,8 @@
 package mathLib.operators;
 
+import java.io.Serializable;
 
-
-public interface OperatorSet<T>{
+public interface OperatorSet<T> extends Serializable {
 	
 	public T add(T num1, T num2);
 	public T sub(T num1, T num2);

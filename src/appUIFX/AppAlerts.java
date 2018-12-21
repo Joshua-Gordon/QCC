@@ -58,8 +58,10 @@ public class AppAlerts {
 		alert.setTitle(title);
 		alert.setHeaderText(title);
 		alert.setContentText(message);
-		alert.initOwner(window);
-		alert.initModality(Modality.APPLICATION_MODAL);
+		if(window != null) {
+			alert.initOwner(window);
+			alert.initModality(Modality.APPLICATION_MODAL);
+		}
 		alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
 		return alert;
 	}

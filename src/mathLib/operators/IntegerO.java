@@ -1,6 +1,7 @@
 package mathLib.operators;
 
 public final class IntegerO implements OperatorSet<Integer>{
+	private static final long serialVersionUID = -9024031678660839963L;
 	
 	public static final OperatorSet<Integer> OPERATOR_SET = new IntegerO();
 

@@ -11,16 +11,14 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import appPreferencesFX.AppPreferences;
-import framework2FX.AppStatus;
 import framework2FX.Project;
 import javafx.scene.control.Alert.AlertType;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
-import utils.customCollections.eventTracableCollections.Notifier;
 import javafx.stage.Stage;
 
 
-public class AppFileIO implements AppPreferences{
+public class AppFileIO implements AppPreferences {
 	
 
 	public static final String QUANTUM_PROJECT_EXTENSION = ".qcc";
@@ -162,7 +160,7 @@ public class AppFileIO implements AppPreferences{
 	
 	public static boolean writeProject(Project project, File file) {
 		try (
-			FileOutputStream outStream = new FileOutputStream(file, true);
+			FileOutputStream outStream = new FileOutputStream(file, false);
 			ObjectOutputStream objOutStream = new ObjectOutputStream(outStream);
 		){
 			objOutStream.writeObject(project);
@@ -174,7 +172,6 @@ public class AppFileIO implements AppPreferences{
 			e.printStackTrace();
 			return false;
 		}
-		
 		return true;
 	}
 	

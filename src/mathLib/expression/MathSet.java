@@ -2,9 +2,8 @@ package mathLib.expression;
 
 import java.util.Hashtable;
 
-import mathLib.Complex;
 import mathLib.MathValue;
-import mathLib.Matrix;
+import mathLib.expression.Expression.EvaluateExpressionException;
 import mathLib.expression.Function.FunctionID;
 
 public class MathSet {
@@ -59,7 +58,7 @@ public class MathSet {
 		return function;
 	}
 	
-	public MathValue computeFunction(String name, Expression ... params) {
+	public MathValue computeFunction(String name, Expression ... params) throws EvaluateExpressionException {
 		Function function = functionSet.get(new FunctionID(name, params.length));
 		if(function == null)
 			if(enclosingSubSet != null)
@@ -68,14 +67,14 @@ public class MathSet {
 		return function.compute(this, this, params);
 	}
 	
-	private MathValue computeFunction(MathSet localSet, String name, Expression ... params) {
+	private MathValue computeFunction(MathSet localSet, String name, Expression ... params) throws EvaluateExpressionException {
 		Function function = getFunction(name, params.length);
 		if(function == null)
 			throw new FunctionNotDefinedException(name, params.length);
 		return function.compute(this, localSet, params);
 	}
 	
-	public MathValue computeVariable (String name) {
+	public MathValue computeVariable (String name) throws EvaluateExpressionException {
 		Variable variable = getVariable(name);
 		if(variable == null)
 			throw new VariableNotDefinedException(name);

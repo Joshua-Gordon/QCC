@@ -1,6 +1,10 @@
 package framework2FX.solderedGates;
 
-public abstract class SolderedPin {
+import java.io.Serializable;
+
+public abstract class SolderedPin implements Serializable {
+	private static final long serialVersionUID = 6996945385029339136L;
+	
 	private final SolderedGate gate;
 	
 	public SolderedPin (SolderedGate gate) {

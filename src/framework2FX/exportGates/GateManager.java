@@ -1,14 +1,12 @@
 package framework2FX.exportGates;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.util.Hashtable;
 import java.util.LinkedList;
-import java.util.Stack;
+import java.util.ListIterator;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import framework2FX.CircuitBoard;
+import framework2FX.AppStatus;
 import framework2FX.MathDefintions;
 import framework2FX.Project;
 import framework2FX.UserDefinitions.ArgObject;
@@ -16,458 +14,500 @@ import framework2FX.UserDefinitions.GroupDefinition;
 import framework2FX.UserDefinitions.MathObject;
 import framework2FX.UserDefinitions.MatrixObject;
 import framework2FX.UserDefinitions.ScalarObject;
-import framework2FX.exportGates.Exportable.ExportableCircuitBoard;
-import framework2FX.exportGates.Exportable.ExportableGate;
+import framework2FX.gateModels.CircuitBoard;
+import framework2FX.gateModels.DefaultModel;
 import framework2FX.gateModels.GateModel;
-import framework2FX.solderedGates.SolderedControl;
 import framework2FX.solderedGates.SolderedGate;
-import framework2FX.solderedGates.SolderedPin;
-import framework2FX.solderedGates.SolderedRegister;
-import framework2FX.solderedGates.SpacerPin;
 import mathLib.Complex;
 import mathLib.Matrix;
+import mathLib.expression.Expression.EvaluateExpressionException;
 import mathLib.expression.MathSet;
 import mathLib.expression.Variable.ConcreteVariable;
 import utils.customCollections.ImmutableArray;
+import utils.customCollections.Queue;
+import utils.customCollections.Stack;
 
 public class GateManager {
 	
-	public static Stream<ExportedGate> exportGates(Project p) {
-		return exportGates(p.getTopLevelBoard());
+	public static Stream<ExportedGate> exportGates(String circuitboardName) throws ExportException {
+		ExportTree et = startScanAndGetExportStream(circuitboardName, MathDefintions.GLOBAL_DEFINITIONS);
+		return Stream.generate(new DefaultExportGatesSupplier(et)).takeWhile(x -> x != null);
 	}
 	
-	public static Stream<ExportedGate> exportGates(CircuitBoard cb) {
-		Stream<ExportedGate> stream = Stream.generate(new ExportEveryGateSupplier(cb));
-		return stream.takeWhile(x -> x != null);
+	public static Stream<ExportedGate> exportGates(Project p) throws ExportException {
+		return exportGates(p.getTopLevelCircuitName());
 	}
 	
-	public static Stream<Exportable> exportGatesRecursively(Project p) {
-		return exportGatesRecursively(p.getTopLevelBoard());
+	public static Stream<Exportable> exportGatesRecursively(Project p) throws ExportException {
+		return exportGatesRecursively(p.getTopLevelCircuitName());
 	}
 	
-	public static Stream<Exportable> exportGatesRecursively(CircuitBoard cb) {
-		Stream<Exportable> stream = Stream.generate(new ExportGatesRecusivelySupplier(cb));
-		return stream.takeWhile(x -> x != null);
+	public static Stream<Exportable> exportGatesRecursively(String circuitboardName) throws ExportException {
+		return exportGatesRecursively(startScanAndGetExportStream(circuitboardName, MathDefintions.GLOBAL_DEFINITIONS));
 	}
 	
-	static Stream<Exportable> exportGatesRecursively(CircuitBoard cb, MathSet mathDefinitions, int[] registers, HashSet<Control> controls) {
-		ExportStatus es = new ExportStatus(cb, mathDefinitions, registers, controls);
-		Stream<Exportable> stream = Stream.generate(new ExportGatesRecusivelySupplier(es));
-		return stream.takeWhile(x -> x != null);
-	}
-	
-	public static Stream<SolderedGate> scanSolderedGatesOnBoard(CircuitBoard cb) {
-		Stream<SolderedGate> stream = Stream.generate(new ScanSolderGatesSupplier(cb));
-		return stream.takeWhile(x -> x != null);
+	private static Stream<Exportable> exportGatesRecursively(ExportTree et) {
+		return Stream.generate(new RecursiveExportGatesSupplier(et)).takeWhile(x -> x != null);
 	}
 	
 	
 	
 	
+	public static interface Exportable {
+		public Stream<Exportable> exportIfCircuitBoard();
+		public ExportedGate exportIfNotCircuitBoard();
+		public boolean isCircuitBoard();
+		public int getColumn();
+		public int[] getRegisters();
+		public int[] getUnderneathIdentityRegisters();
+		public Control[] getControls();
+	}
 	
-	private static class ExportStatus {
-		CircuitBoard cb;
-		MathSet mathDefinitions;
-		int[] registers;
-		HashSet<Control> controls;
+	
+	
+	private static class ExportNotCircuit implements Exportable {
+		private final int column;
+		private final ExportLeaf n;
 		
-		int row = 0;
-		int column = 0;
-		
-		public ExportStatus(CircuitBoard cb, MathSet mathDefinitions, int[] registers, HashSet<Control> controls) {
-			this.cb = cb;
-			this.mathDefinitions = mathDefinitions;
-			this.registers = registers;
-			this.controls = controls;
+		private ExportNotCircuit(ExportLeaf n, int column) {
+			this.column = column;
+			this.n = n;
+		}
+
+		@Override
+		public Stream<Exportable> exportIfCircuitBoard() {
+			return null;
+		}
+
+		@Override
+		public ExportedGate exportIfNotCircuitBoard() {
+			return toExportedGate(n);
+		}
+
+		@Override
+		public boolean isCircuitBoard() {
+			return false;
+		}
+
+		@Override
+		public int getColumn() {
+			return column;
+		}
+
+		@Override
+		public int[] getRegisters() {
+			RawExportableGateData regs = n.rawData;
+			Hashtable<Integer, Integer> registers = regs.getRegisters();
+			int[] temp = new int[registers.size()];
+			
+			for(int i = 0; i < registers.size(); i++)
+				temp[i] = registers.get(i);
+			
+			return temp;
+		}
+
+		@Override
+		public int[] getUnderneathIdentityRegisters() {
+			RawExportableGateData regs = n.rawData;
+			LinkedList<Integer> registers = regs.getUnderneathIdentityGates();
+			int[] temp = new int[registers.size()];
+			
+			for(int i = 0; i < registers.size(); i++)
+				temp[i] = registers.get(i);
+			
+			return temp;
+		}
+
+		@Override
+		public Control[] getControls() {
+			RawExportableGateData regs = n.rawData;
+			LinkedList<Control> controls = regs.getControls();
+			Control[] temp = new Control[controls.size()];
+			
+			for(int i = 0; i < controls.size(); i++)
+				temp[i] = controls.get(i);
+			
+			return temp;
 		}
 	}
 	
 	
-	private static class ScanSolderGatesSupplier implements Supplier<SolderedGate> {
+	private static class ExportCircuit implements Exportable {
+		private int column;
+		private ExportTree tree;
 		
-		private Iterator<LinkedList<SolderedPin>> columnIterator;
-		private Iterator<SolderedPin> rowIterator;
-		private SolderedGate current;
-		
-		public ScanSolderGatesSupplier(CircuitBoard cb) {
-			this.columnIterator = cb.iterator();
-			this.rowIterator = columnIterator.next().iterator();
-			this.current = rowIterator.next().getSolderedGate();
+		private ExportCircuit(ExportTree tree, int column) {
+			this.column = column;
+			this.tree = tree;
 		}
 		
 		@Override
-		public SolderedGate get() {
-			if(current == null)
-				return null;
+		public Stream<Exportable> exportIfCircuitBoard() {
+			return exportGatesRecursively(tree);
+		}
+
+		@Override
+		public ExportedGate exportIfNotCircuitBoard() {
+			return null;
+		}
+
+		@Override
+		public boolean isCircuitBoard() {
+			return true;
+		}
+
+		@Override
+		public int getColumn() {
+			return column;
+		}
+
+		@Override
+		public int[] getRegisters() {
+			RawExportableGateData regs = tree.rawData;
+			Hashtable<Integer, Integer> registers = regs.getRegisters();
+			int[] temp = new int[registers.size()];
 			
-			SolderedGate previous = current;
+			for(int i = 0; i < registers.size(); i++)
+				temp[i] = registers.get(i);
 			
-			while (getNext() && current == previous);
-			
-			return previous;
+			return temp;
 		}
 		
-		
-		public boolean getNext() {
-			if(rowIterator.hasNext()) {
-				current = rowIterator.next().getSolderedGate();
-			} else {
-				if(columnIterator.hasNext()) {
-					rowIterator = columnIterator.next().iterator();
-					current = (rowIterator).next().getSolderedGate();
-				} else {
-					return false;
-				}
-			}
-			return true;
+		@Override
+		public int[] getUnderneathIdentityRegisters() {
+			RawExportableGateData regs = tree.rawData;
+			LinkedList<Integer> gates = regs.getUnderneathIdentityGates();
+			int[] temp = new int[gates.size()];
+			
+			for(int i = 0; i < gates.size(); i++)
+				temp[i] = gates.get(i);
+			
+			return temp;
+		}
+
+		@Override
+		public Control[] getControls() {
+			RawExportableGateData regs = tree.rawData;
+			LinkedList<Control> controls = regs.getControls();
+			Control[] temp = new Control[controls.size()];
+			
+			for(int i = 0; i < controls.size(); i++)
+				temp[i] = controls.get(i);
+			
+			return temp;
 		}
 		
 	}
 	
 	
-	private static class ExportGatesRecusivelySupplier implements Supplier<Exportable> {
+	
+	
+	
+	
+	
+	@SuppressWarnings("unchecked")
+	private static ExportedGate toExportedGate(ExportLeaf leaf) {
+		LinkedList<Control> tempControls = leaf.rawData.getControls();
+		Control[] controls = new Control[tempControls.size()];
+		controls = tempControls.toArray(controls);
 		
-		ExportStatus current;
+		Hashtable<Integer, Integer> tempRegs = leaf.rawData.getRegisters();
+		int[] registers = new int[tempRegs.size()];
+		for(int i = 0; i < tempRegs.size(); i++)
+			registers[i] = tempRegs.get(i);
 		
-		boolean finshedExporting = false;
+		GateModel gm = leaf.gm;
+		Hashtable<String, Complex> argParamTable = leaf.parameters;
+		DefaultModel dg = (DefaultModel) gm;
+		ImmutableArray<MathObject> definitions = dg.getDefinitions();
+		Matrix<Complex>[] matrixes = new Matrix[definitions.size()];
 		
-		SolderedPin sp;
-		SolderedGate sg;
-		HashSet<Control> localControls = null;
-		int[] localRegisters = null;
-		int curReg = 0;
-		
-		ExportGatesRecusivelySupplier(ExportStatus es) {
-			current = es;
+		for (int i = 0 ; i < matrixes.length; i++) {
+			try {
+				MathObject mo = definitions.get(i);
+				if(mo.hasArguments())
+					matrixes[i] = (Matrix<Complex>) ((ArgObject) mo).getDefinition().compute(leaf.runtimeVariables);
+				else
+					matrixes[i] = (Matrix<Complex>) ((MatrixObject) mo).getMatrix();
+			} catch (EvaluateExpressionException e) {
+				e.printStackTrace();
+				throw new RuntimeException(e.getMessage());
+			}
 		}
 		
-		ExportGatesRecusivelySupplier(CircuitBoard cb) {
-			this(new ExportStatus(cb, MathDefintions.GLOBAL_DEFINITIONS, null, new HashSet<>()));
+		return new ExportedGate(dg, argParamTable, registers, controls, matrixes);
+	}
+	
+	
+	
+	
+	private static class DefaultExportGatesSupplier extends AbstractExportGatesSupplier {
+		private DefaultExportGatesSupplier(ExportTree et) {
+			super(et);
+		}
+
+		@Override
+		public void doActionToNode(ExportTree previous, ExportNode next) {
+			if(previous.rawData != null) {
+				Hashtable<Integer, Integer> registers = previous.rawData.getRegisters();
+				Hashtable<Integer, Integer> nextRegisters = next.rawData.getRegisters();
+				
+				for(int i = 0; i < nextRegisters.size(); i++)
+					nextRegisters.put(i, registers.get(nextRegisters.get(i)));
+				
+				LinkedList<Control> controls = next.rawData.getControls();
+				ListIterator<Control> li = controls.listIterator();
+				
+				while(li.hasNext()){
+					Control previousControl = li.next();
+					int previousReg = previousControl.getRegister();
+					boolean previousStat = previousControl.getControlStatus();
+					li.set(new Control(registers.get(previousReg), previousStat));
+				}
+				controls.addAll(previous.rawData.getControls());
+			}
+		}
+		
+		@Override
+		public ExportedGate export(ExportLeaf leaf) {
+			return toExportedGate(leaf);
+		}
+	}
+	
+	
+	
+	
+	
+	
+	private static class RecursiveExportGatesSupplier implements Supplier<Exportable> {
+		private ExportTree et;
+		
+		private RecursiveExportGatesSupplier(ExportTree et) {
+			this.et = et;
 		}
 		
 		@Override
 		public Exportable get() {
-			if(finshedExporting)
-				return null;
-			return getNextGate();
+			Queue<ExportNode> nodes = et.exportNodes;
+			if(nodes.size() == 0) return null;
+			
+			ExportNode node = et.exportNodes.dequeue();
+			if(node instanceof ExportTree)
+				return new ExportCircuit((ExportTree) node, et.rawData.getColumn());
+			else
+				return new ExportNotCircuit((ExportLeaf) node, et.rawData.getColumn());
 		}
 		
-		private Exportable getNextGate() {
-			
-			SolderedGate nextGate = getGate();
-			
-			if(nextGate != sg) {
-				sg = nextGate;
-				localRegisters = new int[sg.getGateModel().getNumberOfRegisters()];
-				localControls = new HashSet<>(current.controls);
-				curReg = 0;
-			}
-			
-			sp = getPin();
-			
-			addToExportGate();
-			
-			while(increment() && sg == (sg = getGate())) {
-				sp = getPin();
-				boolean isSpacer = !addToExportGate();
-				if(isSpacer)
-					return new ExportableGate(current.column, ExportedGate.mkIdentAt(current.row));
-			}
-			
-			// get back the last soldered gate
-			sg = sp.getSolderedGate();
-			
-			if(curReg != localRegisters.length)
-				throw new RuntimeException("The gate given does not have all its registers defined");
-			
-			
-			// finally export gate to stream
-			
-			return exportGateToStream();
-		}
-		
-		
-		
-		@SuppressWarnings("unchecked")
-		private Exportable exportGateToStream() {
-			MathSet localDefinitions = new MathSet(MathDefintions.GLOBAL_DEFINITIONS);
-			
-			ImmutableArray<String> params = sg.getGateModel().getArguments();
-			GroupDefinition grp = sg.getParameterSet();
-			Complex[] parameters = new Complex[params.size()];
-			Complex c = null;
-			
-			int i = 0;
-			for(MathObject mo : grp.getMathDefinitions()) {
-				if(mo.isMatrix())
-					throw new RuntimeException("Can not pass a matrix as an parameter");
-				
-				if(mo.hasArguments())
-					c = (Complex) ((ArgObject) mo).getDefinition().compute(current.mathDefinitions);
-				else
-					c = (Complex) ((ScalarObject) mo).getScalar();
-				
-				localDefinitions.addVariable(new ConcreteVariable(params.get(i), c));
-				parameters[i] = c;
-				
-				i++;
-			}
-			
-			
-			int column = current.row == 0? -1 : 0 + current.column;
-			
-			if(sg.getGateModel() instanceof CircuitBoard){
-				
-				return new ExportableCircuitBoard(column, (CircuitBoard) sg.getGateModel(), localDefinitions, localRegisters, localControls);
-				
-			} else {
-				Control[] tempArray = new Control[localControls.size()];
-				localControls.toArray(tempArray);
-				
-				GateModel gm = (GateModel) sg.getGateModel();
-				Matrix<Complex>[] matrixes = new Matrix[gm.getDefinitions().size()];
-				
-				i = 0;
-				for(MathObject mo : gm.getDefinitions()) {
-					if(!mo.isMatrix())
-						throw new RuntimeException("No scalars are allowed to be defined for any gate model");
-					
-					if(mo.hasArguments())
-						matrixes[i] = (Matrix<Complex>) ((ArgObject) mo).getDefinition().compute(localDefinitions);
-					else
-						matrixes[i] = (Matrix<Complex>) ((MatrixObject) mo).getMatrix();
-					
-					i++;
-				}
-				
-				HashMap<String, Complex> argParamMap = new HashMap<>();
-				int j = 0;
-				for(String argument : gm.getArguments())
-					argParamMap.put(argument, parameters[j++]);
-				
-				return new ExportableGate(column, new ExportedGate(gm, argParamMap, localRegisters, tempArray, matrixes));
-			}
-		}
-		
-		
-		
-		private boolean addToExportGate() {
-			
-			if(sp instanceof SolderedControl) {
-				SolderedControl sc = (SolderedControl) sp;
-				
-				if(current.registers == null)
-					localControls.add(new Control(current.row, sc.getControlStatus()));
-				else
-					localControls.add(new Control(current.registers[current.row], sc.getControlStatus()));
-			} else if (!(sp instanceof SpacerPin)) {
-				SolderedRegister sr = (SolderedRegister) sp;
-				if(current.registers == null)
-					localRegisters[sr.getSolderedGatePinNumber()] = current.row;
-				else
-					localRegisters[sr.getSolderedGatePinNumber()] = current.registers[current.row];
-				curReg ++;
-			} else {
-				return false;
-			}
-			return true;
-		}
-		
-		
-		public SolderedPin getPin() {
-			return current.cb.getSolderPinAt(current.row, current.column);
-		}
-		
-		public SolderedGate getGate() {
-			return current.cb.getGateAt(current.row, current.column);
-		}
-		
-		private boolean increment() {
-			if(current.row + 1 == current.cb.getRows()) {
-				current.row = 0;
-				if(current.column + 1 == current.cb.getColumns()) {
-					finshedExporting = true;
-				} else {
-					current.row = 0;
-					current.column++;
-				}
-				return false;
-			} else {
-				current.row++;
-			}
-			return true;
-		}
 	}
 	
 	
 	
 	
-	private static class ExportEveryGateSupplier implements Supplier<ExportedGate> {
-
-		Stack<ExportStatus> exportState = new Stack<>();
+	
+	
+	
+	
+	
+	private abstract static class AbstractExportGatesSupplier  implements Supplier<ExportedGate> {
+		Stack<ExportTree> currentState = new Stack<>();
 		
-		SolderedPin sp;
-		SolderedGate sg;
-		HashSet<Control> localControls = null;
-		int[] localRegisters = null;
-		int curReg = 0;
-		
-		public ExportEveryGateSupplier (CircuitBoard cb) {
-			exportState.push(new ExportStatus(cb, MathDefintions.GLOBAL_DEFINITIONS, null, new HashSet<>()));
+		private AbstractExportGatesSupplier(ExportTree et) {
+			currentState.push(et);
 		}
 		
 		@Override
 		public ExportedGate get() {
-			if(exportState.size() == 0)
-				return null;
-			return getNextGate();
+			while(!currentState.isEmpty()) {
+				ExportTree tree = currentState.peak();
+				Queue<ExportNode> nodes = tree.exportNodes;
+				
+				if(nodes.isEmpty()) {
+					currentState.pop();
+					continue;
+				}
+				
+				ExportNode n = nodes.dequeue();
+				
+				doActionToNode(tree, n);
+				
+				if(n instanceof ExportTree) {
+					currentState.push((ExportTree) n);
+					continue;
+				} else {
+					return export((ExportLeaf) n);
+				}
+			}
+			return null;
 		}
+		public abstract void doActionToNode(ExportTree previous, ExportNode next);
+		public abstract ExportedGate export(ExportLeaf leaf);
 		
-		private ExportedGate getNextGate() {
+	}
+	
+	
+	
+	
+		
+	private static ExportTree startScanAndGetExportStream (String circuitboardName, MathSet runtimeVariables) throws ExportException {
+		
+		Project p = AppStatus.get().getFocusedProject();
+		CircuitBoard cb = (CircuitBoard) p.getGateModel(circuitboardName);
+		
+		if(cb == null) throw new ExportException("Gate \"" + circuitboardName + "\" is not valid or does not exist");
+		
+		Hashtable<Integer, Integer> registers = new Hashtable<>();
+		for(int i = 0; i < cb.getRows(); i++)
+			registers.put(i, i);
+		
+		return scanCB(p, cb, runtimeVariables, null);
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	private static ExportTree scanCB (Project p, CircuitBoard cb, MathSet runtimeVariables, RawExportableGateData data) throws ExportException {
+		
+		Queue<ExportNode> nodes = new Queue<>();
+		
+		for(RawExportableGateData rawData : cb) {
+			SolderedGate sg = rawData.getSolderedGate();
+			GateModel gm = p.getGateModel(sg.getGateModelFormalName());
 			
-			SolderedGate nextGate = getGate();
+			if(gm == null) throw new ExportException("Gate \"" + sg.getGateModelFormalName() + 
+					"\" is not valid or does not exist in \"" + cb.getFormalName() + "\"");
 			
-			if(nextGate != sg) {
-				sg = nextGate;
-				localRegisters = new int[sg.getGateModel().getNumberOfRegisters()];
-				localControls = new HashSet<>(current().controls);
-				curReg = 0;
+
+			GroupDefinition        parameters = sg.getParameterSet();
+			ImmutableArray<String> arguments = gm.getArguments();
+			
+			
+			if(arguments.size() != parameters.getSize()) {
+				throw new ExportException("Gate \"" + sg.getGateModelFormalName() + "\" in \"" 
+											+ cb.getFormalName() + "\" are missing necessary arguments");
 			}
 			
-			sp = getPin();
-			
-			addToExportGate();
-			
-			while(increment() && sg == (sg = getGate())) {
-				sp = getPin();
-				boolean isSpacer = !addToExportGate();
-				if(isSpacer)
-					return ExportedGate.mkIdentAt(current().row);
+			if(rawData.getRegisters().size() != gm.getNumberOfRegisters()) {
+				throw new ExportException("Gate \"" + sg.getGateModelFormalName() + "\" in \"" 
+						+ cb.getFormalName() + "\" is not the appropriate size");
 			}
-			
-			// get back the last soldered gate
-			sg = sp.getSolderedGate();
-			
-			if(curReg != localRegisters.length)
-				throw new RuntimeException("The gate given does not have all its registers defined");
-			
-			
-			// finally export gate to stream
-			
-			return exportGateToStream();
-		}
-		
-		
-		
-		@SuppressWarnings("unchecked")
-		private ExportedGate exportGateToStream() {
-			MathSet localDefinitions = new MathSet(MathDefintions.GLOBAL_DEFINITIONS);
-			
-			ImmutableArray<String> params = sg.getGateModel().getArguments();
-			GroupDefinition grp = sg.getParameterSet();
-			Complex[] parameters = new Complex[params.size()];
-			Complex c = null;
 			
 			int i = 0;
-			for(MathObject mo : grp.getMathDefinitions()) {
-				if(mo.isMatrix())
-					throw new RuntimeException("Can not pass a matrix as an parameter");
-				
-				if(mo.hasArguments())
-					c = (Complex) ((ArgObject) mo).getDefinition().compute(current().mathDefinitions);
-				else
-					c = (Complex) ((ScalarObject) mo).getScalar();
-				
-				localDefinitions.addVariable(new ConcreteVariable(params.get(i), c));
-				parameters[i] = c;
-				
-				i++;
-			}
+			Complex c;
 			
+			ExportNode n = null;
+			MathSet ms = new MathSet(MathDefintions.GLOBAL_DEFINITIONS);
 			
-			if(sg.getGateModel() instanceof CircuitBoard){
-				exportState.push(new ExportStatus((CircuitBoard) sg.getGateModel(), localDefinitions, localRegisters, localControls));
-				return getNextGate();
-			} else {
-				Control[] tempArray = new Control[localControls.size()];
-				localControls.toArray(tempArray);
-				
-				GateModel gm = (GateModel) sg.getGateModel();
-				Matrix<Complex>[] matrixes = new Matrix[gm.getDefinitions().size()];
-				
-				i = 0;
-				for(MathObject mo : gm.getDefinitions()) {
-					if(!mo.isMatrix())
-						throw new RuntimeException("No scalars are allowed to be defined for any gate model");
-					
-					if(mo.hasArguments())
-						matrixes[i] = (Matrix<Complex>) ((ArgObject) mo).getDefinition().compute(localDefinitions);
-					else
-						matrixes[i] = (Matrix<Complex>) ((MatrixObject) mo).getMatrix();
-					
-					i++;
-				}
-				
-				HashMap<String, Complex> argParamMap = new HashMap<>();
-				int j = 0;
-				for(String argument : gm.getArguments())
-					argParamMap.put(argument, parameters[j++]);
-				
-				return new ExportedGate(gm, argParamMap, localRegisters, tempArray, matrixes);
-			}
-		}
-		
-		
-		
-		private boolean addToExportGate() {
-			
-			if(sp instanceof SolderedControl) {
-				SolderedControl sc = (SolderedControl) sp;
-				
-				if(current().registers == null)
-					localControls.add(new Control(current().row, sc.getControlStatus()));
-				else
-					localControls.add(new Control(current().registers[current().row], sc.getControlStatus()));
-			} else if (!(sp instanceof SpacerPin)) {
-				SolderedRegister sr = (SolderedRegister) sp;
-				if(current().registers == null)
-					localRegisters[sr.getSolderedGatePinNumber()] = current().row;
-				else
-					localRegisters[sr.getSolderedGatePinNumber()] = current().registers[current().row];
-				curReg ++;
-			} else {
-				return false;
-			}
-			return true;
-		}
-		
-		private ExportStatus current () {
-			return exportState.peek();
-		}
-		
-		public SolderedPin getPin() {
-			return current().cb.getSolderPinAt(current().row, current().column);
-		}
-		
-		public SolderedGate getGate() {
-			return current().cb.getGateAt(current().row, current().column);
-		}
-		
-		private boolean increment() {
-			if(current().row + 1 == current().cb.getRows()) {
-				current().row = 0;
-				if(current().column + 1 == current().cb.getColumns()) {
-					exportState.pop();
+			try {
+				if(gm instanceof CircuitBoard) {
+					for(MathObject mo : parameters.getMathDefinitions()) {
+						if(mo.isMatrix())
+							throw new ExportException("Gate \"" + sg.getGateModelFormalName() + "\" in \"" 
+									+ cb.getFormalName() + "\" cannot not pass a matrix in parameter " + i);
+						
+						if(mo.hasArguments())
+							c = (Complex) ((ArgObject) mo).getDefinition().compute(runtimeVariables);
+						else
+							c = (Complex) ((ScalarObject) mo).getScalar();
+						
+						ms.addVariable(new ConcreteVariable(arguments.get(i++), c));
+					}
+					n = scanCB(p, (CircuitBoard) gm, ms, rawData);
 				} else {
-					current().row = 0;
-					current().column++;
+					Hashtable<String, Complex> argParamTable = new Hashtable<>();
+					for(MathObject mo : parameters.getMathDefinitions()) {
+						if(mo.isMatrix())
+							throw new ExportException("Gate \"" + sg.getGateModelFormalName() + "\" in \"" 
+									+ cb.getFormalName() + "\" cannot not pass a matrix in parameter " + i);
+						
+						if(mo.hasArguments())
+							c = (Complex) ((ArgObject) mo).getDefinition().compute(runtimeVariables);
+						else
+							c = (Complex) ((ScalarObject) mo).getScalar();
+						
+						argParamTable.put(arguments.get(i++), c);
+						ms.addVariable(new ConcreteVariable(arguments.get(i++), c));
+					}
+					n = new ExportLeaf(argParamTable, gm, ms, rawData);
 				}
-				return false;
-			} else {
-				current().row++;
+				
+			} catch (EvaluateExpressionException e) {
+				throw new ExportException("Gate \"" + sg.getGateModelFormalName() + "\" in \"" 
+						+ cb.getFormalName() + "\" could not evaluate parameter " + i + " due to: " + e.getMessage());
 			}
-			return true;
+			
+			
+			nodes.enqueue(n);
+		}
+		
+		return new ExportTree(nodes, data);
+	}
+	
+	
+	
+	
+	
+	
+	
+	@SuppressWarnings("serial")
+	public static class ExportException extends Exception {
+		private ExportException (String message) {
+			super(message);
 		}
 	}
+	
+	
+	
+	
+	
+	
+	
+	private static class ExportTree extends ExportNode {
+		
+		final Queue<ExportNode> exportNodes;
+		
+		public ExportTree(Queue<ExportNode> exportStates, RawExportableGateData rawData) {
+			super(rawData);
+			this.exportNodes = exportStates;
+		}
+		
+		
+	}
+	
+	
+	
+	
+	
+	
+	
+	private abstract static class ExportNode {
+		final RawExportableGateData rawData;
+		
+		public ExportNode (RawExportableGateData rawData) {
+			this.rawData = rawData;
+		}
+	}
+	
+	
+	
+	
+	
+	
+	private static class ExportLeaf extends ExportNode {
+		final Hashtable<String, Complex> parameters;
+		final GateModel gm;
+		final MathSet runtimeVariables;
+		
+		private ExportLeaf(Hashtable<String, Complex> parameters, GateModel gm, MathSet runtimeVariables, RawExportableGateData rawData) {
+			super(rawData);
+			this.runtimeVariables = runtimeVariables;
+			this.parameters = parameters;
+			this.gm = gm;
+		}
+	}
+	
 	
 }

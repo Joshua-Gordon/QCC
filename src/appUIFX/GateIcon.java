@@ -10,8 +10,8 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
 import appUI.CircuitBoardRenderContext;
+import framework2FX.gateModels.GateModel;
 import framework2FX.gateModels.GateModelFactory.PresetGateModel;
-import framework2FX.solderedGates.Solderable;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
@@ -24,6 +24,8 @@ public class GateIcon  {
 	public static final BasicStroke THIN = new BasicStroke(2, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER);
 	
 	public static final Polygon ARROW_HEAD = new Polygon(); 
+	public static final Image MEASUREMENT = getMeasureIconWithNoLine();
+	
 	
 	static {
 		ARROW_HEAD.addPoint( 0, 0);
@@ -31,7 +33,7 @@ public class GateIcon  {
 		ARROW_HEAD.addPoint( 2,-5);
 	}
 	
-	public static GateIcon getGateIcon(Solderable s) {
+	public static GateIcon getGateIcon(GateModel s) {
 		if(s instanceof PresetGateModel) {
 			PresetGateModel pgm = (PresetGateModel) s;
 			
@@ -65,7 +67,7 @@ public class GateIcon  {
 	private static final int PADDING = 10;
 	private static final int LINE_LENGTH = 5;
 	
-	private GateIcon(Solderable s) {
+	private GateIcon(GateModel s) {
 		icon = SolderableIcon.mkIcon(s);
 	}
 	
@@ -82,7 +84,29 @@ public class GateIcon  {
 	
 	
 	
-	
+	private static Image getMeasureIconWithNoLine() {
+		Font f = ResourceLoader.VAST_SHADOW.deriveFont(12f);
+		Rectangle2D rect = CircuitBoardRenderContext.getStringBounds(f, "M");
+		BufferedImage bi = new BufferedImage(2 * (PADDING) + (int) rect.getWidth(),
+				2 * PADDING + (int) rect.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
+		Graphics2D g2d = (Graphics2D) bi.getGraphics();
+    	g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		g2d.setFont(f);
+		g2d.setColor(Color.WHITE);
+		g2d.fillRect(0, 0, bi.getWidth(), bi.getHeight() - 1);
+		g2d.setColor(Color.BLACK);
+		g2d.drawRect(0, 0, bi.getWidth() , bi.getHeight() - 1);
+		
+		g2d.drawLine(0, bi.getHeight() / 2, 0, bi.getHeight() / 2);
+		g2d.drawLine(bi.getWidth(), bi.getHeight() / 2, bi.getWidth(), bi.getHeight() / 2);
+		
+		g2d.drawArc(PADDING/2, PADDING, (int) rect.getWidth() + PADDING, (int) rect.getHeight() + PADDING, 0, 180);
+		CircuitBoardRenderContext.drawArrow(g2d, ARROW_HEAD, PADDING + (int)(rect.getWidth() / 2), 
+				(int)(1.5f * PADDING) + (int) (rect.getHeight() / 2), bi.getWidth() - 5, 5);
+		
+		g2d.dispose();
+		return SwingFXUtils.toFXImage(bi, null);
+	}
 	
 	
 	

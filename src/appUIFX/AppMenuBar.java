@@ -1,6 +1,7 @@
 package appUIFX;
 
 import appPreferencesFX.AppPreferences;
+import appUIFX.appViews.ConcreteTabView;
 import framework2FX.AppCommand;
 import javafx.collections.ObservableList;
 import javafx.scene.control.CheckMenuItem;
@@ -38,19 +39,14 @@ public class AppMenuBar implements AppPreferences{
 			addItemToMenu(menu, mkItem("Add Column", AppCommand.ADD_COLUMN_TO_FOCUSED_CB, KeyShortCuts.ADD_COLUMN));
 			addItemToMenu(menu, mkItem("Remove Last Row", AppCommand.REMOVE_ROW_FROM_FOCUSED_CB, KeyShortCuts.REMOVE_LAST_ROW));
 			addItemToMenu(menu, mkItem("Remove Last Column", AppCommand.REMOVE_COLUMN_FROM_FOCUSED_CB, KeyShortCuts.REMOVE_LAST_COLUMN));
-			addSeparator(menu);
-			addItemToMenu(menu, mkItem("Make Custom Gate", AppCommand.OPEN_CUSTOM_GATE_EDITOR, KeyShortCuts.MAKE_CUSTOM_GATE));
 		menus.add(menu);
 		menu = new Menu("Run");
 			addItemToMenu(menu, mkItem("QUIL", AppCommand.RUN_QUIL, KeyShortCuts.RUN_QUIL));
 			addItemToMenu(menu, mkItem("QASM", AppCommand.RUN_QASM, KeyShortCuts.RUN_QASM));
 		menus.add(menu);
 		menu = new Menu("View");
-			addItemToMenu(menu, mkViewItem("Show Project Hierarchy", mainScene, TabView.PROJECT_HIERARCHY));
-			addItemToMenu(menu, mkViewItem("Show Console", mainScene, TabView.CONSOLE));
-			addItemToMenu(menu, mkViewItem("Show Preset Gates", mainScene, TabView.PRESET_GATES_VIEW));
-			addItemToMenu(menu, mkViewItem("Show Custom Gates", mainScene, TabView.CUSTOM_GATES_VIEW));
-			addItemToMenu(menu, mkViewItem("Show Circuits", mainScene, TabView.CIRCUITBOARD_VIEW));
+			for( ConcreteTabView ctv : ConcreteTabView.values())
+				addItemToMenu(menu, mkViewItem("Show " + ctv.getView().getName(), mainScene, ctv));
 		menus.add(menu);
 		menu = new Menu("Help");
 			//TODO: to be implemented
@@ -83,7 +79,7 @@ public class AppMenuBar implements AppPreferences{
 		return item;
 	}
 	
-	private static CheckMenuItem mkViewItem(String label, MainScene mainScene, TabView view) {
+	private static CheckMenuItem mkViewItem(String label, MainScene mainScene, ConcreteTabView view) {
 		CheckMenuItem item = new CheckMenuItem(label);
 		item.setOnAction(event -> {
 			if(item.isSelected()) {

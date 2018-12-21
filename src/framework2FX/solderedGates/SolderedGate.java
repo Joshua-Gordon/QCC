@@ -2,41 +2,35 @@ package framework2FX.solderedGates;
 
 import java.io.Serializable;
 
+import appUIFX.AppAlerts;
+import framework2FX.AppStatus;
 import framework2FX.UserDefinitions;
 import framework2FX.UserDefinitions.ArgDefinition;
 import framework2FX.UserDefinitions.CheckDefinitionRunnable;
+import framework2FX.UserDefinitions.DefinitionEvaluatorException;
 import framework2FX.UserDefinitions.GroupDefinition;
 import framework2FX.UserDefinitions.MatrixDefinition;
 import framework2FX.UserDefinitions.ScalarDefinition;
-import framework2FX.gateModels.GateModel;
 import framework2FX.gateModels.PresetGateType;
-import framework2FX.gateModels.GateModelFactory.PresetGateModel;
-import utils.customCollections.ImmutableArray;
+import utils.customCollections.Manifest.ManifestObject;
 
 
 
 public class SolderedGate implements Serializable, CheckDefinitionRunnable {
 	private static final long serialVersionUID = 2595030500395644473L;
 	
-	private final Solderable gateModel;
+	@SuppressWarnings("rawtypes")
+	private ManifestObject gateModelFormalName;
 	private final GroupDefinition parameterSet;
 	
-	public SolderedGate(Solderable gateModel, String ... parameters) {
-		this.gateModel = gateModel;
-		
-		ImmutableArray<String> modelArguments = gateModel.getArguments();
-		if(parameters.length != modelArguments.size())
-			throw new RuntimeException("Not all arguments are defined with the user input");
-		
-		parameterSet = UserDefinitions.evaluateInput(this, parameters);
+	@SuppressWarnings("rawtypes")
+	public SolderedGate(ManifestObject gateModelFormalName, String ... parameters) throws DefinitionEvaluatorException {
+		this.gateModelFormalName = gateModelFormalName;
+		parameterSet = UserDefinitions.evaluateInput(this, parameters); 
 	}
 	
-	public static SolderedGate mkIdent() {
-		return new SolderedGate(PresetGateType.IDENTITY.getModel());
-	}
-	
-	public Solderable getGateModel() {
-		return gateModel;
+	public String getGateModelFormalName() {
+		return (String) gateModelFormalName.getObject();
 	}
 	
 	public GroupDefinition getParameterSet() {
@@ -44,26 +38,19 @@ public class SolderedGate implements Serializable, CheckDefinitionRunnable {
 	}
 	
 	public boolean isIdentity() {
-		if (gateModel instanceof GateModel) {
-			GateModel gm = (GateModel) gateModel;
-			if(gm.isPreset()) {
-				PresetGateModel pgm = (PresetGateModel) gm;
-				return pgm.getPresetGateType() == PresetGateType.IDENTITY;
-			}
-		}
-		return false;
+		return getGateModelFormalName().equals(PresetGateType.IDENTITY.getModel().getFormalName());
 	}
 	
 	@Override
-	public void checkScalarDefinition(ScalarDefinition definition) {}
+	public void checkScalarDefinition(ScalarDefinition definition, int i) {}
 
 	@Override
-	public void checkMatrixDefinition(MatrixDefinition definition) {
+	public void checkMatrixDefinition(MatrixDefinition definition, int i) {
 		throw new RuntimeException("Definition should not define a matrix");
 	}
 
 	@Override
-	public void checkArgDefinition(ArgDefinition definition) {
+	public void checkArgDefinition(ArgDefinition definition, int i) {
 		if(definition.isMatrix())
 			throw new RuntimeException("Definition should not define a matrix");
 	}

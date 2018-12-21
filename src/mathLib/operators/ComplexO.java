@@ -3,6 +3,8 @@ package mathLib.operators;
 import mathLib.Complex;
 
 public final class ComplexO implements OperatorSet<Complex> {
+	private static final long serialVersionUID = 3921141394624207165L;
+	
 	public static final ComplexO OPERATOR_SET = new ComplexO();
 	
 	private ComplexO() {}

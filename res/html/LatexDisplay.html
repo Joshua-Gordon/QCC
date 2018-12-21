@@ -22,6 +22,7 @@
 		    }
 
 		    #LAT_SPAN {
+		    	white-space: pre;
 		    	display: inline-block;
 		    }
 
@@ -33,6 +34,14 @@
 	    <script type="text/javascript">		
 	    	
 	    	var flag = false;
+
+	    	var doWhenLatexIsFinished = function() {
+	    		flag = true;
+				changeSize();
+				app.setLatexLoaded();
+				app.setHtmlLoaded();
+	    	}
+
 
 			var getWidth = function () {
 				return document.getElementById('LAT_SPAN').offsetWidth;
@@ -46,7 +55,7 @@
 				flag = false;
 				document.getElementById('LAT_SPAN').innerHTML = latex;
 				window.MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
-				window.MathJax.Hub.Queue(function () {flag = true;});
+				window.MathJax.Hub.Queue(doWhenLatexIsFinished());
 			}
 
 			function setFontSize(size) {
@@ -79,9 +88,12 @@
     			showMathMenu: false
    			});
 
-			MathJax.Hub.Queue(function () {
-				flag = true;
-			});
+			MathJax.Hub.Queue(function() {
+	    		flag = true;
+				changeSize();
+				app.setLatexLoaded();
+				app.setHtmlLoaded();
+	    	});
 		</script>
 		
 	</head>

@@ -1,5 +1,6 @@
 package framework2FX;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -15,6 +16,7 @@ import mathLib.Matrix;
 import mathLib.expression.Expression;
 import mathLib.expression.Expression.EvaluateExpressionException;
 import mathLib.expression.Expression.ExpressionParser;
+import mathLib.expression.Expression.ExpressionParser.EquationParseException;
 import mathLib.expression.Function;
 import mathLib.expression.Function.LatexFormat;
 import mathLib.expression.MathSet;
@@ -22,27 +24,38 @@ import mathLib.expression.Variable;
 import mathLib.expression.Variable.ConcreteVariable;
 import utils.customCollections.ImmutableArray;
 
-public class UserDefinitions {
+public class UserDefinitions implements Serializable {
+	private static final long serialVersionUID = 5627225884389883084L;
 
-	
-	
-	public static GroupDefinition evaluateInput(CheckDefinitionRunnable runnable, String ... rawUserInput) {
+
+
+
+
+
+
+	public static GroupDefinition evaluateInput(CheckDefinitionRunnable runnable, String ... rawUserInput) throws DefinitionEvaluatorException {
 		return evaluateInput(runnable, new String[0], rawUserInput); 
 	}
 	
 	
-	public static GroupDefinition evaluateInput(CheckDefinitionRunnable runnable, String[] distinctVariables, String ... rawUserInput) {
+	public static GroupDefinition evaluateInput(CheckDefinitionRunnable runnable, String[] distinctVariables, String ... rawUserInput) throws DefinitionEvaluatorException {
 		Definition[] definitions = new Definition[rawUserInput.length];
 		
 		int i = 0;
 		for(String input : rawUserInput) {
-			definitions[i] = evaluateInput(input);
+			
+			try {
+				definitions[i] = evaluateInput(input);
+			} catch (EquationParseException | EvaluateExpressionException e) {
+				throw new DefinitionEvaluatorException(e.getMessage(), i);
+			}  
+			
 			if(definitions[i].hasArguments())
-				runnable.checkArgDefinition((ArgDefinition)definitions[i]);
+				runnable.checkArgDefinition((ArgDefinition)definitions[i], i);
 			else if (definitions[i].isMatrix())
-				runnable.checkMatrixDefinition((MatrixDefinition)definitions[i]);
+				runnable.checkMatrixDefinition((MatrixDefinition)definitions[i], i);
 			else
-				runnable.checkScalarDefinition((ScalarDefinition)definitions[i]);
+				runnable.checkScalarDefinition((ScalarDefinition)definitions[i], i);
 			i++;
 		}
 		
@@ -55,14 +68,14 @@ public class UserDefinitions {
 	
 	
 	
-	public static Definition evaluateInput (String rawUserInput) {
+	public static Definition evaluateInput (String rawUserInput) throws EquationParseException, EvaluateExpressionException {
 		return evaluateInput(rawUserInput, MathDefintions.GLOBAL_DEFINITIONS);
 	}
 	
 	
 	
 	
-	public static Definition evaluateInput (String rawUserInput, MathSet mathdefinitions) {
+	public static Definition evaluateInput (String rawUserInput, MathSet mathdefinitions) throws EquationParseException, EvaluateExpressionException {
 		String userInputString = rawUserInput; 
 		Expression userInputExpression = new Expression(userInputString);
 		ExpressionTraits et = getExpressionTraits(userInputExpression, mathdefinitions);
@@ -78,16 +91,32 @@ public class UserDefinitions {
 	
 	public static interface CheckDefinitionRunnable {
 		
-		public void checkScalarDefinition(ScalarDefinition definition);
-		public void checkMatrixDefinition(MatrixDefinition definition);
-		public void checkArgDefinition(ArgDefinition definition);
+		public void checkScalarDefinition(ScalarDefinition definition, int numDefinition) throws DefinitionEvaluatorException;
+		public void checkMatrixDefinition(MatrixDefinition definition, int numDefinition) throws DefinitionEvaluatorException;
+		public void checkArgDefinition(ArgDefinition definition, int numDefinition) throws DefinitionEvaluatorException;
 		
 	}
 	
 	
+	@SuppressWarnings("serial")
+	public static class DefinitionEvaluatorException extends Exception {
+		private final int definitionNumber;
+		
+		public DefinitionEvaluatorException (String message, int definitionNumber) {
+			super(message);
+			this.definitionNumber = definitionNumber;
+		}
+		
+		public int getDefinitionNumber () {
+			return definitionNumber;
+		}
+	}
 	
 	
-	public static abstract class Definition {
+	
+	public static abstract class Definition implements Serializable {
+		private static final long serialVersionUID = -1749477646803650121L;
+		
 		private final String rawUserInput;
 		private final String latexRepresentation;
 		
@@ -114,6 +143,8 @@ public class UserDefinitions {
 	
 	
 	public static class ScalarDefinition extends Definition {
+		private static final long serialVersionUID = 2084584343957581263L;
+		
 		private final Complex value;
 		
 		ScalarDefinition(String rawUserInput, ExpressionTraits et) {
@@ -143,6 +174,8 @@ public class UserDefinitions {
 	
 	
 	public static class MatrixDefinition extends Definition {
+		private static final long serialVersionUID = -1751452868227716197L;
+		
 		private final Matrix<Complex> matrix;
 		
 		@SuppressWarnings("unchecked")
@@ -172,6 +205,8 @@ public class UserDefinitions {
 	
 	
 	public static class ArgDefinition extends Definition {
+		private static final long serialVersionUID = -2552282272041934364L;
+		
 		private final boolean isMatrix;
 		private final int rows, columns;
 		private final ImmutableArray<String> arguments;
@@ -225,7 +260,9 @@ public class UserDefinitions {
 	
 	
 	
-	public static class GroupDefinition {
+	public static class GroupDefinition implements Serializable {
+		private static final long serialVersionUID = 6568397205909656782L;
+		
 		private final ImmutableArray<String> arguments;
 		private final ImmutableArray<String> rawUserInput;
 		private final ImmutableArray<String> latexRepresentations;
@@ -297,7 +334,7 @@ public class UserDefinitions {
 	}
 	
 	
-	public static abstract interface MathObject {
+	public static abstract interface MathObject extends Serializable {
 		
 		public abstract boolean hasArguments ();
 		public abstract boolean isMatrix();
@@ -306,6 +343,8 @@ public class UserDefinitions {
 	
 	
 	public static class ScalarObject implements MathObject {
+		private static final long serialVersionUID = 6189604891964648829L;
+		
 		private final Complex scalar;
 		
 		ScalarObject (Complex scalar) {
@@ -330,6 +369,8 @@ public class UserDefinitions {
 	
 	
 	public static class MatrixObject implements MathObject {
+		private static final long serialVersionUID = 712029353060012634L;
+		
 		private final Matrix<Complex> matrix;
 		
 		
@@ -354,6 +395,8 @@ public class UserDefinitions {
 	}
 	
 	public static class ArgObject implements MathObject {
+		private static final long serialVersionUID = -8836456210671603780L;
+		
 		private final Expression definition;
 		private final boolean isMatrix;
 		private final int rows, columns;
@@ -392,23 +435,32 @@ public class UserDefinitions {
 	
 	
 
-	private static ExpressionTraits getExpressionTraits (Expression e, MathSet mathDefinitions) {
+	private static ExpressionTraits getExpressionTraits (Expression e, MathSet mathDefinitions) throws EvaluateExpressionException {
 		MathSet dummyVariableSet = new MathSet(mathDefinitions);
 		
 		ExpressionTraits et = new ExpressionTraits(e);
 		
 		StringBuilder latexBuilder = new StringBuilder();
-		MathValue v = evalExpr ((ParseBranch) e.getTree().getRoot(), dummyVariableSet, et, latexBuilder);
-		et.latexString = latexBuilder.toString();
-		et.result = v;
 		
-		return et;
+		try {
+			
+			MathValue v = evalExpr ((ParseBranch) e.getTree().getRoot(), dummyVariableSet, et, latexBuilder);
+			et.latexString = latexBuilder.toString();
+			et.result = v;
+			
+			return et;
+			
+		} catch (EvaluateExpressionException e1) {
+			throw e1;
+		} catch (Exception e2) {
+			throw new EvaluateExpressionException(e2.getMessage());
+		}
 	}
 	
 	
 	
 	
-	private static MathValue evalExpr(ParseBranch pb, MathSet mathDefinitions, ExpressionTraits traits, StringBuilder sb) {
+	private static MathValue evalExpr(ParseBranch pb, MathSet mathDefinitions, ExpressionTraits traits, StringBuilder sb) throws EvaluateExpressionException {
 		Iterator<ParseNode> terms = pb.getChildren().iterator();
 		
 		MathValue current = evalTerm((ParseBranch) terms.next(), mathDefinitions, traits, sb);
@@ -434,7 +486,7 @@ public class UserDefinitions {
 		return current;
 	}
 	
-	private static MathValue evalTerm(ParseBranch pb, MathSet mathDefinitions, ExpressionTraits traits, StringBuilder sb) {
+	private static MathValue evalTerm(ParseBranch pb, MathSet mathDefinitions, ExpressionTraits traits, StringBuilder sb) throws EvaluateExpressionException {
 		Iterator<ParseNode> pows = pb.getChildren().iterator();
 		
 
@@ -499,7 +551,7 @@ public class UserDefinitions {
 	}
 
 
-	private static MathValue evalPow(ParseBranch pb, MathSet mathDefinitions, ExpressionTraits traits, StringBuilder sb) {
+	private static MathValue evalPow(ParseBranch pb, MathSet mathDefinitions, ExpressionTraits traits, StringBuilder sb) throws EvaluateExpressionException {
 		Iterator<ParseNode> pows = pb.getChildren().iterator();
 		
 		ParseNode pn = pows.next();
@@ -541,7 +593,7 @@ public class UserDefinitions {
 	
 	
 	
-	private static MathValue evalValue(ParseBranch pb, MathSet mathDefinitions, ExpressionTraits traits, StringBuilder sb) {
+	private static MathValue evalValue(ParseBranch pb, MathSet mathDefinitions, ExpressionTraits traits, StringBuilder sb) throws EvaluateExpressionException {
 		Iterator<ParseNode> parts = pb.getChildren().iterator();
 		ParseNode pn = parts.next();
 		ProductionSymbol ps = pn.getProductionSymbol();
@@ -670,7 +722,7 @@ public class UserDefinitions {
 	}
 	
 	private static void fillParamArray(Function function, Expression[] paramList, ParseBranch params, 
-			MathSet mathDefinitions, ExpressionTraits traits, String[] latexParams) {
+			MathSet mathDefinitions, ExpressionTraits traits, String[] latexParams) throws EvaluateExpressionException {
 		
 		Iterator<ParseNode> iterator = params.getChildren().iterator();
 		
@@ -706,7 +758,7 @@ public class UserDefinitions {
 		}
 	}
 	
-	private static void fillMatrixArray(Complex[] paramList, int offset, ParseBranch params, MathSet mathDefinitions, ExpressionTraits traits, StringBuilder sb) throws ClassCastException {
+	private static void fillMatrixArray(Complex[] paramList, int offset, ParseBranch params, MathSet mathDefinitions, ExpressionTraits traits, StringBuilder sb) throws ClassCastException, EvaluateExpressionException {
 		Iterator<ParseNode> iterator = params.getChildren().iterator();
 		
 		StringBuilder temp = new StringBuilder();

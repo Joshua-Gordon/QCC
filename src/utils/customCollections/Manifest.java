@@ -1,29 +1,50 @@
 package utils.customCollections;
 
+import java.io.Serializable;
 import java.util.Hashtable;
 import java.util.Set;
 
-public class Manifest <T> {
-	private final Hashtable<T, Integer> elements = new Hashtable<>();
+public class Manifest <T> implements Serializable {
+	private static final long serialVersionUID = -5048176347320317395L;
 	
-	public void add(T element) {
-		if(contains(element))
-			elements.put(element, elements.get(element) + 1);
-		else
-			elements.put(element, 0);
+	private final Hashtable<T, ManifestObject> elements = new Hashtable<>();
+	
+	public ManifestObject add(T element) {
+		ManifestObject mo = elements.get(element);
+		if(mo == null) {
+			mo = new ManifestObject(element);
+			elements.put(element, mo);
+		} else {
+			mo.ocurrances++;
+		}
+		return mo;
+	}
+	
+	public void replace(T oldValue, T newValue) {
+		ManifestObject mo = elements.remove(oldValue);
+		
+		if(mo != null) {
+			mo.element = newValue;
+			elements.put(newValue, mo);
+		}
 	}
 	
 	public void remove(T element) {
-		if(contains(element)) {
-			int value = elements.get(element);
-			
-			if(value == 0)
+		ManifestObject mo = elements.get(element);
+		
+		if(mo != null) {
+			if(mo.ocurrances == 0)
 				elements.remove(element);
 			else
-				elements.put(element, value - 1);
-		} else {
-			throw new RuntimeException("Element " + element.toString() + " is not already in this manifest");
+				mo.ocurrances--;
 		}
+	}
+	
+	public int getOccurrences(T element) {
+		ManifestObject mo = elements.get(element);
+		if(mo != null)
+			return mo.ocurrances + 1;
+		return 0;
 	}
 	
 	public boolean contains (T element) {
@@ -32,5 +53,21 @@ public class Manifest <T> {
 	
 	public Set<T> getElements () {
 		return elements.keySet();
+	}
+	
+	public class ManifestObject implements Serializable {
+		private static final long serialVersionUID = -4119245424558455962L;
+		
+		private T element;
+		private int ocurrances;
+		
+		private ManifestObject (T element) {
+			this.element = element;
+			this.ocurrances = 0;
+		}
+		
+		public T getObject () {
+			return element;
+		}
 	}
 }

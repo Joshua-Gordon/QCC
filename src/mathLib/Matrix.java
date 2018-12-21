@@ -146,7 +146,7 @@ public class Matrix<T> extends MathValue {
 	
 	public Matrix<T> mult(Matrix<T> mat){
 		if(this.columns != mat.rows)
-			throw new MatrixSizeException();
+			throw new MatrixSizeException("Matrxes dimensions are not fit for matrix multiplication");
 		Matrix<T> temp = new Matrix<T>(o, rows, mat.columns, o.mkZeroArray(rows * mat.columns));
 		T sum;
 		for(int r = 0; r < rows; r++){
@@ -449,8 +449,8 @@ public class Matrix<T> extends MathValue {
 
 	@SuppressWarnings("serial")
 	public static class MatrixSizeException extends RuntimeException{
-		public MatrixSizeException() {
-			super("Can not apply action with this size matrix");
+		public MatrixSizeException(String message) {
+			super(message);
 		}
 	}
 

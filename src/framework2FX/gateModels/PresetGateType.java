@@ -1,50 +1,52 @@
 package framework2FX.gateModels;
 
-import framework2FX.gateModels.GateModel.GateModelType;
+import appUIFX.AppAlerts;
+import framework2FX.gateModels.DefaultModel.DefaultModelType;
+import framework2FX.gateModels.GateModel.NameTakenException;
 
 public enum PresetGateType {
 	
-	IDENTITY ("Identity", "I", GateModelType.REGULAR_GATE ,
+	IDENTITY ("Identity", "I", DefaultModelType.UNIVERSAL ,
 			 "[1, 0; "
 			+ "0, 1]"),
 	
-	HADAMARD ("Hadamard", "H", GateModelType.REGULAR_GATE ,
+	HADAMARD ("Hadamard", "H", DefaultModelType.UNIVERSAL ,
 			"1/sqrt(2) * [1,  1;"
 			+ 			" 1, -1]"),
 	
-	PAULI_X ("Pauli x", "X", GateModelType.REGULAR_GATE ,
+	PAULI_X ("Pauli_x", "X", DefaultModelType.UNIVERSAL ,
 			  "[0, 1;"
 			+ " 1, 0]"),
 	
-	PAULI_Y ("Pauli y", "Y", GateModelType.REGULAR_GATE ,
+	PAULI_Y ("Pauli_y", "Y", DefaultModelType.UNIVERSAL ,
 			" [0, -i;"
 			+ "i,  0]"),
 	
-	PAULI_Z ("Pauli z", "Z", GateModelType.REGULAR_GATE ,
+	PAULI_Z ("Pauli_z", "Z", DefaultModelType.UNIVERSAL ,
 			  "[1,  0;"
 			+ " 0, -1]"),
 	
-	PHASE ("Phase", "S", GateModelType.REGULAR_GATE ,
+	PHASE ("Phase", "S", DefaultModelType.UNIVERSAL ,
 			  "[1, 0;"
 			+ " 0, i]"),
 	
-	PI_ON_8 ("Pi/8", "T", GateModelType.REGULAR_GATE ,
-			  "[1,              0;"
+	PI_ON_8 ("Pi_over_8", "T", DefaultModelType.UNIVERSAL ,
+			  "[1, 0;"
 			+ " 0, (1+i) / sqrt(2)]"),
 	
-	SWAP ("Swap", "", GateModelType.REGULAR_GATE ,
+	SWAP ("Swap", "Swap", DefaultModelType.UNIVERSAL ,
 			 "[1, 0, 0, 0;"
 			+ "0, 0, 1, 0;"
 			+ "0, 1, 0, 0;"
 			+ "0, 0, 0, 1]"),
 	
-	CNOT ("Cnot", "", GateModelType.REGULAR_GATE ,
+	CNOT ("Cnot", "Cnot", DefaultModelType.UNIVERSAL ,
 			 "[1, 0, 0, 0;"
 			+ "0, 1, 0, 0;"
 			+ "0, 0, 0, 1;"
 			+ "0, 0, 1, 0]"),
 	
-	TOFFOLI ("Toffoli", "", GateModelType.REGULAR_GATE ,
+	TOFFOLI ("Toffoli", "Toffoli", DefaultModelType.UNIVERSAL ,
 			 "[1, 0, 0, 0, 0, 0, 0, 0;"
 			+ "0, 1, 0, 0, 0, 0, 0, 0;"
 			+ "0, 0, 1, 0, 0, 0, 0, 0;"
@@ -54,12 +56,12 @@ public enum PresetGateType {
 			+ "0, 0, 0, 0, 0, 0, 0, 1;"
 			+ "0, 0, 0, 0, 0, 0, 1, 0]"),
 	
-	PHASE_SHIFT ("Phase Shift", "R", GateModelType.REGULAR_GATE ,
-			 "[1,             0;"
-			+ "0, exp(i * theta)]"),
+	PHASE_SHIFT ("Phase_Shift", "R", DefaultModelType.UNIVERSAL ,
+			 "[1, 0;"
+			+ "0, exp(i * \\theta)]"),
 	
 	
-	MEASUREMENT ("Measurement", "M", GateModelType.POVM , 
+	MEASUREMENT ("Measurement", "M", DefaultModelType.POVM , 
 			 "[1, 0; "
 			+ "0, 0]",
 			
@@ -72,18 +74,48 @@ public enum PresetGateType {
 	;
 	
 	
-	
-	private final GateModel gateModel;
-	
-	private PresetGateType(String name, String symbol, String description, GateModelType type, String ... expression) {
-		this.gateModel = GateModelFactory.makeGateModel(name, symbol, description, type, this, expression);
+	public static void checkName(String name) {
+		for(PresetGateType pgt : values())
+			if(pgt.getModel().getName().equals(name)) 
+				throw new NameTakenException("The name \"" + name + "\" is already a preset gate name and cannot be used");
 	}
 	
-	private PresetGateType(String name, String symbol, GateModelType type, String ... expression) {
+	
+	public static PresetGateType getPresetTypeByFormalName (String name) {
+		for(PresetGateType pgt : PresetGateType.values())
+			if(pgt.gateModel.getFormalName().equals(name))
+				return pgt;
+		return null;
+	}
+	
+	public static boolean containsPresetTypeByFormalName (String name) {
+		for(PresetGateType pgt : PresetGateType.values())
+			if(pgt.gateModel.getFormalName().equals(name))
+				return true;
+		return false;
+	}
+	
+	
+	private final DefaultModel gateModel;
+	
+	private PresetGateType(String name, String symbol, String description, DefaultModelType type, String ... expression) {
+		DefaultModel gm = null;
+		try {
+			gm = GateModelFactory.makeGateModel(name, symbol, description, type, this, expression);
+		} catch (Exception e) {
+			AppAlerts.showJavaExceptionMessage(null, "Program Crashed", "Could not make preset " + name + " gate model", e);
+			e.printStackTrace();
+			System.exit(1);
+		} finally {
+			this.gateModel = gm;
+		}
+	}
+	
+	private PresetGateType(String name, String symbol, DefaultModelType type, String ... expression) {
 		this(name, symbol, "", type, expression);
 	}
 	
-	public GateModel getModel() {
+	public DefaultModel getModel() {
 		return gateModel;
 	}
 }

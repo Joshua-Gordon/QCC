@@ -1,19 +1,32 @@
 package utils.customCollections;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Iterator;
 
 public class ImmutableArray <T> implements Iterable<T>, Serializable {
 	private static final long serialVersionUID = 3565001439834778170L;
 	
-	private final T[] array;
+	private final Object[] array;
 	
-	public ImmutableArray (T ... array) {
-		this.array = array;
+	public ImmutableArray(Collection<T> collection) {
+		this.array = new Object[collection.size()];
+		int i = 0;
+		for(T element : collection)
+			array[i++] = element;
 	}
 	
+	@SafeVarargs
+	public ImmutableArray (T ... array) {
+		this.array = new Object[array.length];
+		int i = 0;
+		for(T value : array)
+			this.array[i++] = value;
+	}
+	
+	@SuppressWarnings("unchecked")
 	public T get(int index) {
-		return array[index];
+		return (T) array[index];
 	}
 	
 	public int size () {
@@ -35,9 +48,10 @@ public class ImmutableArray <T> implements Iterable<T>, Serializable {
 				return index + 1 != array.length;
 			}
 			
+			@SuppressWarnings("unchecked")
 			@Override
 			public T next() {
-				return array[++index];
+				return (T) array[++index];
 			}
 		};
 	}

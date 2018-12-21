@@ -1,20 +1,19 @@
-package appUIFX;
+package appUIFX.appViews.gateChooser;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import framework2FX.AppStatus;
 import framework2FX.gateModels.PresetGateType;
 
-public class PresetGatesView extends AbstractGateChooser {
+public class PresetGatesChooser extends AbstractGateChooser {
 	
-	public PresetGatesView() {
+	public PresetGatesChooser() {
 		super("Preset Gates");
 	}
 
 	public void initializeGates() {
 		for(PresetGateType dg : PresetGateType.values())
-			addSolderable(dg.getModel());
+			addGateModel(dg.getModel());
 	}
 	
 	
@@ -29,8 +28,9 @@ public class PresetGatesView extends AbstractGateChooser {
 
 
 	@Override
-	public void receive(Object source, String methodName, Object... args) {
+	public boolean receive(Object source, String methodName, Object... args) {
 		
+		return false;
 	}
 	
 }

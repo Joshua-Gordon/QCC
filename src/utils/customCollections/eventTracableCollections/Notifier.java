@@ -6,10 +6,8 @@ public class Notifier implements Serializable {
 	private static final long serialVersionUID = -4355135792535307514L;
 	
 	private static final Notifier NO_NOTIFIER;
-	private static final ReceivedEvent NO_EVENT;
 	
 	static {
-		NO_EVENT = (f1, f2, f3) -> {};
 		
 		NO_NOTIFIER = new Notifier() {
 			private static final long serialVersionUID = -7938646971850743846L;
@@ -30,12 +28,12 @@ public class Notifier implements Serializable {
 	}
 	
 	public Notifier(Notifier receiver) {
-		this(receiver, NO_EVENT);
+		this(receiver, null);
 	}
 	
 	public Notifier(Notifier receiver, ReceivedEvent receivedEvent) {
 		setReceiver(receiver);
-		setReceivedEvent(NO_EVENT);
+		setReceivedEvent(null);
 	}
 	
 	public void setReceiver(Notifier receiver) {
@@ -43,7 +41,7 @@ public class Notifier implements Serializable {
 	}
 	
 	public void setReceivedEvent(ReceivedEvent receivedEvent) {
-		this.receivedEvent = receivedEvent == null ? NO_EVENT : receivedEvent;
+		this.receivedEvent = receivedEvent;
 	}
 	
 	public void sendChange(Object source, String methodName, Object... args) {
@@ -51,12 +49,13 @@ public class Notifier implements Serializable {
 	}
 	
 	private void retrieve(Object source, String methodName, Object... args) {
-		receivedEvent.receive(source, methodName, args);
+		if(receivedEvent != null)
+			receivedEvent.receive(source, methodName, args);
 		sendChange(source, methodName, args);
 	}
 	
 	public static interface ReceivedEvent {
-		public void receive(Object source, String methodName, Object ... args);
+		public boolean receive(Object source, String methodName, Object ... args);
 	}
 	
 }
