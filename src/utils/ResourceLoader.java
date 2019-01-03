@@ -16,36 +16,21 @@ import java.util.Hashtable;
 
 import javax.imageio.ImageIO;
 
+import framework.Main;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 
 public class ResourceLoader {
 	
-	public static Font MPLUS;
-	public static Font VAST_SHADOW;
-	public static BufferedImage SOLDER;
-	public static BufferedImage EDIT;
-	public static BufferedImage SELECT;
-	
-	public static BufferedImage ADD_ROW;
-	public static BufferedImage ADD_COLUMN;
-	public static BufferedImage REMOVE_ROW;
-	public static BufferedImage REMOVE_COLUMN;
-	
 	private static final Hashtable<String, File> TEMP_FILES = new Hashtable<>();
+	private static final SwingResources SWING_RESOURCES;
 	
 	static {
-		MPLUS = loadFont("mplus-2m-bold.ttf", 12);
-		VAST_SHADOW = loadFont("VastShadow-Regular.ttf", 12).deriveFont(35);
-		loadFont("KosugiMaru-Regular.ttf", 12);
-		SOLDER = loadImage("solderIcon.png");
-		EDIT = loadImage("editIcon.png");
-		SELECT = loadImage("selectIcon.png");
-		ADD_ROW = loadImage("addRowIcon.png");
-		ADD_COLUMN = loadImage("addColumnIcon.png");
-		REMOVE_ROW = loadImage("removeRowIcon.png");
-		REMOVE_COLUMN = loadImage("removeColumnIcon.png");
-		
+		SWING_RESOURCES = Main.JAVAFX_MODE? null : new SwingResources();
+	}
+	
+	public static SwingResources getSwingResources() {
+		return SWING_RESOURCES;
 	}
 	
 	public static String getHTMLString (String filename) throws IOException, URISyntaxException {
@@ -54,15 +39,6 @@ public class ResourceLoader {
 		Charset ascii = Charset.forName("US-ASCII");
 		return new String(encoded, ascii);
 	}
-	
-	public static Node loadFXML(String filename) throws IOException {
-		return loadFXMLLoader(filename).load();
-	}
-	
-	public static FXMLLoader loadFXMLLoader(String filename) {
-		return new FXMLLoader(ResourceLoader.class.getResource("/fxml/" + filename));
-	}
-	
 	
 	private static BufferedImage loadImage(String fileName) {
 		BufferedImage bi = null;
@@ -79,16 +55,14 @@ public class ResourceLoader {
 		return bi;
 	}
 	
-	
 	private static Font loadFont(String fileName, int size) {
 		Font font = null;
 		try {
 			URL url = ResourceLoader.class.getResource("/fonts/" + fileName);
 			File fontFile = new File(url.toURI());
 			font = Font.createFont(Font.TRUETYPE_FONT, fontFile).deriveFont(size);
-		    GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+			GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		    ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, fontFile));
-		    javafx.scene.text.Font.loadFont(url.toExternalForm(), size);
 		} catch (IOException e) {
 		    e.printStackTrace();
 		} catch(FontFormatException e) {
@@ -98,6 +72,7 @@ public class ResourceLoader {
 		}
 		return font;
 	}
+	
 	
 	/**
 	 * 
@@ -172,4 +147,34 @@ public class ResourceLoader {
 		}
 		return parts;
 	}
+	
+	
+	public static class SwingResources {
+		public final Font MPLUS, VAST_SHADOW, KOSUGI_MARU;
+		public final BufferedImage SOLDER;
+		public final BufferedImage EDIT;
+		public final BufferedImage SELECT;
+		
+		public final BufferedImage ADD_ROW;
+		public final BufferedImage ADD_COLUMN;
+		public final BufferedImage REMOVE_ROW;
+		public final BufferedImage REMOVE_COLUMN;
+		
+		private SwingResources() {
+			MPLUS = loadFont("mplus-2m-bold.ttf", 12);
+			VAST_SHADOW = loadFont("VastShadow-Regular.ttf", 35);
+			KOSUGI_MARU = loadFont("KosugiMaru-Regular.ttf", 12);
+			
+			SOLDER = loadImage("solderIcon.png");
+			EDIT = loadImage("editIcon.png");
+			SELECT = loadImage("selectIcon.png");
+			ADD_ROW = loadImage("addRowIcon.png");
+			ADD_COLUMN = loadImage("addColumnIcon.png");
+			REMOVE_ROW = loadImage("removeRowIcon.png");
+			REMOVE_COLUMN = loadImage("removeColumnIcon.png");
+		}	
+	}
+	
+	
+	
 }

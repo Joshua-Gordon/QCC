@@ -6,9 +6,10 @@ import java.util.ResourceBundle;
 import appUIFX.GateIcon;
 import appUIFX.LatexNode;
 import appUIFX.appViews.AppView.ViewListener;
+import framework2FX.AppCommand;
 import framework2FX.AppStatus;
 import framework2FX.Project;
-import framework2FX.gateModels.DefaultModel;
+import framework2FX.gateModels.BasicModel;
 import framework2FX.gateModels.GateModel;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
@@ -21,7 +22,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import utils.customCollections.ImmutableArray;
 
-public class GateModelView extends AppView implements Initializable, ViewListener {
+public class BasicModelView extends AppView implements Initializable, ViewListener {
 	
 	public TextField name, symbol, registers, modelType;
 	public ScrollPane description;
@@ -32,19 +33,19 @@ public class GateModelView extends AppView implements Initializable, ViewListene
 	private boolean initialized = false;
 	
 	
-	private DefaultModel gm;
+	private BasicModel gm;
 	
-	public GateModelView(DefaultModel gm) {
+	public BasicModelView(BasicModel gm) {
 		super("GateModelView.fxml", gm.getFormalName(), Layout.CENTER);
 		this.gm = gm;
 	}
 
 	public void onButtonPress(ActionEvent e) {
-		GateEditableView.openGateEditableView(gm, false);
+		AppCommand.doAction(AppCommand.EDIT_GATE, gm.getFormalName());
 	}
 	
 	public void onButton2Press(ActionEvent e) {
-		GateEditableView.openGateEditableView(gm, true);
+		AppCommand.doAction(AppCommand.EDIT_AS_NEW_GATE, gm.getFormalName());
 	}
 	
 	@Override

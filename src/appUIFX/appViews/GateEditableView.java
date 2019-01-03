@@ -12,8 +12,9 @@ import framework2FX.AppStatus;
 import framework2FX.Project;
 import framework2FX.Project.ProjectHashtable;
 import framework2FX.UserDefinitions.DefinitionEvaluatorException;
-import framework2FX.gateModels.DefaultModel;
-import framework2FX.gateModels.DefaultModel.DefaultModelType;
+import framework2FX.gateModels.BasicModel;
+import framework2FX.gateModels.BasicModel.DefaultModelType;
+import framework2FX.gateModels.GateModel;
 import framework2FX.gateModels.GateModel.NameTakenException;
 import framework2FX.gateModels.GateModelFactory;
 import framework2FX.gateModels.PresetGateType;
@@ -54,18 +55,18 @@ public class GateEditableView extends AppFXMLComponent implements Initializable,
 	
 
 	
-	private DefaultModel gm;
+	private BasicModel gm;
 	private String tempName = "";
 	private Stage stage;
 	private boolean editAsNewModel;
 	private int krausSelected = -1;
 	
 	
-	public static void openGateEditableView() {
+	public static void createNewGate() {
 		openGateEditableView(null, true);
 	}
 	
-	public static void openGateEditableView(String name) {
+	public static void createNewGate(String name) {
 		Stage primary = AppStatus.get().getPrimaryStage();
 		
 		Stage dialog = new Stage();
@@ -78,8 +79,22 @@ public class GateEditableView extends AppFXMLComponent implements Initializable,
 		dialog.showAndWait();
 	}
 	
-	public static void openGateEditableView(DefaultModel gm, boolean editAsNewModel) {
+	
+	public static void editGate(String name) {
+		openGateEditableView(name, false);
+	}
+	
+	
+	public static void editAsNewGate(String name) {
+		openGateEditableView(name, true);
+	}
+	
+	private static void openGateEditableView(String name, boolean editAsNewModel) { 
 		Stage primary = AppStatus.get().getPrimaryStage();
+		Project p = AppStatus.get().getFocusedProject();
+		BasicModel gm = name == null ? null : (BasicModel) p.getGateModel(name);
+		
+		
 		
 		Stage dialog = new Stage();
 		dialog.setScene(new Scene((Parent) new GateEditableView(dialog, gm, editAsNewModel).loadAsNode(), 650, 700));
@@ -105,7 +120,7 @@ public class GateEditableView extends AppFXMLComponent implements Initializable,
 		this(stage, null, editAsNewModel);
 	}
 	
-	private GateEditableView(Stage stage, DefaultModel gm, boolean editAsNewModel) {
+	private GateEditableView(Stage stage, BasicModel gm, boolean editAsNewModel) {
 		super("GateEditableView.fxml");
 		this.gm = gm;
 		this.stage = stage;
@@ -117,14 +132,10 @@ public class GateEditableView extends AppFXMLComponent implements Initializable,
 	}
 	
 	public void buttonCreate(ActionEvent e) {
-		
-		
-		DefaultModel gmNew = checkRequiredFields();
-		
+		BasicModel gmNew = checkRequiredFields();
 		
 		if(gmNew == null)
 			return;
-		
 		
 		Project p = AppStatus.get().getFocusedProject();
 		ProjectHashtable pht = p.getCustomGates();
@@ -135,14 +146,26 @@ public class GateEditableView extends AppFXMLComponent implements Initializable,
 							+ "All instances of the previous gate model in this project will be changed to the new implementation.", AlertType.WARNING);
 			if(options.get() == ButtonType.CANCEL)
 				return;
+			if(p.containsGateModel(gmNew.getFormalName())) {
+				options = AppAlerts.showMessage(stage, "Override Gate Model " + gmNew.getName(), 
+						"A Gate Model with the name \"" + gmNew.getName() + "\" already exists, "
+								+ "do you want to override this gate model?"
+								+ " All instances of the previous implementation of \""
+								+ gmNew.getName() + "\" in this project will be removed.", AlertType.WARNING);
+				if(options.get() == ButtonType.CANCEL)
+					return;
+			}
+			if(options.get() == ButtonType.CANCEL)
+				return;
+			
 			pht.replace(gm.getFormalName(), gmNew);
 		} else {
 			if(pht.containsGateModel(gmNew.getFormalName())) {
-				Optional<ButtonType> options = AppAlerts.showMessage(stage, "Override Gate Model " + gm.getName(), 
-						"A Gate Model with the name \"" + gm.getName() + "\" already exists, "
+				Optional<ButtonType> options = AppAlerts.showMessage(stage, "Override Gate Model " + gmNew.getName(), 
+						"A Gate Model with the name \"" + gmNew.getName() + "\" already exists, "
 								+ "do you want to override this gate model?"
 								+ " All instances of the previous implementation of \""
-								+ gm.getName() + "\" in this project will be removed.", AlertType.WARNING);
+								+ gmNew.getName() + "\" in this project will be removed.", AlertType.WARNING);
 				if(options.get() == ButtonType.CANCEL)
 					return;
 			}
@@ -157,7 +180,7 @@ public class GateEditableView extends AppFXMLComponent implements Initializable,
 	
 	
 	
-	DefaultModel checkRequiredFields() {
+	BasicModel checkRequiredFields() {
 		
 		
 		
@@ -165,9 +188,9 @@ public class GateEditableView extends AppFXMLComponent implements Initializable,
 			name.setStyle("-fx-background-color: #ff000033");
 			AppAlerts.showMessage(stage, "Unfilled prompts", "Name must be defined", AlertType.ERROR);
 			return null;
-		} else if(!name.getText().matches("[a-zA-Z][\\w]*")) {
+		} else if(!name.getText().matches(GateModel.NAME_REGEX)) {
 			name.setStyle("-fx-background-color: #ff000033");
-			AppAlerts.showMessage(stage, "Inproper name scheme", "Name must be a letter followed by letters, digits, or underscores", AlertType.ERROR);
+			AppAlerts.showMessage(stage, "Inproper name scheme", GateModel.INPROPER_NAME_SCHEME_MSG, AlertType.ERROR);
 			return null;
 		} else {
 			try {
@@ -184,9 +207,9 @@ public class GateEditableView extends AppFXMLComponent implements Initializable,
 			symbol.setStyle("-fx-background-color: #ff000033");
 			AppAlerts.showMessage(stage, "Unfilled prompts", "Symbol must be defined", AlertType.ERROR);
 			return null;
-		} else if(!symbol.getText().matches("[a-zA-Z][\\w\\s]*")) {
+		} else if(!symbol.getText().matches(GateModel.SYMBOL_REGEX)) {
 			symbol.setStyle("-fx-background-color: #ff000033");
-			AppAlerts.showMessage(stage, "Inproper symbol scheme", "Symbol must be a letter followed by letters, digits, or underscores", AlertType.ERROR);
+			AppAlerts.showMessage(stage, "Inproper symbol scheme", GateModel.INPROPER_SYMBOL_SCHEME_MSG, AlertType.ERROR);
 			return null;
 		} else {
 			symbol.setStyle("-fx-background-color: #ffffff");
@@ -216,7 +239,7 @@ public class GateEditableView extends AppFXMLComponent implements Initializable,
 			definitions[i++] = tf.getText();
 		}
 		
-		DefaultModel gm = null;
+		BasicModel gm = null;
 		try {
 			gm = GateModelFactory.makeGateModel(name.getText(), symbol.getText(), description.getText(), modelType.getValue(), definitions);
 		} catch (DefinitionEvaluatorException e) {
@@ -269,7 +292,7 @@ public class GateEditableView extends AppFXMLComponent implements Initializable,
 		}
 	}
 	
-	private void setDefinitionUI(DefaultModelType gmt, DefaultModel gm) {
+	private void setDefinitionUI(DefaultModelType gmt, BasicModel gm) {
 		definitionStatement.getChildren().clear();
 		definition.getChildren().clear();
 		

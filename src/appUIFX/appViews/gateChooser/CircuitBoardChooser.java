@@ -10,7 +10,7 @@ import framework2FX.gateModels.GateModel;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 
-public class CircuitBoardChooser extends AbstractGateChooser implements ChangeListener<Boolean> {
+public class CircuitBoardChooser extends AbstractGateChooser {
 	private boolean initialized = false;
 	
 	public CircuitBoardChooser() {
@@ -20,7 +20,7 @@ public class CircuitBoardChooser extends AbstractGateChooser implements ChangeLi
 	public void initializeGates() {
 		Project p = AppStatus.get().getFocusedProject();
 		if(p != null) {
-			for(GateModel s : p.getSubCircuits().getGateModelIterable())
+			for(GateModel s : p.getCircuitBoardModels().getGateModelIterable())
 				addGateModel(s);
 		}
 	}
@@ -29,7 +29,6 @@ public class CircuitBoardChooser extends AbstractGateChooser implements ChangeLi
 	public void initialize(URL arg0, ResourceBundle arg1) {
 		button.setVisible(true);
 		button.setText("Create Circuit Board");
-		button.pressedProperty().addListener(this);
 		initializeGates();
 		initialized = true;
 	}
@@ -41,26 +40,26 @@ public class CircuitBoardChooser extends AbstractGateChooser implements ChangeLi
 		if(source == status && methodName == "setFocusedProject" && initialized) {
 			removeAllGateModels();
 			Project p = (Project) args[0];
-			for(GateModel s : p.getSubCircuits().getGateModelIterable())
+			for(GateModel s : p.getCircuitBoardModels().getGateModelIterable())
 				addGateModel(s);
 		}
 		
 		Project p = status.getFocusedProject();
-		if(p != null && source == p.getSubCircuits() && initialized) {
-			if( methodName.equals("put")) {
+		if(p != null && source == p.getCircuitBoardModels() && initialized) {
+			if(methodName.equals("put")) {
 				GateModel replacement = (GateModel) args[0];
 				removeGateModelByName(replacement.getName());
 				addGateModel(replacement);
-			}
-			
-			if( methodName.equals("replace")) {
+			} else if(methodName.equals("replace") ) {
 				String name = (String) args[0];
 				GateModel replacement = (GateModel) args[1];
 				removeGateModelByName(name);
+				
+				String newName = replacement.getFormalName();
+				if(!newName.equals(name))
+					removeGateModelByName(newName);	
 				addGateModel(replacement);
-			}
-			
-			if( methodName.equals("remove")) {
+			} else if(methodName.equals("remove")) {
 				String name = (String) args[0];
 				removeGateModelByName(name);
 			}
@@ -71,11 +70,6 @@ public class CircuitBoardChooser extends AbstractGateChooser implements ChangeLi
 	@Override
 	public void buttonAction() {
 		AppCommand.doAction(AppCommand.CREATE_CIRCUIT_BOARD);
-	}
-
-	@Override
-	public void changed(ObservableValue<? extends Boolean> arg0, Boolean arg1, Boolean arg2) {
-		
 	}
 
 }

@@ -6,12 +6,13 @@ import java.util.Iterator;
 import java.util.ResourceBundle;
 
 import appUIFX.AppFileIO;
+import appUIFX.GateModelContextMenu;
 import appUIFX.MainScene;
 import framework2FX.AppCommand;
 import framework2FX.AppStatus;
 import framework2FX.Project;
-import framework2FX.gateModels.CircuitBoard;
-import framework2FX.gateModels.DefaultModel;
+import framework2FX.gateModels.BasicModel;
+import framework2FX.gateModels.CircuitBoardModel;
 import framework2FX.gateModels.GateModel;
 import framework2FX.gateModels.OracleModel;
 import framework2FX.gateModels.PresetGateType;
@@ -20,7 +21,6 @@ import javafx.event.EventHandler;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.MouseButton;
@@ -53,7 +53,7 @@ public class ProjectHierarchy extends AppView implements Initializable, EventHan
 			topLevel.getChildren().add(new TreeItem<>(topLevelName));
 		}
 			
-		for(String name : project.getSubCircuits().getGateNameIterable())
+		for(String name : project.getCircuitBoardModels().getGateNameIterable())
 			if(!hasTopLevel || !name.equals(topLevelName))
 				subCircuits.getChildren().add(new TreeItem<String>(name));
 		
@@ -114,50 +114,55 @@ public class ProjectHierarchy extends AppView implements Initializable, EventHan
 		AppStatus status = AppStatus.get();
 		Project p = status.getFocusedProject();
 		
-		if(source instanceof AppStatus && methodName.equals("setFocusedProject") && initialized) {
-			setFocusedProject( (Project) args[0] );
-		} else if(source instanceof Project && methodName.equals("setProjectFileLocation") && initialized) {
-			root.setValue(Project.getProjectNameFromURI((URI) args[0]));
-		} else if(source instanceof Project && methodName.equals("setTopLevelCircuitName") && initialized) {
-			topLevel.getChildren().clear();
-			if(args[0] != null) {
-				topLevel.getChildren().add(new TreeItem<String>(args[0].toString()));
-				Iterator<TreeItem<String>> iter = subCircuits.getChildren().iterator();
-				while(iter.hasNext())
-					if(iter.next().getValue().equals(args[0]))
-						iter.remove();
+		if(initialized) {
+			if(source instanceof AppStatus && methodName.equals("setFocusedProject")) {
+				setFocusedProject( (Project) args[0] );
+			} else if(source instanceof Project && methodName.equals("setProjectFileLocation")) {
+				root.setValue(Project.getProjectNameFromURI((URI) args[0]));
+			} else if(source instanceof Project && methodName.equals("setTopLevelCircuitName")) {
+				topLevel.getChildren().clear();
+				if(args[0] != null) {
+					topLevel.getChildren().add(new TreeItem<String>(args[0].toString()));
+					Iterator<TreeItem<String>> iter = subCircuits.getChildren().iterator();
+					while(iter.hasNext())
+						if(iter.next().getValue().equals(args[0]))
+							iter.remove();
+				}
+				
+				String previous = p.getTopLevelCircuitName();
+				if(previous != null && p.getCircuitBoardModels().containsGateModel(previous))
+					subCircuits.getChildren().add(new TreeItem<String>(previous.toString()));
+				
+			} else 	if(p != null &&(source == p.getCustomGates() || source == p.getCircuitBoardModels() || source == p.getCustomOracles())) {
+				Pair<TreeItem<String>, String> list = getListFromSource(p, source);
+				
+				
+				if(methodName.equals("put")) {
+					GateModel replacement = (GateModel) args[0];
+					removeSolderableByName(list.first(), replacement.getFormalName());
+					addSolderable(list.first(), replacement);
+				} else if(methodName.equals("replace")) {
+					String name = (String) args[0];
+					GateModel replacement = (GateModel) args[1];
+					removeSolderableByName(list.first(), name);
+					removeSolderableByName(list.first(), replacement.getFormalName());
+					addSolderable(list.first(), replacement);
+				} else 	if(methodName.equals("remove")) {
+					String name = (String) args[0];
+					removeSolderableByName(list.first(), name);
+				}
 			}
-			
-			String previous = p.getTopLevelCircuitName();
-			if(previous != null && p.getSubCircuits().containsGateModel(previous))
-				subCircuits.getChildren().add(new TreeItem<String>(previous.toString()));
-			
-		} else 	if(p != null && initialized && (source == p.getCustomGates() || source == p.getSubCircuits() || source == p.getCustomOracles())) {
-			Pair<TreeItem<String>, String> list = getListFromSource(p, source);
-			if(methodName.equals("put")) {
-				GateModel replacement = (GateModel) args[0];
-				removeSolderableByName(list.first(), replacement.getFormalName());
-				addSolderable(list.first(), replacement);
-			} else if(methodName.equals("replace")) {
-				String name = (String) args[0];
-				GateModel replacement = (GateModel) args[1];
-				removeSolderableByName(list.first(), name + "." + list.second());
-				addSolderable(list.first(), replacement);
-			} else 	if(methodName.equals("remove")) {
-				String name = (String) args[0];
-				removeSolderableByName(list.first(), name + "." + list.second());
-			}
+			cm.hide();
 		}
-		cm.hide();
 		
 		return false;
 	}
 	
 	private Pair<TreeItem<String>, String> getListFromSource(Project p, Object source) {
 		if(source == p.getCustomGates()) {
-			return new Pair<>(customGates, DefaultModel.GATE_MODEL_EXTENSION);
-		} else if (source == p.getSubCircuits()) {
-			return new Pair<>(subCircuits, CircuitBoard.CIRCUIT_BOARD_EXTENSION);
+			return new Pair<>(customGates, BasicModel.GATE_MODEL_EXTENSION);
+		} else if (source == p.getCircuitBoardModels()) {
+			return new Pair<>(subCircuits, CircuitBoardModel.CIRCUIT_BOARD_EXTENSION);
 		} else if(source == p.getCustomOracles()) {
 			return new Pair<>(customOracles, OracleModel.ORACLE_MODEL_EXTENSION);
 		}
@@ -194,40 +199,9 @@ public class ProjectHierarchy extends AppView implements Initializable, EventHan
 			ObservableList<MenuItem> elements = getItems();
 			
 			if (parent == topLevel || parent == subCircuits || parent == presetGates || parent == customGates || parent == customOracles) {
-
-				GateModel gm = (GateModel) AppCommand.doAction(AppCommand.GET_GATE, selected.getValue());
+				GateModel gm = p.getGateModel(selected.getValue());
+				GateModelContextMenu.addToElements(gm, elements, p);
 				
-				if(parent == topLevel) {
-					MenuItem removeFromTopLevel = new MenuItem("Remove From Top-Level");
-					removeFromTopLevel.setOnAction((e) -> AppCommand.doAction(AppCommand.REMOVE_TOP_LEVEL));
-					elements.add(removeFromTopLevel);
-					elements.add(new SeparatorMenuItem());
-					
-				} else if(gm instanceof CircuitBoard) {
-					MenuItem mkTopLevel = new MenuItem("Set as Top-Level");
-					mkTopLevel.setOnAction((e) -> AppCommand.doAction(AppCommand.SET_AS_TOP_LEVEL, selected.getValue()));
-					elements.add(mkTopLevel);
-					elements.add(new SeparatorMenuItem());
-				}
-				
-				
-				MenuItem open = new MenuItem("Open");
-				MenuItem editAsNew = new MenuItem("Edit as New");
-				
-				open.setOnAction((e) -> AppCommand.doAction(AppCommand.OPEN_GATE, selected.getValue()));
-				elements.add(open);
-				if(!gm.isPreset()) {
-					MenuItem edit = new MenuItem("Edit");
-					edit.setOnAction((e) -> AppCommand.doAction(AppCommand.EDIT_GATE, selected.getValue()));
-					elements.add(edit);
-				}
-				editAsNew.setOnAction((e) -> AppCommand.doAction(AppCommand.EDIT_AS_NEW_GATE, selected.getValue())); 
-				elements.add(editAsNew);
-				if(!gm.isPreset()) {
-					MenuItem remove = new MenuItem("Remove");
-					remove.setOnAction((e) -> AppCommand.doAction(AppCommand.REMOVE_GATE, selected.getValue()));
-					elements.add(remove);
-				}
 			} else if (selected == subCircuits) {
 				MenuItem open = new MenuItem("Add Untitled Circuit Board");
 				open.setOnAction((e) -> AppCommand.doAction(AppCommand.ADD_UNTITLED_CIRCUIT_BOARD));

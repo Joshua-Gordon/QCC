@@ -11,7 +11,7 @@ import framework2FX.AppStatus;
 import framework2FX.Project;
 import framework2FX.exportGates.Control;
 import framework2FX.exportGates.RawExportableGateData;
-import framework2FX.gateModels.CircuitBoard;
+import framework2FX.gateModels.CircuitBoardModel;
 import framework2FX.gateModels.GateModel;
 import framework2FX.gateModels.GateModelFactory.PresetGateModel;
 import framework2FX.solderedGates.SolderedGate;
@@ -61,7 +61,7 @@ public class CircuitBoardView extends AppView implements Initializable{
 	public void showCircuitBoard(String circuitBoardName) {
 		Project p = AppStatus.get().getFocusedProject();
 		
-		CircuitBoard cb = (CircuitBoard) p.getGateModel(circuitBoardName);
+		CircuitBoardModel cb = (CircuitBoardModel) p.getGateModel(circuitBoardName);
 		
 		ObservableList<Node> nodes = circuitBoardPane.getChildren();
 		

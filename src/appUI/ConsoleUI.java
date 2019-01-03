@@ -12,7 +12,6 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
 import javax.swing.JTextPane;
 import javax.swing.border.BevelBorder;
 import javax.swing.text.AttributeSet;
@@ -22,7 +21,6 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 
-import preferences.AppPreferences;
 import utils.ResourceLoader;
 
 @SuppressWarnings("serial")
@@ -48,7 +46,7 @@ public class ConsoleUI extends AbstractAppViewUI{
 		gbc.gridx = 0;
 		gbc.gridy = 1;
 		console.setEditable(false);
-		console.setFont(ResourceLoader.MPLUS);
+		console.setFont(ResourceLoader.getSwingResources().MPLUS);
 		console.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		JScrollPane container = new JScrollPane(console);
 		container.setPreferredSize(new Dimension(200, 100));

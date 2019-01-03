@@ -137,7 +137,7 @@ public final class AppStatus {
 		notifier.sendChange(this, "setFocusedProject", project);
 		this.project = project;
 		this.project.setReceiver(notifier);
-
+		
 		if(project.getTopLevelCircuitName() != null)
 			AppCommand.doAction(AppCommand.OPEN_GATE, project.getTopLevelCircuitName());
 	}

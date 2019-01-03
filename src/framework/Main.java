@@ -19,27 +19,32 @@ import mathLib.Complex;
 import mathLib.Matrix;
 import mathLib.Vector;
 import mathLib.compile.UnitaryDecomp;
+import utils.ResourceLoaderFX;
 
 
 
 public class Main extends Application implements AppPreferences {
 	
-	private static Window window;
-	
 	public static final String APP_NAME = "QuaCC";
 	
+	/* toggle flags: debug mode or not */
+	public static final boolean NORMAL_MODE            = true;
+	public static final boolean JAVAFX_MODE            = true;
+	
+	public static final boolean DEBUG_MODE             = false;
+	public static final boolean DEBUG_SIMULATOR_MODE   = false;
+	public static final boolean DEBUG_MIXED_STATE_MODE = false;
+	
+	
+	
+	
+	
+	private static Window window;
+	
     public static void main(String[] args) {
-    	/* toggle flags: debug mode or not */
-    	boolean normalMode = true;
     	
-    	boolean javaFX_GUI = true;
-    	
-    	boolean debugMode = false;
-    	boolean debugSimulatorMode = false;
-    	boolean debugMixedStateMode = false;
-    	
-    	if ( normalMode ) {
-    		if( javaFX_GUI ) {
+    	if ( NORMAL_MODE ) {
+    		if( JAVAFX_MODE ) {
     			launch(args);
     		} else {
 	        	DefaultGate.loadGates();
@@ -48,11 +53,11 @@ public class Main extends Application implements AppPreferences {
     		}
     	}
     	
-    	if ( debugMode ) {
+    	if ( DEBUG_MODE ) {
     		
     	}
     	
-    	if ( debugSimulatorMode ) {
+    	if ( DEBUG_SIMULATOR_MODE ) {
     		ArrayList<ArrayList<SolderedRegister>> gates = Translator.loadProgram(DefaultGate.LangType.QASM,"res//test2.qasm");
 			Main.getWindow().getSelectedBoard().setGates(gates);
 			for(int i = 0; i < 10; ++i) {
@@ -61,7 +66,7 @@ public class Main extends Application implements AppPreferences {
 			}
 		}
 
-		if(debugMixedStateMode) {
+		if(DEBUG_MIXED_STATE_MODE) {
 			Vector<Complex> v = UnitaryDecomp.getRandomTwoVector(); //Reusing code
 			Matrix<Complex> vm = v.outerProduct(v); //You should replace this matrix and the other one with the kraus operators you actually want
 			Random r = new Random();
@@ -76,6 +81,14 @@ public class Main extends Application implements AppPreferences {
 		}
     }
     
+    
+    @Override
+    public void init() throws Exception {
+    	super.init();
+    	
+    	// loads resources for FX application
+    	ResourceLoaderFX.loadFXResources();
+    }
     
     public static Window getWindow() {
     	return window;

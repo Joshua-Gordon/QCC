@@ -8,12 +8,12 @@ import java.util.Iterator;
 
 import appUIFX.AppFileIO;
 import framework2FX.exportGates.RawExportableGateData;
-import framework2FX.gateModels.CircuitBoard;
-import framework2FX.gateModels.DefaultModel;
+import framework2FX.gateModels.BasicModel;
+import framework2FX.gateModels.CircuitBoardModel;
 import framework2FX.gateModels.GateModel;
 import framework2FX.gateModels.OracleModel;
 import framework2FX.gateModels.PresetGateType;
-import framework2FX.solderedGates.SolderedGate;
+import utils.customCollections.Pair;
 import utils.customCollections.eventTracableCollections.Notifier;
 
 
@@ -21,7 +21,7 @@ import utils.customCollections.eventTracableCollections.Notifier;
  * All Quantum Circuits designed within this application are done by modifying an instance of {@link Project} <br>
  * Only one {@link Project} can be focused to be edited upon within one session of this Application <br>
  * <p>
- * All {@link CustomGateModel}s, {@link OracleModel}s, and {@link CircuitBoard}s used within this project <br>
+ * All {@link CustomGateModel}s, {@link OracleModel}s, and {@link CircuitBoardModel}s used within this project <br>
  * are stored as lists within a instance of this class <br> 
  * 
  * <p>
@@ -98,27 +98,35 @@ public class Project implements Serializable{
 	 * @throws {@link RuntimeException} if sub-circuit count exceeds Integer.MAX_VALUE
 	 */
 	public String addUntitledSubCircuit(){
-		String title = "Untitled";
+		Pair<String, Integer> nameAttr = makeUnusedUntitledBoardName();
 		
-		if(!subCircuits.containsGateModel(title + "." + CircuitBoard.CIRCUIT_BOARD_EXTENSION)) {
-			subCircuits.put(new CircuitBoard(title, title, "", 5, 5));
-			return title + "." + CircuitBoard.CIRCUIT_BOARD_EXTENSION;
-		}
+		String name = nameAttr.first();
+		String symbol = "U" + nameAttr.second();
+
+		notifier.sendChange(this, "addUntitledSubCircuit");
+		subCircuits.put(new CircuitBoardModel(name, symbol, "", 5, 5));
+		
+		return name + "." + CircuitBoardModel.CIRCUIT_BOARD_EXTENSION;
+	}
+	
+	
+	public Pair<String, Integer> makeUnusedUntitledBoardName() {
+		final String untitledString = "Untitled";
+		
+		if(!subCircuits.containsGateModel(untitledString + "." + CircuitBoardModel.CIRCUIT_BOARD_EXTENSION))
+			return new Pair<>(untitledString, 0);
 		
 		int i = 1;
-		while(subCircuits.containsGateModel(title + "_" + Integer.toString(i) + "." + CircuitBoard.CIRCUIT_BOARD_EXTENSION)) {
+		while(subCircuits.containsGateModel(untitledString + "_" + Integer.toString(i) + "." + CircuitBoardModel.CIRCUIT_BOARD_EXTENSION)) {
 			if(i == Integer.MAX_VALUE)
 				throw new RuntimeException("Could not add any more untitled sub-ciruits");
 			i++;
 		}
 		
-		String name = title + "_" + Integer.toString(i);
-
-		notifier.sendChange(this, "addUntitledSubCircuit");
-		subCircuits.put(new CircuitBoard(name, name, "", 5, 5));
-		
-		return title + "_" + Integer.toString(i) + "." + CircuitBoard.CIRCUIT_BOARD_EXTENSION;
+		return new Pair<>(untitledString + "_" + Integer.toString(i), i);
 	}
+	
+	
 	
 	
 	
@@ -137,7 +145,7 @@ public class Project implements Serializable{
 	/**
 	 * @return the list of the sub-circuits for this project
 	 */
-	public ProjectHashtable getSubCircuits() {
+	public ProjectHashtable getCircuitBoardModels() {
 		return subCircuits;
 	}
 	
@@ -173,11 +181,9 @@ public class Project implements Serializable{
 	}
 	
 	
-	public CircuitBoard getTopLevelBoard() {
-		return (CircuitBoard) subCircuits.get(topLevelCircuit);
+	public boolean hasTopLevel() {
+		return topLevelCircuit != null;
 	}
-	
-	
 	
 	
 	/**
@@ -193,7 +199,7 @@ public class Project implements Serializable{
 			topLevelCircuit = null;
 		} else {
 			String[] parts = formalName.split("\\.");
-			if(parts.length == 2 && parts[1].equals(CircuitBoard.CIRCUIT_BOARD_EXTENSION)) {
+			if(parts.length == 2 && parts[1].equals(CircuitBoardModel.CIRCUIT_BOARD_EXTENSION)) {
 				if(subCircuits.containsGateModel(formalName)) {
 					notifier.sendChange(this, "setTopLevelCircuitName", formalName);
 					topLevelCircuit = formalName;
@@ -241,9 +247,9 @@ public class Project implements Serializable{
 		String[] parts = gateModelFormalName.split("\\.");
 		
 		if(parts.length == 2) {
-			if(parts[1].equals(CircuitBoard.CIRCUIT_BOARD_EXTENSION)) {
+			if(parts[1].equals(CircuitBoardModel.CIRCUIT_BOARD_EXTENSION)) {
 				return subCircuits.get(gateModelFormalName);
-			} else if(parts[1].equals(DefaultModel.GATE_MODEL_EXTENSION)) {
+			} else if(parts[1].equals(BasicModel.GATE_MODEL_EXTENSION)) {
 				PresetGateType pgt = PresetGateType.getPresetTypeByFormalName(gateModelFormalName);
 				if(pgt != null) 
 					return pgt.getModel();
@@ -260,9 +266,9 @@ public class Project implements Serializable{
 		String[] parts = gateModelFormalName.split("\\.");
 		
 		if(parts.length == 2) {
-			if(parts[1].equals(CircuitBoard.CIRCUIT_BOARD_EXTENSION)) {
+			if(parts[1].equals(CircuitBoardModel.CIRCUIT_BOARD_EXTENSION)) {
 				return subCircuits.containsGateModel(gateModelFormalName);
-			} else if(parts[1].equals(DefaultModel.GATE_MODEL_EXTENSION)) {
+			} else if(parts[1].equals(BasicModel.GATE_MODEL_EXTENSION)) {
 				if(PresetGateType.containsPresetTypeByFormalName(gateModelFormalName))
 					return true;
 				else
@@ -312,15 +318,13 @@ public class Project implements Serializable{
 		
 		public void replace(String formalNameToReplace, GateModel newValue) {
 			if(newValue == null)
-				return;
+				throw new NullPointerException("Gate to replace cannot be null");
 			
 			GateModel toReplace = elements.get(formalNameToReplace);
 			
 			
 			if(toReplace == null) {
-				notifier.sendChange(this, "replace", formalNameToReplace, newValue);
-				elements.put(newValue.getFormalName(), newValue);
-				addCircuitBoardTraits(newValue);
+				throw new RuntimeException("Gate \"" + formalNameToReplace + "\" does not exist and cannot be replaced");
 			} else {
 				if(toReplace == newValue)
 					return;
@@ -331,10 +335,10 @@ public class Project implements Serializable{
 					elements.put(newValue.getFormalName(), newValue);
 				} else {
 					notifier.sendChange(this, "replace", formalNameToReplace, newValue);
-					System.out.println("Here");
+					
 					for(GateModel circ : subCircuits.getGateModelIterable())
 						if(circ != toReplace)
-							((CircuitBoard)circ).changeAllOccurrences(formalNameToReplace, newValue.getFormalName());
+							((CircuitBoardModel)circ).changeAllOccurrences(formalNameToReplace, newValue.getFormalName());
 					
 					if(removeCircuitBoardTraits(toReplace, true))
 						setTopLevelCircuitName(newValue.getFormalName());
@@ -355,8 +359,8 @@ public class Project implements Serializable{
 				notifier.sendChange(this, "remove", formalName);
 				
 				GateModel gm = elements.get(formalName);
-				if(gm instanceof CircuitBoard) {
-					CircuitBoard cb = (CircuitBoard) gm;
+				if(gm instanceof CircuitBoardModel) {
+					CircuitBoardModel cb = (CircuitBoardModel) gm;
 					cb.getNotifier().setReceiver(null);
 				}
 				elements.remove(formalName);
@@ -386,7 +390,7 @@ public class Project implements Serializable{
 		
 		private void removeAllOccurances (String formalName) {
 			for(GateModel si : subCircuits.getGateModelIterable()) {
-				Iterator<RawExportableGateData> gateData = ((CircuitBoard)si).iterator();
+				Iterator<RawExportableGateData> gateData = ((CircuitBoardModel)si).iterator();
 				while (gateData.hasNext())
 					if(gateData.next().getSolderedGate().getGateModelFormalName().equals(formalName))
 						gateData.remove();
@@ -394,15 +398,15 @@ public class Project implements Serializable{
 		}
 		
 		private void addCircuitBoardTraits (GateModel gm) {
-			if(gm instanceof CircuitBoard) {
-				CircuitBoard cb = (CircuitBoard) gm;
+			if(gm instanceof CircuitBoardModel) {
+				CircuitBoardModel cb = (CircuitBoardModel) gm;
 				cb.getNotifier().setReceiver(notifier);
 			}
 		}
 		
 		private boolean removeCircuitBoardTraits (GateModel gm, boolean removeTopLeve) {
-			if(gm instanceof CircuitBoard) {
-				CircuitBoard cb = (CircuitBoard) gm;
+			if(gm instanceof CircuitBoardModel) {
+				CircuitBoardModel cb = (CircuitBoardModel) gm;
 				cb.getNotifier().setReceiver(null);
 				if(removeTopLeve && topLevelCircuit != null && cb.getFormalName().equals(topLevelCircuit)) {
 					setTopLevelCircuitName(null);

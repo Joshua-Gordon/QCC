@@ -7,7 +7,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import utils.ResourceLoader;
+import utils.ResourceLoaderFX;
 
 public abstract class AppFXMLComponent{
 	private final String fxmlFilename;
@@ -19,7 +19,7 @@ public abstract class AppFXMLComponent{
 	public Node loadAsNode() {
 		Node node = null;
 		try {
-			FXMLLoader loader = ResourceLoader.loadFXMLLoader(fxmlFilename);
+			FXMLLoader loader = ResourceLoaderFX.loadFXMLLoader(fxmlFilename);
 			loader.setController(this);
 			node = loader.load();
 		} catch(IOException e) {
@@ -38,7 +38,7 @@ public abstract class AppFXMLComponent{
 	
 	public void loadNewScene(Stage stage, int width, int height) {
 		try {
-			FXMLLoader loader = ResourceLoader.loadFXMLLoader(fxmlFilename);
+			FXMLLoader loader = ResourceLoaderFX.loadFXMLLoader(fxmlFilename);
 			loader.setController(this);
 			
 			Scene scene = new Scene(loader.load(), width, height);

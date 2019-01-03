@@ -71,7 +71,7 @@ public class GateIcon extends ImageIcon{
 	
 	
 	public static GateIcon getMeasureIcon() {
-		Font f = ResourceLoader.VAST_SHADOW.deriveFont(12f);
+		Font f = ResourceLoader.getSwingResources().VAST_SHADOW.deriveFont(12f);
 		Rectangle2D rect = CircuitBoardRenderContext.getStringBounds(f, "M");
 		BufferedImage bi = new BufferedImage(2 * (PADDING + LINE_LENGTH) + (int) rect.getWidth(),
 				2 * PADDING + (int) rect.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
@@ -172,7 +172,7 @@ public class GateIcon extends ImageIcon{
 	}
 	
 	public BufferedImage getBufferedImage() {
-		Font f = ResourceLoader.VAST_SHADOW.deriveFont(12f);
+		Font f = ResourceLoader.getSwingResources().VAST_SHADOW.deriveFont(12f);
 		Rectangle2D rect = CircuitBoardRenderContext.getStringBounds(f, name);
 		BufferedImage bi = new BufferedImage(2 * (PADDING + LINE_LENGTH) + (int) rect.getWidth(),
 				2 * PADDING + (int) rect.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);

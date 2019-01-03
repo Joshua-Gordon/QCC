@@ -10,7 +10,7 @@ import framework2FX.gateModels.GateModel;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 
-public class CustomOracleChooser extends AbstractGateChooser implements ChangeListener<Boolean>{
+public class CustomOracleChooser extends AbstractGateChooser {
 	private boolean initialized = false;
 	
 	public CustomOracleChooser() {
@@ -29,7 +29,6 @@ public class CustomOracleChooser extends AbstractGateChooser implements ChangeLi
 	public void initialize(URL arg0, ResourceBundle arg1) {
 		button.setVisible(true);
 		button.setText("Create Custom Oracle");
-		button.pressedProperty().addListener(this);
 		initializeGates();
 		initialized = true;
 	}
@@ -51,16 +50,16 @@ public class CustomOracleChooser extends AbstractGateChooser implements ChangeLi
 				GateModel replacement = (GateModel) args[0];
 				removeGateModelByName(replacement.getName());
 				addGateModel(replacement);
-			}
-			
-			if(methodName.equals("replace") ) {
+			} else if(methodName.equals("replace") ) {
 				String name = (String) args[0];
 				GateModel replacement = (GateModel) args[1];
 				removeGateModelByName(name);
+				
+				String newName = replacement.getFormalName();
+				if(!newName.equals(name))
+					removeGateModelByName(newName);	
 				addGateModel(replacement);
-			}
-			
-			if(methodName.equals("remove")) {
+			} else if(methodName.equals("remove")) {
 				String name = (String) args[0];
 				removeGateModelByName(name);
 			}
@@ -73,8 +72,4 @@ public class CustomOracleChooser extends AbstractGateChooser implements ChangeLi
 		AppCommand.doAction(AppCommand.CREATE_ORACLE_GATE);
 	}
 
-	@Override
-	public void changed(ObservableValue<? extends Boolean> arg0, Boolean arg1, Boolean arg2) {
-		
-	}
 }

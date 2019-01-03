@@ -14,8 +14,8 @@ import framework2FX.UserDefinitions.GroupDefinition;
 import framework2FX.UserDefinitions.MathObject;
 import framework2FX.UserDefinitions.MatrixObject;
 import framework2FX.UserDefinitions.ScalarObject;
-import framework2FX.gateModels.CircuitBoard;
-import framework2FX.gateModels.DefaultModel;
+import framework2FX.gateModels.CircuitBoardModel;
+import framework2FX.gateModels.BasicModel;
 import framework2FX.gateModels.GateModel;
 import framework2FX.solderedGates.SolderedGate;
 import mathLib.Complex;
@@ -218,7 +218,7 @@ public class GateManager {
 		
 		GateModel gm = leaf.gm;
 		Hashtable<String, Complex> argParamTable = leaf.parameters;
-		DefaultModel dg = (DefaultModel) gm;
+		BasicModel dg = (BasicModel) gm;
 		ImmutableArray<MathObject> definitions = dg.getDefinitions();
 		Matrix<Complex>[] matrixes = new Matrix[definitions.size()];
 		
@@ -351,7 +351,7 @@ public class GateManager {
 	private static ExportTree startScanAndGetExportStream (String circuitboardName, MathSet runtimeVariables) throws ExportException {
 		
 		Project p = AppStatus.get().getFocusedProject();
-		CircuitBoard cb = (CircuitBoard) p.getGateModel(circuitboardName);
+		CircuitBoardModel cb = (CircuitBoardModel) p.getGateModel(circuitboardName);
 		
 		if(cb == null) throw new ExportException("Gate \"" + circuitboardName + "\" is not valid or does not exist");
 		
@@ -369,7 +369,7 @@ public class GateManager {
 	
 	
 	
-	private static ExportTree scanCB (Project p, CircuitBoard cb, MathSet runtimeVariables, RawExportableGateData data) throws ExportException {
+	private static ExportTree scanCB (Project p, CircuitBoardModel cb, MathSet runtimeVariables, RawExportableGateData data) throws ExportException {
 		
 		Queue<ExportNode> nodes = new Queue<>();
 		
@@ -402,7 +402,7 @@ public class GateManager {
 			MathSet ms = new MathSet(MathDefintions.GLOBAL_DEFINITIONS);
 			
 			try {
-				if(gm instanceof CircuitBoard) {
+				if(gm instanceof CircuitBoardModel) {
 					for(MathObject mo : parameters.getMathDefinitions()) {
 						if(mo.isMatrix())
 							throw new ExportException("Gate \"" + sg.getGateModelFormalName() + "\" in \"" 
@@ -415,7 +415,7 @@ public class GateManager {
 						
 						ms.addVariable(new ConcreteVariable(arguments.get(i++), c));
 					}
-					n = scanCB(p, (CircuitBoard) gm, ms, rawData);
+					n = scanCB(p, (CircuitBoardModel) gm, ms, rawData);
 				} else {
 					Hashtable<String, Complex> argParamTable = new Hashtable<>();
 					for(MathObject mo : parameters.getMathDefinitions()) {

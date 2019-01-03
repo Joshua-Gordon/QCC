@@ -7,6 +7,12 @@ import utils.customCollections.ImmutableArray;
 public abstract class GateModel implements Serializable {
 	private static final long serialVersionUID = 3195910933230664750L;
 	
+	public static final String NAME_REGEX = "[a-zA-Z][\\w]*";
+	public static final String SYMBOL_REGEX = "[a-zA-Z][\\w\\s]*";
+	
+	public static final String INPROPER_NAME_SCHEME_MSG = "Name must be a letter followed by letters, digits, or underscores";
+	public static final String INPROPER_SYMBOL_SCHEME_MSG = "Name must be a letter followed by letters, digits, or underscores";
+	
 	private final String name;
 	private final String symbol;
 	private final String description;
@@ -14,25 +20,27 @@ public abstract class GateModel implements Serializable {
 	public GateModel (String name, String symbol, String description) {
 		if(name == null) {
 			throw new InproperNameSchemeException("Name must be defined");
-		} else if(!name.matches("[a-zA-Z][\\w]*")) {
-			throw new InproperNameSchemeException("Name must be a letter followed by letters, digits, or underscores");
+		} else if(!name.matches(NAME_REGEX)) {
+			throw new InproperNameSchemeException(INPROPER_NAME_SCHEME_MSG);
 		}
 		
 		if(symbol == null) {
 			throw new InproperNameSchemeException("Symbol must be defined");
-		} else if(!symbol.matches("[a-zA-Z][\\w\\s]*")) {
-			throw new InproperNameSchemeException("Symbol must be a letter followed by letters, digits, or underscores");
+		} else if(!symbol.matches(SYMBOL_REGEX)) {
+			throw new InproperNameSchemeException(INPROPER_SYMBOL_SCHEME_MSG);
 		}
 		
-		this.name = name;
-		this.symbol = symbol;
-		this.description = description;
+		this.name = name.trim();
+		this.symbol = symbol.trim();
+		this.description = description.trim();
 	}
 	
 	public abstract int getNumberOfRegisters();
 	public abstract ImmutableArray<String> getArguments();
 	public abstract String getExtString();
 	public abstract boolean isPreset();
+	public abstract GateModel getAsNewModel(String name, String symbol, String description);
+	
 	
 	public String getFormalName() {
 		return name + "." + getExtString();

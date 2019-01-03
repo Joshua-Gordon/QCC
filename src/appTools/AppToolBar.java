@@ -4,12 +4,6 @@ package appTools;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
-import java.awt.image.BufferedImage;
 
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
@@ -18,6 +12,7 @@ import javax.swing.JToolBar;
 
 import appUI.Window;
 import utils.ResourceLoader;
+import utils.ResourceLoader.SwingResources;
 
 @SuppressWarnings("serial")
 public class AppToolBar extends JToolBar{
@@ -29,20 +24,23 @@ public class AppToolBar extends JToolBar{
 		super();
 		this.w = w;
 		
+		SwingResources sr = ResourceLoader.getSwingResources();
+		
+		
 		setFloatable(false);
 		
-		selected = new SelectionTool(w, new ImageIcon(ResourceLoader.SELECT));
+		selected = new SelectionTool(w, new ImageIcon(sr.SELECT));
 		
 //		Add Tools Here:
 		addTool(selected);
-		addTool(new SolderingTool(w, new ImageIcon(ResourceLoader.SOLDER)));
-		addTool(new EditTool(w, new ImageIcon(ResourceLoader.EDIT)));
+		addTool(new SolderingTool(w, new ImageIcon(sr.SOLDER)));
+		addTool(new EditTool(w, new ImageIcon(sr.EDIT)));
 		
 		addSeparator();
-		addTool(new AddColumnTool(w, new ImageIcon(ResourceLoader.ADD_COLUMN)));
-		addTool(new RemoveColumnTool(w, new ImageIcon(ResourceLoader.REMOVE_COLUMN)));
-		addTool(new AddRowTool(w, new ImageIcon(ResourceLoader.ADD_ROW)));
-		addTool(new RemoveRowTool(w, new ImageIcon(ResourceLoader.REMOVE_ROW)));
+		addTool(new AddColumnTool(w, new ImageIcon(sr.ADD_COLUMN)));
+		addTool(new RemoveColumnTool(w, new ImageIcon(sr.REMOVE_COLUMN)));
+		addTool(new AddRowTool(w, new ImageIcon(sr.ADD_ROW)));
+		addTool(new RemoveRowTool(w, new ImageIcon(sr.REMOVE_ROW)));
 		
 		
 		((JToggleButton) getComponent(0)).setSelected(true);

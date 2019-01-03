@@ -58,10 +58,6 @@ public class Console extends AppView implements PrintStream, Initializable, Chan
 		consoleArea.getChildren().add(text1);
 	}
 	
-	public void println(String text, Color color) {
-		print(text + "\n", color);
-	}
-	
 	public void print(String text) {
 		print(text, Color.BLACK);
 	}
@@ -118,14 +114,6 @@ public class Console extends AppView implements PrintStream, Initializable, Chan
 	
 	public void printLatex(String latex, float font, String backgroundColor, String textColor) {
 		consoleArea.getChildren().add(new LatexNode(latex, font, backgroundColor, textColor));
-	}
-	
-	public void println(String text) {
-		println(text, Color.BLACK);
-	}
-	
-	public void printErrln(String text) {
-		println(text, Color.RED);
 	}
 	
 	public void printErr(String text) {

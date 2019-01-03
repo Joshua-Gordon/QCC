@@ -9,10 +9,12 @@ import appUIFX.appViews.AppView;
 import appUIFX.appViews.AppView.ViewListener;
 import appUIFX.appViews.CircuitBoardView;
 import appUIFX.appViews.ConcreteTabView;
+import framework.Main;
 import framework2FX.AppStatus;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Label;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
@@ -29,6 +31,7 @@ public class MainScene extends AppFXMLComponent implements Initializable, AppPre
 	public TabPane leftTabPane, centerTabPane, rightTabPane, bottomTabPane;
 	public ToggleButton selectTool, solderTool, editTool, addColumnTool, removeColumnTool, addRowTool, removeRowTool;
 	public MenuBar menuBar;
+	public Label appNameLabel;
 	
 	private ToggleGroup tools;
 	
@@ -179,6 +182,7 @@ public class MainScene extends AppFXMLComponent implements Initializable, AppPre
 		initializeTools();
 		AppMenuBar.initializeMenuBar(this);
 		initializeViews();
+		appNameLabel.setText(Main.APP_NAME);
 	}
 	
 	

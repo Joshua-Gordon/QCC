@@ -2,11 +2,9 @@ package appUIFX;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Polygon;
 import java.awt.RenderingHints;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
 import appUI.CircuitBoardRenderContext;
@@ -16,7 +14,6 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import utils.ResourceLoader;
 
 public class GateIcon  {
 
@@ -85,13 +82,14 @@ public class GateIcon  {
 	
 	
 	private static Image getMeasureIconWithNoLine() {
-		Font f = ResourceLoader.VAST_SHADOW.deriveFont(12f);
-		Rectangle2D rect = CircuitBoardRenderContext.getStringBounds(f, "M");
-		BufferedImage bi = new BufferedImage(2 * (PADDING) + (int) rect.getWidth(),
-				2 * PADDING + (int) rect.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
+		int height = 20;
+		int width = 20;
+		
+		BufferedImage bi = new BufferedImage(2 * (PADDING) + width,
+				2 * PADDING + height, BufferedImage.TYPE_4BYTE_ABGR);
+		
 		Graphics2D g2d = (Graphics2D) bi.getGraphics();
     	g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		g2d.setFont(f);
 		g2d.setColor(Color.WHITE);
 		g2d.fillRect(0, 0, bi.getWidth(), bi.getHeight() - 1);
 		g2d.setColor(Color.BLACK);
@@ -100,9 +98,9 @@ public class GateIcon  {
 		g2d.drawLine(0, bi.getHeight() / 2, 0, bi.getHeight() / 2);
 		g2d.drawLine(bi.getWidth(), bi.getHeight() / 2, bi.getWidth(), bi.getHeight() / 2);
 		
-		g2d.drawArc(PADDING/2, PADDING, (int) rect.getWidth() + PADDING, (int) rect.getHeight() + PADDING, 0, 180);
-		CircuitBoardRenderContext.drawArrow(g2d, ARROW_HEAD, PADDING + (int)(rect.getWidth() / 2), 
-				(int)(1.5f * PADDING) + (int) (rect.getHeight() / 2), bi.getWidth() - 5, 5);
+		g2d.drawArc(PADDING/2, PADDING, width + PADDING, height + PADDING, 0, 180);
+		CircuitBoardRenderContext.drawArrow(g2d, ARROW_HEAD, PADDING + width / 2, 
+				(int)(1.5f * PADDING) + height / 2, bi.getWidth() - 5, 5);
 		
 		g2d.dispose();
 		return SwingFXUtils.toFXImage(bi, null);
@@ -115,14 +113,15 @@ public class GateIcon  {
 	
 	
 	private static GateIcon getMeasureIcon() {
-		Font f = ResourceLoader.VAST_SHADOW.deriveFont(12f);
-		Rectangle2D rect = CircuitBoardRenderContext.getStringBounds(f, "M");
-		BufferedImage bi = new BufferedImage(2 * (PADDING + LINE_LENGTH) + (int) rect.getWidth(),
-				2 * PADDING + (int) rect.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
+		int height = 20;
+		int width = 20;
+		
+		BufferedImage bi = new BufferedImage(2 * (PADDING + LINE_LENGTH) + width,
+				2 * PADDING + height, BufferedImage.TYPE_4BYTE_ABGR);
 		Graphics2D g2d = (Graphics2D) bi.getGraphics();
     	g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		g2d.setFont(f);
-		g2d.setColor(Color.WHITE);
+		
+    	g2d.setColor(Color.WHITE);
 		g2d.fillRect(LINE_LENGTH, 0, bi.getWidth() - 2*LINE_LENGTH, bi.getHeight() - 1);
 		g2d.setColor(Color.BLACK);
 		g2d.drawRect(LINE_LENGTH, 0, bi.getWidth() - 2*LINE_LENGTH, bi.getHeight() - 1);
@@ -130,9 +129,9 @@ public class GateIcon  {
 		g2d.drawLine(0, bi.getHeight() / 2, LINE_LENGTH, bi.getHeight() / 2);
 		g2d.drawLine(bi.getWidth() - LINE_LENGTH, bi.getHeight() / 2, bi.getWidth(), bi.getHeight() / 2);
 		
-		g2d.drawArc(LINE_LENGTH + PADDING/2, PADDING, (int) rect.getWidth() + PADDING, (int) rect.getHeight() + PADDING, 0, 180);
-		CircuitBoardRenderContext.drawArrow(g2d, ARROW_HEAD, LINE_LENGTH + PADDING + (int)(rect.getWidth() / 2), 
-				(int)(1.5f * PADDING) + (int) (rect.getHeight() / 2), bi.getWidth() - LINE_LENGTH - 5, 5);
+		g2d.drawArc(LINE_LENGTH + PADDING/2, PADDING, width + PADDING, height + PADDING, 0, 180);
+		CircuitBoardRenderContext.drawArrow(g2d, ARROW_HEAD, LINE_LENGTH + PADDING + width / 2, 
+				(int)(1.5f * PADDING) + height / 2, bi.getWidth() - LINE_LENGTH - 5, 5);
 		
 		g2d.dispose();
 		return new GateIcon(bi);

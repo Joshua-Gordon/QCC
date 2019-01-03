@@ -1,5 +1,6 @@
 package framework;
 
+import java.awt.Font;
 import java.awt.geom.Rectangle2D;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -45,6 +46,8 @@ public class CustomGate extends AbstractGate implements Serializable {
      * be added to the currently selected {@link CircuitBoard}'s {@link CustomGate} {@link ListModel}.
      */
     public static void makeCustom() {
+    	final Font VAST_SHADOW = ResourceLoader.getSwingResources().VAST_SHADOW;
+    	
     	CustomGateConstructorUI window = new CustomGateConstructorUI(Main.getWindow().getFrame());
     	window.setVisible(true);
     	ArrayList<Matrix<Complex>> matrixes = window.getCustomMatrix();
@@ -53,9 +56,9 @@ public class CustomGate extends AbstractGate implements Serializable {
     		cg.setDescription(window.getDescription());
     		cg.setIcon(window.getIcon());
     		
-    		Rectangle2D rect = CircuitBoardRenderContext.getStringBounds(ResourceLoader.VAST_SHADOW, cg.getName());
+    		Rectangle2D rect = CircuitBoardRenderContext.getStringBounds(VAST_SHADOW, cg.getName());
     		int offset = (int) (2 * CircuitBoardRenderContext.REGISTER_NUM_PADDING + 
-    				CircuitBoardRenderContext.getStringBounds(ResourceLoader.VAST_SHADOW, Integer.toString(cg.getNumberOfRegisters() - 1)).getWidth());
+    				CircuitBoardRenderContext.getStringBounds(VAST_SHADOW, Integer.toString(cg.getNumberOfRegisters() - 1)).getWidth());
     		int width = (int)Math.ceil((double) (rect.getWidth() + offset)/ (double) CircuitBoardRenderContext.GATE_PIXEL_SIZE);
     		cg.setWidth(width);
     		

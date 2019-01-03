@@ -30,5 +30,10 @@ public class OracleModel extends GateModel {
 	public boolean isPreset() {
 		return false;
 	}
+
+	@Override
+	public GateModel getAsNewModel(String name, String symbol, String description) {
+		return new OracleModel(name, symbol, description);
+	}
 	
 }

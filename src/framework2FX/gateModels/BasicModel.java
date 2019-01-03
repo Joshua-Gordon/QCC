@@ -4,7 +4,7 @@ import framework2FX.UserDefinitions.GroupDefinition;
 import framework2FX.UserDefinitions.MathObject;
 import utils.customCollections.ImmutableArray;
 
-public class DefaultModel extends GateModel {
+public class BasicModel extends GateModel {
 	private static final long serialVersionUID = -3974442774420594973L;
 	
 	public static final String GATE_MODEL_EXTENSION =  "gm";
@@ -28,8 +28,14 @@ public class DefaultModel extends GateModel {
 	private final GroupDefinition gateDefinition;
     private final DefaultModelType gateType;
     
+    private BasicModel(String name, String symbol, String description, BasicModel old) {
+    	super(name, symbol, description);
+    	this.numberOfRegisters = old.numberOfRegisters;
+    	this.gateDefinition = old.gateDefinition;
+    	this.gateType = old.gateType;
+    }
 	
-    DefaultModel (String name, String symbol, String description, int numberOfRegisters, GroupDefinition gateDefinition, DefaultModelType gateType) {
+    BasicModel (String name, String symbol, String description, int numberOfRegisters, GroupDefinition gateDefinition, DefaultModelType gateType) {
 		super(name, symbol, description);
 		this.numberOfRegisters			= numberOfRegisters;
 		this.gateDefinition				= gateDefinition;
@@ -88,5 +94,10 @@ public class DefaultModel extends GateModel {
 	@Override
 	public String getExtString() {
 		return GATE_MODEL_EXTENSION;
+	}
+
+	@Override
+	public GateModel getAsNewModel(String name, String symbol, String description) {
+		return new BasicModel(name, symbol, description, this);
 	}
 }

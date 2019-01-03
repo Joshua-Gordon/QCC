@@ -7,17 +7,17 @@ import framework2FX.UserDefinitions.DefinitionEvaluatorException;
 import framework2FX.UserDefinitions.GroupDefinition;
 import framework2FX.UserDefinitions.MatrixDefinition;
 import framework2FX.UserDefinitions.ScalarDefinition;
-import framework2FX.gateModels.DefaultModel.DefaultModelType;
+import framework2FX.gateModels.BasicModel.DefaultModelType;
 import mathLib.Complex;
 import mathLib.Matrix;
 
 public class GateModelFactory {
 	
-	public static DefaultModel makeGateModel(String name, String symbol, String description, DefaultModelType type, String ... userDefinitions) throws DefinitionEvaluatorException {
+	public static BasicModel makeGateModel(String name, String symbol, String description, DefaultModelType type, String ... userDefinitions) throws DefinitionEvaluatorException {
 		return makeGateModel(name, symbol, description, type, null, userDefinitions);
 	}
 	
-	static DefaultModel makeGateModel(String name, String symbol, String description, DefaultModelType type, PresetGateType presetModel, String ... userDefinitions) throws DefinitionEvaluatorException {
+	static BasicModel makeGateModel(String name, String symbol, String description, DefaultModelType type, PresetGateType presetModel, String ... userDefinitions) throws DefinitionEvaluatorException {
 		
 		switch (type) {
 		case HAMILTONIAN:
@@ -38,7 +38,7 @@ public class GateModelFactory {
 			
 			
 			if(presetModel == null)
-				return new DefaultModel(name, symbol, description, rgc.getNumberRegisters(), definitions, type);
+				return new BasicModel(name, symbol, description, rgc.getNumberRegisters(), definitions, type);
 			else
 				return new PresetGateModel(name, symbol, description, rgc.getNumberRegisters(), definitions, type, presetModel);
 		case POVM:
@@ -59,7 +59,7 @@ public class GateModelFactory {
 			
 			
 			if(presetModel == null)
-				return new DefaultModel(name, symbol, description, rgc.getNumberRegisters(), definitions, type);
+				return new BasicModel(name, symbol, description, rgc.getNumberRegisters(), definitions, type);
 			else
 				return new PresetGateModel(name, symbol, description, rgc.getNumberRegisters(), definitions, type, presetModel);
 			
@@ -84,7 +84,7 @@ public class GateModelFactory {
 			
 			
 			if(presetModel == null)
-				return new DefaultModel(name, symbol, description, rgc.getNumberRegisters(), definitions, type);
+				return new BasicModel(name, symbol, description, rgc.getNumberRegisters(), definitions, type);
 			else
 				return new PresetGateModel(name, symbol, description, rgc.getNumberRegisters(), definitions, type, presetModel);
 			
@@ -129,7 +129,7 @@ public class GateModelFactory {
 	
 	
 	
-	public static class PresetGateModel extends DefaultModel {
+	public static class PresetGateModel extends BasicModel {
 		private static final long serialVersionUID = 3655123001545022473L;
 		
 		private final PresetGateType presetModel;

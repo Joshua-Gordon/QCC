@@ -3,12 +3,10 @@ package appUIFX.appViews.gateChooser;
 import java.util.Iterator;
 
 import appUIFX.GateIcon;
-import appUIFX.MainScene;
+import appUIFX.GateModelContextMenu;
 import appUIFX.appViews.AppView;
-import appUIFX.appViews.GateModelView;
 import framework2FX.AppCommand;
-import framework2FX.AppStatus;
-import framework2FX.gateModels.DefaultModel;
+import framework2FX.Project;
 import framework2FX.gateModels.GateModel;
 import javafx.collections.ObservableList;
 import javafx.fxml.Initializable;
@@ -21,7 +19,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.TilePane;
 
-public abstract class AbstractGateChooser extends AppView implements Initializable{
+public abstract class AbstractGateChooser extends AppView implements Initializable {
 	
 	public Button button;
 	public HBox buttonBox;
@@ -53,20 +51,20 @@ public abstract class AbstractGateChooser extends AppView implements Initializab
 		tg.getToggles().add(stb);
 	}
 	
-	public void putGateModel(GateModel s) {
-		ObservableList<Node> buttons = list.getChildren();
-		Iterator<Node> iter = buttons.iterator();
-		while(iter.hasNext()) {
-			GateToggleButton stb = (GateToggleButton) iter.next();
-			if(stb.gateModel.getFormalName().equals(s.getFormalName())) {
-				iter.remove();
-				break;
-			}
-		}
-		GateToggleButton stb = new GateToggleButton(s);
-		buttons.add(stb);
-		tg.getToggles().add(stb);
-	}
+//	public void putGateModel(GateModel s) {
+//		ObservableList<Node> buttons = list.getChildren();
+//		Iterator<Node> iter = buttons.iterator();
+//		while(iter.hasNext()) {
+//			GateToggleButton stb = (GateToggleButton) iter.next();
+//			if(stb.gateModel.getFormalName().equals(s.getFormalName())) {
+//				iter.remove();
+//				break;
+//			}
+//		}
+//		GateToggleButton stb = new GateToggleButton(s);
+//		buttons.add(stb);
+//		tg.getToggles().add(stb);
+//	}
 	
 	public void removeGateModelByName(String name) {
 		Iterator<Node> buttons = list.getChildren().iterator();
@@ -80,17 +78,17 @@ public abstract class AbstractGateChooser extends AppView implements Initializab
 		}
 	}
 	
-	public void removeGateModel(GateModel s) {
-		Iterator<Node> buttons = list.getChildren().iterator();
-		while(buttons.hasNext()) {
-			GateToggleButton stb = (GateToggleButton) buttons.next();
-			if(stb.gateModel == s) {
-				buttons.remove();
-				tg.getToggles().remove(stb);
-				return;
-			}
-		}
-	}
+//	public void removeGateModel(GateModel s) {
+//		Iterator<Node> buttons = list.getChildren().iterator();
+//		while(buttons.hasNext()) {
+//			GateToggleButton stb = (GateToggleButton) buttons.next();
+//			if(stb.gateModel == s) {
+//				buttons.remove();
+//				tg.getToggles().remove(stb);
+//				return;
+//			}
+//		}
+//	}
 	
 	public void removeAllGateModels() {
 		ObservableList<Node> buttons = list.getChildren();
@@ -117,6 +115,7 @@ public abstract class AbstractGateChooser extends AppView implements Initializab
 		            	AppCommand.doAction(AppCommand.OPEN_GATE, gateModel.getFormalName());
 		                
 			});
+			setContextMenu(new GateModelContextMenu(null, gateModel));
 		}
 		
 		public GateModel getGateModel() {

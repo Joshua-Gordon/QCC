@@ -7,13 +7,19 @@ public interface PrintStream {
 	
 	public void print(String text, Color color) ;
 	
-	public void println(String text, Color color) ;
+	public default void println(String text, Color color) {
+		print(text + "\n", color);
+	}
 	
 	public void print(String text) ;
 	
-	public void println(String text) ;
+	public default void println(String text) {
+		print(text + "\n");
+	}
 	
-	public void printErrln(String text) ;
+	public default void printErrln(String text) {
+		printErr(text + "\n");
+	}
 	
 	public void printErr(String text) ;
 	
@@ -24,6 +30,28 @@ public interface PrintStream {
 	public void printLatex(String latex, float font, String backgroundColor) ;
 	
 	public void printLatex(String latex, float font, String backgroundColor, String textColor) ;
+	
+	
+	public default void printLatexln(String latex) {
+		printLatex(latex);
+		println("");
+	}
+	
+	public default void printLatexln(String latex, float font) {
+		printLatex(latex, font);
+		println("");
+	}
+	
+	public default void printLatexln(String latex, float font, String backgroundColor) {
+		printLatex(latex, font, backgroundColor);
+		println("");
+	}
+	
+	public default void printLatexln(String latex, float font, String backgroundColor, String textColor) {
+		printLatex(latex, font, backgroundColor, textColor);
+		println("");
+	}
+	
 	
 	public static class SystemPrintStream implements PrintStream {
 		public static SystemPrintStream instance = new SystemPrintStream();
@@ -43,23 +71,8 @@ public interface PrintStream {
 		}
 
 		@Override
-		public void println(String text, Color color) {
-			System.out.println(text);
-		}
-
-		@Override
 		public void print(String text) {
 			System.out.print(text);			
-		}
-
-		@Override
-		public void println(String text) {
-			System.out.println(text);
-		}
-
-		@Override
-		public void printErrln(String text) {
-			System.err.println(text);			
 		}
 
 		@Override

@@ -7,10 +7,8 @@ import framework2FX.AppCommand;
 import framework2FX.AppStatus;
 import framework2FX.Project;
 import framework2FX.gateModels.GateModel;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 
-public class CustomGateChooser extends AbstractGateChooser implements ChangeListener<Boolean>{
+public class CustomGateChooser extends AbstractGateChooser {
 	private boolean initialized = false;
 	
 	public CustomGateChooser() {
@@ -29,11 +27,10 @@ public class CustomGateChooser extends AbstractGateChooser implements ChangeList
 	public void initialize(URL arg0, ResourceBundle arg1) {
 		button.setVisible(true);
 		button.setText("Create Custom Gate");
-		button.pressedProperty().addListener(this);
 		initializeGates();
 		initialized = true;
 	}
-	// TODO : FIX Immediately
+	
 	@Override
 	public boolean receive(Object source, String methodName, Object... args) {
 		AppStatus status = AppStatus.get();
@@ -51,16 +48,16 @@ public class CustomGateChooser extends AbstractGateChooser implements ChangeList
 				GateModel replacement = (GateModel) args[0];
 				removeGateModelByName(replacement.getName());
 				addGateModel(replacement);
-			}
-			
-			if(methodName.equals("replace") ) {
+			} else if(methodName.equals("replace") ) {
 				String name = (String) args[0];
 				GateModel replacement = (GateModel) args[1];
 				removeGateModelByName(name);
-				putGateModel(replacement);
-			}
-			
-			if(methodName.equals("remove")) {
+				
+				String newName = replacement.getFormalName();
+				if(!newName.equals(name))
+					removeGateModelByName(newName);	
+				addGateModel(replacement);
+			} else if(methodName.equals("remove")) {
 				String name = (String) args[0];
 				removeGateModelByName(name);
 			}
@@ -71,11 +68,6 @@ public class CustomGateChooser extends AbstractGateChooser implements ChangeList
 	@Override
 	public void buttonAction() {
 		AppCommand.doAction(AppCommand.CREATE_DEFAULT_GATE);
-	}
-
-	@Override
-	public void changed(ObservableValue<? extends Boolean> arg0, Boolean arg1, Boolean arg2) {
-		
 	}
 
 }

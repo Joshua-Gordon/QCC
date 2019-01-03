@@ -28,25 +28,25 @@ import utils.customCollections.eventTracableCollections.Notifier;
 /**
  * This is a 2D grid of gates that represents a quantum protocol within design (often referred to as a sub-circuit or top-level) <br>
  * <p>
- * For a {@link CircuitBoard} to be used within a the application through the GUI, it must be added to <br>
+ * For a {@link CircuitBoardModel} to be used within a the application through the GUI, it must be added to <br>
  * a {@link Project} instance.
  * <p>
- * A {@link CircuitBoard} instance has two tiers: sub-circuit or top-level <br>
+ * A {@link CircuitBoardModel} instance has two tiers: sub-circuit or top-level <br>
  * The top-level board is top-most 'module' of a quantum protocol. <br>
- * The top-level can be composed of other {@link CircuitBoard} instances; These instances are called sub-circuits.<br>
+ * The top-level can be composed of other {@link CircuitBoardModel} instances; These instances are called sub-circuits.<br>
  * <p>
  * There can only be one top-level within a single {@link Project} instance, but there is no <br>
  * limit to the amount of sub-circuits within a {@link Project} instance.
  * <p>
  * 
- * For a {@link CircuitBoard} to be identified as a 
+ * For a {@link CircuitBoardModel} to be identified as a 
  * 
  * 
  * 
  * @author quantumresearch
  *
  */
-public class CircuitBoard extends GateModel implements  Iterable<RawExportableGateData> {
+public class CircuitBoardModel extends GateModel implements  Iterable<RawExportableGateData> {
 	private static final long serialVersionUID = -6921131331890897905L;
 	
 	private final CustomLinkedList<CustomLinkedList<SolderedPin>> elements;
@@ -55,18 +55,37 @@ public class CircuitBoard extends GateModel implements  Iterable<RawExportableGa
 	
 	
     // Notifies User-Interface of changes
-    private Notifier notifier;
+    private final Notifier notifier;
     
     private final OrderedSet<String> arguments;
     
-    private Manifest<String> circuitBoardsUsed = new Manifest<>();
-    private Manifest<String> defaultGatesUsed = new Manifest<>();
-    private Manifest<String> presetGatesUsed = new Manifest<>();
-    private Manifest<String> oraclesUsed = new Manifest<>();
+    private final Manifest<String> circuitBoardsUsed;
+    private final Manifest<String> defaultGatesUsed;
+    private final Manifest<String> presetGatesUsed;
+    private final Manifest<String> oraclesUsed;
+    
+    private CircuitBoardModel(String name, String symbol, String description, CircuitBoardModel oldModel) {
+    	super(name, symbol, description);
+    	
+    	this.arguments = oldModel.arguments;
+    	this.elements = oldModel.elements;
+    	
+    	this.circuitBoardsUsed = oldModel.circuitBoardsUsed;
+    	this.defaultGatesUsed = oldModel.defaultGatesUsed;
+    	this.presetGatesUsed = oldModel.presetGatesUsed;
+    	this.oraclesUsed = oldModel.oraclesUsed;
+    	
+    	this.notifier = new Notifier();
+    }
     
     
-    public CircuitBoard(String name, String symbol, String description, int rows, int columns, String ... arguments) {
+    public CircuitBoardModel(String name, String symbol, String description, int rows, int columns, String ... arguments) {
     	super (name, symbol, description);
+    	
+    	circuitBoardsUsed = new Manifest<>();
+        defaultGatesUsed = new Manifest<>();
+        presetGatesUsed = new Manifest<>();
+        oraclesUsed = new Manifest<>();
     	
     	if (rows < 1)
 			throw new IllegalArgumentException("Rows cannot be less than 1");
@@ -97,9 +116,9 @@ public class CircuitBoard extends GateModel implements  Iterable<RawExportableGa
     	String[] parts = oldGateName.split("\\.");
     	
     	if(parts.length == 2 && newGateName.endsWith("." + parts[1])) {
-    		if(parts[1].equals(CircuitBoard.CIRCUIT_BOARD_EXTENSION)) {
+    		if(parts[1].equals(CircuitBoardModel.CIRCUIT_BOARD_EXTENSION)) {
     			circuitBoardsUsed.replace(oldGateName, newGateName);
-    		} else if (parts[1].equals(DefaultModel.GATE_MODEL_EXTENSION)) {
+    		} else if (parts[1].equals(BasicModel.GATE_MODEL_EXTENSION)) {
     			defaultGatesUsed.replace(oldGateName, newGateName);
     		} else if (parts[1].equals(OracleModel.ORACLE_MODEL_EXTENSION)) {
     			oraclesUsed.replace(oldGateName, newGateName);
@@ -111,9 +130,9 @@ public class CircuitBoard extends GateModel implements  Iterable<RawExportableGa
     	String[] parts = gateName.split("\\.");
     	
     	if(parts.length == 2) {
-    		if(parts[1].equals(CircuitBoard.CIRCUIT_BOARD_EXTENSION)) {
+    		if(parts[1].equals(CircuitBoardModel.CIRCUIT_BOARD_EXTENSION)) {
     			return circuitBoardsUsed.getOccurrences(gateName);
-    		} else if (parts[1].equals(DefaultModel.GATE_MODEL_EXTENSION)) {
+    		} else if (parts[1].equals(BasicModel.GATE_MODEL_EXTENSION)) {
     			if(PresetGateType.containsPresetTypeByFormalName(gateName))
     				return presetGatesUsed.getOccurrences(gateName);
     			else	
@@ -761,11 +780,11 @@ public class CircuitBoard extends GateModel implements  Iterable<RawExportableGa
 		Project p = AppStatus.get().getFocusedProject();
 		GateModel gm = p.getGateModel(gateModel);
 		
-		if(gm instanceof CircuitBoard) {
+		if(gm instanceof CircuitBoardModel) {
 			if(findRecursion(p, gateModel))
 				throw new RuntimeException("The circuit board " + gateModel + " makes circuit board " + getName() + " recusively defined");
 			return circuitBoardsUsed.add(gateModel); 
-		} else if (gm instanceof DefaultModel) {
+		} else if (gm instanceof BasicModel) {
 			if(gm.isPreset())
 				return presetGatesUsed.add(gm.getFormalName());
 			else
@@ -784,7 +803,7 @@ public class CircuitBoard extends GateModel implements  Iterable<RawExportableGa
 			for(String usedB : circuitBoardsUsed.getElements()) {
 				if(usedB == circuitBoardName) return true;
 				else {
-					CircuitBoard cb = (CircuitBoard) p.getGateModel(circuitBoardName);
+					CircuitBoardModel cb = (CircuitBoardModel) p.getGateModel(circuitBoardName);
 					if(cb.findRecursion(p, circuitBoardName)) return true;
 				}
 			}
@@ -799,9 +818,9 @@ public class CircuitBoard extends GateModel implements  Iterable<RawExportableGa
 		Project p = AppStatus.get().getFocusedProject();
 		GateModel gm = p.getGateModel(gateModel);
 		
-		if(gm instanceof CircuitBoard) {
+		if(gm instanceof CircuitBoardModel) {
 			circuitBoardsUsed.remove(gateModel); 
-		} else if (gm instanceof DefaultModel) {
+		} else if (gm instanceof BasicModel) {
 			if(gm.isPreset())
 				presetGatesUsed.remove(gm.getFormalName());
 			else
@@ -859,6 +878,11 @@ public class CircuitBoard extends GateModel implements  Iterable<RawExportableGa
 					break;
 			}
 		}
+	}
+
+	@Override
+	public CircuitBoardModel getAsNewModel(String name, String symbol, String description) {
+		return new CircuitBoardModel(name, symbol, description, this);
 	}
 	
 }
