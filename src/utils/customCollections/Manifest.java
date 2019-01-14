@@ -7,7 +7,15 @@ import java.util.Set;
 public class Manifest <T> implements Serializable {
 	private static final long serialVersionUID = -5048176347320317395L;
 	
-	private final Hashtable<T, ManifestObject> elements = new Hashtable<>();
+	private final Hashtable<T, ManifestObject> elements;
+	
+	public Manifest() {
+		this.elements = new Hashtable<>();
+	}
+	
+	private Manifest(Hashtable<T, ManifestObject> elements) {
+		this.elements = elements;
+	}
 	
 	public ManifestObject add(T element) {
 		ManifestObject mo = elements.get(element);
@@ -55,6 +63,17 @@ public class Manifest <T> implements Serializable {
 		return elements.keySet();
 	}
 	
+	public Manifest<T> deepCopy() {
+		Hashtable<T, ManifestObject> temp = new Hashtable<>();
+		
+		for(T key : elements.keySet()) {
+			ManifestObject mo = elements.get(key);
+			temp.put(key, mo.clone());
+		}
+		
+		return new Manifest<T>(temp);
+	}
+	
 	public class ManifestObject implements Serializable {
 		private static final long serialVersionUID = -4119245424558455962L;
 		
@@ -62,12 +81,20 @@ public class Manifest <T> implements Serializable {
 		private int ocurrances;
 		
 		private ManifestObject (T element) {
+			this(element, 0);
+		}
+		
+		private ManifestObject(T element, int occurances) {
 			this.element = element;
-			this.ocurrances = 0;
+			this.ocurrances = occurances;
 		}
 		
 		public T getObject () {
 			return element;
+		}
+		
+		public ManifestObject clone() {
+			return new ManifestObject(element, ocurrances);
 		}
 	}
 }

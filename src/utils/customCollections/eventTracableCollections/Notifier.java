@@ -33,7 +33,7 @@ public class Notifier implements Serializable {
 	
 	public Notifier(Notifier receiver, ReceivedEvent receivedEvent) {
 		setReceiver(receiver);
-		setReceivedEvent(null);
+		setReceivedEvent(receivedEvent);
 	}
 	
 	public void setReceiver(Notifier receiver) {
@@ -45,13 +45,9 @@ public class Notifier implements Serializable {
 	}
 	
 	public void sendChange(Object source, String methodName, Object... args) {
-		receiver.retrieve(source, methodName, args);
-	}
-	
-	private void retrieve(Object source, String methodName, Object... args) {
 		if(receivedEvent != null)
 			receivedEvent.receive(source, methodName, args);
-		sendChange(source, methodName, args);
+		receiver.sendChange(source, methodName, args);
 	}
 	
 	public static interface ReceivedEvent {

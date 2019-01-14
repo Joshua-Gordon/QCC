@@ -1,8 +1,8 @@
 package Simulator;
 
-import framework.*;
 import mathLib.Complex;
 import mathLib.Matrix;
+import swing.framework.*;
 
 import java.util.ArrayList;
 import java.util.Random;

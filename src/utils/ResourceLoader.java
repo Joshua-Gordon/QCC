@@ -16,9 +16,9 @@ import java.util.Hashtable;
 
 import javax.imageio.ImageIO;
 
-import framework.Main;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import main.Main;
 
 public class ResourceLoader {
 	

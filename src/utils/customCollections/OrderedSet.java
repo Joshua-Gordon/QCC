@@ -9,12 +9,16 @@ import java.util.Iterator;
 public class OrderedSet <T> implements Collection<T>, Serializable {
 	private static final long serialVersionUID = 767801037222203057L;
 	
-	private HashSet<Object> set;
-	private ArrayList<Object> list;
+	private final HashSet<T> set;
+	private final ArrayList<T> list;
+	
+	private OrderedSet(HashSet<T> set, ArrayList<T> list) {
+		this.set = set;
+		this.list = list;
+	}
 	
 	public OrderedSet() {
-		set = new HashSet<>();
-		list = new ArrayList<>();
+		this(new HashSet<>(), new ArrayList<>());
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -113,7 +117,7 @@ public class OrderedSet <T> implements Collection<T>, Serializable {
 	@Override
 	public boolean retainAll(Collection<?> c) {
 		boolean hasChanged = false;
-		Iterator<Object> elements = list.iterator();
+		Iterator<T> elements = list.iterator();
 		while(elements.hasNext()) {
 			Object e = elements.next();
 			if(!c.contains(e)) {
@@ -130,8 +134,13 @@ public class OrderedSet <T> implements Collection<T>, Serializable {
 		set.clear();
 	}
 	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public OrderedSet<T> clone() {
+		return new OrderedSet(set.clone(), list.clone());
+	}
+	
 	private class OrdIter implements Iterator<T> {
-		private Iterator<Object> iter = list.iterator();
+		private Iterator<T> iter = list.iterator();
 		private T lastValue;
 		private int index = -1;
 		

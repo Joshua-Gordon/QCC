@@ -37,6 +37,18 @@ public class ImmutableArray <T> implements Iterable<T>, Serializable {
 		return size() == 0;
 	}
 	
+	@SuppressWarnings("unchecked")
+	public T[] toArray(T[] elements) {
+		if(elements.length != array.length)
+			throw new IllegalArgumentException("input array must be the same size of this array");
+		
+		int i = 0;
+		for(Object o : array)
+			elements[i++] = (T) o;
+		
+		return elements;
+	}
+	
 	@Override
 	public Iterator<T> iterator() {
 		
