@@ -124,6 +124,8 @@ public enum AppCommand {
 		case EXPORT_TO_QASM:
 			break;
 		case EXPORT_TO_QUIL:
+			String code = Translator.exportToQUIL(currentProject);
+			console.println(code);
 			break;
 		case EXPORT_TO_QUIPPER:
 			break;
@@ -156,7 +158,7 @@ public enum AppCommand {
 			if(AppFileIO.saveProjectAs(currentProject, primaryStage) == AppFileIO.SUCCESSFUL)
 				status.setProjectSavedFlag();
 			break;
-			
+
 			
 			
 		case REMOVE_COLUMN_FROM_FOCUSED_CB:
