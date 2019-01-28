@@ -558,8 +558,9 @@ public enum AppCommand {
 			
 		case DEBUG_CIRCUIT_BOARD:
 			CircuitBoardModel model = (CircuitBoardModel) currentProject.getCircuitBoardModels().get(parameters.getString(0));
-			assertExists(parameters.getString(0), model, commandResponse);
-			
+			if(!assertExists(parameters.getString(0), model, commandResponse))
+				return null;
+				
 			int solderID = -1;
 			SolderedGate sg = null;
 			

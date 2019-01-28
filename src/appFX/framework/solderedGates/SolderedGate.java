@@ -43,14 +43,14 @@ public class SolderedGate implements Serializable, CheckDefinitionRunnable {
 	public void checkScalarDefinition(ScalarDefinition definition, int i) {}
 
 	@Override
-	public void checkMatrixDefinition(MatrixDefinition definition, int i) {
-		throw new RuntimeException("Definition should not define a matrix");
+	public void checkMatrixDefinition(MatrixDefinition definition, int i) throws DefinitionEvaluatorException {
+		throw new DefinitionEvaluatorException("Definition should not define a matrix", i);
 	}
 
 	@Override
-	public void checkArgDefinition(ArgDefinition definition, int i) {
+	public void checkArgDefinition(ArgDefinition definition, int i) throws DefinitionEvaluatorException {
 		if(definition.isMatrix())
-			throw new RuntimeException("Definition should not define a matrix");
+			throw new DefinitionEvaluatorException("Definition should not define a matrix", i);
 	}
 	
 }

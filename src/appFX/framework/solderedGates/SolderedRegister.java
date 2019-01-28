@@ -6,7 +6,7 @@ public class SolderedRegister extends SolderedPin  {
 	private int solderedGatePinNumber;
 	
 	public SolderedRegister(SolderedGate gate, int solderedGatePinNumber) {
-		super(gate);
+		super(gate, true);
 		this.solderedGatePinNumber = solderedGatePinNumber;
 	}
 	

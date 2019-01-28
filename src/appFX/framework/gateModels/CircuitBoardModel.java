@@ -176,7 +176,6 @@ public class CircuitBoardModel extends GateModel implements  Iterable<RawExporta
 			
 			SolderedPin spp, spc;
 			SolderedGate sg;
-//			boolean isWithinGate;
 			for(CustomLinkedList<SolderedPin> column : elements) {
 				iterator = column.listIterator(index-1);
 				spp = iterator.next();
@@ -186,10 +185,8 @@ public class CircuitBoardModel extends GateModel implements  Iterable<RawExporta
 				if(spp.getSolderedGate() == spc.getSolderedGate()) {
 					sg = spp.getSolderedGate();
 					
-//					isWithinGate = spp.isWithinBody() && spc.isWithinBody();
-					
 					for(int i = 0; i< amt; i++)
-						iterator.add(new SpacerPin(sg));
+						iterator.add(new SpacerPin(sg, spp.isWithinBody() && spc.isWithinBody()));
 					
 				} else {
 					for(int i = 0; i< amt; i++)
@@ -418,7 +415,7 @@ public class CircuitBoardModel extends GateModel implements  Iterable<RawExporta
 				if(++i == localRegs.size())
 					break;
 			} else {
-				iterator.set(new SpacerPin(toPlace));
+				iterator.set(new SpacerPin(toPlace, true));
 			}
 		}
 		ListIterator<SolderedPin> copy = elements.get(column).listIterator(iterator.nextIndex());
@@ -496,7 +493,7 @@ public class CircuitBoardModel extends GateModel implements  Iterable<RawExporta
 			
 			notifier.sendChange(this, "placeControl", rowControl, rowGate, column, controlStatus);
 			
-			iterator.set(new SolderedControl(sg, controlStatus));
+			iterator.set(new SolderedControl(sg, spc.isWithinBody(), controlStatus));
 		} else {
 			
 			notifier.sendChange(this, "placeControl", rowControl, rowGate, column, controlStatus);
@@ -505,7 +502,7 @@ public class CircuitBoardModel extends GateModel implements  Iterable<RawExporta
 			boolean remove = spc instanceof SolderedRegister;
 			
 			if(rowControl - rowGate > 0) {
-				iterator.set(new SolderedControl(sg, controlStatus));
+				iterator.set(new SolderedControl(sg, false, controlStatus));
 				
 				while (iterator.hasPrevious()) {
 					SolderedPin current = iterator.previous();
@@ -520,14 +517,14 @@ public class CircuitBoardModel extends GateModel implements  Iterable<RawExporta
 						break;
 					if(currentGate == sgc && current instanceof SolderedRegister)
 						remove = true;
-					iterator.set(new SpacerPin(sg));
+					iterator.set(new SpacerPin(sg, false));
 				}
 				
 				removeBoundaryGates(currentGate, currentGate, false, remove, null, 
 						elements.get(column).listIterator(rowControl));
 			} else {
 				iterator.next();
-				iterator.set(new SolderedControl(sg, controlStatus));
+				iterator.set(new SolderedControl(sg, false, controlStatus));
 				
 				while (iterator.hasNext()) {
 					SolderedPin current = iterator.next();
@@ -542,7 +539,7 @@ public class CircuitBoardModel extends GateModel implements  Iterable<RawExporta
 						break;
 					if(currentGate == sgc && current instanceof SolderedRegister)
 						remove = true;
-					iterator.set(new SpacerPin(sg));
+					iterator.set(new SpacerPin(sg, false));
 				}
 				
 				removeBoundaryGates(currentGate, currentGate, remove, false, 
@@ -552,6 +549,92 @@ public class CircuitBoardModel extends GateModel implements  Iterable<RawExporta
 		
 		renderNotifier.sendChange(this, "placeControl", rowControl, rowGate, column, controlStatus);
 	}
+	
+	
+	
+//	public void placeControl(int rowControl, int rowGate, int column, boolean controlStatus) {
+//		if(rowControl < 0 || rowControl >= getRows())
+//			throw new IllegalArgumentException("row must be a postive and less than the size");
+//		if(rowGate < 0 || rowGate >= getRows())
+//			throw new IllegalArgumentException("row must be a postive and less than the size");
+//		if(column < 0|| column >= getColumns())
+//			throw new IllegalArgumentException("column must be a postive and less than the size");
+//		
+//		
+//		ListIterator<SolderedPin> iterator = elements.get(column).listIterator(rowControl);
+//		SolderedPin spc = iterator.next();
+//		SolderedGate sgc = spc.getSolderedGate();
+//		iterator.previous();
+//		
+//		
+//		
+//		SolderedGate sg = getGateAt(rowGate, column);
+//		
+//		if(sg.isIdentity())
+//			return;
+//		
+//		if(sgc == sg) {
+//			if(spc instanceof SolderedRegister)
+//				throw new IllegalArgumentException("Gate cannot add control where a local register is currently present");
+//			
+//			notifier.sendChange(this, "placeControl", rowControl, rowGate, column, controlStatus);
+//			
+//			iterator.set(new SolderedControl(sg, spc.isWithinBody(), controlStatus));
+//		} else {
+//			
+//			notifier.sendChange(this, "placeControl", rowControl, rowGate, column, controlStatus);
+//			
+//			SolderedGate currentGate = sgc;
+//			boolean remove = spc instanceof SolderedRegister;
+//			
+//			if(rowControl - rowGate > 0) {
+//				iterator.set(new SolderedControl(sg, false, controlStatus));
+//				
+//				while (iterator.hasPrevious()) {
+//					SolderedPin current = iterator.previous();
+//					
+//					if(current.getSolderedGate() != currentGate) {
+//						if(currentGate != sgc)
+//							removeFromManifest(currentGate.getGateModelFormalName());
+//						currentGate = current.getSolderedGate();
+//					}
+//					
+//					if(currentGate == sg)
+//						break;
+//					if(currentGate == sgc && current instanceof SolderedRegister)
+//						remove = true;
+//					iterator.set(new SpacerPin(sg, false));
+//				}
+//				
+//				removeBoundaryGates(currentGate, currentGate, false, remove, null, 
+//						elements.get(column).listIterator(rowControl));
+//			} else {
+//				iterator.next();
+//				iterator.set(new SolderedControl(sg, false, controlStatus));
+//				
+//				while (iterator.hasNext()) {
+//					SolderedPin current = iterator.next();
+//					
+//					if(current.getSolderedGate() != currentGate) {
+//						if(currentGate != sgc)
+//							removeFromManifest(currentGate.getGateModelFormalName());
+//						currentGate = current.getSolderedGate();
+//					}
+//					
+//					if(currentGate == sg)
+//						break;
+//					if(currentGate == sgc && current instanceof SolderedRegister)
+//						remove = true;
+//					iterator.set(new SpacerPin(sg, false));
+//				}
+//				
+//				removeBoundaryGates(currentGate, currentGate, remove, false, 
+//						elements.get(column).listIterator(rowControl), null);
+//			}
+//		}
+//		
+//		renderNotifier.sendChange(this, "placeControl", rowControl, rowGate, column, controlStatus);
+//	}
 	
 	
 	
@@ -580,8 +663,10 @@ public class CircuitBoardModel extends GateModel implements  Iterable<RawExporta
 		
 		boolean checkAbove, checkBelow;
 		
+		SolderedPin prev = null;
+		
 		if(iterator.hasPrevious()) {
-			SolderedPin prev = iterator.previous();
+			prev = iterator.previous();
 			checkAbove = prev.getSolderedGate() == sg;
 			iterator.next();
 		} else {
@@ -594,11 +679,11 @@ public class CircuitBoardModel extends GateModel implements  Iterable<RawExporta
 		
 		if(checkAbove && checkBelow) {
 			iterator.next();
-			iterator.set(new SpacerPin(sg));
+			iterator.set(new SpacerPin(sg, prev.isWithinBody() && next.isWithinBody() ));
 		} else if (checkAbove) {
 			iterator.set(mkIdent());
 			while (iterator.hasPrevious()) {
-				SolderedPin prev = iterator.previous();
+				prev = iterator.previous();
 				if(prev instanceof SpacerPin)
 					iterator.set(mkIdent());
 				else
