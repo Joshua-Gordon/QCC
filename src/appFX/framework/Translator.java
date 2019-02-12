@@ -17,6 +17,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import appFX.framework.exportGates.ExportedGate;
+import appFX.framework.exportGates.GateManager;
+import appFX.framework.gateModels.PresetGateType;
+
 public class Translator {
 
    private static LinkedList<String> definedGates;
@@ -42,7 +46,6 @@ public class Translator {
       return code;
    }
 
-   //@Contract("!null -> !null")
    private static String genGateCode(ExportedGate eg) {
       if(eg == null) {
          return null;

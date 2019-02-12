@@ -428,7 +428,7 @@ public class GateManager {
 						else
 							c = (Complex) ((ScalarObject) mo).getScalar();
 						
-						argParamTable.put(arguments.get(i++), c);
+						argParamTable.put(arguments.get(i), c);
 						ms.addVariable(new ConcreteVariable(arguments.get(i++), c));
 					}
 					n = new ExportLeaf(argParamTable, gm, ms, rawData);

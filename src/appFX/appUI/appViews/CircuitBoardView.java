@@ -456,9 +456,9 @@ public class CircuitBoardView extends AppView implements Initializable, ViewList
 						} else if (data.getRegisters().get(0) == i) {
 							nodes.add(makeControlAt(i, column, true, getDispType(start, end, i)));
 						} else if (data.getRegisters().get(1) == i) {
-							nodes.add(makeSwapHead(i, column, getDispType(start, end, i)));
+							nodes.add(makeControlAt(i, column, true, getDispType(start, end, i)));
 						} else if (data.getRegisters().get(2) == i) {
-							nodes.add(makeSwapHead(i, column, getDispType(start, end, i)));
+							nodes.add(makeCNOTHead(i, column, getDispType(start, end, i)));
 						} else {
 							nodes.add(makeIdentityWithLineAt(i, column));
 						}
@@ -545,7 +545,7 @@ public class CircuitBoardView extends AppView implements Initializable, ViewList
 				paramString += " , " + paramLatex.get(i);
 			
 			paramString += " ) \\)";
-			LatexNode lv = new LatexNode(paramString, .6f, "#00000000", "#000000");
+			LatexNode lv = new LatexNode(paramString, 1f, "#00000000", "#000000");
 			box.getChildren().add(lv);
 		}
 		
