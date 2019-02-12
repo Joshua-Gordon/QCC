@@ -417,7 +417,7 @@ public class UserDefinitions implements Serializable {
 		
 		@Override
 		public boolean hasArguments() {
-			return false;
+			return true;
 		}
 
 		@Override
