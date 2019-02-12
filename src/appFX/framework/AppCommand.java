@@ -231,6 +231,8 @@ public enum AppCommand {
 			break;
 		case RUN_QUIL:
 			console.println("Running QUIL", Color.BLUE);
+			String quil = Translator.exportToQUIL(currentProject);
+			console.println(Executor.execute(quil));
 			break;
 		case RUN_SIMULATION:
 			console.println("Running Simulation", Color.BLUE);
