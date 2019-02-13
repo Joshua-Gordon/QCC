@@ -1,11 +1,9 @@
 package mathLib;
 
-import mathLib.operators.DoubleO;
-
 public class MathUtils {
 	
 	public static Matrix<Double> translate(Vector<Double> position){
-		Matrix<Double> temp = Matrix.identity(new DoubleO(), 4);
+		Matrix<Double> temp = Matrix.identity(0d,4);
 		for(int i = 0; i < 3; i++)
 			temp.r(position.v(i), i, 3);
 		return temp;
@@ -30,7 +28,7 @@ public class MathUtils {
 				0d, 0d, 0d, 1d
 		};
 		
-		return new Matrix<Double>(new DoubleO(), 4, 4, components);
+		return new Matrix<Double>(0d, 4, 4, components);
 	}
 	
 	public static Matrix<Double> rotate(double yaw, double pitch, double roll){

@@ -23,7 +23,7 @@ public class UnitaryDecomp {
         return tlu.scale(scale);
     }
 
-    public Vector<Complex> getRandomTwoVector() {
+    public static Vector<Complex> getRandomTwoVector() {
        double a0 = Math.random();
        double b0 = Math.random();
        double a1 = Math.random();

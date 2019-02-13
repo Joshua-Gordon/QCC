@@ -1,9 +1,4 @@
-
-@font-face {
-	src: url("../fonts/KosugiMaru-Regular.ttf");
-}
-
-* {
+.root {
 	-fx-font-family: 'MotoyaLMaru';
 }
 
@@ -57,7 +52,7 @@ SplitPane {
 
 /* Menu and MenuBar */
 
-.root VBox {
+.root > VBox {
 	-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
 }
 
@@ -82,11 +77,15 @@ MenuBar .label {
 	-fx-background-color: #00796B;
 }
 
+.context-menu .label {
+  	-fx-text-fill: white;
+}
+
 .menu-item:hover, .menu:hover, .menu-button:showing {
 	-fx-background-color: #607D8B;
 }
 
-.menu Separator *.line {
+.context-menu Separator *.line,  .menu Separator *.line {
 	-fx-border-style: solid;
     -fx-border-width: 1;
 	-fx-border-color: #607D8B;
@@ -151,7 +150,7 @@ ToolBar .toggle-button:selected {
 
 /* Gate Icons lists */
 
-TilePane ToggleButton {
+TilePane .toggle-button {
 	-fx-background-color: transparent;
 }
 
@@ -163,8 +162,7 @@ TilePane .toggle-button:selected {
 	-fx-background-color: transparent ;
 	-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 10, 0, 0, 0);
 	-fx-border-color: #607D8B;
-	-fx-border-width: 3 1 2 3;
+	-fx-border-width: 1 1 1 1;
 	-fx-border-radius: 5 5 5 5;
 }
-
 

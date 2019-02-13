@@ -1,17 +1,13 @@
 package mathLib;
 
-import java.io.Serializable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import mathLib.operators.Operators;
-
-public class Complex extends Operators<Complex> implements Serializable{
+public class Complex extends MathValue {
 	private static final long serialVersionUID = -9099395460757557732L;
 	
 	double a, b;
     public Complex(double a, double b) {
-    	this.value = this;
         this.a = a;
         this.b = b;
     }
@@ -28,6 +24,10 @@ public class Complex extends Operators<Complex> implements Serializable{
 
     public static Complex ONE(){
         return new Complex(1,0);
+    }
+    
+    public static Complex NEG_ONE(){
+        return new Complex(-1,0);
     }
 
     public static Complex ZERO(){
@@ -150,30 +150,14 @@ public class Complex extends Operators<Complex> implements Serializable{
     }
 
 
-	@Override
-	public Complex get1() {
-		return new Complex(1, 0);
-	}
 
-	@Override
-	public Complex getn1() {
-		return new Complex(-1, 0);
-	}
-
-	@Override
-	public Complex get0() {
-		return new Complex(0, 0);
-	}
-
-	@Override
-	public Complex[] mkZeroArray(int size) {
+	public static Complex[] mkZeroArray(int size) {
 		Complex[] temp = new Complex[size];
 		for(int i = 0; i < size; i++)
-			temp[i] = get0();
+			temp[i] = ZERO();
 		return temp;
 	}
 
-	@Override
 	public Complex add(Complex num) {
 		return new Complex(a + num.a, b + num.b);
 	}
@@ -182,7 +166,6 @@ public class Complex extends Operators<Complex> implements Serializable{
 		return new Complex(a + num, b);
 	}
 
-	@Override
 	public Complex sub(Complex num) {
 		return new Complex(a - num.a, b - num.b);
 	}
@@ -191,7 +174,6 @@ public class Complex extends Operators<Complex> implements Serializable{
 		return new Complex(a - num, b);
 	}
 
-	@Override
 	public Complex mult(Complex num) {
 		return new Complex(a * num.a - b * num.b, a * num.b + b * num.a);
 	}
@@ -200,7 +182,6 @@ public class Complex extends Operators<Complex> implements Serializable{
 		return new Complex(a * num, b * num);
 	}
 
-	@Override
 	public Complex div(Complex num) {
 		double magSquared = num.a * num.a + num.b * num.b;
 		Complex conjugateMult = mult(num.conjugate());
@@ -223,7 +204,6 @@ public class Complex extends Operators<Complex> implements Serializable{
 	 * <br>...for any value K<sub>1</sub>, K<sub>2</sub>, K<sub>3</sub> 
 	 * <p>This is due to the multi-value nature of raising a complex number to a complex power
 	 */
-	@Override
 	public Complex exp(Complex num) {
 		if(b == 0) {
 			double temp1 = Math.pow(a, num.a);
@@ -250,27 +230,14 @@ public class Complex extends Operators<Complex> implements Serializable{
 	 * @return e^this where e is the Euler constant
 	 */
 	public Complex exponentiated() {
-		return new Complex(Math.cos(b), Math.sin(b)).mult(Math.pow(Math.E,  a));
+		return new Complex(Math.cos(b), Math.sin(b)).mult(Math.exp(a));
 	}
 	
-	@Override
 	public Complex sqrt() {
 		return exp(new Complex(.5d, 0));
 	}
 
-	@Override
-	public Operators<Complex> dup() {
-		return new Complex(a, b);
-	}
-
 	public double abs() {
 		return Math.sqrt(a*a + b*b);
-	}
-
-	@Override
-	public Operators<Complex> op(Complex value) {
-		this.a = value.a;
-		this.b = value.b;
-		return this;
 	}
 }

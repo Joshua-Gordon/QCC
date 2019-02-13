@@ -47,7 +47,7 @@ public class LexicalAnalyzer {
 	 * @return the {@link Stream} object that handles the token stream
 	 */
 	public Stream<Pair<Token, String>> getTokenStream (String inputString) {
-		return getTokenStream(new BufferedReader(new StringReader(inputString)));
+		return getTokenStream(new BufferedReader(new StringReader(inputString))).takeWhile((n) -> n != null);
 	}
 	
 	

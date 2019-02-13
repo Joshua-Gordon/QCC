@@ -24,6 +24,14 @@ public class Qubit extends Vector<Complex> {
         return new Qubit(Complex.ONE(),Complex.ZERO());
     }
 
+    public static Qubit PLUS() {
+        return new Qubit(Complex.ISQRT2(),Complex.ISQRT2());
+    }
+
+    public static Qubit MINUS() {
+        return new Qubit(Complex.ISQRT2(),Complex.ISQRT2().negative());
+    }
+
     public static int measure(Vector<Complex> qubits){
         //Check that qubit vector is properly normalized
         ArrayList<Complex> amps = qubits.toArrayList();

@@ -1,11 +1,12 @@
 package Simulator;
 
-import framework.*;
 import mathLib.Complex;
 import mathLib.Matrix;
 
 import java.util.ArrayList;
 import java.util.Random;
+
+import appSW.framework.*;
 
 public class InternalExecutor {
 
@@ -97,7 +98,11 @@ public class InternalExecutor {
                         }
                     }
                 }
+                for(Matrix<Complex> m : pureStates) {
+                    System.out.println(m);
+                }
             }
+
         });
         return new MixedState(pureStates,probabilities);
     }
