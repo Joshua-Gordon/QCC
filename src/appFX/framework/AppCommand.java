@@ -10,7 +10,7 @@ import appFX.appUI.CircuitBoardPropertiesView;
 import appFX.appUI.GateEditableView;
 import appFX.appUI.MainScene;
 import appFX.appUI.appViews.BasicModelView;
-import appFX.appUI.appViews.CircuitBoardView;
+import appFX.appUI.appViews.circuitBoardView.CircuitBoardView;
 import appFX.framework.gateModels.BasicModel;
 import appFX.framework.gateModels.CircuitBoardModel;
 import appFX.framework.gateModels.GateModel;

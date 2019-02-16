@@ -7,6 +7,7 @@ import appFX.framework.AppStatus;
 import appFX.framework.Project;
 import appFX.framework.UserDefinitions.DefinitionEvaluatorException;
 import appFX.framework.gateModels.CircuitBoardModel;
+import appFX.framework.gateModels.CircuitBoardModel.RecursionException;
 import appFX.framework.gateModels.GateModel;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -62,6 +63,7 @@ public class ParameterPrompt extends AppFXMLComponent implements Initializable{
 		
 		try {
 			cb.placeGate(gm.getFormalName(), column, rows, params);
+			addedGateSuccessfully = true;
 		} catch (DefinitionEvaluatorException e) {
 			AppAlerts.showMessage(stage, "Inproper Parameter Definition", e.getMessage(), AlertType.ERROR);
 			int error = e.getDefinitionNumber();
@@ -72,8 +74,9 @@ public class ParameterPrompt extends AppFXMLComponent implements Initializable{
 					getTextField(i).setStyle("");
 			}
 			return;
+		} catch (RecursionException e2) {
+			AppAlerts.showMessage(stage, "Recursion detected", e2.getMessage(), AlertType.ERROR);
 		}
-		addedGateSuccessfully = true;
 		stage.close();
 	}
 	

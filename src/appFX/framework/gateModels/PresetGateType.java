@@ -75,6 +75,11 @@ public enum PresetGateType {
 	;
 	
 	
+	public static boolean isIdentity(String name) {
+		return PresetGateType.IDENTITY.getModel().getFormalName().equals(name);
+	}
+	
+	
 	public static void checkName(String name) {
 		for(PresetGateType pgt : values())
 			if(pgt.getModel().getName().equals(name)) 

@@ -1,7 +1,6 @@
-package appFX.appUI.appViews;
+package appFX.appUI.appViews.circuitBoardView;
 
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.ResourceBundle;
@@ -9,21 +8,18 @@ import java.util.Set;
 
 import appFX.appUI.GateIcon;
 import appFX.appUI.LatexNode;
-import appFX.appUI.MainScene;
-import appFX.appUI.ParameterPrompt;
+import appFX.appUI.appViews.AppView;
 import appFX.appUI.appViews.AppView.ViewListener;
 import appFX.appUI.appViews.gateChooser.AbstractGateChooser;
 import appFX.framework.AppCommand;
 import appFX.framework.AppStatus;
 import appFX.framework.Project;
-import appFX.framework.UserDefinitions.DefinitionEvaluatorException;
 import appFX.framework.exportGates.Control;
 import appFX.framework.exportGates.RawExportableGateData;
 import appFX.framework.gateModels.CircuitBoardModel;
 import appFX.framework.gateModels.GateModel;
 import appFX.framework.gateModels.PresetGateType.PresetGateModel;
 import appFX.framework.solderedGates.SolderedGate;
-import javafx.beans.value.ChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -37,8 +33,6 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Toggle;
-import javafx.scene.control.ToggleButton;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -48,7 +42,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -56,6 +49,8 @@ import javafx.scene.shape.Line;
 import utils.customCollections.ImmutableArray;
 import utils.customCollections.eventTracableCollections.Notifier.ReceivedEvent;
 
+
+//TODO: fix iterator "choose index" constructor
 public class CircuitBoardView extends AppView implements Initializable, ViewListener {
 	
 	private static final int GRID_SIZE = 50;
@@ -69,7 +64,7 @@ public class CircuitBoardView extends AppView implements Initializable, ViewList
 	private final CircuitBoardModel circuitBoard;
 	private final Project project;
 	private boolean initialized = false;
-	private final SolderRegionTool solderRegion;
+	private final SelectCursor cursor;
 	
 	public static void openCircuitBoard(String circuitBoardName) {
 		AppStatus status = AppStatus.get();
@@ -82,7 +77,7 @@ public class CircuitBoardView extends AppView implements Initializable, ViewList
 		this.circuitBoard = (CircuitBoardModel) project.getCircuitBoardModels().get(circuitBoard);
 		this.project = project;
 		this.circuitBoard.setRenderEventHandler(new CircuitBoardEventHandler());
-		this.solderRegion = new SolderRegionTool();
+		this.cursor = new SelectCursor(this);
 	}
 	
 	@Override
@@ -164,12 +159,12 @@ public class CircuitBoardView extends AppView implements Initializable, ViewList
 		}
 		
 		circuitBoardPane.setOnMouseExited((e) -> {
-			solderRegion.showTool(false);
+			cursor.showTool(false);
 		});
 		
 
-		AppStatus.get().getMainScene().addToolButtonListener(solderRegion.toolChanged);
-		AbstractGateChooser.addToggleListener(solderRegion.gateModelChanged);
+		AppStatus.get().getMainScene().addToolButtonListener(cursor.getToolChangedListener());
+		AbstractGateChooser.addToggleListener(cursor.getModelChangedListener());
 		
 		rerenderCircuitBoard();
 	}
@@ -182,8 +177,8 @@ public class CircuitBoardView extends AppView implements Initializable, ViewList
 	@Override
 	public void viewChanged(boolean wasAdded) {
 		if(!wasAdded) {
-			AppStatus.get().getMainScene().removeToolButtonListener(solderRegion.toolChanged);
-			AbstractGateChooser.removeToggleListener(solderRegion.gateModelChanged);
+			AppStatus.get().getMainScene().removeToolButtonListener(cursor.getToolChangedListener());
+			AbstractGateChooser.removeToggleListener(cursor.getModelChangedListener());
 			removeEventListener();
 		}
 	}
@@ -192,136 +187,13 @@ public class CircuitBoardView extends AppView implements Initializable, ViewList
 		
 		@Override
 		public boolean receive(Object source, String methodName, Object... args) {
+			System.out.println(methodName);
+			cursor.getCurrentTool().reset();
 			rerenderCircuitBoard();
 			return false;
 		}
 	}
 	
-	private class SolderRegionTool extends Region implements EventHandler<MouseEvent>{
-		private final ChangeListener<Toggle> toolChanged, gateModelChanged;
-		private Integer[] regs;
-		private ArrayList<NumberRegion> regDisps;
-		private int currentReg = -1;
-		private int lastReg = -1;
-		private int column = -1;
-		
-		public SolderRegionTool() {
-			setStyle("-fx-background-color: #BDBDBD66");
-			setOnMouseClicked(this);
-			
-			
-			toolChanged = (o, oldV, newV) -> {
-				MainScene ms = AppStatus.get().getMainScene();
-				if(oldV != null && ms.isSolderButton((ToggleButton) oldV))
-					showTool(false);
-			};
-			
-			gateModelChanged = (o, oldV, newV) -> {
-				restart();
-			};
-		}
-		
-		public void showTool(boolean show) {
-			setManaged(show);
-			setVisible(show);
-		}
-		
-		
-		public void toolAction() {
-			
-			if(column != -1 && column != getColumn())
-				restart();
-			column = getColumn();
-			
-			
-			GateModel gm = getSelectedModel();
-			if(gm != null) { 
-				
-				if(regs == null) {
-					regs = new Integer[gm.getNumberOfRegisters()];
-					regDisps = new ArrayList<NumberRegion>(gm.getNumberOfRegisters() - 1);
-					lastReg = 1;
-					currentReg = 0;
-				}
-				
-				NumberRegion numberRegion = new NumberRegion(); 
-				regDisps.add(numberRegion);
-				circuitBoardPane.getChildren().add(numberRegion);
-				
-				regs[currentReg] = getRow();
-				currentReg = lastReg;
-				lastReg++;
-				
-				if(lastReg == regs.length + 1) {
-					ImmutableArray<String> args = gm.getArguments();
-					if(args.size() > 0) {
-						ParameterPrompt pp = new ParameterPrompt(project, circuitBoard, gm.getFormalName(), regs, column);
-						pp.showAndWait();
-					} else {
-						try {
-							circuitBoard.placeGate(gm.getFormalName(), column, regs);
-						} catch (DefinitionEvaluatorException e) {
-							e.printStackTrace();
-						}
-					}
-					restart();
-				}
-			}
-			
-		}
-		
-		private int getRow() {
-			return GridPane.getRowIndex(this);
-		}
-		
-		private int getColumn () {
-			return GridPane.getColumnIndex(this) - 1;
-		}
-		
-		public void restart() {
-			currentReg = -1;
-			column = -1;
-			lastReg = -1;
-			
-			if(regDisps != null) {
-				for(NumberRegion nr : regDisps)
-					circuitBoardPane.getChildren().remove(nr);
-			}
-			
-			regDisps = null;
-			regs = null;
-		}
-		
-		public GateModel getSelectedModel() {
-			return AbstractGateChooser.getSelected();
-		}
-
-		@Override
-		public void handle(MouseEvent event) {
-			toolAction();
-		}
-		
-		
-		private class NumberRegion extends BorderPane {
-			private int reg = currentReg;
-			private Label label;
-			
-			private NumberRegion() {
-				label = new Label(Integer.toString(reg));
-				setCenter(label);
-				setStyle("-fx-background-color: #BDBDBD;");
-				GridPane.setConstraints(this, getColumn() + 1, getRow());
-				
-				setOnMouseClicked((e) -> {
-					regs[currentReg] = GridPane.getRowIndex(this);
-					int temp = currentReg;
-					currentReg = reg;
-					reg = temp;
-					label.setText(Integer.toString(reg));
-				});
-			}
-		}
-	}
 	
 	
 //	Render Methods:
@@ -329,9 +201,11 @@ public class CircuitBoardView extends AppView implements Initializable, ViewList
 	
 	public void rerenderCircuitBoard() {
 		
+		
+		
 		ObservableList<Node> nodes = circuitBoardPane.getChildren();
 		nodes.clear();
-
+		System.out.println(circuitBoard.getFormalName());
 		ObservableList<RowConstraints> rows = circuitBoardPane.getRowConstraints();
 		
 		for(int i = 0; i < circuitBoard.getRows(); i++) {
@@ -504,11 +378,13 @@ public class CircuitBoardView extends AppView implements Initializable, ViewList
 			
 		}
 		
-		nodes.add(solderRegion);
-		solderRegion.showTool(false);
+		nodes.add(cursor);
+		cursor.showTool(false);
 		
 		if(grid.isSelected())
 			showGrid();
+		
+		
 	}
 	
 	private int getDispType(int start, int end, int current) {
@@ -926,13 +802,22 @@ public class CircuitBoardView extends AppView implements Initializable, ViewList
 			
 		@Override
 		public void handle(MouseEvent event) {
-			MainScene ms = AppStatus.get().getMainScene();
-			if(ms.isSolderButtonSelected()) {
-				if(!solderRegion.isManaged())
-					solderRegion.showTool(true);
-				GridPane.setConstraints(solderRegion, column + 1, row);
+			if(cursor.getCurrentTool().isCursorDisplayed()) {
+				if(!cursor.isManaged())
+					cursor.showTool(true);
+				cursor.setPosition(row, column);
 			}
 		}
+	}
+
+
+
+	public CircuitBoardModel getCircuitBoard() {
+		return circuitBoard;
+	}
+
+	public Project getProject() {
+		return project;
 	}
 	
 	

@@ -373,8 +373,6 @@ public class CircuitBoardModel extends GateModel implements  Iterable<RawExporta
 		notifier.sendChange(this, "placeGate", gateModelFormalName, column, registers, parameters);
 		
 		
-		
-		
 		SolderedGate toPlace = new SolderedGate(addToManifest(gateModelFormalName), parameters);
 		
 		
@@ -836,8 +834,8 @@ public class CircuitBoardModel extends GateModel implements  Iterable<RawExporta
 		GateModel gm = p.getGateModel(gateModel);
 		
 		if(gm instanceof CircuitBoardModel) {
-			if(((CircuitBoardModel) gm).findRecursion(p, gateModel))
-				throw new RuntimeException("The circuit board " + gateModel + " makes circuit board " + getName() + " recusively defined");
+			if(((CircuitBoardModel) gm).findRecursion(p, getFormalName()))
+				throw new RecursionException(getName());
 			return circuitBoardsUsed.add(gateModel); 
 		} else if (gm instanceof BasicModel) {
 			if(gm.isPreset())
@@ -950,5 +948,13 @@ public class CircuitBoardModel extends GateModel implements  Iterable<RawExporta
 		return new CircuitBoardModel(name, symbol, description, parameters, temp, circuitBoardsUsed.deepCopy(), 
 				defaultGatesUsed.deepCopy(), presetGatesUsed.deepCopy(), oraclesUsed.deepCopy());
 	}
-
+	
+	
+	@SuppressWarnings("serial")
+	public class RecursionException extends RuntimeException {
+		private RecursionException(String circuitboardName) {
+			super("The circuit board \"" + circuitboardName + "\" makes circuit board \"" + getName() + "\" recusively defined");
+		}
+	}
+	
 }

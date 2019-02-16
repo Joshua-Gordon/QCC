@@ -6,9 +6,9 @@ import java.util.ResourceBundle;
 
 import appFX.appPreferences.AppPreferences;
 import appFX.appUI.appViews.AppView;
-import appFX.appUI.appViews.CircuitBoardView;
 import appFX.appUI.appViews.ConcreteTabView;
 import appFX.appUI.appViews.AppView.ViewListener;
+import appFX.appUI.appViews.circuitBoardView.CircuitBoardView;
 import appFX.framework.AppStatus;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.ListChangeListener;
@@ -31,7 +31,7 @@ public class MainScene extends AppFXMLComponent implements Initializable, AppPre
 	public SplitPane verticalSplitPane, horizontalSplitPane;
 	public BorderPane leftBorderPane, bottomBorderPane, rightBorderPane;
 	public TabPane leftTabPane, centerTabPane, rightTabPane, bottomTabPane;
-	public ToggleButton selectTool, solderTool, editTool, addColumnTool, removeColumnTool, addRowTool, removeRowTool;
+	public ToggleButton selectTool, solderTool, editTool, controlTool, controlNotTool, addColumnTool, removeColumnTool, addRowTool, removeRowTool;
 	public MenuBar menuBar;
 	public Label appNameLabel;
 	
@@ -201,6 +201,8 @@ public class MainScene extends AppFXMLComponent implements Initializable, AppPre
 		selectTool.setToggleGroup(tools);
 		solderTool.setToggleGroup(tools);
 		editTool.setToggleGroup(tools);
+		controlTool.setToggleGroup(tools);
+		controlNotTool.setToggleGroup(tools);
 		addColumnTool.setToggleGroup(tools);
 		removeColumnTool.setToggleGroup(tools);
 		addRowTool.setToggleGroup(tools);

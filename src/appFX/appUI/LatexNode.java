@@ -28,6 +28,7 @@ public class LatexNode extends AnchorPane {
 	private HtmlEventHandler eventHandler;
 	private WebEngine engine;
 	private WebView latexWebView;
+	private LatexLoadedRunnable runWhenLatexLoaded = null;
 	
 	public LatexNode (String latex) {
 		this(latex, .7f);
@@ -42,11 +43,16 @@ public class LatexNode extends AnchorPane {
 	}
 	
 	public LatexNode (String latex, float fontSize, String color, String textColor) {
+		this(latex, fontSize, color, textColor, (e)->{});
+	}
+	
+	public LatexNode (String latex, float fontSize, String color, String textColor, LatexLoadedRunnable runWhenLatexLoaded) {
 		this.eventHandler = new HtmlEventHandler();
 		this.latex = latex;
 		this.fontSize = fontSize;
 		this.color = color;
 		this.textColor = textColor;
+		this.runWhenLatexLoaded = runWhenLatexLoaded;
 		LatexView lv = new LatexView();
 		getChildren().add(lv.loadAsNode());
 		setMinWidth(AnchorPane.USE_PREF_SIZE);
@@ -89,6 +95,14 @@ public class LatexNode extends AnchorPane {
 			this.textColor = color;
 	}
 	
+	
+	public interface LatexLoadedRunnable {
+		public void runWhenLoaded(LatexNode ln);
+	}
+	
+	private LatexNode getInstance() {
+		return this;
+	}
 	
 	public class LatexView extends AppFXMLComponent implements Initializable {
 		
@@ -155,13 +169,14 @@ public class LatexNode extends AnchorPane {
 	    }
 		
 		public void setLatexLoaded() {
-			latexLoaded = true;
-			
 			if(latex != null) {
-				eventHandler.latexLoaded = false;
+				latexLoaded = false;
 				String modified = latex.replace("\\", "\\\\");
 				latex = null;
 				engine.executeScript("window.setLatex(\"" + modified + "\")");
+			} else {
+				latexLoaded = true;
+				runWhenLatexLoaded.runWhenLoaded(getInstance());
 			}
 		}
 		
