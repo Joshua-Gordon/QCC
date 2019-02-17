@@ -33,7 +33,7 @@ public class Main extends Application implements AppPreferences {
 	
 	/* toggle flags: debug mode or not */
 	public static final boolean NORMAL_MODE            = true;
-	public static final boolean JAVAFX_MODE            = true;
+	public static final boolean JAVAFX_MODE            = false;
 	
 	public static final boolean DEBUG_MODE             = false;
 	public static final boolean DEBUG_SIMULATOR_MODE   = false;

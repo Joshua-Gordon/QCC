@@ -200,7 +200,7 @@ public class CircuitBoardRenderContext {
 	
 	private void drawGate(Graphics2D g2d, int x, int y, ExportedGate eg) {
         g2d.setStroke(BASIC);
-        g2d.setFont(ResourceLoader.getSwingResources().MPLUS);
+        g2d.setFont(ResourceLoader.getSwingResources().MPLUS.deriveFont(12f));
         int offset = 0;
         int width = GATE_PIXEL_SIZE * eg.getAbstractGate().getWidth();
         int height = GATE_PIXEL_SIZE * eg.getHeight();
@@ -216,11 +216,10 @@ public class CircuitBoardRenderContext {
         if(eg.getRegisters().length > 1) {
 	        for(int i = 0; i < eg.getRegisters().length; i++)
 	        	g2d.drawString(Integer.toString(i), x + REGISTER_NUM_PADDING, (int) ((eg.getRegisters()[i] + .5d ) * GATE_PIXEL_SIZE));
-	        Rectangle2D rect = getStringBounds(ResourceLoader.getSwingResources().MPLUS, Integer.toString(eg.getRegisters().length - 1));
+	        Rectangle2D rect = getStringBounds(g2d.getFont(), Integer.toString(eg.getRegisters().length - 1));
 	        offset = (int) (2 * REGISTER_NUM_PADDING + rect.getWidth());
         }
-        
-	    g2d.setFont(ResourceLoader.getSwingResources().VAST_SHADOW);
+	    g2d.setFont(ResourceLoader.getSwingResources().VAST_SHADOW.deriveFont(32f));
     	drawCenteredString(g2d, eg.getAbstractGate().getName(), x + offset, y, width - offset - 1, height - 1);
 	}
 	

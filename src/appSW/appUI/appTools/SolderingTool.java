@@ -144,7 +144,7 @@ public class SolderingTool extends Tool{
 			int columnWidth = window.getRenderContext().getColumnWidth(selectedColumn) * GATE_PIXEL_SIZE;
 			g2d.fillRect(columnPixelPosition, p.y * GATE_PIXEL_SIZE, columnWidth, GATE_PIXEL_SIZE);
 			g2d.setColor(Color.WHITE);
-			g2d.setFont(ResourceLoader.getSwingResources().MPLUS.deriveFont(24));
+			g2d.setFont(ResourceLoader.getSwingResources().MPLUS.deriveFont(24f));
 			CircuitBoardRenderContext.drawCenteredString(g2d, Integer.toString(previousGateRegister), 
 					columnPixelPosition, p.y * GATE_PIXEL_SIZE, columnWidth - 1, GATE_PIXEL_SIZE - 1);
 			window.getRenderContext().paintBaseImageWithOverlay(grayedOut);
@@ -160,7 +160,7 @@ public class SolderingTool extends Tool{
 		g2d.setColor(Color.RED);
 		int columnWidth =	window.getRenderContext().getColumnWidth(selectedColumn) * GATE_PIXEL_SIZE;
 		g2d.drawRect(columnPixelPosition, p.y * GATE_PIXEL_SIZE, columnWidth - 1, GATE_PIXEL_SIZE - 1);
-		g2d.setFont(ResourceLoader.getSwingResources().MPLUS.deriveFont(16));
+		g2d.setFont(ResourceLoader.getSwingResources().MPLUS.deriveFont(16f));
 		CircuitBoardRenderContext.drawCenteredString(g2d, Integer.toString(currentGateRegister),
 				columnPixelPosition, p.y * GATE_PIXEL_SIZE, columnWidth - 1, GATE_PIXEL_SIZE - 1);
 		

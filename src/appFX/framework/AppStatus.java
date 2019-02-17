@@ -1,9 +1,11 @@
 package appFX.framework;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Optional;
 
+import appFX.appPreferences.AppPreferences;
 import appFX.appUI.AppAlerts;
 import appFX.appUI.AppFileIO;
 import appFX.appUI.MainScene;
@@ -14,7 +16,6 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import sun.awt.RepaintArea;
 import utils.customCollections.eventTracableCollections.Notifier;
 import utils.customCollections.eventTracableCollections.Notifier.ReceivedEvent;
 
@@ -219,14 +220,20 @@ public final class AppStatus implements EventHandler<WindowEvent> {
 			ButtonType sel = options.get();
 			
 			if(sel == type1) {
-				if(AppFileIO.saveProject(project, primaryStage) != AppFileIO.SUCCESSFUL)
+				if(AppFileIO.saveProject(project, primaryStage) != AppFileIO.SUCCESSFUL) {
 					event.consume();
-			} else if (sel == type2) {
-				return;
+					return;
+				}
 			} else if (sel == type3) {
 				event.consume();
+				return;
 			}
 		}
+		
+		URI location = project.getProjectFileLocation();
+		if(location != null)
+			AppPreferences.Strings.PREVIOUS_PROJ_URL.set(location.toString());
+//		AppPreferences.Booleans.CONSOLE_OPEN.set(mainscene.);
 	}
 
 

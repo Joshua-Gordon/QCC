@@ -47,7 +47,7 @@ public class CustomGate extends AbstractGate implements Serializable {
      * be added to the currently selected {@link CircuitBoard}'s {@link CustomGate} {@link ListModel}.
      */
     public static void makeCustom() {
-    	final Font VAST_SHADOW = ResourceLoader.getSwingResources().VAST_SHADOW;
+    	final Font VAST_SHADOW = ResourceLoader.getSwingResources().VAST_SHADOW.deriveFont(12f);;
     	
     	CustomGateConstructorUI window = new CustomGateConstructorUI(Main.getWindow().getFrame());
     	window.setVisible(true);

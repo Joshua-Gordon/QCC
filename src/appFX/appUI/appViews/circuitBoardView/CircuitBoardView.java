@@ -51,7 +51,6 @@ import utils.customCollections.ImmutableArray;
 import utils.customCollections.eventTracableCollections.Notifier.ReceivedEvent;
 
 
-//TODO: fix iterator "choose index" constructor
 public class CircuitBoardView extends AppView implements Initializable, ViewListener, EventHandler<MouseEvent> {
 	
 	private static final int GRID_SIZE = 50;

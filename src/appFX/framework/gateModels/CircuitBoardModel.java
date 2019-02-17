@@ -716,7 +716,6 @@ public class CircuitBoardModel extends GateModel implements  Iterable<RawExporta
 				}
 			}
 		}
-		
 		return new Pair<Integer, Integer> (top, bot);
 	}
 	
@@ -733,18 +732,10 @@ public class CircuitBoardModel extends GateModel implements  Iterable<RawExporta
 	}
 	
 	
-	public CircuitBoardIterator iterator(int index) {
-		return new CircuitBoardIterator(index);
-	}
-	
-	
-	
-	
 	@Override
 	public int getNumberOfRegisters() {
 		return getRows();
 	}
-	
 	
 	
 	public void setReciever(Notifier reciever) {

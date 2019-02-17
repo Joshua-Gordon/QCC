@@ -15,9 +15,6 @@ import java.nio.file.Paths;
 import java.util.Hashtable;
 
 import javax.imageio.ImageIO;
-
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import main.Main;
 
 public class ResourceLoader {
@@ -62,7 +59,7 @@ public class ResourceLoader {
 			File fontFile = new File(url.toURI());
 			font = Font.createFont(Font.TRUETYPE_FONT, fontFile).deriveFont(size);
 			GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-		    ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, fontFile));
+		    ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, fontFile).deriveFont(size));
 		} catch (IOException e) {
 		    e.printStackTrace();
 		} catch(FontFormatException e) {
