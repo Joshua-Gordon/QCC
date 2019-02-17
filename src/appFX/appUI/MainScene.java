@@ -6,8 +6,9 @@ import java.util.ResourceBundle;
 
 import appFX.appPreferences.AppPreferences;
 import appFX.appUI.appViews.AppView;
-import appFX.appUI.appViews.ConcreteTabView;
+import appFX.appUI.appViews.AppView.Layout;
 import appFX.appUI.appViews.AppView.ViewListener;
+import appFX.appUI.appViews.ConcreteTabView;
 import appFX.appUI.appViews.circuitBoardView.CircuitBoardView;
 import appFX.framework.AppStatus;
 import javafx.beans.value.ChangeListener;
@@ -54,6 +55,32 @@ public class MainScene extends AppFXMLComponent implements Initializable, AppPre
 	
 	public void addView(ConcreteTabView tabView) {
 		addView(tabView.getView());
+	}
+	
+	
+	public boolean containsView(String tabName, Layout tabLayout) {
+		switch(tabLayout) {
+		case LEFT:
+			return containsTab(tabName, leftTabPane);
+		case CENTER:
+			return containsTab(tabName, centerTabPane);
+		case RIGHT:
+			return containsTab(tabName, rightTabPane);
+		case BOTTOM:
+		default:
+			return containsTab(tabName, bottomTabPane);
+		}
+	}
+	
+	private boolean containsTab(String name, TabPane tabPane) {
+		Iterator<Tab> i = tabPane.getTabs().iterator();
+		Tab t;
+		while(i.hasNext()) {
+			t = i.next();
+			if(t.getText().equals(name))
+				return true;
+		}
+		return false;
 	}
 	
 	

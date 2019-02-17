@@ -70,8 +70,10 @@ public class CircuitBoardView extends AppView implements Initializable, ViewList
 	
 	public static void openCircuitBoard(String circuitBoardName) {
 		AppStatus status = AppStatus.get();
-		CircuitBoardView circuitBoardView = new CircuitBoardView(status.getFocusedProject(), circuitBoardName);
-		status.getMainScene().addView(circuitBoardView);
+		if(!status.getMainScene().containsView(circuitBoardName, Layout.CENTER)) {
+			CircuitBoardView circuitBoardView = new CircuitBoardView(status.getFocusedProject(), circuitBoardName);
+			status.getMainScene().addView(circuitBoardView);
+		}
 	}
 	
 	private CircuitBoardView(Project project, String circuitBoard) {
