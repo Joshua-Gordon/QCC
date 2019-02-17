@@ -24,7 +24,7 @@ import mathLib.expression.Variable;
 import mathLib.expression.Variable.ConcreteVariable;
 import utils.customCollections.ImmutableArray;
 
-public class UserDefinitions implements Serializable {
+public class InputDefinitions implements Serializable {
 	private static final long serialVersionUID = 5627225884389883084L;
 
 
@@ -83,7 +83,7 @@ public class UserDefinitions implements Serializable {
 	
 	
 	public static Definition evaluateInput (String rawUserInput) throws EquationParseException, EvaluateExpressionException {
-		return evaluateInput(rawUserInput, MathDefintions.GLOBAL_DEFINITIONS);
+		return evaluateInput(rawUserInput, MathDefinitions.GLOBAL_DEFINITIONS);
 	}
 	
 	
@@ -448,7 +448,6 @@ public class UserDefinitions implements Serializable {
 		ExpressionTraits et = new ExpressionTraits(e);
 		
 		StringBuilder latexBuilder = new StringBuilder();
-		
 		try {
 			
 			MathValue v = evalExpr ((ParseBranch) e.getTree().getRoot(), dummyVariableSet, et, latexBuilder);
@@ -530,22 +529,24 @@ public class UserDefinitions implements Serializable {
 		
 		String latex = "";
 		if(!numerators.isEmpty()) {
-			latex += numerators.get(0);
+			latex += " { " + numerators.get(0);
 			for(int i = 1; i < numerators.size(); i++)
 				latex += " \\cdot " + numerators.get(i);
 			
+			latex += " } ";
+			
 			if(!denominators.isEmpty()) {
-				latex = " { " + latex + " \\over " + denominators.get(0);
+				latex = " { " + latex + " \\over { " + denominators.get(0);
 				for(int i = 1; i < denominators.size(); i++)
-					sb.append(" \\cdot " + denominators.get(i));
-				latex += " } ";
+					latex += " \\cdot " + denominators.get(i);
+				latex += " } } ";
 			}
 		} else {
 			if(!denominators.isEmpty()) {
-				latex = " { 1 \\over " + denominators.get(0);
+				latex = " { 1 \\over { " + denominators.get(0);
 				for(int i = 1; i < denominators.size(); i++)
-					sb.append(" \\cdot " + denominators.get(i));
-				latex += " } ";
+					latex += " \\cdot " + denominators.get(i);
+				latex += " } } ";
 			}
 		}
 		

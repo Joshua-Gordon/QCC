@@ -2,13 +2,13 @@ package appFX.framework.solderedGates;
 
 import java.io.Serializable;
 
-import appFX.framework.UserDefinitions;
-import appFX.framework.UserDefinitions.ArgDefinition;
-import appFX.framework.UserDefinitions.CheckDefinitionRunnable;
-import appFX.framework.UserDefinitions.DefinitionEvaluatorException;
-import appFX.framework.UserDefinitions.GroupDefinition;
-import appFX.framework.UserDefinitions.MatrixDefinition;
-import appFX.framework.UserDefinitions.ScalarDefinition;
+import appFX.framework.InputDefinitions;
+import appFX.framework.InputDefinitions.ArgDefinition;
+import appFX.framework.InputDefinitions.CheckDefinitionRunnable;
+import appFX.framework.InputDefinitions.DefinitionEvaluatorException;
+import appFX.framework.InputDefinitions.GroupDefinition;
+import appFX.framework.InputDefinitions.MatrixDefinition;
+import appFX.framework.InputDefinitions.ScalarDefinition;
 import appFX.framework.gateModels.PresetGateType;
 import utils.customCollections.Manifest.ManifestObject;
 
@@ -24,7 +24,7 @@ public class SolderedGate implements Serializable, CheckDefinitionRunnable {
 	@SuppressWarnings("rawtypes")
 	public SolderedGate(ManifestObject gateModelFormalName, String ... parameters) throws DefinitionEvaluatorException {
 		this.gateModelFormalName = gateModelFormalName;
-		parameterSet = UserDefinitions.evaluateInput(this, parameters); 
+		parameterSet = InputDefinitions.evaluateInput(this, parameters); 
 	}
 	
 	public String getGateModelFormalName() {

@@ -1,7 +1,17 @@
 package appFX.appUI.appViews.circuitBoardView;
 
-public interface ToolAction {
-	public void buttonPressed(int row, int column);
-	public void reset();
-	public boolean isCursorDisplayed();
+public abstract class ToolAction {
+	private final boolean showCursor;
+	
+	public ToolAction (boolean showCursor) {
+		this.showCursor = showCursor;
+	}
+	
+	public abstract void buttonPressed(int row, int column);
+	public abstract void reset();
+	public abstract boolean isCursorDisplayed();
+	
+	public boolean shouldShowTool() {
+		return showCursor;
+	}
 }

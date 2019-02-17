@@ -1,7 +1,7 @@
 package appFX.framework.gateModels;
 
 import appFX.appUI.AppAlerts;
-import appFX.framework.UserDefinitions.DefinitionEvaluatorException;
+import appFX.framework.InputDefinitions.DefinitionEvaluatorException;
 import appFX.framework.gateModels.BasicModel.BasicModelType;
 import appFX.framework.gateModels.GateModel.NameTakenException;
 

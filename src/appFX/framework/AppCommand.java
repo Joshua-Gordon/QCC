@@ -153,6 +153,8 @@ public enum AppCommand {
 		case SAVE_PROJECT:
 			if(AppFileIO.saveProject(currentProject, primaryStage) == AppFileIO.SUCCESSFUL)
 				status.setProjectSavedFlag();
+			else 
+				return false;
 			break;
 		case SAVE_PROJECT_TO_FILESYSTEM:
 			if(AppFileIO.saveProjectAs(currentProject, primaryStage) == AppFileIO.SUCCESSFUL)

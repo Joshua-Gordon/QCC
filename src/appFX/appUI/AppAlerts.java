@@ -32,6 +32,18 @@ public class AppAlerts {
 	}
 	
 	
+	public static Optional<ButtonType> showButtonMessage(Window window, String title, String message, AlertType type, ButtonType ... buttons) {
+		Alert alert = new Alert(type, message, buttons);
+		alert.initModality(Modality.APPLICATION_MODAL);
+		if(window != null) {
+			alert.initOwner(window);
+			alert.setTitle(title);
+		}
+		alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+		return alert.showAndWait();
+	}
+	
+	
 	public static void showJavaExceptionMessage(Window window, String title, String message, Exception e) {
 		Alert alert = constructBasicAlert(window, title, message, AlertType.ERROR);
 		

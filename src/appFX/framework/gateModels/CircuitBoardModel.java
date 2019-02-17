@@ -8,8 +8,8 @@ import java.util.ListIterator;
 
 import appFX.appUI.AppAlerts;
 import appFX.framework.AppStatus;
+import appFX.framework.InputDefinitions.DefinitionEvaluatorException;
 import appFX.framework.Project;
-import appFX.framework.UserDefinitions.DefinitionEvaluatorException;
 import appFX.framework.exportGates.Control;
 import appFX.framework.exportGates.RawExportableGateData;
 import appFX.framework.solderedGates.SolderedControl;
@@ -21,6 +21,7 @@ import utils.customCollections.CollectionUtils;
 import utils.customCollections.CustomLinkedList;
 import utils.customCollections.Manifest;
 import utils.customCollections.Manifest.ManifestObject;
+import utils.customCollections.Pair;
 import utils.customCollections.eventTracableCollections.Notifier;
 import utils.customCollections.eventTracableCollections.Notifier.ReceivedEvent;
 
@@ -536,8 +537,8 @@ public class CircuitBoardModel extends GateModel implements  Iterable<RawExporta
 					iterator.set(new SpacerPin(sg, false));
 				}
 				
-				removeBoundaryGates(currentGate, currentGate, false, remove, null, 
-						elements.get(column).listIterator(rowControl));
+				removeBoundaryGates(currentGate, sgc, false, remove, null, 
+						elements.get(column).listIterator(rowControl + 1));
 			} else {
 				iterator.next();
 				iterator.set(new SolderedControl(sg, false, controlStatus));
@@ -558,7 +559,7 @@ public class CircuitBoardModel extends GateModel implements  Iterable<RawExporta
 					iterator.set(new SpacerPin(sg, false));
 				}
 				
-				removeBoundaryGates(currentGate, currentGate, remove, false, 
+				removeBoundaryGates(sgc, currentGate, remove, false, 
 						elements.get(column).listIterator(rowControl), null);
 			}
 		}
@@ -645,6 +646,78 @@ public class CircuitBoardModel extends GateModel implements  Iterable<RawExporta
 	
 	public SolderedPin getSolderPinAt(int row, int column) {
 		return elements.get(column).get(row);
+	}
+	
+	public Pair<Integer, Integer> getSolderedGateBodyBounds(int row, int column) {
+		CustomLinkedList<SolderedPin> list = elements.listIterator(column).next();
+		ListIterator<SolderedPin> solderedPins = list.listIterator(row);
+		ListIterator<SolderedPin> copy = list.listIterator(solderedPins);
+		SolderedPin spS = solderedPins.next();
+		SolderedGate spG = spS.getSolderedGate();
+		solderedPins.previous();
+		
+		int top = 0, bot = 0;
+		
+		if(spS.isWithinBody()) {
+			top = row;
+			while(solderedPins.hasPrevious()) {
+				SolderedPin sp = solderedPins.previous();
+				if(sp.getSolderedGate() == spG && sp.isWithinBody())
+					top--;
+				else
+					break;
+			}
+			bot = row;
+			while(copy.hasNext()) {
+				SolderedPin sp = copy.next();
+				if(sp.getSolderedGate() == spG && sp.isWithinBody())
+					bot++;
+				else
+					break;
+			}
+		} else {
+			
+			boolean hitTop = false;
+			
+			while(solderedPins.hasPrevious()) {
+				SolderedPin sp = solderedPins.previous();
+				if(sp.getSolderedGate() != spG)
+					break;
+				if(sp.isWithinBody()) {
+					hitTop = true;
+					break;
+				}
+			}
+			
+			if(hitTop) {
+				bot = solderedPins.nextIndex() + 1;
+				top = bot - 1;
+				while(solderedPins.hasPrevious()) {
+					SolderedPin sp = solderedPins.previous();
+					if(sp.getSolderedGate() == spG && sp.isWithinBody())
+						top--;
+					else
+						break;
+				}
+			} else {
+				while(copy.hasNext()) {
+					SolderedPin sp = copy.next();
+					if(sp.isWithinBody())
+						break;
+				}
+				top = copy.previousIndex();
+				bot = top + 1;
+				while(copy.hasNext()) {
+					SolderedPin sp = copy.next();
+					if(sp.getSolderedGate() == spG && sp.isWithinBody())
+						bot++;
+					else
+						break;
+				}
+			}
+		}
+		
+		return new Pair<Integer, Integer> (top, bot);
 	}
 	
 	
@@ -835,7 +908,7 @@ public class CircuitBoardModel extends GateModel implements  Iterable<RawExporta
 		
 		if(gm instanceof CircuitBoardModel) {
 			if(((CircuitBoardModel) gm).findRecursion(p, getFormalName()))
-				throw new RecursionException(getName());
+				throw new RecursionException();
 			return circuitBoardsUsed.add(gateModel); 
 		} else if (gm instanceof BasicModel) {
 			if(gm.isPreset())
@@ -848,6 +921,20 @@ public class CircuitBoardModel extends GateModel implements  Iterable<RawExporta
 		return null;
 	}
 	
+	
+	public void assertNoRecursion(String gateModelName) {
+		Project p = AppStatus.get().getFocusedProject();
+		GateModel gm = p.getGateModel(gateModelName);
+		
+		if(gm != null) {
+			if(!(gm instanceof CircuitBoardModel))
+				return;
+			if(((CircuitBoardModel) gm).findRecursion(p, getFormalName()))
+				throw new RecursionException();
+		} else { 
+			throw new NullPointerException("Circuit Board \"" + gateModelName + "\" is not within the project.");
+		}
+	}
 	
 	private boolean findRecursion(Project p, String circuitBoardName) {
 		if(getFormalName().equals(circuitBoardName))
@@ -882,6 +969,8 @@ public class CircuitBoardModel extends GateModel implements  Iterable<RawExporta
 	}
 	
 	
+	
+	
 	private void removeBoundaryGates (SolderedGate firstG, SolderedGate lastG, 
 			boolean hitFirstReg, boolean hitLastReg, 
 			ListIterator<SolderedPin> firstIt, ListIterator<SolderedPin> lastIt) {
@@ -897,7 +986,7 @@ public class CircuitBoardModel extends GateModel implements  Iterable<RawExporta
 					break;
 			}
 			removeFromManifest(firstG.getGateModelFormalName());
-		} else if (diffGates && firstIt != null) {
+		} else if (/*diffGates && */firstIt != null) {
 			while(firstIt.previousIndex() >= 0) {
 				SolderedPin sp = firstIt.previous();
 				if(sp instanceof SpacerPin)					
@@ -917,8 +1006,8 @@ public class CircuitBoardModel extends GateModel implements  Iterable<RawExporta
 			}
 			if(diffGates)
 				removeFromManifest(lastG.getGateModelFormalName());
-		} else if (diffGates) {
-			while(lastIt.nextIndex() < getRows() && lastIt != null) {
+		} else if (/*diffGates && */lastIt != null) {
+			while(lastIt.nextIndex() < getRows()) {
 				SolderedPin sp = lastIt.next();
 				if(sp instanceof SpacerPin)					
 					lastIt.set(mkIdent());
@@ -927,6 +1016,8 @@ public class CircuitBoardModel extends GateModel implements  Iterable<RawExporta
 			}
 		}
 	}
+	
+	
 
 	@Override
 	public CircuitBoardModel shallowCopyToNewName(String name, String symbol, String description, String ... parameters) {
@@ -952,8 +1043,8 @@ public class CircuitBoardModel extends GateModel implements  Iterable<RawExporta
 	
 	@SuppressWarnings("serial")
 	public class RecursionException extends RuntimeException {
-		private RecursionException(String circuitboardName) {
-			super("The circuit board \"" + circuitboardName + "\" makes circuit board \"" + getName() + "\" recusively defined");
+		private RecursionException() {
+			super("The circuit board \"" + getName() + "\" makes circuit board \"" + getName() + "\" recusively defined");
 		}
 	}
 	

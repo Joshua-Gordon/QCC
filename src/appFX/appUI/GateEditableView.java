@@ -8,7 +8,7 @@ import appFX.framework.AppCommand;
 import appFX.framework.AppStatus;
 import appFX.framework.Project;
 import appFX.framework.Project.ProjectHashtable;
-import appFX.framework.UserDefinitions.DefinitionEvaluatorException;
+import appFX.framework.InputDefinitions.DefinitionEvaluatorException;
 import appFX.framework.gateModels.BasicModel;
 import appFX.framework.gateModels.GateModel;
 import appFX.framework.gateModels.PresetGateType;

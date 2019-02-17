@@ -12,7 +12,8 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
 
 public class SelectCursor extends Region implements EventHandler<MouseEvent> {
-	private static final ToolAction DO_NOTHING = new ToolAction() {
+	private static final ToolAction DO_NOTHING = new ToolAction(false) {
+		
 		public void reset() {}
 		public void buttonPressed(int row, int column) {}
 		public boolean isCursorDisplayed() {
@@ -20,19 +21,21 @@ public class SelectCursor extends Region implements EventHandler<MouseEvent> {
 		}
 	};
 	
-	private ToolAction currentToolAction = DO_NOTHING;
+	private ToolAction currentToolAction;
 	private final ChangeListener<Toggle> toolChanged, gateModelChanged;
 	private final CircuitBoardView cbv;
 	
 	public SelectCursor(CircuitBoardView cbv) {
 		this.cbv = cbv;
+		MainScene ms = AppStatus.get().getMainScene();
+		this.currentToolAction = getToolAction(ms.getSelectedTool());
 		
 		setStyle("-fx-background-color: #BDBDBD66");
 		setOnMouseClicked(this);
 		
 		toolChanged = (o, oldV, newV) -> {
 			currentToolAction.reset();
-			currentToolAction = getNextToolAction(newV);
+			currentToolAction = getToolAction(newV);
 		};
 		
 		gateModelChanged = (o, oldV, newV) -> {
@@ -40,28 +43,28 @@ public class SelectCursor extends Region implements EventHandler<MouseEvent> {
 		};
 	}
 	
-	private ToolAction getNextToolAction(Toggle oldV) {
+	private ToolAction getToolAction(Toggle toggle) {
 		MainScene ms = AppStatus.get().getMainScene();
 		
-		if(oldV == ms.selectTool) {
-		} else if(oldV == ms.solderTool) {
+		if(toggle == ms.selectTool) {
+		} else if(toggle == ms.solderTool) {
 			return new SolderRegionToolAction(cbv);
-		} else if(oldV == ms.editTool) {
+		} else if(toggle == ms.editTool) {
 			
-		} else if(oldV == ms.controlTool) {
+		} else if(toggle == ms.controlTool) {
 			return new ControlToolAction(cbv, Control.CONTROL_TRUE);
-		} else if(oldV == ms.controlNotTool) {
+		} else if(toggle == ms.controlNotTool) {
 			return new ControlToolAction(cbv, Control.CONTROL_FALSE);
-		} else if(oldV == ms.addColumnTool) {
-		
-		} else if(oldV == ms.removeColumnTool) {
-		
-		} else if(oldV == ms.addRowTool) {
-		
-		} else if(oldV == ms.removeRowTool) {
-		
+		} else if(toggle == ms.addColumnTool) {
+			
+		} else if(toggle == ms.removeColumnTool) {
+			
+		} else if(toggle == ms.addRowTool) {
+			
+		} else if(toggle == ms.removeRowTool) {
+			
 		}
-		
+		hideTool();
 		return DO_NOTHING;
 	}
 
@@ -73,14 +76,16 @@ public class SelectCursor extends Region implements EventHandler<MouseEvent> {
 		return gateModelChanged;
 	}
 	
-	public void setPosition(int row, int column) {
-		GridPane.setRowIndex(this, row);
-		GridPane.setColumnIndex(this, column + 1);
+	public void showTool() {
+		if(currentToolAction.isCursorDisplayed()) {
+			setManaged(true);
+			setVisible(true);
+		}
 	}
 	
-	public void showTool(boolean show) {
-		setManaged(show);
-		setVisible(show);
+	public void hideTool() {
+		setManaged(false);
+		setVisible(false);
 	}
 	
 	private int getRow() {

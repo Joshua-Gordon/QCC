@@ -14,6 +14,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import sun.awt.RepaintArea;
 import utils.customCollections.eventTracableCollections.Notifier;
 import utils.customCollections.eventTracableCollections.Notifier.ReceivedEvent;
 
@@ -125,12 +126,24 @@ public final class AppStatus implements EventHandler<WindowEvent> {
 			return;
 		
 		if(isProjectModifed) {
-			Optional<ButtonType> response = AppAlerts.showMessage(primaryStage,
+			ButtonType type1 = new ButtonType("Save");
+			ButtonType type2 = new ButtonType("Continue without saving");
+			ButtonType type3 = new ButtonType("Cancel");
+			
+			Optional<ButtonType> response = AppAlerts.showButtonMessage(primaryStage,
 					"The current project is not saved",
-					"Do you want to continue without saving?", AlertType.CONFIRMATION);
-
-			if(response.get() != ButtonType.OK)
+					"Do you want to continue without saving?", AlertType.CONFIRMATION, type1, type2, type3);
+			
+			ButtonType sel = response.get();
+			
+			if(sel == type1) {
+				Object o = AppCommand.doAction(AppCommand.SAVE_PROJECT);
+				if(o != null && !((Boolean) o))
+					return;
+			} else if(sel == type2) {
+			} else if(sel == type3) {
 				return;
+			}
 		}
 		
 		// set previously focused project unfocused
@@ -196,12 +209,23 @@ public final class AppStatus implements EventHandler<WindowEvent> {
 	@Override
 	public void handle(WindowEvent event) {
 		if(isProjectModifed && project != null) {
-			Optional<ButtonType> options = AppAlerts.showMessage(primaryStage, "Project is not saved", 
-					"The current project is not saved, would you like to save before exiting?", AlertType.CONFIRMATION);
-
-			if(options.get() == ButtonType.OK)
-				if(AppFileIO.saveProject(project, primaryStage) == AppFileIO.SUCCESSFUL)
-					status.setProjectSavedFlag();
+			ButtonType type1 = new ButtonType("Save");
+			ButtonType type2 = new ButtonType("Exit Anyway");
+			ButtonType type3 = new ButtonType("Cancel");
+			
+			Optional<ButtonType> options = AppAlerts.showButtonMessage(primaryStage, "Project is not saved", 
+					"The current project is not saved, would you like to save before exiting?", AlertType.CONFIRMATION, type1, type2, type3);
+			
+			ButtonType sel = options.get();
+			
+			if(sel == type1) {
+				if(AppFileIO.saveProject(project, primaryStage) != AppFileIO.SUCCESSFUL)
+					event.consume();
+			} else if (sel == type2) {
+				return;
+			} else if (sel == type3) {
+				event.consume();
+			}
 		}
 	}
 

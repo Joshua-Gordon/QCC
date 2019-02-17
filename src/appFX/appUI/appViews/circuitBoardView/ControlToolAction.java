@@ -4,10 +4,13 @@ import appFX.framework.gateModels.PresetGateType;
 import appFX.framework.solderedGates.SolderedGate;
 import appFX.framework.solderedGates.SolderedPin;
 import appFX.framework.solderedGates.SolderedRegister;
+import javafx.collections.ObservableList;
+import javafx.scene.Node;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
+import utils.customCollections.Pair;
 
-public class ControlToolAction implements ToolAction {
+public class ControlToolAction extends ToolAction {
 	private final boolean controlType;
 	private final CircuitBoardView cbv;
 	private int rowSel, colSel;
@@ -15,6 +18,7 @@ public class ControlToolAction implements ToolAction {
 	private SolderedGate currSG;
 	
 	public ControlToolAction(CircuitBoardView cbv, boolean controlType) {
+		super(true);
 		this.cbv = cbv;
 		this.controlType = controlType;
 	}
@@ -26,14 +30,21 @@ public class ControlToolAction implements ToolAction {
 		if(currSG == null) {
 			if(PresetGateType.isIdentity(sg.getGateModelFormalName()))
 				return;
+			
 			currSG = sg;
 			rowSel = row;
 			colSel = column;
-			region = new ControlSelectRegion(row, column, 1);
-			cbv.circuitBoardPane.getChildren().add(region);
+			
+			Pair<Integer, Integer> bounds = cbv.getCircuitBoard().getSolderedGateBodyBounds(row, column);
+			
+			region = new ControlSelectRegion(bounds.first(), column, bounds.second() - bounds.first());
+			ObservableList<Node> nodes = cbv.circuitBoardPane.getChildren();
+			nodes.add(nodes.size() - 1, region);
 		} else {
-			if(colSel != column)
+			if(colSel != column) {
 				reset();
+				return;
+			}
 			if(sg == currSG && sp instanceof SolderedRegister)
 				return;
 			
@@ -57,11 +68,10 @@ public class ControlToolAction implements ToolAction {
 		
 		public ControlSelectRegion (int row, int column, int height) {
 			setStyle("-fx-border-color: blue;\n"
-	                + "-fx-border-insets: 5;\n"
-	                + "-fx-border-width: 3;\n"
+	                + "-fx-border-width: 2;\n"
 	                + "-fx-border-style: dashed;\n");
 			
-			GridPane.setConstraints(this, column + 1, row, height, 1);
+			GridPane.setConstraints(this, column + 1, row, 1, height);
 		}
 		
 		

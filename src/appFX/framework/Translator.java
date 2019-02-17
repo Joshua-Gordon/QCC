@@ -1,17 +1,5 @@
 package appFX.framework;
 
-import appFX.framework.exportGates.ExportedGate;
-import appFX.framework.exportGates.GateManager;
-import appFX.framework.gateModels.CircuitBoardModel;
-import appFX.framework.gateModels.PresetGateType;
-import appSW.framework.CircuitBoard;
-import mathLib.Complex;
-import mathLib.Matrix;
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,6 +8,8 @@ import java.util.stream.Stream;
 import appFX.framework.exportGates.ExportedGate;
 import appFX.framework.exportGates.GateManager;
 import appFX.framework.gateModels.PresetGateType;
+import mathLib.Complex;
+import mathLib.Matrix;
 
 public class Translator {
 
@@ -31,7 +21,7 @@ public class Translator {
 
    //@NotNull
    public static String exportToQUIL(Project p) {
-      String cbname = p.getTopLevelCircuitName();
+      String cbName = p.getTopLevelCircuitName();
       Stream<ExportedGate> exps = null;
       try {
          exps = GateManager.exportGates(p);

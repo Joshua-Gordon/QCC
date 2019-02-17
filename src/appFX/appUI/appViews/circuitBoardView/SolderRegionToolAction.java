@@ -6,7 +6,7 @@ import appFX.appUI.AppAlerts;
 import appFX.appUI.ParameterPrompt;
 import appFX.appUI.appViews.gateChooser.AbstractGateChooser;
 import appFX.framework.AppStatus;
-import appFX.framework.UserDefinitions.DefinitionEvaluatorException;
+import appFX.framework.InputDefinitions.DefinitionEvaluatorException;
 import appFX.framework.gateModels.CircuitBoardModel.RecursionException;
 import appFX.framework.gateModels.GateModel;
 import javafx.scene.control.Alert.AlertType;
@@ -15,7 +15,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import utils.customCollections.ImmutableArray;
 
-public class SolderRegionToolAction  implements ToolAction {
+public class SolderRegionToolAction  extends ToolAction {
 	private Integer[] regs;
 	private ArrayList<NumberRegion> regDisps;
 	private int currentReg = -1;
@@ -24,6 +24,7 @@ public class SolderRegionToolAction  implements ToolAction {
 	private final CircuitBoardView view;
 	
 	public SolderRegionToolAction(CircuitBoardView view) {
+		super(true);
 		this.view = view;
 	}
 
@@ -36,7 +37,18 @@ public class SolderRegionToolAction  implements ToolAction {
 		
 		
 		GateModel gm = getSelectedModel();
+		
+		
 		if(gm != null) { 
+			
+			try {
+				view.getCircuitBoard().assertNoRecursion(gm.getFormalName());
+			} catch(RecursionException re) {
+				AppAlerts.showMessage(AppStatus.get().getPrimaryStage(),
+						"Recursion detected", re.getMessage(), AlertType.ERROR);
+				return;
+			}
+			
 			
 			if(regs == null) {
 				regs = new Integer[gm.getNumberOfRegisters()];

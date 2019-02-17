@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.Hashtable;
 import java.util.Set;
 
-import appFX.framework.UserDefinitions.MatrixDefinition;
+import appFX.framework.InputDefinitions.MatrixDefinition;
 import appFX.framework.gateModels.BasicModel;
 import appFX.framework.gateModels.GateModel;
 import appFX.framework.gateModels.PresetGateType;

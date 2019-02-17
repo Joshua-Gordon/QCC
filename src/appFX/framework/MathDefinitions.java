@@ -13,7 +13,7 @@ import mathLib.expression.Function.LatexFormat;
 import mathLib.expression.MathSet;
 import mathLib.expression.Variable.ConcreteVariable;
 
-public class MathDefintions {
+public class MathDefinitions {
 	public static final MathSet GLOBAL_DEFINITIONS =  new MathSet();
 	
 	

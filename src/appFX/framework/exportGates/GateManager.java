@@ -7,13 +7,13 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import appFX.framework.AppStatus;
-import appFX.framework.MathDefintions;
+import appFX.framework.MathDefinitions;
 import appFX.framework.Project;
-import appFX.framework.UserDefinitions.ArgObject;
-import appFX.framework.UserDefinitions.GroupDefinition;
-import appFX.framework.UserDefinitions.MathObject;
-import appFX.framework.UserDefinitions.MatrixObject;
-import appFX.framework.UserDefinitions.ScalarObject;
+import appFX.framework.InputDefinitions.ArgObject;
+import appFX.framework.InputDefinitions.GroupDefinition;
+import appFX.framework.InputDefinitions.MathObject;
+import appFX.framework.InputDefinitions.MatrixObject;
+import appFX.framework.InputDefinitions.ScalarObject;
 import appFX.framework.gateModels.BasicModel;
 import appFX.framework.gateModels.CircuitBoardModel;
 import appFX.framework.gateModels.GateModel;
@@ -30,7 +30,7 @@ import utils.customCollections.Stack;
 public class GateManager {
 	
 	public static Stream<ExportedGate> exportGates(String circuitboardName) throws ExportException {
-		ExportTree et = startScanAndGetExportStream(circuitboardName, MathDefintions.GLOBAL_DEFINITIONS);
+		ExportTree et = startScanAndGetExportStream(circuitboardName, MathDefinitions.GLOBAL_DEFINITIONS);
 		return Stream.generate(new DefaultExportGatesSupplier(et)).takeWhile(x -> x != null);
 	}
 	
@@ -43,7 +43,7 @@ public class GateManager {
 	}
 	
 	public static Stream<Exportable> exportGatesRecursively(String circuitboardName) throws ExportException {
-		return exportGatesRecursively(startScanAndGetExportStream(circuitboardName, MathDefintions.GLOBAL_DEFINITIONS));
+		return exportGatesRecursively(startScanAndGetExportStream(circuitboardName, MathDefinitions.GLOBAL_DEFINITIONS));
 	}
 	
 	private static Stream<Exportable> exportGatesRecursively(ExportTree et) {
@@ -399,7 +399,7 @@ public class GateManager {
 			Complex c;
 			
 			ExportNode n = null;
-			MathSet ms = new MathSet(MathDefintions.GLOBAL_DEFINITIONS);
+			MathSet ms = new MathSet(MathDefinitions.GLOBAL_DEFINITIONS);
 			
 			try {
 				if(gm instanceof CircuitBoardModel) {

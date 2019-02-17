@@ -29,6 +29,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -51,7 +52,7 @@ import utils.customCollections.eventTracableCollections.Notifier.ReceivedEvent;
 
 
 //TODO: fix iterator "choose index" constructor
-public class CircuitBoardView extends AppView implements Initializable, ViewListener {
+public class CircuitBoardView extends AppView implements Initializable, ViewListener, EventHandler<MouseEvent> {
 	
 	private static final int GRID_SIZE = 50;
 	
@@ -65,6 +66,7 @@ public class CircuitBoardView extends AppView implements Initializable, ViewList
 	private final Project project;
 	private boolean initialized = false;
 	private final SelectCursor cursor;
+	private Node[] topNodes;
 	
 	public static void openCircuitBoard(String circuitBoardName) {
 		AppStatus status = AppStatus.get();
@@ -78,6 +80,7 @@ public class CircuitBoardView extends AppView implements Initializable, ViewList
 		this.project = project;
 		this.circuitBoard.setRenderEventHandler(new CircuitBoardEventHandler());
 		this.cursor = new SelectCursor(this);
+		GridPane.setConstraints(cursor, 1, 0);
 	}
 	
 	@Override
@@ -159,9 +162,15 @@ public class CircuitBoardView extends AppView implements Initializable, ViewList
 		}
 		
 		circuitBoardPane.setOnMouseExited((e) -> {
-			cursor.showTool(false);
+			cursor.hideTool();
 		});
 		
+		circuitBoardPane.setOnMouseEntered((e) -> {
+			cursor.showTool();
+		});
+		
+		
+		circuitBoardPane.addEventFilter(MouseEvent.MOUSE_MOVED, this);
 
 		AppStatus.get().getMainScene().addToolButtonListener(cursor.getToolChangedListener());
 		AbstractGateChooser.addToggleListener(cursor.getModelChangedListener());
@@ -187,7 +196,6 @@ public class CircuitBoardView extends AppView implements Initializable, ViewList
 		
 		@Override
 		public boolean receive(Object source, String methodName, Object... args) {
-			System.out.println(methodName);
 			cursor.getCurrentTool().reset();
 			rerenderCircuitBoard();
 			return false;
@@ -205,17 +213,18 @@ public class CircuitBoardView extends AppView implements Initializable, ViewList
 		
 		ObservableList<Node> nodes = circuitBoardPane.getChildren();
 		nodes.clear();
-		System.out.println(circuitBoard.getFormalName());
 		ObservableList<RowConstraints> rows = circuitBoardPane.getRowConstraints();
+		topNodes = new Node[circuitBoard.getColumns()];
 		
 		for(int i = 0; i < circuitBoard.getRows(); i++) {
 			LatexNode ln = new LatexNode("\\( \\lvert \\psi_{" + i +  "}\\rangle \\)");
-			GridPane.setConstraints(ln, 0, i, 1, 1, HPos.CENTER, VPos.CENTER);
 			ln.setPadding(new Insets(0, 5, 0, 5));
+			BorderPane bp = new BorderPane();
+			bp.setCenter(ln);
+			GridPane.setConstraints(bp, 0, i, 1, 1, HPos.CENTER, VPos.CENTER);
+			circuitBoardPane.getChildren().add(bp);			
 			
 			rows.add(new RowConstraints(GridPane.USE_PREF_SIZE, GridPane.USE_COMPUTED_SIZE, GridPane.USE_PREF_SIZE));
-			
-			circuitBoardPane.getChildren().add(ln);
 		}
 		
 		
@@ -233,6 +242,7 @@ public class CircuitBoardView extends AppView implements Initializable, ViewList
 				Hashtable<Integer, Integer> regs = data.getRegisters();
 				Node n = makeIdentityAt(regs.get(0), column);
 				nodes.add(n);
+				topNodes[column] = n;
 				continue;
 			}
 			
@@ -261,18 +271,14 @@ public class CircuitBoardView extends AppView implements Initializable, ViewList
 			
 			
 			
-			
-			
-			
-			
 			GateModel gm = project.getGateModel(sg.getGateModelFormalName());
+			
+			
 			
 			String symbol;
 			if(gm == null) {
 				symbol = sg.getGateModelFormalName();
-				for(int i = startBody; i < endBody + 1; i++)
-					nodes.add(makeIdentityAt(i, column));
-//				nodes.add(makeRegularGateBody(data, symbol));
+				drawBehindIdentiyGates(nodes, column, start, startBody, endBody, end);
 				addRegularGateBody(nodes, data, symbol);
 			} else if(gm.isPreset()) {
 				symbol = gm.getName();
@@ -294,13 +300,13 @@ public class CircuitBoardView extends AppView implements Initializable, ViewList
 							nodes.add(makeIdentityWithLineAt(i, column));
 						}
 					}
-					
+					topNodes[column] = nodes.get(nodes.size() - 1);
 					
 					break;
 				case MEASUREMENT:
 					
 					nodes.add(makeMeasurementGate(startBody, column));
-					
+					topNodes[column] = nodes.get(nodes.size() - 1);
 					break;
 				case SWAP:
 					
@@ -317,7 +323,7 @@ public class CircuitBoardView extends AppView implements Initializable, ViewList
 							nodes.add(makeIdentityWithLineAt(i, column));
 						}
 					}
-					
+					topNodes[column] = nodes.get(nodes.size() - 1);
 					
 					break;
 				case TOFFOLI:
@@ -337,34 +343,24 @@ public class CircuitBoardView extends AppView implements Initializable, ViewList
 							nodes.add(makeIdentityWithLineAt(i, column));
 						}
 					}
-					
+					topNodes[column] = nodes.get(nodes.size() - 1);
 					break;
 				default:
-					for(int i = startBody; i < endBody + 1; i++)
-						nodes.add(makeIdentityAt(i, column));
-//					nodes.add(makeRegularGateBody(data, gm.getSymbol()));
+					drawBehindIdentiyGates(nodes, column, start, startBody, endBody, end);
 					addRegularGateBody(nodes, data, gm.getSymbol());
 					break;
 				}
 				
-			
-				
 				
 			} else {
 				symbol = gm.getSymbol();
-				for(int i = startBody; i < endBody + 1; i++)
-					nodes.add(makeIdentityAt(i, column));
-//				nodes.add(makeRegularGateBody(data, symbol));
+				drawBehindIdentiyGates(nodes, column, start, startBody, endBody, end);
 				addRegularGateBody(nodes, data, symbol);
 			}
 			
 			
 			
-			
-			
-			
-			
-			for(int i = endBody + 1; i < end; i++) {
+			for(int i = endBody + 1; i < end + 1; i++) {
 				Control c = controls.peek();
 				if(c != null && c.getRegister() == i) {
 					nodes.add(makeControlAt(i, column, c.getControlStatus(), getDispType(start, end, i)));
@@ -373,19 +369,33 @@ public class CircuitBoardView extends AppView implements Initializable, ViewList
 					nodes.add(makeIdentityWithLineAt(i, column));
 				}
 			}
-			
-			
-			
-		}
+		}			
 		
 		nodes.add(cursor);
-		cursor.showTool(false);
 		
 		if(grid.isSelected())
 			showGrid();
 		
 		
 	}
+	
+	
+	private void drawBehindIdentiyGates(ObservableList<Node> nodes, int column, int start, int startBody, int endBody, int end) {
+		int controlTop = startBody - start > 0 ? -1 : 0;
+		int controlBot = end - endBody > 0 ? 1 : 0;
+		if(endBody - startBody == 0) {
+			int value = controlTop == -1 && controlBot == 1 ? -2 : controlTop + controlBot;
+			nodes.add(makeIdentityWithControlOut(startBody, column, value));
+		} else {
+			nodes.add(makeIdentityWithControlOut(startBody, column, controlTop));
+			for(int i = startBody + 1; i < endBody; i++)
+				nodes.add(makeIdentityAt(i, column));
+			nodes.add(makeIdentityWithControlOut(endBody, column, controlBot));
+		}
+		topNodes[column] = nodes.get(nodes.size() - 1);
+	}
+	
+	
 	
 	private int getDispType(int start, int end, int current) {
 		if(current == start) return 1;
@@ -447,82 +457,40 @@ public class CircuitBoardView extends AppView implements Initializable, ViewList
 			}
 			bp.setLeft(ap);
 			BorderPane.setMargin(ap, new Insets(GRID_SIZE / 4, 5, GRID_SIZE / 4, 5));
+			
+			LinkedList<Control> controls = data.getControls();
+			int bodyEnd = data.getGateRowBodyEnd();
+			Control c = controls.peek();
+			while(c != null && c.getRegister() < bodyEnd) {
+				controls.pop();
+				
+				Circle circ;
+				
+				if(c.getControlStatus() == Control.CONTROL_TRUE) 
+					circ = new Circle(3, Color.BLACK);
+				else
+					circ = new Circle(3, Color.WHITE);
+				circ.setStroke(Color.BLACK);
+				
+				Node toMatch = nodes.get(c.getRegister());
+				circ.centerYProperty().bind(toMatch.layoutYProperty().subtract(start.layoutYProperty()).add(6));
+				circ.setCenterX(5);
+				
+				ap.getChildren().add(circ);
+				c = controls.peek();
+			}
 		}
+		
 		GridPane.setConstraints(bp, data.getColumn() + 1, data.getGateRowBodyStart(), 1, data.getGateRowBodyEnd() - data.getGateRowBodyStart() + 1);
 		GridPane.setHalignment(bp, HPos.CENTER);
 		GridPane.setVgrow(bp, Priority.ALWAYS);
-		GridPane.setMargin(bp, new Insets(5, 5, 5, 5));
+//		GridPane.setMargin(bp, new Insets(5, 5, 5, 5));
 		
 		
 		
 		nodes.add(bp);
 	}
 	
-	
-//	public Node makeRegularGateBody(RawExportableGateData data, String symbol) {
-//		BorderPane bp = new BorderPane();
-//		
-//		bp.setMinSize(AnchorPane.USE_PREF_SIZE, AnchorPane.USE_PREF_SIZE);
-//		bp.setPrefSize(AnchorPane.USE_COMPUTED_SIZE, AnchorPane.USE_COMPUTED_SIZE);
-//		bp.setMaxSize(AnchorPane.USE_PREF_SIZE, AnchorPane.USE_PREF_SIZE);
-//		
-//		bp.setStyle("-fx-background-color: #FFFFFF;\n "
-//				+ "-fx-border-color: #000000; \n"
-//				+ "-fx-border-width: 1; ");
-//		
-//		HBox box = new HBox();
-//		box.setAlignment(Pos.CENTER);
-//		Label l = new Label(symbol);
-//		l.setStyle("-fx-font-family: 'Vast Shadow'; \n" 
-//				 + "-fx-font-size: 20;");
-//		
-//		box.getChildren().add(l);
-//		
-//		ImmutableArray<String> paramLatex = data.getSolderedGate().getParameterSet().getLatexRepresentations();
-//		
-//		if(!paramLatex.isEmpty()) {
-//			String paramString = "\\( ( " + paramLatex.get(0);
-//			
-//			for(int i = 1; i < paramLatex.size(); i++)
-//				paramString += " , " + paramLatex.get(i);
-//			
-//			paramString += " ) \\)";
-//			LatexNode lv = new LatexNode(paramString, .6f, "#00000000", "#000000");
-//			box.getChildren().add(lv);
-//		}
-//		
-//		box.setPadding(new Insets(5));
-//		bp.setCenter(box);
-//		
-//		
-//		Hashtable<Integer, Integer> regs = data.getRegisters();
-//		LinkedList<Integer> underNeaths = data.getUnderneathIdentityGates();
-//		
-//		if(regs.size() > 1) {
-//			GridPane pane = new GridPane();
-//			
-//			for(int reg : underNeaths) {
-//				int gridRow = reg - data.getGateRowBodyStart();
-//				Region r = new Region();
-//				GridPane.setConstraints(r, 0, gridRow, 1, 1, HPos.CENTER, VPos.CENTER, Priority.ALWAYS, Priority.ALWAYS);
-//				pane.getChildren().add(r);
-//			}
-//			
-//			for(int i = 0; i < regs.size(); i++) {
-//				int reg = regs.get(i);
-//				int gridRow = reg - data.getGateRowBodyStart();
-//				Label label = new Label(Integer.toString(reg));
-//				GridPane.setConstraints(label, 0, gridRow, 1, 1, HPos.CENTER, VPos.CENTER, Priority.ALWAYS, Priority.ALWAYS);
-//				pane.getChildren().add(label);
-//			}
-//			
-//			
-//			bp.setLeft(pane);
-//		}
-//		GridPane.setConstraints(bp, data.getColumn() + 1, data.getGateRowBodyStart(), 1, data.getGateRowBodyEnd() - data.getGateRowBodyStart() + 1);
-//		GridPane.setHalignment(bp, HPos.CENTER);
-//		return bp;
-//	}
 	
 	
 	public Node makeMeasurementGate(int row, int column) {
@@ -545,8 +513,6 @@ public class CircuitBoardView extends AppView implements Initializable, ViewList
 		
 		GridPane.setConstraints(r, column + 1, row, 1, 1, HPos.CENTER, VPos.CENTER);
 		
-		setOnSolderHover(r, row, column);
-		
 		return r;
 	}
 	
@@ -567,8 +533,6 @@ public class CircuitBoardView extends AppView implements Initializable, ViewList
 		l.endYProperty().bind(r.heightProperty().divide(2));
 		
 		GridPane.setConstraints(r, column + 1, row, 1, 1, HPos.CENTER, VPos.CENTER);
-		
-		setOnSolderHover(r, row, column);
 		
 		return r;
 	}
@@ -597,9 +561,48 @@ public class CircuitBoardView extends AppView implements Initializable, ViewList
 		
 		GridPane.setConstraints(r, column + 1, row, 1, 1, HPos.CENTER, VPos.CENTER);
 		
-		setOnSolderHover(r, row, column);
-		
 		return r;
+	}
+	
+	public Node makeIdentityWithControlOut(int row, int column, int type) {
+		if(type == 0)
+			return makeIdentityAt(row, column);
+		else if(type == -2) 
+			return makeIdentityWithLineAt(row, column);
+		else {
+			AnchorPane r = new AnchorPane();
+			r.getStyleClass().add("cb_grid");
+			
+			r.setMinSize(GRID_SIZE, GRID_SIZE);
+			r.setPrefSize(GRID_SIZE, GRID_SIZE);
+			r.setMaxSize(AnchorPane.USE_COMPUTED_SIZE, AnchorPane.USE_COMPUTED_SIZE);
+			
+			Line h = new Line();
+			Line v = new Line();
+			
+			r.getChildren().add(h);
+			h.endXProperty().bind(r.widthProperty().subtract(1));
+			h.startYProperty().bind(r.heightProperty().divide(2));
+			h.endYProperty().bind(r.heightProperty().divide(2));
+			
+			r.getChildren().add(v);
+			
+			if(type < 0) {
+				v.endYProperty().bind(r.heightProperty().divide(2));
+				v.startXProperty().bind(r.widthProperty().divide(2));
+				v.endXProperty().bind(r.widthProperty().divide(2));
+			} else if(type > 0) {
+				v.startYProperty().bind(r.heightProperty().divide(2));
+				v.endYProperty().bind(r.heightProperty().subtract(1));
+				v.startXProperty().bind(r.widthProperty().divide(2));
+				v.endXProperty().bind(r.widthProperty().divide(2));
+			}
+			
+			
+			GridPane.setConstraints(r, column + 1, row, 1, 1, HPos.CENTER, VPos.CENTER);
+			
+			return r;
+		}
 	}
 	
 	public Node makeSwapHead(int row, int column, int position) {
@@ -658,8 +661,6 @@ public class CircuitBoardView extends AppView implements Initializable, ViewList
 		
 		GridPane.setConstraints(r, column + 1, row, 1, 1, HPos.CENTER, VPos.CENTER);
 		
-		setOnSolderHover(r, row, column);
-		
 		return r;
 	}
 	
@@ -714,8 +715,6 @@ public class CircuitBoardView extends AppView implements Initializable, ViewList
 		GridPane.setConstraints(r, column + 1, row, 1, 1, HPos.CENTER, VPos.CENTER);
 		
 
-		setOnSolderHover(r, row, column);
-		
 		return r;
 	}
 	
@@ -774,41 +773,10 @@ public class CircuitBoardView extends AppView implements Initializable, ViewList
 		
 		GridPane.setConstraints(r, column + 1, row, 1, 1, HPos.CENTER, VPos.CENTER);
 		
-		setOnSolderHover(r, row, column);
-		
 		return r;
 	}
 	
-	
-	private void setOnSolderHover(Node n, int row, int column) {
-		
-		SolderMouseHover eventHandler = new SolderMouseHover(row, column);
-		n.setOnMouseEntered(eventHandler);
-	}
-	
-	
-	
-	
-	
-	
-	private class SolderMouseHover implements EventHandler<MouseEvent> {
 
-		private final int row, column;
-		
-		public SolderMouseHover(int row, int column) {
-			this.row = row;
-			this.column = column;
-		}
-			
-		@Override
-		public void handle(MouseEvent event) {
-			if(cursor.getCurrentTool().isCursorDisplayed()) {
-				if(!cursor.isManaged())
-					cursor.showTool(true);
-				cursor.setPosition(row, column);
-			}
-		}
-	}
 
 
 
@@ -819,6 +787,33 @@ public class CircuitBoardView extends AppView implements Initializable, ViewList
 	public Project getProject() {
 		return project;
 	}
+
+	@Override
+	public void handle(MouseEvent event) {
+		if (event.getEventType() == MouseEvent.MOUSE_MOVED) {
+			int row = 0, column = 0;
+			
+			for(int i = 0; i < circuitBoard.getRows(); i++) {
+				Parent p = (Parent) circuitBoardPane.getChildren().get(i);
+				if(event.getY() > p.getLayoutY())
+					row = i;
+				else break; 
+			}
+			
+			for(int i = 0; i < circuitBoard.getColumns(); i++) {
+				Parent p = (Parent) topNodes[i];
+				if(event.getX() > p.getLayoutX())
+					column = i;
+				else break; 
+			}
+			
+			if(GridPane.getColumnIndex(cursor) - 1 != column)
+				GridPane.setColumnIndex(cursor, column + 1);
+			if(GridPane.getRowIndex(cursor) != row)
+				GridPane.setRowIndex(cursor, row);
+		}
+	}
+
 	
 	
 }

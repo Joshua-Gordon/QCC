@@ -1,13 +1,13 @@
 package appFX.framework.gateModels;
 
-import appFX.framework.UserDefinitions;
-import appFX.framework.UserDefinitions.ArgDefinition;
-import appFX.framework.UserDefinitions.CheckDefinitionRunnable;
-import appFX.framework.UserDefinitions.DefinitionEvaluatorException;
-import appFX.framework.UserDefinitions.GroupDefinition;
-import appFX.framework.UserDefinitions.MathObject;
-import appFX.framework.UserDefinitions.MatrixDefinition;
-import appFX.framework.UserDefinitions.ScalarDefinition;
+import appFX.framework.InputDefinitions;
+import appFX.framework.InputDefinitions.ArgDefinition;
+import appFX.framework.InputDefinitions.CheckDefinitionRunnable;
+import appFX.framework.InputDefinitions.DefinitionEvaluatorException;
+import appFX.framework.InputDefinitions.GroupDefinition;
+import appFX.framework.InputDefinitions.MathObject;
+import appFX.framework.InputDefinitions.MatrixDefinition;
+import appFX.framework.InputDefinitions.ScalarDefinition;
 import mathLib.Complex;
 import mathLib.Matrix;
 import utils.customCollections.ImmutableArray;
@@ -54,7 +54,7 @@ public class BasicModel extends GateModel {
 		
 		
 		RegularGateChecker rgc = new RegularGateChecker();
-		GroupDefinition definitions = UserDefinitions.evaluateInput(rgc, parameters, userDefinitions);
+		GroupDefinition definitions = InputDefinitions.evaluateInput(rgc, parameters, userDefinitions);
 		
 		
 		for(String var : definitions.getArguments()) {
