@@ -8,6 +8,7 @@ import java.util.stream.Stream;
 import appFX.framework.exportGates.ExportedGate;
 import appFX.framework.exportGates.GateManager;
 import appFX.framework.gateModels.PresetGateType;
+import appFX.framework.exportGates.Control;
 import mathLib.Complex;
 import mathLib.Matrix;
 
@@ -45,31 +46,60 @@ public class Translator {
             if(eg.isPresetGate()) {
                PresetGateType pgt = eg.getPresetGateType();
                int[] regs = eg.getGateRegister();
+               String code = "";
                switch(pgt) {
                   case IDENTITY:
-                     return "";
+                     return ""; //permissible to return; control identity is not very useful
                   case HADAMARD:
-                     return "H " + regs[0];
+                     code = "H " + regs[0];
+                     break;
                   case PAULI_X:
-                     return "X " + regs[0];
+                     code = "X " + regs[0];
+                     break;
                   case PAULI_Y:
-                     return "Y " + regs[0];
+                     code = "Y " + regs[0];
+                     break;
                   case PAULI_Z:
-                     return "Z " + regs[0];
+                     code = "Z " + regs[0];
+                     break;
                   case CNOT:
-                     return "CNOT " + regs[0] + " " + regs[1];
+                     code = "CNOT " + regs[0] + " " + regs[1];
+                     break;
                   case SWAP:
-                     return "SWAP " + regs[0] + " " + regs[1];
+                     code = "SWAP " + regs[0] + " " + regs[1];
+                     break;
                   case TOFFOLI:
-                     return "CCNOT " + regs[0] + " " + regs[1] + " " + regs[2];
+                     code = "CCNOT " + regs[0] + " " + regs[1] + " " + regs[2];
+                     break;
                   case PI_ON_8:
-                     return "T " + regs[0];
+                     code = "T " + regs[0];
+                     break;
                   case PHASE:
-                     return "S " + regs[0];
+                     code = "S " + regs[0];
+                     break;
+                  case MEASUREMENT:
+                     code = "MEASURE " + regs[0];
                   default:
                      throw new TranslationException("Gate not implemented!");
 
                }
+               String notBuffer = "";
+               String[] split = code.split(" ");
+               String gate = split[0];
+
+               for (Control c : eg.getControls()) {
+                  if(!c.getControlStatus()) {
+                     notBuffer = "X " + c.getRegister() + "\n" + notBuffer;
+                  }
+                  gate = "CONTROLLED " + gate + " " + c.getRegister();
+               }
+               for(int i = 0; i < split.length-1; ++i) {
+                  gate += " " + split[i+1];
+               }
+               if(notBuffer.length() == 0) {
+                  return gate;
+               }
+               return notBuffer + gate + "\n" + notBuffer;
             }
             //eg is not a preset gate, likely multiple qubits
             String gateName = eg.getGateModel().getName();
@@ -84,7 +114,8 @@ public class Translator {
             definedGates.add(gateName);
             return defGate(eg) + genGateCode(eg);
          case POVM:
-            break;
+            System.out.println("POVM");
+            return "MEASURE " + eg.getGateRegister()[0];
          case HAMILTONIAN:
             break;
       }
@@ -94,9 +125,17 @@ public class Translator {
    private static String defGate(ExportedGate eg) {
       String name = eg.getGateModel().getName();
       String header = "DEFGATE " + name + ":\n";
+      String body = "";
       Matrix<Complex> mat = eg.getInputMatrixes()[0]; //only one matrix for a Universal gate
-
-      return "";
+      for(int i = 0; i < mat.getColumns(); ++i) {
+         body += "    ";
+         for(int j = 0; j < mat.getRows(); ++j) {
+            body += mat.v(i,j).toString();
+            body += ", ";
+         }
+         body += "\n";
+      }
+      return header+body;
    }
 
    public static class TranslationException extends RuntimeException {
