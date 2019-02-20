@@ -883,24 +883,20 @@ public class CustomLinkedList <E> extends AbstractSequentialList<E> implements L
      */
     public ListIterator<E> listIterator(int index) {
         checkPositionIndex(index);
-        return new ListItr(index);
+        return new CustomListIterator(index);
     }
     
-    public ListIterator<E> listIterator(Iterator<E> li) {
-        return (ListIterator<E>) iterator(li);
-    }
-    
-    public Iterator<E> iterator(Iterator<E> li) {
-    	if(li instanceof CustomLinkedList.ListItr) {
-    		ListItr temp = (ListItr) li;
-    		if(temp.getList() == this) {
-		    	ListItr listIterator = new ListItr(0);
-		    	listIterator.lastReturned = temp.lastReturned;
-		    	listIterator.next = temp.next;
-		    	listIterator.nextIndex = temp.nextIndex;
-		    	listIterator.expectedModCount = temp.expectedModCount;
+    public CustomListIterator iterator(Iterator<E> li) {
+    	if(li instanceof CustomLinkedList.CustomListIterator) {
+    		CustomListIterator iter = (CustomListIterator)li;
+			if(iter.getList() == this) {
+		    	CustomListIterator listIterator = new CustomListIterator(0);
+		    	listIterator.lastReturned = iter.lastReturned;
+		    	listIterator.next = iter.next;
+		    	listIterator.nextIndex = iter.nextIndex;
+		    	listIterator.expectedModCount = iter.expectedModCount;
 		    	return listIterator;
-    		}
+			}
     	}
     	throw new IteratorNotCompatableException();
     }
@@ -916,13 +912,13 @@ public class CustomLinkedList <E> extends AbstractSequentialList<E> implements L
     	}
     }
     
-    private class ListItr implements ListIterator<E> {
+    public class CustomListIterator implements ListIterator<E> {
         private Node<E> lastReturned;
         private Node<E> next;
         private int nextIndex;
         private int expectedModCount = modCount;
 
-        private ListItr(int index) {
+        private CustomListIterator(int index) {
             // assert isPositionIndex(index);
             next = (index == size) ? null : node(index);
             nextIndex = index;
@@ -930,6 +926,10 @@ public class CustomLinkedList <E> extends AbstractSequentialList<E> implements L
         
         private CustomLinkedList<E> getList() {
         	return getSelf();
+        }
+        
+        public CustomListIterator mkCopy() {
+        	return iterator(this);
         }
         
         public boolean hasNext() {
@@ -1042,7 +1042,7 @@ public class CustomLinkedList <E> extends AbstractSequentialList<E> implements L
      * Adapter to provide descending iterators via ListItr.previous
      */
     private class DescendingIterator implements Iterator<E> {
-        private final ListItr itr = new ListItr(size());
+        private final CustomListIterator itr = new CustomListIterator(size());
         public boolean hasNext() {
             return itr.hasPrevious();
         }

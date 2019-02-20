@@ -81,6 +81,7 @@ public final class AppStatus implements EventHandler<WindowEvent> {
 		this.notifierFan = new Notifier();
 		this.notifier = new Notifier(notifierFan);
 		this.notifier.setReceivedEvent((source, method, args) -> {
+			System.out.println(method);
 			isProjectModifed = true;
 			return false;
 		});

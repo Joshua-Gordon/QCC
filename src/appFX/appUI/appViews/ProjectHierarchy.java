@@ -130,8 +130,17 @@ public class ProjectHierarchy extends AppView implements Initializable, EventHan
 				}
 				
 				String previous = p.getTopLevelCircuitName();
-				if(previous != null && p.getCircuitBoardModels().containsGateModel(previous))
-					subCircuits.getChildren().add(new TreeItem<String>(previous.toString()));
+				if(previous != null && p.getCircuitBoardModels().containsGateModel(previous)) {
+					boolean containsItem = false;
+					for(TreeItem<String> item: subCircuits.getChildren()) {
+						if(item.getValue().equals(previous.toString())) {
+							containsItem = true;
+							break;
+						}
+					}
+					if(!containsItem)
+						subCircuits.getChildren().add(new TreeItem<String>(previous.toString()));
+				}
 				
 			} else 	if(p != null &&(source == p.getCustomGates() || source == p.getCircuitBoardModels() || source == p.getCustomOracles())) {
 				Pair<TreeItem<String>, String> list = getListFromSource(p, source);

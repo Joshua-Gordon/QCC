@@ -46,7 +46,7 @@ public class CustomGateChooser extends AbstractGateChooser {
 		if(p != null && source == p.getCustomGates() && initialized) {
 			if(methodName.equals("put")) {
 				GateModel replacement = (GateModel) args[0];
-				removeGateModelByName(replacement.getName());
+				removeGateModelByName(replacement.getFormalName());
 				addGateModel(replacement);
 			} else if(methodName.equals("replace") ) {
 				String name = (String) args[0];

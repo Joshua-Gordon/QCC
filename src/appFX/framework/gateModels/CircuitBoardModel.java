@@ -6,6 +6,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
+import javax.swing.text.StyleContext.SmallAttributeSet;
+
 import appFX.appUI.AppAlerts;
 import appFX.framework.AppStatus;
 import appFX.framework.InputDefinitions.DefinitionEvaluatorException;
@@ -19,6 +21,7 @@ import appFX.framework.solderedGates.SolderedRegister;
 import appFX.framework.solderedGates.SpacerPin;
 import utils.customCollections.CollectionUtils;
 import utils.customCollections.CustomLinkedList;
+import utils.customCollections.CustomLinkedList.CustomListIterator;
 import utils.customCollections.Manifest;
 import utils.customCollections.Manifest.ManifestObject;
 import utils.customCollections.Pair;
@@ -208,7 +211,8 @@ public class CircuitBoardModel extends GateModel implements  Iterable<RawExporta
     
     
     
-    public void removeRows(int firstIndex, int lastIndex) {
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+	public void removeRows(int firstIndex, int lastIndex) {
     	if(firstIndex < 0 || firstIndex > getRows())
 			throw new IllegalArgumentException("First arg must be a postive and less than or equal the size");
 		if(lastIndex < firstIndex || lastIndex > getRows())
@@ -251,8 +255,10 @@ public class CircuitBoardModel extends GateModel implements  Iterable<RawExporta
 				}
 				iterator.remove();
 			}
-			ListIterator<SolderedPin> copy = column.listIterator(iterator.nextIndex() - 1);
-			removeBoundaryGates(firstG, lastG, hitFirstReg, hitLastReg, iterator, copy);
+			if(!firstP.isWithinBody() || hitFirstReg || hitLastReg) {
+				ListIterator<SolderedPin> copy = column.iterator((CustomListIterator)iterator);
+				removeBoundaryGates(firstG, lastG, hitFirstReg, hitLastReg, iterator, copy);
+			}
 		}
 		
 
@@ -363,6 +369,7 @@ public class CircuitBoardModel extends GateModel implements  Iterable<RawExporta
 	
 	
 	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void placeGate(String gateModelFormalName, int column, Integer[] registers, String ... parameters) throws DefinitionEvaluatorException {
 		if(column < 0 || column > getColumns())
 			throw new IllegalArgumentException("Column should be greater than 0 and less than circuitboard column size");
@@ -381,7 +388,7 @@ public class CircuitBoardModel extends GateModel implements  Iterable<RawExporta
 		int firstGlobalReg = registers[(localRegs.get(0))];
 		
 		ListIterator<SolderedPin> iterator = elements.get(column).listIterator(firstGlobalReg);
-		ListIterator<SolderedPin> copy = elements.get(column).listIterator(iterator);
+		ListIterator<SolderedPin> copy = elements.get(column).iterator((CustomListIterator)iterator);
 		
 		SolderedPin firstP = iterator.next();
 		SolderedGate firstG = firstP.getSolderedGate();
@@ -394,6 +401,7 @@ public class CircuitBoardModel extends GateModel implements  Iterable<RawExporta
 		iterator.previous();
 		
 		int i = 0;
+		
 		
 		while (iterator.hasNext()) {
 			SolderedPin current = iterator.next();
@@ -419,6 +427,7 @@ public class CircuitBoardModel extends GateModel implements  Iterable<RawExporta
 				iterator.set(new SpacerPin(toPlace, true));
 			}
 		}
+		
 		
 		if(isWithinGate && !hitFirstReg && !hitLastReg) {
 			while(iterator.hasNext()) {
@@ -648,10 +657,11 @@ public class CircuitBoardModel extends GateModel implements  Iterable<RawExporta
 		return elements.get(column).get(row);
 	}
 	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public Pair<Integer, Integer> getSolderedGateBodyBounds(int row, int column) {
 		CustomLinkedList<SolderedPin> list = elements.listIterator(column).next();
 		ListIterator<SolderedPin> solderedPins = list.listIterator(row);
-		ListIterator<SolderedPin> copy = list.listIterator(solderedPins);
+		ListIterator<SolderedPin> copy = list.iterator((CustomListIterator) solderedPins);
 		SolderedPin spS = solderedPins.next();
 		SolderedGate spG = spS.getSolderedGate();
 		solderedPins.previous();
@@ -720,6 +730,41 @@ public class CircuitBoardModel extends GateModel implements  Iterable<RawExporta
 	}
 	
 	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private Pair<Boolean, ListIterator<SolderedPin>> getSolderedBodyDirection(SolderedGate sg, CustomListIterator top, CustomListIterator bottom) {
+		ListIterator<SolderedPin> outIterator = null;
+		
+		top = top.mkCopy();
+		bottom = bottom.mkCopy();
+		
+		while(top.hasPrevious()) {
+			SolderedPin sp = (SolderedPin) top.previous();
+			if(sp.getSolderedGate() != sg)
+				break;
+			if(sp instanceof SolderedControl && outIterator == null)
+				outIterator = top.mkCopy();
+			
+			if(sp.isWithinBody())
+				return new Pair<>(true, outIterator == null? 
+						(ListIterator<SolderedPin>) top.mkCopy() : outIterator);
+		}
+		
+		outIterator = null;
+		
+		while(bottom.hasNext()) {
+			SolderedPin sp = (SolderedPin) bottom.next();
+			if(sp.getSolderedGate() != sg)
+				break;
+			if(sp instanceof SolderedControl && outIterator == null)
+				outIterator = bottom.mkCopy();
+			if(sp.isWithinBody())
+				return new Pair<>(false, outIterator == null? 
+						(ListIterator<SolderedPin>) bottom.mkCopy() : outIterator);
+		}
+		return null;
+	}
+	
+	
 	@Override
 	public String getExtString() {
 		return CIRCUIT_BOARD_EXTENSION;
@@ -771,11 +816,12 @@ public class CircuitBoardModel extends GateModel implements  Iterable<RawExporta
 			return lookAhead.hasNext() || columns.hasNext();
 		}
 		
+		@SuppressWarnings({ "rawtypes", "unchecked" })
 		@Override
 		public RawExportableGateData next() {
 			if(!lookAhead.hasNext())
 				nextColumn();
-			rows = rowList.listIterator(lookAhead);
+			rows = rowList.iterator((CustomListIterator)lookAhead);
 			
 			
 			SolderedPin sp = lookAhead.next();
@@ -836,12 +882,14 @@ public class CircuitBoardModel extends GateModel implements  Iterable<RawExporta
 			r = -1;
 		}
 		
+		@SuppressWarnings({ "rawtypes", "unchecked" })
 		public ListIterator<SolderedPin> iteratorAtStart() {
-			return rowList.listIterator(rows);
+			return rowList.iterator((CustomListIterator)rows);
 		}
 		
+		@SuppressWarnings({ "rawtypes", "unchecked" })
 		public ListIterator<SolderedPin> iteratorAtEnd() {
-			return rowList.listIterator(rows);
+			return rowList.iterator((CustomListIterator)rows);
 		}
 		
 		@Override
@@ -962,11 +1010,13 @@ public class CircuitBoardModel extends GateModel implements  Iterable<RawExporta
 	
 	
 	
+	@SuppressWarnings("rawtypes")
 	private void removeBoundaryGates (SolderedGate firstG, SolderedGate lastG, 
 			boolean hitFirstReg, boolean hitLastReg, 
 			ListIterator<SolderedPin> firstIt, ListIterator<SolderedPin> lastIt) {
 		
 		boolean diffGates = firstG != lastG;
+		boolean sameGateNoRegs = false;
 		
 		if(hitFirstReg) {
 			while(firstIt.previousIndex() >= 0) {
@@ -977,13 +1027,17 @@ public class CircuitBoardModel extends GateModel implements  Iterable<RawExporta
 					break;
 			}
 			removeFromManifest(firstG.getGateModelFormalName());
-		} else if (/*diffGates && */firstIt != null) {
-			while(firstIt.previousIndex() >= 0) {
-				SolderedPin sp = firstIt.previous();
-				if(sp instanceof SpacerPin)					
-					firstIt.set(mkIdent());
-				else
-					break;
+		} else if (firstIt != null) {
+			if(diffGates) {
+				while(firstIt.previousIndex() >= 0) {
+					SolderedPin sp = firstIt.previous();
+					if(!(sp instanceof SolderedControl) && sp instanceof SpacerPin && sp.getSolderedGate() == firstG)					
+						firstIt.set(mkIdent());
+					else
+						break;
+				}
+			} else {
+				sameGateNoRegs = true;
 			}
 		}
 		
@@ -997,13 +1051,58 @@ public class CircuitBoardModel extends GateModel implements  Iterable<RawExporta
 			}
 			if(diffGates)
 				removeFromManifest(lastG.getGateModelFormalName());
-		} else if (/*diffGates && */lastIt != null) {
-			while(lastIt.nextIndex() < getRows()) {
-				SolderedPin sp = lastIt.next();
-				if(sp instanceof SpacerPin)					
-					lastIt.set(mkIdent());
-				else
-					break;
+		} else if (lastIt != null) {
+			if(diffGates) {
+				while(lastIt.nextIndex() < getRows()) {
+					SolderedPin sp = lastIt.next();
+					if(!(sp instanceof SolderedControl) && sp instanceof SpacerPin && sp.getSolderedGate() == lastG)					
+						lastIt.set(mkIdent());
+					else
+						break;
+				}
+			} else {
+				sameGateNoRegs = true;
+			}
+		}
+		
+		if(sameGateNoRegs) {
+			Pair<Boolean, ListIterator<SolderedPin>> out = 
+					getSolderedBodyDirection(firstG, (CustomListIterator) firstIt, (CustomListIterator) lastIt);
+			
+			ListIterator<SolderedPin> outPins = out.second();
+			
+			if(out.first()) {
+				outPins.next();
+				while(outPins.nextIndex() < getRows()) {
+					SolderedPin sp = outPins.next();
+					if(sp.getSolderedGate() == firstG)					
+						outPins.set(mkIdent());
+					else
+						break;
+				}
+				while(lastIt.nextIndex() < getRows()) {
+					SolderedPin sp = lastIt.next();
+					if(sp.getSolderedGate() == firstG)					
+						lastIt.set(mkIdent());
+					else
+						break;
+				}
+			} else {
+				outPins.previous();
+				while(outPins.previousIndex() < getRows()) {
+					SolderedPin sp = outPins.previous();
+					if(sp.getSolderedGate() == firstG)					
+						outPins.set(mkIdent());
+					else
+						break;
+				}
+				while(firstIt.previousIndex() < getRows()) {
+					SolderedPin sp = firstIt.previous();
+					if(sp.getSolderedGate() == firstG)					
+						firstIt.set(mkIdent());
+					else
+						break;
+				}
 			}
 		}
 	}
