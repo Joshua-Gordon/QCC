@@ -161,7 +161,6 @@ public class Console extends AppView implements PrintStream, Initializable, Chan
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
 		consoleArea.heightProperty().addListener(this);
-		
 	}
 
 	@Override

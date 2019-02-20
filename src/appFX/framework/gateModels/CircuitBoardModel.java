@@ -6,8 +6,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
-import javax.swing.text.StyleContext.SmallAttributeSet;
-
 import appFX.appUI.AppAlerts;
 import appFX.framework.AppStatus;
 import appFX.framework.InputDefinitions.DefinitionEvaluatorException;
@@ -1019,7 +1017,7 @@ public class CircuitBoardModel extends GateModel implements  Iterable<RawExporta
 		boolean sameGateNoRegs = false;
 		
 		if(hitFirstReg) {
-			while(firstIt.previousIndex() >= 0) {
+			while(firstIt.hasPrevious()) {
 				SolderedPin sp = firstIt.previous();
 				if(sp.getSolderedGate() == firstG)					
 					firstIt.set(mkIdent());
@@ -1029,7 +1027,7 @@ public class CircuitBoardModel extends GateModel implements  Iterable<RawExporta
 			removeFromManifest(firstG.getGateModelFormalName());
 		} else if (firstIt != null) {
 			if(diffGates) {
-				while(firstIt.previousIndex() >= 0) {
+				while(firstIt.hasPrevious()) {
 					SolderedPin sp = firstIt.previous();
 					if(!(sp instanceof SolderedControl) && sp instanceof SpacerPin && sp.getSolderedGate() == firstG)					
 						firstIt.set(mkIdent());
@@ -1042,7 +1040,7 @@ public class CircuitBoardModel extends GateModel implements  Iterable<RawExporta
 		}
 		
 		if(hitLastReg) {
-			while(lastIt.nextIndex() < getRows()) {
+			while(lastIt.hasNext()) {
 				SolderedPin sp = lastIt.next();
 				if(sp.getSolderedGate() == lastG)					
 					lastIt.set(mkIdent());
@@ -1053,7 +1051,7 @@ public class CircuitBoardModel extends GateModel implements  Iterable<RawExporta
 				removeFromManifest(lastG.getGateModelFormalName());
 		} else if (lastIt != null) {
 			if(diffGates) {
-				while(lastIt.nextIndex() < getRows()) {
+				while(lastIt.hasNext()) {
 					SolderedPin sp = lastIt.next();
 					if(!(sp instanceof SolderedControl) && sp instanceof SpacerPin && sp.getSolderedGate() == lastG)					
 						lastIt.set(mkIdent());
@@ -1073,14 +1071,14 @@ public class CircuitBoardModel extends GateModel implements  Iterable<RawExporta
 			
 			if(out.first()) {
 				outPins.next();
-				while(outPins.nextIndex() < getRows()) {
+				while(outPins.hasNext()) {
 					SolderedPin sp = outPins.next();
 					if(sp.getSolderedGate() == firstG)					
 						outPins.set(mkIdent());
 					else
 						break;
 				}
-				while(lastIt.nextIndex() < getRows()) {
+				while(lastIt.hasNext()) {
 					SolderedPin sp = lastIt.next();
 					if(sp.getSolderedGate() == firstG)					
 						lastIt.set(mkIdent());
@@ -1089,14 +1087,14 @@ public class CircuitBoardModel extends GateModel implements  Iterable<RawExporta
 				}
 			} else {
 				outPins.previous();
-				while(outPins.previousIndex() < getRows()) {
+				while(outPins.hasPrevious()) {
 					SolderedPin sp = outPins.previous();
 					if(sp.getSolderedGate() == firstG)					
 						outPins.set(mkIdent());
 					else
 						break;
 				}
-				while(firstIt.previousIndex() < getRows()) {
+				while(firstIt.hasPrevious()) {
 					SolderedPin sp = firstIt.previous();
 					if(sp.getSolderedGate() == firstG)					
 						firstIt.set(mkIdent());
