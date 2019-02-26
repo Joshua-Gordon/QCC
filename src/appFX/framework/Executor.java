@@ -1,12 +1,20 @@
 package appFX.framework;
 
+import appFX.framework.exportGates.ExportedGate;
+import appFX.framework.exportGates.GateManager;
+
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.stream.Stream;
 
 public class Executor {
 
+    /**
+     * Executes quil code by writing to a QVM instance and collecting the output
+     * @param quil The quil code to be executed.
+     * @return The output of the QVM when given the quil code
+     */
     static String execute(String quil) {
         //runs qvm -e
         String output = "";
@@ -15,9 +23,7 @@ public class Executor {
             BufferedReader isr = new BufferedReader(new InputStreamReader(p.getInputStream()));
             BufferedReader isr1 = new BufferedReader(new InputStreamReader(p.getErrorStream()));
 
-            System.err.println(isr.read()); //blocking
 
-            quil.concat("\0");
             p.getOutputStream().write(quil.getBytes());
             p.getOutputStream().close();
 
@@ -31,6 +37,21 @@ public class Executor {
         }
 
         return output;
+    }
+
+    /**
+     * Executes the current project without relying on any external dependencies such as the QVM or a python install.
+     * @param p The project to execute
+     * @return A string of the resulting wavefunction after execution
+     */
+    static String executeInternal(Project p) {
+        Stream<ExportedGate> exps = null;
+        try {
+            exps = GateManager.exportGates(p);
+        } catch (GateManager.ExportException e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 
 }
