@@ -25,7 +25,7 @@ public class ControlToolAction extends ToolAction {
 	
 	@Override
 	public void buttonPressed(int row, int column) {
-		SolderedPin sp = cbv.getCircuitBoard().getSolderPinAt(row, column);
+		SolderedPin sp = cbv.getCircuitBoardModel().getSolderPinAt(row, column);
 		SolderedGate sg = sp.getSolderedGate();
 		if(currSG == null) {
 			if(PresetGateType.isIdentity(sg.getGateModelFormalName()))
@@ -35,7 +35,7 @@ public class ControlToolAction extends ToolAction {
 			rowSel = row;
 			colSel = column;
 			
-			Pair<Integer, Integer> bounds = cbv.getCircuitBoard().getSolderedGateBodyBounds(row, column);
+			Pair<Integer, Integer> bounds = cbv.getCircuitBoardModel().getSolderedGateBodyBounds(row, column);
 			
 			region = new ControlSelectRegion(bounds.first(), column, bounds.second() - bounds.first());
 			ObservableList<Node> nodes = cbv.circuitBoardPane.getChildren();
@@ -48,7 +48,7 @@ public class ControlToolAction extends ToolAction {
 			if(sg == currSG && sp instanceof SolderedRegister)
 				return;
 			
-			cbv.getCircuitBoard().placeControl(row, rowSel, column, controlType);
+			cbv.getCircuitBoardModel().placeControl(row, rowSel, column, controlType);
 			
 			reset();
 		}

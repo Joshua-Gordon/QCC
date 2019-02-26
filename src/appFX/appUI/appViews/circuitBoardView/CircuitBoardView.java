@@ -81,7 +81,6 @@ public class CircuitBoardView extends AppView implements Initializable, ViewList
 		this.project = project;
 		this.circuitBoard.setRenderEventHandler(new CircuitBoardEventHandler());
 		this.cursor = new SelectCursor(this);
-		GridPane.setConstraints(cursor, 1, 0);
 	}
 	
 	@Override
@@ -163,7 +162,7 @@ public class CircuitBoardView extends AppView implements Initializable, ViewList
 		}
 		
 		circuitBoardPane.setOnMouseExited((e) -> {
-			cursor.hideTool();
+			cursor.hideCursor();
 		});
 		
 		circuitBoardPane.setOnMouseEntered((e) -> {
@@ -372,7 +371,7 @@ public class CircuitBoardView extends AppView implements Initializable, ViewList
 			}
 		}			
 		
-		nodes.add(cursor);
+		cursor.addToNodeList(nodes);
 		
 		if(grid.isSelected())
 			showGrid();
@@ -778,13 +777,6 @@ public class CircuitBoardView extends AppView implements Initializable, ViewList
 	}
 	
 
-
-
-
-	public CircuitBoardModel getCircuitBoard() {
-		return circuitBoard;
-	}
-
 	public Project getProject() {
 		return project;
 	}
@@ -808,10 +800,10 @@ public class CircuitBoardView extends AppView implements Initializable, ViewList
 				else break; 
 			}
 			
-			if(GridPane.getColumnIndex(cursor) - 1 != column)
-				GridPane.setColumnIndex(cursor, column + 1);
-			if(GridPane.getRowIndex(cursor) != row)
-				GridPane.setRowIndex(cursor, row);
+			if(cursor.getColumn() != column)
+				cursor.setColumn(column);
+			if(cursor.getRow() != row)
+				cursor.setRow(row);
 		}
 	}
 

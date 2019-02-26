@@ -46,7 +46,7 @@ public class ConsoleUI extends AbstractAppViewUI{
 		gbc.gridx = 0;
 		gbc.gridy = 1;
 		console.setEditable(false);
-		console.setFont(ResourceLoader.getSwingResources().MPLUS);
+		console.setFont(ResourceLoader.getSwingResources().MPLUS.deriveFont(12f));
 		console.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		JScrollPane container = new JScrollPane(console);
 		container.setPreferredSize(new Dimension(200, 100));

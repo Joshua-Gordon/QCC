@@ -42,7 +42,7 @@ public class SolderRegionToolAction  extends ToolAction {
 		if(gm != null) { 
 			
 			try {
-				view.getCircuitBoard().assertNoRecursion(gm.getFormalName());
+				view.getCircuitBoardModel().assertNoRecursion(gm.getFormalName());
 			} catch(RecursionException re) {
 				AppAlerts.showMessage(AppStatus.get().getPrimaryStage(),
 						"Recursion detected", re.getMessage(), AlertType.ERROR);
@@ -68,11 +68,11 @@ public class SolderRegionToolAction  extends ToolAction {
 			if(lastReg == regs.length + 1) {
 				ImmutableArray<String> args = gm.getArguments();
 				if(args.size() > 0) {
-					ParameterPrompt pp = new ParameterPrompt(view.getProject(), view.getCircuitBoard(), gm.getFormalName(), regs, selectedColumn);
+					ParameterPrompt pp = new ParameterPrompt(view.getProject(), view.getCircuitBoardModel(), gm.getFormalName(), regs, selectedColumn);
 					pp.showAndWait();
 				} else {
 					try {
-						view.getCircuitBoard().placeGate(gm.getFormalName(), selectedColumn, regs);
+						view.getCircuitBoardModel().placeGate(gm.getFormalName(), selectedColumn, regs);
 					} catch (DefinitionEvaluatorException e) {
 						e.printStackTrace();
 					} catch(RecursionException e2) {
