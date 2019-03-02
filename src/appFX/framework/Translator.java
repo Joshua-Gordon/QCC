@@ -20,9 +20,12 @@ public class Translator {
       definedGates = new LinkedList<>();
    }
 
-   //@NotNull
+   /**
+    * This function takes the current top level circuit board from the project and produces an equivalent QUIL program
+    * @param p The project to be translated
+    * @return A string of newline separated QUIL instructions for the Forest 2 platform
+    */
    public static String exportToQUIL(Project p) {
-      String cbName = p.getTopLevelCircuitName();
       Stream<ExportedGate> exps = null;
       try {
          exps = GateManager.exportGates(p);
@@ -37,6 +40,12 @@ public class Translator {
       return code;
    }
 
+   /**
+    * This function takes an ExportedGate and returns the QUIL instruction(s) equivalent to it.
+    * It can currently handle multi-qubit gates, controls, and measurements in the computational basis.
+    * @param eg The exported gate to generate code for
+    * @return The instruction(s) for the exported gate
+    */
    private static String genGateCode(ExportedGate eg) {
       if(eg == null) {
          return null;
@@ -122,6 +131,11 @@ public class Translator {
       return "TEST STRING: " + eg.toString();
    }
 
+   /**
+    * Produces the QUIL definition of a multi-qubit gate that is not in the standard set
+    * @param eg The multi-qubit gate that needs to be defined
+    * @return The DEFGATE expression with the full matrix to be inserted into the QUIL code
+    */
    private static String defGate(ExportedGate eg) {
       String name = eg.getGateModel().getName();
       String header = "DEFGATE " + name + ":\n";

@@ -238,6 +238,9 @@ public enum AppCommand {
 			break;
 		case RUN_SIMULATION:
 			console.println("Running Simulation", Color.BLUE);
+			String output = Executor.executeInternal(currentProject);
+			console.println(output);
+			System.out.println(output);
 			break;
 		
 		
