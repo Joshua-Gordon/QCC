@@ -1,12 +1,15 @@
 package appFX.framework;
 
+import Simulator.Qubit;
 import appFX.framework.exportGates.Control;
 import appFX.framework.exportGates.ExportedGate;
 import appFX.framework.exportGates.GateManager.Exportable;
 import appFX.framework.exportGates.GateManager;
+import appFX.framework.gateModels.BasicModel;
 import appFX.framework.gateModels.CircuitBoardModel;
 import appFX.framework.gateModels.GateModel;
 import appFX.framework.gateModels.PresetGateType;
+import appSW.framework.AbstractGate;
 import mathLib.Complex;
 import mathLib.Matrix;
 import mathLib.Vector;
@@ -62,7 +65,8 @@ public class Executor {
         } catch (GateManager.ExportException e) {
             System.err.println("Could not create gate stream");
             e.printStackTrace();
-        } //To compute the number of registers in the circuit, we check the maximum register index in the circuit that is not an identity gate
+            return "";
+        }
         CircuitBoardModel cb = (CircuitBoardModel) p.getGateModel(p.getTopLevelCircuitName());
         int colHeight = cb.getRows();
         System.out.println(colHeight);
@@ -74,6 +78,8 @@ public class Executor {
                   break addCols;
                 }
                 ExportedGate eg = itr.next();
+                if(eg.getGateType().equals(BasicModel.BasicModelType.POVM))
+                    return executeMixedState(p);
                 i += eg.getGateRegister().length;
                 column.add(eg);
             }
@@ -256,5 +262,93 @@ public class Executor {
             column = column.kronecker(Matrix.identity(Complex.ZERO(),2));
         }
         return column;
+    }
+
+    public static String executeMixedState(Project p) {
+        CircuitBoardModel cb = (CircuitBoardModel) p.getGateModel(p.getTopLevelCircuitName());
+        int colHeight = cb.getRows();
+        System.out.println(colHeight);
+
+        //A state |x> is now |x><x|, and applying an operator A|x> is A|x><x|A*
+        //Be sure to normalize by dividing by Tr(A |x><x| A*)
+
+        Vector<Complex> zero = new Vector<Complex>(Complex.ONE(),Complex.ZERO());
+        Vector<Complex> inputTemp = zero;
+        for(int i = 1; i < colHeight; ++i) {
+            inputTemp = inputTemp.kronecker(zero).toVector();
+        }
+        Matrix<Complex> input = inputTemp.outerProduct(inputTemp);
+
+        System.out.println(input);
+
+        //(A tensor B)* = A* tensor B*
+        //Therefore (A tensor B)|x> becomes (A tensor B)|x><x|(A* tensor B*)
+
+        ArrayList<Matrix<Complex>> columns = new ArrayList<>();
+        //The strategy remains similar. We will build a column, compute the new state, and loop doing that until we're out of circuit
+        //Let's construct the gate stream
+        Stream<ExportedGate> gateStream = null;
+        try {
+            gateStream = GateManager.exportGates(p);
+        } catch (GateManager.ExportException e) {
+            e.printStackTrace();
+            return "";
+        }
+        Iterator<ExportedGate> itr = gateStream.iterator();
+
+
+        System.out.println("Matrices:");
+        printArray(itr.next().getInputMatrixes());
+        System.out.println("End Matrices");
+
+        ArrayList<ExportedGate> currentColumn = new ArrayList<>();
+        //Loop to grab one column of gate
+        while(itr.hasNext()) {
+            int columnSpaceTakenUp = 0;
+            while (columnSpaceTakenUp < colHeight) {
+                ExportedGate eg = itr.next();
+                int span = 1 + getMaxElement(eg.getGateRegister()) - getMinElement(eg.getGateRegister());
+                columnSpaceTakenUp += span;
+                currentColumn.add(eg);
+            }
+
+            printColumn(currentColumn);
+
+            Matrix<Complex> columnMatrix = buildColumnDensityMatrix(currentColumn, colHeight);
+            columns.add(columnMatrix);
+            currentColumn = new ArrayList<>();
+        }
+
+        return "";
+    }
+
+    private static <T> void printArray(T[] a) {
+        for(T t : a) {
+            System.out.println(t);
+        }
+    }
+
+    private static void printColumn(ArrayList<ExportedGate> column) {
+        String toPrint = "";
+        for(ExportedGate eg : column) {
+            if(eg.getGateModel().getName().equalsIgnoreCase("Identity")) {
+                toPrint += "Identity\n";
+            } else {
+                toPrint += eg.getGateType().toString() + "\n";
+                if(eg.getGateType().equals(BasicModel.BasicModelType.POVM))
+                    printArray(eg.getInputMatrixes());
+            }
+        }
+        System.out.println(toPrint);
+    }
+
+    private static Matrix<Complex> buildColumnDensityMatrix(ArrayList<ExportedGate> eg, int columnHeight) {
+
+        //Tensor Product of two Operators
+        //O1 = {A1,A2,...,Ar}
+        //O2 = {B1,B2,...,Br}
+        //O1 tensor O2 = {Ai tensor Bj | i,j < r}
+
+        return null;
     }
 }
