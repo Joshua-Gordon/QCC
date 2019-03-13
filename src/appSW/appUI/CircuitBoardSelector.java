@@ -13,7 +13,10 @@ import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 
-import appSW.framework.*;
+import appSW.framework.CircuitBoard;
+import appSW.framework.DefaultGate;
+import appSW.framework.SolderedRegister;
+import appSW.framework.Translator;
 import appSW.preferences.AppPreferences;
 import utils.AppDialogs;
 

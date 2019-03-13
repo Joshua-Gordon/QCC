@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
-import appSW.appUI.Window;
-
 
 public final class AppPreferences {
 	

@@ -41,8 +41,6 @@ public class Main extends Application implements AppPreferences {
 	
 	
 	
-	
-	
 	private static Window window;
 	
     public static void main(String[] args) {

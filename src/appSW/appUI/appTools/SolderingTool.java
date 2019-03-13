@@ -15,7 +15,6 @@ import appSW.appUI.Window;
 import appSW.framework.AbstractGate;
 import appSW.framework.SolderedGate;
 import appSW.framework.SolderedRegister;
-import appSW.framework.AbstractGate.GateType;
 import utils.ResourceLoader;
 
 public class SolderingTool extends Tool{

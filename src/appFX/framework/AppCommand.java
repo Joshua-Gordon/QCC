@@ -7,7 +7,7 @@ import appFX.appUI.AppFXMLComponent;
 import appFX.appUI.AppFileIO;
 import appFX.appUI.AppTab;
 import appFX.appUI.CircuitBoardPropertiesView;
-import appFX.appUI.GateEditableView;
+import appFX.appUI.BasicModelEditableView;
 import appFX.appUI.MainScene;
 import appFX.appUI.appViews.BasicModelView;
 import appFX.appUI.appViews.circuitBoardView.CircuitBoardView;
@@ -315,7 +315,7 @@ public enum AppCommand {
 					continue;
 				}
 				if(ext.equals(BasicModel.GATE_MODEL_EXTENSION)) {
-					GateEditableView.createNewGate(name);
+					BasicModelEditableView.createNewGate(name);
 				} else if (ext.equals(CircuitBoardModel.CIRCUIT_BOARD_EXTENSION)) {
 					CircuitBoardPropertiesView.createNewGate(name);
 				} else if (ext.equals(OracleModel.ORACLE_MODEL_EXTENSION)) {
@@ -327,7 +327,7 @@ public enum AppCommand {
 			CircuitBoardPropertiesView.createNewGate();
 			break;
 		case CREATE_DEFAULT_GATE:
-			GateEditableView.createNewGate();
+			BasicModelEditableView.createNewGate();
 			break;
 		case CREATE_ORACLE_GATE:
 			
@@ -340,7 +340,7 @@ public enum AppCommand {
 					continue;
 				
 				if(gm instanceof BasicModel) {
-					GateEditableView.editAsNewGate(gm.getFormalName());
+					BasicModelEditableView.editAsNewGate(gm.getFormalName());
 				} else if (gm instanceof CircuitBoardModel) {
 					CircuitBoardPropertiesView.editAsNewGate(gm.getFormalName());
 				} else if (gm instanceof OracleModel) {
@@ -360,7 +360,7 @@ public enum AppCommand {
 				}
 				
 				if(gm instanceof BasicModel) {
-					GateEditableView.editGate(gm.getFormalName());
+					BasicModelEditableView.editGate(gm.getFormalName());
 				} else if (gm instanceof CircuitBoardModel) {
 					CircuitBoardPropertiesView.editGate(gm.getFormalName());
 				} else if (gm instanceof OracleModel) {

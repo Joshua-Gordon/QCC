@@ -49,17 +49,6 @@ public class GateIcon  {
 		return new GateIcon(s);
 	}
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	private Node icon;
 	private static final int PADDING = 10;
 	private static final int LINE_LENGTH = 5;

@@ -40,7 +40,7 @@ public class SolderableIcon extends AppFXMLComponent implements Initializable {
 			
 			paramString += " ) \\)";
 			
-			LatexNode lv = new LatexNode(paramString, .6f, "#00000000", "#000000");
+			LatexNode lv = new LatexNode(paramString, 10, "#00000000", "#000000");
 			
 			gate.getChildren().add(lv);
 		}

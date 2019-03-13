@@ -87,7 +87,7 @@ public class BasicModelView extends AppView implements Initializable, ViewListen
 		name.setText(gm.getName());
 		symbol.setText(gm.getSymbol());
 		
-		Node n = new LatexNode(gm.getDescription(), .7f);
+		Node n = new LatexNode(gm.getDescription(), 20);
 		
 		description.setContent(n);
 		
@@ -103,7 +103,7 @@ public class BasicModelView extends AppView implements Initializable, ViewListen
 			for(int i = 1; i < args.size(); i++)
 				parametersLatex += ", \\(" + args.get(i) + "\\)";
 			
-			parameters.getChildren().add(new LatexNode(parametersLatex, .7f));
+			parameters.getChildren().add(new LatexNode(parametersLatex, 20));
 		}
 		
 		registers.setText(Integer.toString(gm.getNumberOfRegisters()));
@@ -120,32 +120,34 @@ public class BasicModelView extends AppView implements Initializable, ViewListen
 		
 		switch (gm.getGateModelType()) {
 		case HAMILTONIAN:
-			String latex = "The model is specified by matrix designated by \\( e ^ {Ht}\\) where \\( H \\) is defined by: ";
-			definitionStatement.getChildren().add(new LatexNode(latex, .7f));
+			String latex = "\\text{The model is specified by matrix designated by } \\( e ^ {Ht}\\) \\text{ where } \\( H \\) \\text{ is defined by:} ";
+			definitionStatement.getChildren().add(new LatexNode(latex, 20));
 			
-			definition.getChildren().add(new LatexNode("$$ H = " + gm.getLatex().get(0) + " $$", .7f));
+			definition.getChildren().add(new LatexNode("$$ H = " + gm.getLatex().get(0) + " $$", 20));
 			
 			break;
 		case POVM:
-			latex = "The model is specified by kraus matricies \\( (k_1, k_2, k_3, ... k_n) \\) where \\( \\sum_{ i = 1 } ^ { n } k_i k_i ^ * = I \\) :";
-			definitionStatement.getChildren().add(new LatexNode(latex, .7f));
+			latex = "\\text{The model is specified by kraus matricies } \\( (k_1, k_2, k_3, ... k_n) \\) \\text{ where } \\( \\sum_{ i = 1 } ^ { n } k_i k_i ^ * = I \\) \\text{ : }";
+			definitionStatement.getChildren().add(new LatexNode(latex, 20));
 			
 			ImmutableArray<String> krausLatex = gm.getLatex();
 			
-			latex = "";
+			latex = "\\begin{eqnarray}";
 			
 			int i = 1;
 			for(String l : krausLatex)
-				latex += "$$ k_" + (i++) + " = " + l + " $$";
+				latex += "k_" + (i++) + " = " + l + " \\\\";
 			
-			definition.getChildren().add(new LatexNode(latex, .7f));
+			latex += "\\end{eqnarray}";
+			
+			definition.getChildren().add(new LatexNode(latex, 20));
 			
 			break;
 		case UNIVERSAL:
-			latex = "The model is specified by a universal gate \\( U \\) described by the matrix: ";
-			definitionStatement.getChildren().add(new LatexNode(latex, .7f));
+			latex = "\\text{The model is specified by a universal gate } \\( U \\) \\text{ described by the matrix:}";
+			definitionStatement.getChildren().add(new LatexNode(latex, 20));
 			
-			definition.getChildren().add(new LatexNode(" $$ U = " + gm.getLatex().get(0) + " $$ ", .7f));
+			definition.getChildren().add(new LatexNode(" $$ U = " + gm.getLatex().get(0) + " $$ ", 20));
 			
 			break;
 			

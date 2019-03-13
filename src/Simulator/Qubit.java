@@ -1,10 +1,10 @@
 package Simulator;
 
-import mathLib.Complex;
-import mathLib.Vector;
-
 import java.util.ArrayList;
 import java.util.Random;
+
+import mathLib.Complex;
+import mathLib.Vector;
 
 public class Qubit extends Vector<Complex> {
 

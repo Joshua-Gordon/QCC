@@ -6,9 +6,9 @@ import java.util.Set;
 
 import appFX.framework.InputDefinitions.MatrixDefinition;
 import appFX.framework.gateModels.BasicModel;
+import appFX.framework.gateModels.BasicModel.BasicModelType;
 import appFX.framework.gateModels.GateModel;
 import appFX.framework.gateModels.PresetGateType;
-import appFX.framework.gateModels.BasicModel.BasicModelType;
 import appFX.framework.gateModels.PresetGateType.PresetGateModel;
 import mathLib.Complex;
 import mathLib.Matrix;

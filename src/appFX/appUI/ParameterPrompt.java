@@ -4,8 +4,8 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import appFX.framework.AppStatus;
-import appFX.framework.Project;
 import appFX.framework.InputDefinitions.DefinitionEvaluatorException;
+import appFX.framework.Project;
 import appFX.framework.gateModels.CircuitBoardModel;
 import appFX.framework.gateModels.CircuitBoardModel.RecursionException;
 import appFX.framework.gateModels.GateModel;

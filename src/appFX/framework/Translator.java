@@ -5,10 +5,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import appFX.framework.exportGates.Control;
 import appFX.framework.exportGates.ExportedGate;
 import appFX.framework.exportGates.GateManager;
 import appFX.framework.gateModels.PresetGateType;
-import appFX.framework.exportGates.Control;
 import mathLib.Complex;
 import mathLib.Matrix;
 

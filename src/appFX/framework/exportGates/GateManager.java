@@ -7,13 +7,13 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import appFX.framework.AppStatus;
-import appFX.framework.MathDefinitions;
-import appFX.framework.Project;
 import appFX.framework.InputDefinitions.ArgObject;
 import appFX.framework.InputDefinitions.GroupDefinition;
 import appFX.framework.InputDefinitions.MathObject;
 import appFX.framework.InputDefinitions.MatrixObject;
 import appFX.framework.InputDefinitions.ScalarObject;
+import appFX.framework.MathDefinitions;
+import appFX.framework.Project;
 import appFX.framework.gateModels.BasicModel;
 import appFX.framework.gateModels.CircuitBoardModel;
 import appFX.framework.gateModels.GateModel;

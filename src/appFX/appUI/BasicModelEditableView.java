@@ -6,14 +6,14 @@ import java.util.ResourceBundle;
 
 import appFX.framework.AppCommand;
 import appFX.framework.AppStatus;
+import appFX.framework.InputDefinitions.DefinitionEvaluatorException;
 import appFX.framework.Project;
 import appFX.framework.Project.ProjectHashtable;
-import appFX.framework.InputDefinitions.DefinitionEvaluatorException;
 import appFX.framework.gateModels.BasicModel;
-import appFX.framework.gateModels.GateModel;
-import appFX.framework.gateModels.PresetGateType;
 import appFX.framework.gateModels.BasicModel.BasicModelType;
+import appFX.framework.gateModels.GateModel;
 import appFX.framework.gateModels.GateModel.NameTakenException;
+import appFX.framework.gateModels.PresetGateType;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
@@ -36,7 +36,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import utils.customCollections.ImmutableArray;
 
-public class GateEditableView extends AppFXMLComponent implements Initializable, ChangeListener<BasicModelType> {
+public class BasicModelEditableView extends AppFXMLComponent implements Initializable, ChangeListener<BasicModelType> {
 	
 	public TextField name, symbol;
 	public ComboBox<BasicModelType> modelType;
@@ -67,7 +67,7 @@ public class GateEditableView extends AppFXMLComponent implements Initializable,
 		Stage primary = AppStatus.get().getPrimaryStage();
 		
 		Stage dialog = new Stage();
-		dialog.setScene(new Scene((Parent) new GateEditableView(dialog, name).loadAsNode(), 650, 700));
+		dialog.setScene(new Scene((Parent) new BasicModelEditableView(dialog, name).loadAsNode(), 650, 700));
 		dialog.initOwner(primary);
 		dialog.initModality(Modality.APPLICATION_MODAL);
 		
@@ -106,7 +106,7 @@ public class GateEditableView extends AppFXMLComponent implements Initializable,
 		
 		
 		Stage dialog = new Stage();
-		dialog.setScene(new Scene((Parent) new GateEditableView(dialog, gm, editAsNewModel).loadAsNode(), 650, 700));
+		dialog.setScene(new Scene((Parent) new BasicModelEditableView(dialog, gm, editAsNewModel).loadAsNode(), 650, 700));
 		dialog.initOwner(primary);
 		dialog.initModality(Modality.APPLICATION_MODAL);
 		
@@ -125,7 +125,7 @@ public class GateEditableView extends AppFXMLComponent implements Initializable,
 	
 	
 	
-	private GateEditableView (Stage stage, String name) {
+	private BasicModelEditableView (Stage stage, String name) {
 		this(stage, null, true);
 		this.tempName = name;
 	}
@@ -134,7 +134,7 @@ public class GateEditableView extends AppFXMLComponent implements Initializable,
 	
 	
 	
-	private GateEditableView (Stage stage, boolean editAsNewModel) {
+	private BasicModelEditableView (Stage stage, boolean editAsNewModel) {
 		this(stage, null, editAsNewModel);
 	}
 	
@@ -143,7 +143,7 @@ public class GateEditableView extends AppFXMLComponent implements Initializable,
 	
 	
 	
-	private GateEditableView(Stage stage, BasicModel gm, boolean editAsNewModel) {
+	private BasicModelEditableView(Stage stage, BasicModel gm, boolean editAsNewModel) {
 		super("GateEditableView.fxml");
 		this.gm = gm;
 		this.stage = stage;
@@ -404,8 +404,8 @@ public class GateEditableView extends AppFXMLComponent implements Initializable,
 			addKrausButton.setDisable(true);
 			addKrausButton.setVisible(false);
 			
-			String latex = "The model is specified by matrix designated by \\( e ^ {Ht}\\) where \\( H \\) is defined by: ";
-			definitionStatement.getChildren().add(new LatexNode(latex, .7f));
+			String latex = "\\text{The model is specified by matrix designated by } \\( e ^ {Ht}\\) \\text{ where } \\( H \\) \\text{ is defined by:} ";
+			definitionStatement.getChildren().add(new LatexNode(latex, 20));
 			
 			Node n = new LatexNode(" $$ H = $$ ");
 			TextField tf = new TextField();
@@ -424,8 +424,8 @@ public class GateEditableView extends AppFXMLComponent implements Initializable,
 			addKrausButton.setDisable(false);
 			addKrausButton.setVisible(true);
 			
-			latex = "The model is specified by kraus matricies \\( (k_1, k_2, k_3, ... k_n) \\) where \\( \\sum_{ i = 1 } ^ { n } k_i k_i ^ * = I \\) :";
-			definitionStatement.getChildren().add(new LatexNode(latex, .7f));
+			latex = "\\text{The model is specified by kraus matricies } \\( (k_1, k_2, k_3, ... k_n) \\) \\text{ where } \\( \\sum_{ i = 1 } ^ { n } k_i k_i ^ * = I \\) \\text{ : }";
+			definitionStatement.getChildren().add(new LatexNode(latex, 20));
 			
 			if(gm != null) {
 				ImmutableArray<String> inputMatrixes = gm.getUserInput();
@@ -440,8 +440,8 @@ public class GateEditableView extends AppFXMLComponent implements Initializable,
 			addKrausButton.setDisable(true);
 			addKrausButton.setVisible(false);
 			
-			latex = "The model is specified by a universal gate \\( U \\) described by the matrix: ";
-			definitionStatement.getChildren().add(new LatexNode(latex, .7f));
+			latex = "\\text{The model is specified by a universal gate } \\( U \\) \\text{ described by the matrix:} ";
+			definitionStatement.getChildren().add(new LatexNode(latex, 20));
 			
 			n = new LatexNode(" $$ U = $$ ");
 			tf = new TextField();
@@ -566,7 +566,7 @@ public class GateEditableView extends AppFXMLComponent implements Initializable,
 	
 	private class KrausView extends HBox {
 		KrausView(int number, String input) {
-			LatexNode lv = new LatexNode("$$ k_{" + number + "} = $$", .7f, "#00000000", "#000000");
+			LatexNode lv = new LatexNode("$$ k_{" + number + "} = $$", 20, "#00000000", "#000000");
 			TextField inputText = new TextField(input);
 			ObservableList<Node> children = getChildren();
 			children.addAll(lv, inputText);

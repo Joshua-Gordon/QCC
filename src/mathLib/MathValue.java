@@ -2,8 +2,6 @@ package mathLib;
 
 import java.io.Serializable;
 
-import javax.swing.tree.VariableHeightLayoutCache;
-
 public abstract class MathValue implements Serializable {
 	
 	private static final long serialVersionUID = -7885273546489149083L;

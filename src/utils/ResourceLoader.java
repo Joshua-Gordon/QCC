@@ -15,6 +15,7 @@ import java.nio.file.Paths;
 import java.util.Hashtable;
 
 import javax.imageio.ImageIO;
+
 import main.Main;
 
 public class ResourceLoader {

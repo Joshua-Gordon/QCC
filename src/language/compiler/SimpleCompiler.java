@@ -4,8 +4,8 @@ import java.io.BufferedReader;
 import java.io.StringReader;
 import java.util.stream.Stream;
 
-import language.compiler.LexicalAnalyzer.LexicalAnaylizerIOException;
 import language.compiler.LexicalAnalyzer.LexemeNotRecognizedException;
+import language.compiler.LexicalAnalyzer.LexicalAnaylizerIOException;
 import language.compiler.SyntaxDirectedTranslator.Parser;
 import utils.customCollections.Pair;
 

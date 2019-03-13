@@ -1,208 +1,69 @@
 package appFX.appUI;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.ResourceBundle;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 
-import javafx.concurrent.Worker;
-import javafx.fxml.Initializable;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.web.WebEngine;
-import javafx.scene.web.WebView;
-import netscape.javascript.JSObject;
+import javax.swing.JLabel;
 
+import org.scilab.forge.jlatexmath.TeXConstants;
+import org.scilab.forge.jlatexmath.TeXFormula;
+import org.scilab.forge.jlatexmath.TeXIcon;
 
-//public class LatexControl extends BorderPane {
-//	
-//}
+import javafx.application.Platform;
+import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 
 
-public class LatexNode extends AnchorPane {
+public class LatexNode extends ImageView {
 	
-	private String latex;
 	private float fontSize;
-	private String color;
 	private String textColor;
-	private HtmlEventHandler eventHandler;
-	private WebEngine engine;
-	private WebView latexWebView;
-	private LatexLoadedRunnable runWhenLatexLoaded = null;
 	
-	public LatexNode (String latex) {
-		this(latex, .7f);
+	
+	public LatexNode() {
+		this("");
 	}
 	
-	public LatexNode (String latex, float fontSize) {
-		this(latex, fontSize, "#00000000");
+	public LatexNode(String latex) {
+		this(latex, 20);
 	}
 	
-	public LatexNode (String latex, float fontSize, String color) {
-		this(latex, fontSize, color, "#000000");
+	public LatexNode(String latex, float fontSize) {
+		this(latex, fontSize, "#000000");
 	}
 	
-	public LatexNode (String latex, float fontSize, String color, String textColor) {
-		this(latex, fontSize, color, textColor, (e)->{});
+	public LatexNode(String latex, float fontSize, String textColor) {
+		this(latex, fontSize, textColor, "#00000000");
 	}
 	
-	public LatexNode (String latex, float fontSize, String color, String textColor, LatexLoadedRunnable runWhenLatexLoaded) {
-		this.eventHandler = new HtmlEventHandler();
-		this.latex = latex;
+	public LatexNode(String latex, float fontSize, String textColor, String backColor) {
 		this.fontSize = fontSize;
-		this.color = color;
 		this.textColor = textColor;
-		this.runWhenLatexLoaded = runWhenLatexLoaded;
-		LatexView lv = new LatexView();
-		getChildren().add(lv.loadAsNode());
-		setMinWidth(AnchorPane.USE_PREF_SIZE);
-		setMinHeight(AnchorPane.USE_PREF_SIZE);
-		setPrefWidth(AnchorPane.USE_COMPUTED_SIZE);
-		setPrefHeight(AnchorPane.USE_COMPUTED_SIZE);
-		setMaxWidth(AnchorPane.USE_PREF_SIZE);
-		setMaxHeight(AnchorPane.USE_PREF_SIZE);
+		rerender(latex);
 	}
-	
 	
 	public void setLatex(String latex) {
-		if(eventHandler.latexLoaded) {
-			eventHandler.latexLoaded = false;
-			latex = latex.replace("\\", "\\\\");
-			engine.executeScript("window.setLatex(\"" + latex + "\")");
-		} else {
-			this.latex = latex;
-		}
+		rerender(latex);
 	}
 	
-	public void setFontSize(float fontSize) {
-		if(eventHandler.htmlLoaded)
-			engine.executeScript("window.setFontSize(\"" + fontSize + "em\")");
-		else
-			this.fontSize = fontSize;
-	}
-	
-	public void setColor(String color) {
-		if(eventHandler.htmlLoaded)
-			engine.executeScript("window.setColor(\"" + color + "\")");
-		else
-			this.color = color;
-	}
-	
-	public void setTextColor(String color) {
-		if(eventHandler.htmlLoaded)
-			engine.executeScript("window.setTextColor(\"" + color + "\")");
-		else
-			this.textColor = color;
-	}
-	
-	
-	public interface LatexLoadedRunnable {
-		public void runWhenLoaded(LatexNode ln);
-	}
-	
-	private LatexNode getInstance() {
-		return this;
-	}
-	
-	public class LatexView extends AppFXMLComponent implements Initializable {
-		
-		public WebView webView;
-		
-		private LatexView() {
-			super("LatexView.fxml");
-		}
-		
-		@Override
-		public void initialize(URL arg0, ResourceBundle arg1) {
-			String html = getHtml();
+	public synchronized void rerender(String latex) {
+		Thread thread = new Thread(()-> {
 			
-			webView.setContextMenuEnabled(false);
-			latexWebView = webView;
-			
-			engine = webView.getEngine();
-			engine.loadContent(html);
-			engine.getLoadWorker().stateProperty().addListener((obs, oldState, newState) -> {
-	            if (newState == Worker.State.SUCCEEDED)
-	            	eventHandler.addFunctionHandlerToDocument();
+			TeXFormula tf = new TeXFormula(latex) ;
+	        TeXIcon ti = tf.createTeXIcon(TeXConstants.STYLE_DISPLAY, fontSize, 0, Color.decode(textColor));
+	        BufferedImage bimg = new BufferedImage(ti.getIconWidth(), ti.getIconHeight(), BufferedImage.TYPE_4BYTE_ABGR);
+	        Graphics2D g2d = (Graphics2D) bimg.getGraphics();
+	        JLabel label = new JLabel();
+	        ti.paintIcon(label, g2d, 0, 0);
+	        Image image = SwingFXUtils.toFXImage(bimg, null);
+	        Platform.runLater(()-> {
+	        	setImage(image);
 	        });
-		}
-		
-		
-		
-		
-		private String getHtml() {
-			String html = null;
-			try {
-				html = utils.ResourceLoader.getHTMLString("LatexDisplay.html");
-			} catch (IOException e) {
-				e.printStackTrace();
-			} catch (URISyntaxException e) {
-				e.printStackTrace();
-			}
-			html = setArg(html, "LATEX_HERE", latex);
-			html = setArg(html, "FONT_SIZE", Float.toString(fontSize));
-			html = setArg(html, "BACK_COLOR", color);
-			html = setArg(html, "TEXT_COLOR", textColor);
-			
-			latex = null;
-			fontSize = -1;
-			color = null;
-			textColor = null;
-			
-			return html;
-		}
-		
-		private String setArg(String html, String arg, String param) {
-			String[] parts = html.split(arg);
-			return parts[0] + param + parts[1];
-		}
-	
-	
+		});
+		thread.start();
 	}
 
-	public class HtmlEventHandler {
-		private boolean latexLoaded = false, htmlLoaded = false;
-		
-		private void addFunctionHandlerToDocument() {
-	        JSObject window = (JSObject) engine.executeScript("window");
-	        window.setMember("app", this);
-	    }
-		
-		public void setLatexLoaded() {
-			if(latex != null) {
-				latexLoaded = false;
-				String modified = latex.replace("\\", "\\\\");
-				latex = null;
-				engine.executeScript("window.setLatex(\"" + modified + "\")");
-			} else {
-				latexLoaded = true;
-				runWhenLatexLoaded.runWhenLoaded(getInstance());
-			}
-		}
-		
-		public void setHtmlLoaded() {
-			if(htmlLoaded) return;
-			
-			htmlLoaded = true;
-			
-			if (fontSize != -1) {
-				engine.executeScript("window.setFontSize(\"" + fontSize + "em\")");
-				fontSize = -1;
-			}
-			if (color != null) {
-				engine.executeScript("window.setColor(\"" + color + "\")");
-				color = null;
-			}
-			if (textColor != null) {
-				engine.executeScript("window.setTextColor(\"" + textColor + "\")");
-				textColor = null;
-			}
-		}
-		
-		public void setSize(int width, int height) {
-			latexWebView.setMinSize(width, height);
-			latexWebView.setPrefSize(width, height);
-			latexWebView.setMaxSize(width, height);
-		}
-	}
 }

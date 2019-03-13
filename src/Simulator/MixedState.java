@@ -1,10 +1,10 @@
 package Simulator;
 
-import mathLib.Complex;
-import mathLib.Matrix;
-
 import java.util.ArrayList;
 import java.util.Random;
+
+import mathLib.Complex;
+import mathLib.Matrix;
 
 public class MixedState {
 

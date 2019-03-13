@@ -1,11 +1,11 @@
 package Simulator;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
 import mathLib.Complex;
 import mathLib.Eigenspace;
 import mathLib.Matrix;
-
-import java.util.ArrayList;
-import java.util.Collections;
 
 public class Operation {
 

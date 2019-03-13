@@ -1,12 +1,12 @@
 package Simulator;
 
+import java.util.ArrayList;
+
+import appSW.framework.CircuitBoard;
+import appSW.framework.ExportGatesRunnable;
+import appSW.framework.ExportedGate;
 import mathLib.Complex;
 import mathLib.Matrix;
-
-import java.util.ArrayList;
-import java.util.Random;
-
-import appSW.framework.*;
 
 public class InternalExecutor {
 

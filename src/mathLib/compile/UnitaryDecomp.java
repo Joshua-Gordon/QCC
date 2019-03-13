@@ -1,10 +1,10 @@
 package mathLib.compile;
 
+import java.util.ArrayList;
+
 import mathLib.Complex;
 import mathLib.Matrix;
 import mathLib.Vector;
-
-import java.util.ArrayList;
 
 
 public class UnitaryDecomp {
