@@ -1,0 +1,10 @@
+#symbol {
+	-fx-font-family: 'Vast Shadow';
+	-fx-font-size: 20;
+}
+
+#gate {
+	-fx-border-color: #000000;
+	-fx-border-width: 1;
+	-fx-background-color: #FFFFFF;
+}

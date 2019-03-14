@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
@@ -13,6 +14,7 @@ import java.util.Hashtable;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.image.Image;
 import javafx.scene.text.Font;
 
 public class ResourceLoaderFX {
@@ -29,6 +31,20 @@ public class ResourceLoaderFX {
 		loadFont("KosugiMaru-Regular.ttf", 12);
 	}
 	
+	public static Image getIcon(String iconName) throws IOException{
+		URL url = ResourceLoader.class.getResource("/icons/" + iconName);
+		try {
+			File file = new File(url.toURI()); 
+			try(
+					InputStream is = new FileInputStream(file);
+					) {
+				return new Image(is);
+			}
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		}
+		return null;
+ 	}
 	
 	public static String getHTMLString (String filename) throws IOException, URISyntaxException {
 		URL url = ResourceLoader.class.getResource("/html/" + filename);
@@ -113,7 +129,6 @@ public class ResourceLoaderFX {
 		return tempFile;
 	}
 	
-	
 	/**
 	 * Removes Temporary File with the name "fileName"
 	 * <p>
@@ -126,7 +141,6 @@ public class ResourceLoaderFX {
 		file.delete();
 		TEMP_FILES.remove(fileName);
 	}
-		
 		
 	private static String[] getPrefixSuffix(String fileName) {
 		String[] parts = fileName.split(".");

@@ -1,0 +1,168 @@
+.root {
+	-fx-font-family: 'MotoyaLMaru';
+}
+
+.split-pane:horizontal > .split-pane-divider {
+   -fx-background-color: transparent;
+}
+.split-pane:vertical > .split-pane-divider {
+   -fx-background-color: transparent;
+}
+.tab-header-background {
+    -fx-background-color: #FFFFFF;
+}
+
+SplitPane {
+	-fx-background-color: #FFFFFF;
+}
+
+/* Color Scheme */
+
+.dark-prim {
+	-fx-background-color: #00796B;
+}
+
+.light-prim {
+	-fx-background-color: #B2DFDB;
+}
+
+.prim {
+	-fx-background-color: #009688;
+}
+
+.accent {
+	-fx-background-color: #607D8B;
+}
+
+.prim-text {
+	-fx-text-fill: #212121;
+}
+
+.sec-text {
+	-fx-text-fill: #757575;
+}
+
+.divider {
+	-fx-background-color: #BDBDBD;
+}
+
+.light-text {
+	-fx-text-fill: #FFFFFF;
+}
+
+/* Menu and MenuBar */
+
+.root > VBox {
+	-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
+}
+
+MenuBar {
+	-fx-background-color: #00796B;
+}
+
+MenuBar .label {
+	-fx-text-fill: #FFFFFF;
+}
+
+.check-menu-item:checked
+{
+    -fx-mark-color: #FFFFFF;
+}
+
+.menu .arrow {
+	-fx-background-color: #FFFFFF;
+}
+
+.menu-item, .context-menu {
+	-fx-background-color: #00796B;
+}
+
+.context-menu .label {
+  	-fx-text-fill: white;
+}
+
+.menu-item:hover, .menu:hover, .menu-button:showing {
+	-fx-background-color: #607D8B;
+}
+
+.context-menu Separator *.line,  .menu Separator *.line {
+	-fx-border-style: solid;
+    -fx-border-width: 1;
+	-fx-border-color: #607D8B;
+	-fx-border-radius: 10 10 10 10;
+	-fx-background-radius: 10 10 10 10;
+}
+
+ToolBar {
+	-fx-background-color: #009688;
+}
+
+
+
+Separator *.line {
+	-fx-border-style: solid;
+    -fx-border-width: 1;
+	-fx-border-color: #00796B;
+	-fx-border-radius: 10 10 10 10;
+	-fx-background-radius: 10 10 10 10;
+	
+}
+
+
+ToolBar ToggleButton {
+	-fx-background-color: #009688;
+}
+
+ToolBar .toggle-button:hover {
+	-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 10, 0, 0, 0);
+}
+
+ToolBar .toggle-button:selected {
+	-fx-background-color: #00796B;
+	-fx-border-radius: 10 10 10 10;
+	-fx-background-radius: 10 10 10 10;
+}
+
+
+/* Views */
+
+.tab, .tab-label {
+	-fx-background-color: #607D8B;
+	-fx-text-fill: #FFFFFF;
+}
+
+.tab .tab-close-button {
+	-fx-background-color: #FFFFFF;
+}
+
+.tab .tab-close-button:hover {
+	-fx-background-color: red;
+}
+
+.tab-content-area {
+	-fx-border-style: solid;
+    -fx-border-width: 2;
+	-fx-border-color: #607D8B;
+	-fx-border-radius: 5 5 5 5;
+	-fx-background-radius: 5 5 5 5;
+	-fx-background-color: #FFFFFF;
+}
+
+/* Gate Icons lists */
+
+TilePane .toggle-button {
+	-fx-background-color: transparent;
+}
+
+TilePane .toggle-button:hover {
+	-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 10, 0, 0, 0);
+}
+
+TilePane .toggle-button:selected {
+	-fx-background-color: transparent ;
+	-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 10, 0, 0, 0);
+	-fx-border-color: #607D8B;
+	-fx-border-width: 1 1 1 1;
+	-fx-border-radius: 5 5 5 5;
+}
+

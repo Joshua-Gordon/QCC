@@ -405,7 +405,7 @@ public class BasicModelEditableView extends AppFXMLComponent implements Initiali
 			addKrausButton.setVisible(false);
 			
 			String latex = "\\text{The model is specified by matrix designated by } \\( e ^ {Ht}\\) \\text{ where } \\( H \\) \\text{ is defined by:} ";
-			definitionStatement.getChildren().add(new LatexNode(latex, 20));
+			definitionStatement.getChildren().add(new LatexNode(latex, 15));
 			
 			Node n = new LatexNode(" $$ H = $$ ");
 			TextField tf = new TextField();
@@ -425,7 +425,7 @@ public class BasicModelEditableView extends AppFXMLComponent implements Initiali
 			addKrausButton.setVisible(true);
 			
 			latex = "\\text{The model is specified by kraus matricies } \\( (k_1, k_2, k_3, ... k_n) \\) \\text{ where } \\( \\sum_{ i = 1 } ^ { n } k_i k_i ^ * = I \\) \\text{ : }";
-			definitionStatement.getChildren().add(new LatexNode(latex, 20));
+			definitionStatement.getChildren().add(new LatexNode(latex, 15));
 			
 			if(gm != null) {
 				ImmutableArray<String> inputMatrixes = gm.getUserInput();
@@ -441,7 +441,7 @@ public class BasicModelEditableView extends AppFXMLComponent implements Initiali
 			addKrausButton.setVisible(false);
 			
 			latex = "\\text{The model is specified by a universal gate } \\( U \\) \\text{ described by the matrix:} ";
-			definitionStatement.getChildren().add(new LatexNode(latex, 20));
+			definitionStatement.getChildren().add(new LatexNode(latex, 15));
 			
 			n = new LatexNode(" $$ U = $$ ");
 			tf = new TextField();

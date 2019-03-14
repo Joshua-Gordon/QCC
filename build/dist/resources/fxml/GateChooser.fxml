@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<BorderPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <bottom>
+      <HBox fx:id="buttonBox" BorderPane.alignment="CENTER">
+         <children>
+            <Region HBox.hgrow="ALWAYS" />
+            <Button fx:id="button" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#buttonAction" text="Button" HBox.hgrow="NEVER">
+               <HBox.margin>
+                  <Insets bottom="5.0" left="5.0" right="10.0" top="5.0" />
+               </HBox.margin>
+            </Button>
+         </children>
+      </HBox>
+   </bottom>
+   <center>
+      <ScrollPane fitToWidth="true" hbarPolicy="NEVER" BorderPane.alignment="CENTER">
+         <content>
+            <TilePane fx:id="list" hgap="5.0" vgap="5.0">
+               <padding>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </padding>
+            </TilePane>
+         </content>
+         <BorderPane.margin>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </BorderPane.margin>
+      </ScrollPane>
+   </center>
+</BorderPane>

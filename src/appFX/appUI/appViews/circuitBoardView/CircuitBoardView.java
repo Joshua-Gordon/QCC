@@ -150,6 +150,8 @@ public class CircuitBoardView extends AppView implements Initializable, ViewList
 		symbol.setText(circuitBoard.getSymbol());
 		symbol.setEditable(false);
 		
+		grid.setSelected(true);
+		
 		description.setContent(new LatexNode(circuitBoard.getDescription()));
 		
 		ImmutableArray<String> args = circuitBoard.getArguments();
@@ -431,7 +433,7 @@ public class CircuitBoardView extends AppView implements Initializable, ViewList
 				paramString += " , " + paramLatex.get(i);
 			
 			paramString += " ) \\)";
-			LatexNode lv = new LatexNode(paramString, 1f, "#00000000", "#000000");
+			LatexNode lv = new LatexNode(paramString, 20, "#00000000", "#000000");
 			box.getChildren().add(lv);
 		}
 		

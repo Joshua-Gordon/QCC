@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<!-- Math Editor!!! -->
+	<head>
+		<meta charset="UTF-8">
+
+		<!-- MathJax -->
+		<script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML"></script>
+	    
+
+
+	    <style  type="text/css">
+	    	
+	    	* {
+				-webkit-touch-callout: none;
+				-webkit-user-select: none;
+				-khtml-user-select: none;
+				-moz-user-select: none;
+				-ms-user-select: none;
+				-o-user-select: none;
+				user-select: none;	    	
+	    	}
+	    	
+		    body { 
+		    	margin:0px; padding:0px; border:0px;
+		    	overflow-x: hidden;
+		        overflow-y: hidden;
+		    }
+
+		    body {
+		    	background: BACK_COLOR;
+		    	color: TEXT_COLOR;
+		    	font-size: FONT_SIZEem;
+		    }
+
+		    #LAT_SPAN {
+		    	white-space: pre;
+		    	display: inline-block;
+		    }
+
+	    </style>
+	    
+
+
+
+	    <script type="text/javascript">		
+	    	
+	    	var flag = false;
+
+	    	var doWhenLatexIsFinished = function() {
+	    		flag = true;
+				changeSize();
+				app.setLatexLoaded();
+				app.setHtmlLoaded();
+	    	}
+
+
+			var getWidth = function () {
+				return document.getElementById('LAT_SPAN').offsetWidth;
+			}
+			
+			var getHeight = function () {
+				return document.getElementById('LAT_SPAN').offsetHeight;
+			}
+
+			function setLatex(latex) {
+				flag = false;
+				document.getElementById('LAT_SPAN').innerHTML = latex;
+				window.MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
+				window.MathJax.Hub.Queue(doWhenLatexIsFinished());
+			}
+
+			function setFontSize(size) {
+				document.getElementById('LAT_SPAN').style.fontSize = size;
+				changeSize();
+			}
+
+			function setColor(color) {
+				document.body.style.background = color;
+			}
+
+			function setTextColor(color) {
+				document.body.style.color = color;
+			}
+
+			var changeSize = function() {
+				app.setSize(getWidth(), getHeight());
+			}
+
+	    	var eventHandler =  function() {
+	    		if(flag)
+	    			changeSize();
+	    	}
+	    	window.addEventListener('DOMSubtreeModified', eventHandler, true);
+	    </script>
+	    
+	    
+	    <script type="text/x-mathjax-config">
+			MathJax.Hub.Config({
+    			showMathMenu: false
+   			});
+
+			MathJax.Hub.Queue(function() {
+	    		flag = true;
+				changeSize();
+				app.setLatexLoaded();
+				app.setHtmlLoaded();
+	    	});
+		</script>
+		
+	</head>
+	<body>
+		<span class="scrollableEquation" id="LAT_SPAN">LATEX_HERE</span>
+	</body>
+</html>

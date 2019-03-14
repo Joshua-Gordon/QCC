@@ -1,0 +1,28 @@
+#parameters {
+	-fx-background-color: #FFFFFF;
+	-fx-padding: 5 5 5 5;
+	-fx-background-radius: 3;
+	-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 2, 0, 0, 0);
+}
+
+#description {
+	-fx-background: #FFFFFF;
+	-fx-background-radius: 3;
+}
+
+#definition {
+	-fx-background-color: #FFFFFF;
+	-fx-background-radius: 3;
+	-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 2, 0, 0, 0);
+}
+
+#definitionStatement {
+	-fx-background-color: #FFFFFF;
+	-fx-padding: 5 5 5 5;
+	-fx-background-radius: 3;
+	-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 2, 0, 0, 0);
+}
+
+#editBar {
+	-fx-background-color: #607D8B;
+}

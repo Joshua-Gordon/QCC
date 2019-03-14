@@ -121,14 +121,14 @@ public class BasicModelView extends AppView implements Initializable, ViewListen
 		switch (gm.getGateModelType()) {
 		case HAMILTONIAN:
 			String latex = "\\text{The model is specified by matrix designated by } \\( e ^ {Ht}\\) \\text{ where } \\( H \\) \\text{ is defined by:} ";
-			definitionStatement.getChildren().add(new LatexNode(latex, 20));
+			definitionStatement.getChildren().add(new LatexNode(latex, 15));
 			
 			definition.getChildren().add(new LatexNode("$$ H = " + gm.getLatex().get(0) + " $$", 20));
 			
 			break;
 		case POVM:
 			latex = "\\text{The model is specified by kraus matricies } \\( (k_1, k_2, k_3, ... k_n) \\) \\text{ where } \\( \\sum_{ i = 1 } ^ { n } k_i k_i ^ * = I \\) \\text{ : }";
-			definitionStatement.getChildren().add(new LatexNode(latex, 20));
+			definitionStatement.getChildren().add(new LatexNode(latex, 15));
 			
 			ImmutableArray<String> krausLatex = gm.getLatex();
 			
@@ -145,7 +145,7 @@ public class BasicModelView extends AppView implements Initializable, ViewListen
 			break;
 		case UNIVERSAL:
 			latex = "\\text{The model is specified by a universal gate } \\( U \\) \\text{ described by the matrix:}";
-			definitionStatement.getChildren().add(new LatexNode(latex, 20));
+			definitionStatement.getChildren().add(new LatexNode(latex, 15));
 			
 			definition.getChildren().add(new LatexNode(" $$ U = " + gm.getLatex().get(0) + " $$ ", 20));
 			
